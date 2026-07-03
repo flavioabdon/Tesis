@@ -1,0 +1,37 @@
+\section{HIPÓTESIS}
+
+La integración de algoritmos de criptografía basada en retículos matemáticos (lattices) y pruebas de conocimiento cero de tipo zk-SNARK sobre una infraestructura de blockchain permite construir un sistema de votación electrónica con verificabilidad de extremo a extremo que resulta resistente a la computación cuántica y capaz de procesar sufragios en menos de 200 milisegundos por voto sobre hardware convencional.\\
+
+Esta hipótesis se sustenta en la convergencia de tres líneas de evidencia documentadas en la literatura consultada. En primer lugar, los estudios de viabilidad de algoritmos post-cuánticos en dispositivos de recursos limitados sugieren que la sobrecarga computacional de ML-KEM y ML-DSA es asumible sin penalizaciones prohibitivas de rendimiento (Lopez, Cadena y Rahman, 2025). En segundo lugar, los avances recientes en la eficiencia de los circuitos zk-SNARK bajo el esquema Groth16, combinados con funciones hash amigables para circuitos como Poseidon, han reducido de manera considerable el costo computacional de generación y verificación de pruebas (Grassi et al., 2021; Tortola et al., 2024). En tercer lugar, la experiencia acumulada en la implementación de sistemas de votación blockchain con validación de identidad demuestra que la verificación on-chain de firmas y pruebas puede ejecutarse dentro de límites de gas y latencia compatibles con entornos de producción (Poudel et al., 2024; Khan, 2025).\\
+
+\subsection{OPERACIONALIZACIÓN DE VARIABLES}
+
+Con el propósito de contrastar empíricamente la hipótesis planteada, se identifican a continuación la variable independiente, la variable dependiente y los indicadores correspondientes, los cuales orientarán el diseño de los instrumentos de medición y de los benchmarks de evaluación del sistema.\\
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{0.25\textwidth}|p{0.32\textwidth}|p{0.37\textwidth}|}
+\hline
+\textbf{Categoría} & \textbf{Descripción} & \textbf{Indicadores asociados} \\
+\hline
+Variable Independiente &
+Protocolo criptográfico híbrido (PQC + ZKP + Blockchain) &
+Configuración de ML-KEM-768 / ML-DSA-65; parámetros del circuito Circom; arquitectura del contrato inteligente \\
+\hline
+Variable Dependiente (1) &
+Resistencia cuántica del sistema &
+Cumplimiento de los estándares FIPS 203 y FIPS 204 (NIST, 2024) \\
+\hline
+Variable Dependiente (2) &
+Eficiencia computacional del sistema &
+Latencia total del pipeline E2E, medida en milisegundos por voto \\
+\hline
+Indicadores &
+Métricas de desempeño operativo &
+Tiempo de generación de claves; tiempo de generación de la prueba ZKP; costo de gas en la EVM; uso de CPU y RAM; tiempo total del pipeline E2E \\
+\hline
+\end{tabular}
+\caption{Operacionalización de variables de la hipótesis}
+\label{tab:operacionalizacion}
+\end{table}

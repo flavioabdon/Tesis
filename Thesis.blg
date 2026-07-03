@@ -1,0 +1,67 @@
+This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: Thesis.aux
+The style file: amsplain.bst
+A level-1 auxiliary file: resumen.aux
+A level-1 auxiliary file: cap1.aux
+A level-1 auxiliary file: cap2.aux
+A level-1 auxiliary file: cap3.aux
+A level-1 auxiliary file: cap4.aux
+Database file #1: bibliografia.bib
+Warning--missing publisher in 16
+Warning--missing pages in 11
+Warning--missing year in 3
+Warning--missing year in 19
+Warning--missing pages in 12
+Warning--missing publisher in 18
+Warning--missing publisher in 17
+Warning--missing pages in 9
+Warning--missing pages in 14
+Warning--missing year in 20
+Warning--missing pages in 10
+Warning--missing pages in 2
+Warning--missing pages in 101
+Warning--missing pages in c1
+Warning--missing pages in 13
+You've used 20 entries,
+            2213 wiz_defined-function locations,
+            583 strings with 6071 characters,
+and the built_in function-call counts, 4062 in all, are:
+= -- 320
+> -- 140
+< -- 0
++ -- 60
+- -- 40
+* -- 274
+:= -- 721
+add.period$ -- 20
+call.type$ -- 20
+change.case$ -- 80
+chr.to.int$ -- 0
+cite$ -- 35
+duplicate$ -- 219
+empty$ -- 385
+format.name$ -- 40
+if$ -- 800
+int.to.chr$ -- 0
+int.to.str$ -- 20
+missing$ -- 35
+newline$ -- 70
+num.names$ -- 40
+pop$ -- 129
+preamble$ -- 1
+purify$ -- 60
+quote$ -- 0
+skip$ -- 112
+stack$ -- 0
+substring$ -- 100
+swap$ -- 35
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 74
+warning$ -- 15
+while$ -- 40
+width$ -- 22
+write$ -- 155
+(There were 15 warnings)

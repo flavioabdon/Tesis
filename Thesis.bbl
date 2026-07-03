@@ -1,0 +1,93 @@
+\providecommand{\bysame}{\leavevmode\hbox to3em{\hrulefill}\thinspace}
+\providecommand{\MR}{\relax\ifhmode\unskip\space\fi MR }
+% \MRhref is called by the amsart/book/proc definition of \MR.
+\providecommand{\MRhref}[2]{%
+  \href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}
+}
+\providecommand{\href}[2]{#2}
+\begin{thebibliography}{10}
+
+\bibitem{16}
+Susana~Millán Anglés, \emph{Metodología y criterios para la evaluar la
+  influencia de la domótica y su preinstalación en funcion de condicionates
+  constructivos y de la envolvente interior}, 2014.
+
+\bibitem{7}
+Autoavance.com, \emph{Sensores pasivos}, Sensores Pasivos.
+
+\bibitem{11}
+BID, \emph{Informe preliminar del potencial energético de la subregión andina
+  como factor estratégico para la seguridad energética regional y
+  hemisférica}, Documento Presentado A los Presidentes de los Paises Andinos
+  (2002).
+
+\bibitem{100}
+Boliviaemprende.com, \emph{Banco bisa edificio inteligente}, Banco Bisa abre
+  edificio inteligente en La Paz, Agosto 2015.
+
+\bibitem{3}
+Vietnam Rafaella~Pereira Boris Andres Quintana~G, \emph{Automatización en el
+  hogar}, Ph.D. thesis, Universidad IIberoamenricana De Mexico.
+
+\bibitem{19}
+Noel De La~Cruz Ceballos, \emph{Sistema inteligente para el ahorro de energía
+  de lamparas flourecentes}, Ph.D. thesis, Instituto Politecnico Nacional de
+  Mexico.
+
+\bibitem{12}
+Autoridad de~Fiscalización y Control Social~de Electricidad, \emph{Producción
+  y consumo en el sistema interconectado nacional}, Autoridad de Fiscalización
+  y Control Social de Electricidad (2009).
+
+\bibitem{18}
+Fundación de~la Innovación~Backinder, \emph{El internet de las cosas, es un
+  mundo conectado de objetos inteligentes}, 2011.
+
+\bibitem{17}
+Instuto Politécnico~Nacional de~México, \emph{AutomatizaciÓn de edificios
+  inteligentes con plc's}, 2011.
+
+\bibitem{0}
+Endesaeduca.com, \emph{Smart buildings}, Smart Buildings.
+
+\bibitem{9}
+Jhojhanni Fiorini, \emph{El primer edificio con energía solar del paraguay},
+  Ultima Hora (2015).
+
+\bibitem{14}
+Antony~García González, \emph{Sensor de humedad-temperatura de precisión
+  para arduino}, panamahitek.com (2014).
+
+\bibitem{1}
+Ingrid Kirschning, \emph{Edificios inteligentes}, Ph.D. thesis, Universidad de
+  las Américas Puebla Mexico, 1992.
+
+\bibitem{20}
+Javier~Povedano Molina, \emph{Una aproximación publicación/subscripción
+  centrada en datos para la provisón de servicios multimedia}, Ph.D. thesis,
+  Universidad de Granada.
+
+\bibitem{5}
+Naylampmechatronics.com, \emph{Bluetooth hc-05}, Configuración del módulo
+  bluetooth HC-05 usando comandos AT.
+
+\bibitem{10}
+Evangelina Nucete, \emph{Oficinas inteligentes}, MAPAMA-España (2009).
+
+\bibitem{2}
+TechFoundiers, \emph{Ambient intelligence}, Enero (2003).
+
+\bibitem{101}
+Yandira Toledo, \emph{Banco bisa abre edificio inteligente en la paz}, Bolivia
+  Emprende (2015).
+
+\bibitem{c1}
+Esperanza~M Torrez., \emph{Análisis cualitativo de los sistemas de
+  telecomunicación y computación en edificios"}, Revista Digital
+  Universitaria (2000).
+
+\bibitem{13}
+Juan~Carlos Troncoso, \emph{Elevado gasto energético en edificios por concepto
+  de climatización}, Agencia Chilena De Energia Electrica (2014).
+
+\end{thebibliography}

@@ -1,0 +1,127 @@
+
+% -------------------------------------------------------------------------------------
+\documentclass[12pt, letterpaper]{thesisUMSA}
+
+\usepackage[left=4cm, top=4cm, right=2.5cm, bottom=2.5cm]{geometry}
+\onehalfspacing
+\usepackage{enumitem}
+\usepackage{url}
+
+% -------------------------------------------------------------------------------------
+% Espacio reservado para la carga de los paquetes por parte del autor
+% **** --------------------------------------------------------------------------------
+% //// --------------------------------------------------------------------------------
+% -------------------------------------------------------------------------------------
+% Espacio reservado para colocar las definiciones especiales por parte del autor
+% **** --------------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \includeonly{cap1,cap2}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% //// --------------------------------------------------------------------------------
+% -------------------------------------------------------------------------------------
+% CUERPO DEL DOCUMENTO
+% **** --------------------------------------------------------------------------------
+% -------------------------------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{pdfrender}
+
+\begin{document}
+
+\logouniversity[100mm]{image1.jpg}
+
+% --- PRIMERA CARÁTULA: Tapa (Todo centrado respecto a la hoja física) ---
+\newgeometry{left=2.5cm, right=2.5cm, top=4cm, bottom=2.5cm}
+\infothesis[
+    author = {Flavio Abdon Condori Vela},
+    advisor = {M.Sc. Aldo Valdez Alvarado},
+    title = {Votación electrónica con verificabilidad de extremo a extremo resistente a computación cuántica y con pruebas de conocimiento cero sobre contratos inteligentes en hardware convencional.},
+    perfil = {Perfil de Tesis de Grado},
+    titledegree = {Tesis de Grado para obtener el T\'itulo de Licenciatura en Inform\'atica},
+    degree = {Menci\'on Ingenier\'ia de Sistemas Inform\'aticos},
+    university = {Universidad Mayor de San Andr\'es},
+    faculty = {Facultad de Ciencias Puras y Naturales},
+    department = {Carrera de Inform\'atica},
+    city = {La Paz -- Bolivia},
+    date = {Mayo, 2013},
+]
+\restoregeometry
+
+% --- SEGUNDA CARÁTULA: Portada (Con el margen izquierdo de 4cm para encuadernado) ---
+\infothesis[
+    author = {Flavio Abdon Condori Vela},
+    advisor = {M.Sc. Aldo Valdez Alvarado},
+    title = {Votación electrónica con verificabilidad de extremo a extremo resistente a computación cuántica y con pruebas de conocimiento cero sobre contratos inteligentes en hardware convencional.},
+    perfil = {Perfil de Tesis de Grado},
+    titledegree = {Tesis de Grado para obtener el T\'itulo de Licenciatura en Inform\'atica},
+    degree = {Menci\'on Ingenier\'ia de Sistemas Inform\'aticos},
+    university = {Universidad Mayor de San Andr\'es},
+    faculty = {Facultad de Ciencias Puras y Naturales},
+    department = {Carrera de Inform\'atica},
+    city = {La Paz -- Bolivia},
+    date = {Mayo, 2013},
+]
+
+%\abstractthesis[
+   % titlespanish = {Desarrollo  e Implementaci\'on de un sistema de visi\'on estereosc\'opica usando FPGA},
+   % titleenglish = {Design and Implementation of Stereo Vision System using FPGA .},
+    %abstractspanish = {Un sistema de de Vision Esteroscopica },
+    %abstractenglish = {Are presented the basic steps and the explanation of the commands to use the template
+    %\texttt{thesisUnal.cls}.},
+    %keywordspanish = {Plantilla, clases, Universidad Nacional de Colombia, \LaTeX, pdf\LaTeX, \TeX, \BibTeX.},
+    %keywordenglish = {Template, Classes, National University of Colombia, \LaTeX, pdf\LaTeX, \TeX, \BibTeX.},
+ %  ]
+
+%\acceptationnote[
+   % note = {Aprobado},
+    %mention = {Meritoria o Laureada},
+    %jury = {Donald Knuth},
+    %jury = {Leslie Lamport},
+    %jury = {Michel Goossens},
+    %advisor = {Rodrigo de Castro Korgi},
+    %coadvisor = {Jonatan Gomz},
+    %date = {Bogot, D.C., Diciembre 31 de 2010}
+%]
+   \frontmatter
+
+   % \dedicatory{dedicatoria}
+     %\acknowledgement{agradecimientos}
+
+    \tableofcontents
+   \listoftables
+   %\listoffigures
+   %\resumen{resumen}
+    %\introduction{introduccion}
+  %  \cleardoublepage
+%  \@mymainmattertrue
+%  \setcounter{chapter}{0}%
+%  \setcounter{section}{0}%
+  \mainmatter
+    \renewcommand{\thesection}{\arabic{section}}
+    \pagestyle{plain}
+    % \pagenumbering{arabic}
+    \include{INF_TESIS_cap1}
+    \include{INF_TESIS_cap2}
+    \include{INF_TESIS_cap3}
+    \include{INF_TESIS_cap4}
+    \include{INF_TESIS_cap5}
+    \include{INF_TESIS_cap6}
+    \include{INF_TESIS_cap7}
+    \include{INF_TESIS_cap8}
+    \include{INF_TESIS_cap9}
+    \include{INF_TESIS_cap10}
+    \include{INF_TESIS_cap11}
+    \include{INF_TESIS_cap12}
+    \include{INF_TESIS_cap13}
+    %\appendix
+    %\include{apendice}
+    %\backmatter
+    %\conclusion{conclusiones}
+    %\futurework{trabajofuturo}
+    %\glossary{glosario}
+    %\nocite{*}
+    %\bibliography{bibliografia}
+    %\include{cap9}
+    %\include{cap10}
+   %\printindex
+\end{document}
