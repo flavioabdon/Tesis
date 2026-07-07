@@ -1,41 +1,42 @@
 \babel@toc {spanish}{}\relax 
 \contentsline {chapter}{\'Indice general}{I}{Doc-Start}%
 \contentsline {chapter}{\'Indice de tablas}{III}{Doc-Start}%
+\contentsline {chapter}{\'{I}ndice de figuras}{IV}{Doc-Start}%
 \contentsline {section}{\numberline {1}INTRODUCCIÓN}{1}{section.0.1}%
 \contentsline {section}{\numberline {2}ANTECEDENTES}{3}{section.0.2}%
-\contentsline {section}{\numberline {3}PLANTEAMIENTO DEL PROBLEMA}{6}{section.0.3}%
-\contentsline {subsection}{\numberline {3.1}PROBLEMA CENTRAL}{6}{subsection.0.3.1}%
-\contentsline {subsection}{\numberline {3.2}PROBLEMAS SECUNDARIOS}{6}{subsection.0.3.2}%
-\contentsline {section}{\numberline {4}DEFINICIÓN DE OBJETIVOS}{8}{section.0.4}%
-\contentsline {subsection}{\numberline {4.1}OBJETIVO GENERAL}{8}{subsection.0.4.1}%
-\contentsline {subsection}{\numberline {4.2}OBJETIVOS ESPECÍFICOS}{8}{subsection.0.4.2}%
+\contentsline {section}{\numberline {3}PLANTEAMIENTO DEL PROBLEMA}{5}{section.0.3}%
+\contentsline {subsection}{\numberline {3.1}PROBLEMA CENTRAL}{5}{subsection.0.3.1}%
+\contentsline {subsection}{\numberline {3.2}PROBLEMAS SECUNDARIOS}{5}{subsection.0.3.2}%
+\contentsline {section}{\numberline {4}DEFINICIÓN DE OBJETIVOS}{7}{section.0.4}%
+\contentsline {subsection}{\numberline {4.1}OBJETIVO GENERAL}{7}{subsection.0.4.1}%
+\contentsline {subsection}{\numberline {4.2}OBJETIVOS ESPECÍFICOS}{7}{subsection.0.4.2}%
 \contentsline {section}{\numberline {5}HIPÓTESIS}{9}{section.0.5}%
 \contentsline {subsection}{\numberline {5.1}OPERACIONALIZACIÓN DE VARIABLES}{9}{subsection.0.5.1}%
 \contentsline {section}{\numberline {6}JUSTIFICACIÓN}{11}{section.0.6}%
 \contentsline {subsection}{\numberline {6.1}JUSTIFICACIÓN ECONÓMICA}{11}{subsection.0.6.1}%
-\contentsline {subsection}{\numberline {6.2}JUSTIFICACIÓN SOCIAL}{11}{subsection.0.6.2}%
+\contentsline {subsection}{\numberline {6.2}JUSTIFICACIÓN SOCIAL}{12}{subsection.0.6.2}%
 \contentsline {subsection}{\numberline {6.3}JUSTIFICACIÓN CIENTÍFICA}{12}{subsection.0.6.3}%
-\contentsline {section}{\numberline {7}ALCANCES Y LÍMITES}{13}{section.0.7}%
-\contentsline {subsection}{\numberline {7.1}ALCANCES}{13}{subsection.0.7.1}%
-\contentsline {subsection}{\numberline {7.2}LÍMITES}{13}{subsection.0.7.2}%
-\contentsline {section}{\numberline {8}APORTES}{14}{section.0.8}%
-\contentsline {subsection}{\numberline {8.1}PRÁCTICO}{14}{subsection.0.8.1}%
-\contentsline {subsection}{\numberline {8.2}TEÓRICO}{14}{subsection.0.8.2}%
-\contentsline {section}{\numberline {9}METODOLOGÍA}{15}{section.0.9}%
-\contentsline {section}{\numberline {10}MARCO TEÓRICO}{17}{section.0.10}%
-\contentsline {subsection}{\numberline {10.1}Criptografía basada en retículos (Lattices)}{17}{subsection.0.10.1}%
-\contentsline {subsubsection}{\numberline {10.1.1}ML-KEM (FIPS 203)}{17}{subsubsection.0.10.1.1}%
-\contentsline {subsubsection}{\numberline {10.1.2}ML-DSA (FIPS 204)}{18}{subsubsection.0.10.1.2}%
-\contentsline {subsubsection}{\numberline {10.1.3}FIPS 205 como alternativa complementaria}{18}{subsubsection.0.10.1.3}%
-\contentsline {subsubsection}{\numberline {10.1.4}Viabilidad sobre hardware convencional}{18}{subsubsection.0.10.1.4}%
-\contentsline {subsection}{\numberline {10.2}Pruebas de Conocimiento Cero}{19}{subsection.0.10.2}%
-\contentsline {subsubsection}{\numberline {10.2.1}zk-SNARKs y el esquema Groth16}{19}{subsubsection.0.10.2.1}%
-\contentsline {subsubsection}{\numberline {10.2.2}Arithmetización R1CS y diseño de circuitos en Circom}{19}{subsubsection.0.10.2.2}%
-\contentsline {subsubsection}{\numberline {10.2.3}Función hash Poseidon}{19}{subsubsection.0.10.2.3}%
-\contentsline {subsubsection}{\numberline {10.2.4}Aplicación a la validación de votos}{20}{subsubsection.0.10.2.4}%
-\contentsline {subsection}{\numberline {10.3}Blockchain y Contratos Inteligentes}{20}{subsection.0.10.3}%
-\contentsline {subsection}{\numberline {10.4}Integración híbrida y modelo del pipeline E2E}{21}{subsection.0.10.4}%
-\contentsline {subsection}{\numberline {10.5}Consideraciones sobre seguridad, auditabilidad y comparación con enfoques previos}{22}{subsection.0.10.5}%
-\contentsline {section}{\numberline {11}ÍNDICE TENTATIVO}{24}{section.0.11}%
-\contentsline {section}{\numberline {12}CRONOGRAMA DE AVANCE}{26}{section.0.12}%
-\contentsline {section}{\numberline {13}BIBLIOGRAFÍA}{27}{section.0.13}%
+\contentsline {section}{\numberline {7}ALCANCES Y LÍMITES}{14}{section.0.7}%
+\contentsline {subsection}{\numberline {7.1}ALCANCES}{14}{subsection.0.7.1}%
+\contentsline {subsection}{\numberline {7.2}LÍMITES}{14}{subsection.0.7.2}%
+\contentsline {section}{\numberline {8}APORTES}{16}{section.0.8}%
+\contentsline {subsection}{\numberline {8.1}PRÁCTICO}{16}{subsection.0.8.1}%
+\contentsline {subsection}{\numberline {8.2}TEÓRICO}{16}{subsection.0.8.2}%
+\contentsline {section}{\numberline {9}METODOLOGÍA}{18}{section.0.9}%
+\contentsline {section}{\numberline {10}MARCO TEÓRICO}{19}{section.0.10}%
+\contentsline {subsection}{\numberline {10.1}Criptografía basada en retículos (Lattices)}{19}{subsection.0.10.1}%
+\contentsline {subsubsection}{\numberline {10.1.1}ML-KEM (FIPS 203)}{19}{subsubsection.0.10.1.1}%
+\contentsline {subsubsection}{\numberline {10.1.2}ML-DSA (FIPS 204)}{20}{subsubsection.0.10.1.2}%
+\contentsline {subsubsection}{\numberline {10.1.3}FIPS 205 como alternativa complementaria}{20}{subsubsection.0.10.1.3}%
+\contentsline {subsubsection}{\numberline {10.1.4}Viabilidad sobre hardware convencional}{21}{subsubsection.0.10.1.4}%
+\contentsline {subsection}{\numberline {10.2}Pruebas de Conocimiento Cero}{22}{subsection.0.10.2}%
+\contentsline {subsubsection}{\numberline {10.2.1}zk-SNARKs y el esquema Groth16}{23}{subsubsection.0.10.2.1}%
+\contentsline {subsubsection}{\numberline {10.2.2}Arithmetización R1CS y diseño de circuitos en Circom}{23}{subsubsection.0.10.2.2}%
+\contentsline {subsubsection}{\numberline {10.2.3}Función hash Poseidon}{24}{subsubsection.0.10.2.3}%
+\contentsline {subsubsection}{\numberline {10.2.4}Aplicación a la validación de votos}{24}{subsubsection.0.10.2.4}%
+\contentsline {subsection}{\numberline {10.3}Blockchain y Contratos Inteligentes}{25}{subsection.0.10.3}%
+\contentsline {subsection}{\numberline {10.4}Integración híbrida y modelo del pipeline E2E}{27}{subsection.0.10.4}%
+\contentsline {subsection}{\numberline {10.5}Consideraciones sobre seguridad, auditabilidad y comparación con enfoques previos}{30}{subsection.0.10.5}%
+\contentsline {section}{\numberline {11}ÍNDICE TENTATIVO}{32}{section.0.11}%
+\contentsline {section}{\numberline {12}CRONOGRAMA DE AVANCE}{34}{section.0.12}%
+\contentsline {section}{\numberline {13}BIBLIOGRAFÍA}{35}{section.0.13}%

@@ -1,11 +1,36 @@
 
 % -------------------------------------------------------------------------------------
-\documentclass[12pt, letterpaper]{thesisUMSA}
+\documentclass[12pt, letterpaper, onehalfspace]{thesisUMSA}
 
 \usepackage[left=4cm, top=4cm, right=2.5cm, bottom=2.5cm]{geometry}
-\onehalfspacing
+
 \usepackage{enumitem}
 \usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{positioning, fit, backgrounds, arrows.meta}
+\usepackage{float}
+
+\tikzset{
+    arch style/.style={
+        font=\sffamily,
+        node distance=14mm and 12mm
+    },
+    box/.style={
+        rectangle, rounded corners=3pt, draw, thick,
+        minimum height=14mm, text width=34mm, align=center,
+        inner sep=2mm
+    },
+    layer1/.style={box, fill=blue!8, draw=blue!55},
+    layer2/.style={box, fill=teal!8, draw=teal!60},
+    layer3/.style={box, fill=violet!8, draw=violet!55},
+    layerlabel/.style={
+        rectangle, anchor=north west, font=\bfseries\sffamily,
+        text=black!75
+    },
+    arr/.style={-{Latex[length=2.5mm]}, thick, draw=black!70},
+    sublabel/.style={font=\scriptsize\itshape, text=black!60},
+    biglabel/.style={font=\bfseries\large\sffamily, text=black!80}
+}
 
 % -------------------------------------------------------------------------------------
 % Espacio reservado para la carga de los paquetes por parte del autor
@@ -89,7 +114,7 @@
 
     \tableofcontents
    \listoftables
-   %\listoffigures
+   \listoffigures
    %\resumen{resumen}
     %\introduction{introduccion}
   %  \cleardoublepage

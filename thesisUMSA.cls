@@ -519,6 +519,7 @@
   \setcounter{chapter}{0}%
   \setcounter{section}{0}%
   \pagenumbering{arabic}
+  \setstretch{\@space}
   \gdef\thechapter{\@arabic\c@chapter}
   \if@spanish
     \def\chaptertitlename{Cap\'itulo}
