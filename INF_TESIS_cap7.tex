@@ -2,19 +2,8 @@
 
 \subsection{ALCANCES}
 
-La delimitaci\'{o}n del alcance de la presente investigaci\'{o}n se centra en el estudio experimental de viabilidad y rendimiento computacional del protocolo dise\~{n}ado, estructur\'{a}ndose bajo las siguientes l\'{i}neas de acci\'{o}n:
-\begin{itemize}
-    \item \textbf{Construcci\'{o}n de un artefacto experimental de control:} El desarrollo de la arquitectura modular y el prototipo funcional del protocolo de votaci\'{o}n electr\'{o}nica se restringe a servir como instrumento de soporte para el experimento de laboratorio. Este prototipo integra las etapas de cifrado y autenticaci\'{o}n (ML-KEM-768 y ML-DSA-65), privacidad (ZKP Groth16) y registro inmutable en contratos inteligentes Solidity.
-    \item \textbf{Recolecci\'{o}n de m\'{e}tricas operativas de rendimiento:} El alcance del estudio cubre la extracci\'{o}n, almacenamiento y tabulaci\'{o}n sistem\'{a}tica de las variables dependientes definidas: latencia del procesamiento temporal del voto (en milisegundos), consumo de recursos f\'{i}sicos de infraestructura (uso de CPU y memoria RAM en los nodos verificadores) y costos transaccionales on-chain (unidades de gas consumidas en la EVM).
-    \item \textbf{Simulaci\'{o}n de escenarios de estr\'{e}s transaccional:} El entorno de experimentaci\'{o}n abarca pruebas de carga concurrentes parametrizadas de hasta 10\,000 votantes simulados de forma simult\'{a}nea, utilizando herramientas de desarrollo local como Hardhat para simular la red Ethereum de forma controlada y repetible.
-    \item \textbf{Evaluaci\'{o}n sobre hardware convencional de prop\'{o}sito general:} Las pruebas del protocolo se delimitan al procesamiento en hardware de consumo com\'{u}n (arquitecturas x86 ó ARM), con el prop\'{o}sito de evaluar de forma emp\'{i}rica la factibilidad operativa de los algoritmos avanzados de ret\'{i}culos bajo restricciones f\'{i}sicas est\'{a}ndar.
-\end{itemize}
+
 
 \subsection{LÍMITES}
 
-Para preservar el rigor metodol\'{o}gico de la investigaci\'{o}n cuantitativa y evitar sesgos o ruido en las mediciones, el estudio se circunscribe a los siguientes l\'{i}mites t\'{e}cnicos y operativos:
-\begin{itemize}
-    \item \textbf{Exclusi\'{o}n de la autenticaci\'{o}n f\'{i}sica y biom\'{e}trica del elector:} No se aborda la capa de identidad f\'{i}sica, registro inicial del ciudadano ni mecanismos de autenticaci\'{o}n biom\'{e}trica. La investigaci\'{o}n asume como condici\'{o}n del entorno la existencia de una infraestructura de clave p\'{u}blica (PKI) post-cu\'{a}ntica est\'{a}tica y en funcionamiento para la emisi\'{o}n de credenciales.
-    \item \textbf{Restricci\'{o}n al esquema de votaci\'{o}n de selecci\'{o}n \'{u}nica:} El dise\~{n}o del circuito aritm\'{e}tico de conocimiento cero y la l\'{o}gica del contrato inteligente se limitan de manera estricta a elecciones donde cada elector emite un \'{u}nico voto a favor de un \'{u}nico candidato v\'{a}lido, quedando fuera del alcance los esquemas de selecci\'{o}n m\'{u}ltiple, votaci\'{o}n preferencial o voto ponderado.
-    \item \textbf{Entorno de red localizado y hardware homogeneizado:} No se eval\'{u}a la latencia en redes f\'{i}sicas WAN, la interoperabilidad multichain real ni el despliegue de puentes criptogr\'{a}ficos. Las pruebas se realizan de manera local sobre hardware homogeneizado bajo condiciones controladas, actuando este \'{u}ltimo como variable de control para garantizar la repetibilidad y validez de las mediciones de rendimiento.
-\end{itemize}
+

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.7.2)  9 JUL 2026 07:41
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.7.2)  9 JUL 2026 11:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1038,7 +1038,7 @@ Package caption Info: End \AtBeginDocument code.
 Package pdfrender Info: New color stack `TextRenderingMode' = 1 on input line 7
 6.
 Package pdfrender Info: New color stack `LineWidth' = 2 on input line 76.
-<image1.jpg, id=161, 125.46875pt x 240.9pt>
+<image1.jpg, id=113, 125.46875pt x 240.9pt>
 File: image1.jpg Graphic file (type jpg)
 <use image1.jpg>
 Package pdftex.def Info: image1.jpg  used on input line 76.
@@ -1116,25 +1116,21 @@ Overfull \hbox (17.62482pt too wide) in paragraph at lines 92--92
 ] (./Thesis.toc
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
- [1
-
-
-])
+)
 \tf@toc=\write5
 \openout5 = `Thesis.toc'.
 
-LaTeX Info: Redefining \. on input line 120.
-LaTeX Info: Redefining \% on input line 120.
-Package babel Info: 'spanish' activates 'spanish' shorthands.
-(babel)             Reported on input line 120.
- [2] (./Thesis.lot
+ [1
+
+
+] (./Thesis.lot
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
 )
 \tf@lot=\write6
 \openout6 = `Thesis.lot'.
 
- [3
+ [2
 
 ] (./Thesis.lof
 LaTeX Info: Redefining \. on input line 1.
@@ -1143,811 +1139,161 @@ LaTeX Info: Redefining \% on input line 1.
 \tf@lof=\write7
 \openout7 = `Thesis.lof'.
 
- [4
+ [3
 
 ]
 \openout2 = `INF_TESIS_cap1.aux'.
 
 
-(./INF_TESIS_cap1.tex
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 3.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 3.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 3.
-
+(./INF_TESIS_cap1.tex)
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.7 
-     [1
+l.132     \include{INF_TESIS_cap1}
+                                   [1
 
 
-])
+]
+\openout2 = `INF_TESIS_cap2.aux'.
+
+ (./INF_TESIS_cap2.tex)
 pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.132     \include{INF_TESIS_cap1}
-                                   [2]
-\openout2 = `INF_TESIS_cap2.aux'.
-
- (./INF_TESIS_cap2.tex [3
+l.133     \include{INF_TESIS_cap2}
+                                   [2
 
 
 
-]) [4]
+]
 \openout2 = `INF_TESIS_cap3.aux'.
 
-
-(./INF_TESIS_cap3.tex
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
-2.
-
-(/usr/local/texlive/2026/texmf-dist/tex/latex/lm/ts1lmr.fd
-File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)) [5
+ (./INF_TESIS_cap3.tex) [3
 
 
 
-{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
+]
 \openout2 = `INF_TESIS_cap4.aux'.
 
- (./INF_TESIS_cap4.tex
+
+(./INF_TESIS_cap4.tex) [4
+
+
+
+]
+\openout2 = `INF_TESIS_cap5.aux'.
+
+ (./INF_TESIS_cap5.tex) [5
+
+
+
+]
+\openout2 = `INF_TESIS_cap6.aux'.
+
+ (./INF_TESIS_cap6.tex)
 [6
 
 
 
-]) [7]
-\openout2 = `INF_TESIS_cap5.aux'.
-
- (./INF_TESIS_cap5.tex [8
-
-
-
-{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/loca
-l/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}] [9]
-LaTeX Font Info:    Calculating math sizes for size <6.5> on input line 55.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6.5> on input line 55.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <4.54997> on input line 55.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <3.25> on input line 55.
-
-
-LaTeX Font Warning: Font shape `U/lasy/m/n' in size <6.5> not available
-(Font)              size <6> substituted on input line 55.
-
-
-LaTeX Font Warning: Font shape `U/lasy/m/n' in size <4.54997> not available
-(Font)              size <5> substituted on input line 55.
-
-
-LaTeX Font Warning: Font shape `U/lasy/m/n' in size <3.25> not available
-(Font)              size <5> substituted on input line 55.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 57--57
-[]|\T1/lmr/bx/n/6.5 Definición
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 57--57
-[]|\T1/lmr/bx/n/6.5 Definición
- []
-
-
-Underfull \hbox (badness 1117) in paragraph at lines 57--57
-[]|\T1/lmr/bx/n/6.5 Unidad /
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 57--58
-[]|\T1/lmr/bx/n/6.5 Instrumento
- []
-
-
-Overfull \vbox (39.77998pt too high) detected at line 59
- []
-
-
-Overfull \hbox (17.04715pt too wide) in paragraph at lines 59--59
-[]|\T1/lmr/m/n/6.5 Independiente|  
- []
-
-
-Underfull \hbox (badness 2600) in paragraph at lines 59--59
-\T1/lmr/m/n/6.5 to-grá-fi-cos ba-sa-
- []
-
-
-Underfull \hbox (badness 3701) in paragraph at lines 59--59
-\T1/lmr/m/n/6.5 mo-du-la-res pa-ra
- []
-
-
-Underfull \hbox (badness 1406) in paragraph at lines 59--59
-\T1/lmr/m/n/6.5 se-gu-ri-dad cuán-
- []
-
-
-Underfull \hbox (badness 1137) in paragraph at lines 59--59
-\T1/lmr/m/n/6.5 con prue-bas de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--59
-[]|\T1/lmr/m/n/6.5 Implementación
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--59
-\T1/lmr/m/n/6.5 del es-que-ma
- []
-
-
-Underfull \hbox (badness 1389) in paragraph at lines 59--59
-\T1/lmr/m/n/6.5 de ci-fra-do ML-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--59
-\T1/lmr/m/n/6.5 KEM-768 y
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--59
-\T1/lmr/m/n/6.5 fir-ma di-gi-tal
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--59
-\T1/lmr/m/n/6.5 ML-DSA-65 en
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--59
-[]|\T1/lmr/m/n/6.5 Criptografía
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--59
-\T1/lmr/m/n/6.5 de re-tícu-los
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--59
-\T1/lmr/m/n/6.5 de es-tán-da-res
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--59
-\T1/lmr/m/n/6.5 FIPS 203 y
- []
-
-
-Overfull \hbox (8.82768pt too wide) in paragraph at lines 59--59
-[]|\T1/lmr/m/n/6.5 Cumplimiento
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--60
-[]|\T1/lmr/m/n/6.5 Código del
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--60
-\T1/lmr/m/n/6.5 pro-to-co-lo
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 59--60
-\T1/lmr/m/n/6.5 / Sui-te de
- []
-
-
-Underfull \hbox (badness 6141) in paragraph at lines 61--61
-[]|\T1/lmr/m/n/6.5 Criptografía de
- []
-
-
-Underfull \hbox (badness 3525) in paragraph at lines 61--61
-\T1/lmr/m/n/6.5 in-for-ma-ción del
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
-[]|\T1/lmr/m/n/6.5 Construcción
- []
-
-
-Underfull \hbox (badness 3343) in paragraph at lines 61--61
-\T1/lmr/m/n/6.5 del cir-cui-to de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
-\T1/lmr/m/n/6.5 ve-ri-fi-ca-ción en
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
-\T1/lmr/m/n/6.5 len-gua-je Cir-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
-\T1/lmr/m/n/6.5 com apli-can-do
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
-[]|\T1/lmr/m/n/6.5 Privacidad
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
-\T1/lmr/m/n/6.5 al-go-rít-mi-ca
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
-[]|\T1/lmr/m/n/6.5 Complejidad
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
-\T1/lmr/m/n/6.5 del cir-cui-to
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
-[]|\T1/lmr/m/n/6.5 Número
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
-\T1/lmr/m/n/6.5 de res-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
-\T1/lmr/m/n/6.5 tric-cio-nes
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 61--61
-\T1/lmr/m/n/6.5 (cons-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 61--62
-[]|\T1/lmr/m/n/6.5 Compilador
- []
-
-
-Underfull \hbox (badness 1565) in paragraph at lines 61--62
-\T1/lmr/m/n/6.5 de Cir-com /
- []
-
-
-Overfull \vbox (12.87pt too high) detected at line 63
- []
-
-
-Overfull \hbox (11.75308pt too wide) in paragraph at lines 63--63
-[]|\T1/lmr/m/n/6.5 Dependiente|  
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 63--63
-[]|\T1/lmr/m/n/6.5 Capacidad de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 63--63
-\T1/lmr/m/n/6.5 res-pues-ta del
- []
-
-
-Underfull \hbox (badness 2521) in paragraph at lines 63--63
-\T1/lmr/m/n/6.5 de aten-ción de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 63--63
-[]|\T1/lmr/m/n/6.5 Medición del
- []
-
-
-Underfull \hbox (badness 1132) in paragraph at lines 63--63
-\T1/lmr/m/n/6.5 tiem-po trans-cu-
- []
-
-
-Underfull \hbox (badness 7667) in paragraph at lines 63--63
-\T1/lmr/m/n/6.5 rri-do des-de el
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 63--63
-\T1/lmr/m/n/6.5 sac-ción has-ta
- []
-
-
-Underfull \hbox (badness 1226) in paragraph at lines 63--63
-\T1/lmr/m/n/6.5 la re-cep-ción de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 63--63
-[]|\T1/lmr/m/n/6.5 Rendimiento
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 63--63
-[]|\T1/lmr/m/n/6.5 Latencia to-tal
- []
-
-
-Overfull \hbox (4.88985pt too wide) in paragraph at lines 63--63
-[]|\T1/lmr/m/n/6.5 Milisegundos
- []
-
-
-Underfull \hbox (badness 7468) in paragraph at lines 63--63
-\T1/lmr/m/n/6.5 (ms) [Me-
- []
-
-
-Underfull \hbox (badness 1859) in paragraph at lines 63--63
-\T1/lmr/m/n/6.5 ta: $\OMS/lmsy/m/n/6.5 ^^T$ \T1/lmr/m/n/6.5 200
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 63--64
-[]|\T1/lmr/m/n/6.5 Módulo de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 63--64
-\T1/lmr/m/n/6.5 me-di-ción de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 63--64
-\T1/lmr/m/n/6.5 tiem-po /
- []
-
-
-Underfull \hbox (badness 5105) in paragraph at lines 65--65
-[]|\T1/lmr/m/n/6.5 Registro de la
- []
-
-
-Underfull \hbox (badness 2150) in paragraph at lines 65--65
-\T1/lmr/m/n/6.5 me-mo-ria vo-lá-til
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 65--65
-\T1/lmr/m/n/6.5 en los no-dos
- []
-
-
-Underfull \hbox (badness 1931) in paragraph at lines 65--65
-\T1/lmr/m/n/6.5 de red du-ran-te
- []
-
-
-Underfull \hbox (badness 1303) in paragraph at lines 65--65
-[]|\T1/lmr/m/n/6.5 Consumo de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 65--65
-\T1/lmr/m/n/6.5 in-fra-es-truc-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 65--65
-[]|\T1/lmr/m/n/6.5 Porcentaje de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 65--65
-\T1/lmr/m/n/6.5 uso de CPU
- []
-
-
-Underfull \hbox (badness 3428) in paragraph at lines 65--65
-\T1/lmr/m/n/6.5 y vo-lu-men de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 65--65
-[]|\T1/lmr/m/n/6.5 CPU ($ $%)
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 65--65
-\T1/lmr/m/n/6.5 y RAM
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 65--66
-[]|\T1/lmr/m/n/6.5 Monitor de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 65--66
-\T1/lmr/m/n/6.5 re-cur-sos del
- []
-
-
-Underfull \hbox (badness 3078) in paragraph at lines 65--66
-\T1/lmr/m/n/6.5 de diag-nós-ti-
- []
-
-
-Underfull \hbox (badness 4582) in paragraph at lines 67--67
-\T1/lmr/m/n/6.5 sa-mien-to ló-gi-co
- []
-
-
-Underfull \hbox (badness 1292) in paragraph at lines 67--67
-\T1/lmr/m/n/6.5 cur-sos con-su-mi-
- []
-
-
-Underfull \hbox (badness 3158) in paragraph at lines 67--67
-\T1/lmr/m/n/6.5 ra ve-ri-fi-car las
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 67--67
-[]|\T1/lmr/m/n/6.5 Consumo
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 67--67
-\T1/lmr/m/n/6.5 tran-sac-cio-nal
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 67--67
-[]|\T1/lmr/m/n/6.5 Unidades
- []
-
-
-Underfull \hbox (badness 3039) in paragraph at lines 67--68
-[]|\T1/lmr/m/n/6.5 Hardhat Gas
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 67--68
-\T1/lmr/m/n/6.5 Re-por-ter /
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 69--69
-[]|\T1/lmr/m/n/6.5 Rigor ma-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 69--69
-\T1/lmr/m/n/6.5 te-má-ti-co
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 69--69
-\T1/lmr/m/n/6.5 crip-to-grá-fi-
- []
-
-
-Underfull \hbox (badness 3417) in paragraph at lines 69--69
-\T1/lmr/m/n/6.5 go-rit-mo res-pec-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 69--69
-[]|\T1/lmr/m/n/6.5 Verificación de
- []
-
-
-Underfull \hbox (badness 4713) in paragraph at lines 69--69
-\T1/lmr/m/n/6.5 wa-re uti-li-zan-do
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 69--69
-\T1/lmr/m/n/6.5 los con-jun-tos
- []
-
-
-Underfull \hbox (badness 7099) in paragraph at lines 69--69
-\T1/lmr/m/n/6.5 de prue-ba del
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 69--69
-[]|\T1/lmr/m/n/6.5 Cumplimiento
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 69--69
-\T1/lmr/m/n/6.5 de vec-to-res
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 69--69
-[]|\T1/lmr/m/n/6.5 Valor
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 69--69
-\T1/lmr/m/n/6.5 boo-leano
- []
-
-
-Underfull \hbox (badness 1377) in paragraph at lines 69--69
-\T1/lmr/m/n/6.5 (Cum-ple /
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 69--70
-[]|\T1/lmr/m/n/6.5 Vectores
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 69--70
-\T1/lmr/m/n/6.5 ofi-cia-les de
- []
-
-
-Overfull \hbox (8.91078pt too wide) in paragraph at lines 71--71
-[]|\T1/lmr/m/n/6.5 Infraestructura
- []
-
-
-Underfull \hbox (badness 2111) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 del en-torno
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 de si-mu-la-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-[]|\T1/lmr/m/n/6.5 Conjunto de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 pro-pie-da-des
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 de hard-wa-re
- []
-
-
-Underfull \hbox (badness 6316) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 y red es-ta-bles
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 asig-na-das al
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-[]|\T1/lmr/m/n/6.5 Delimitación
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 de re-cur-sos
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 de hard-wa-re
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 fi-jos du-ran-te
- []
-
-
-Underfull \hbox (badness 3375) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 las prue-bas en
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 el en-torno de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 del ser-vi-dor
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-[]|\T1/lmr/m/n/6.5 CPU,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 RAM y
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 al-ma-ce-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--71
-\T1/lmr/m/n/6.5 na-mien-to
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 71--72
-\T1/lmr/m/n/6.5 de hard-wa-re
- []
-
-
-Overfull \hbox (23.0618pt too wide) in paragraph at lines 55--74
- [][] 
- []
-
-[10]
-Overfull \vbox (41.88585pt too high) has occurred while \output is active []
-
-
-[11{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}])
-\openout2 = `INF_TESIS_cap6.aux'.
-
-
-(./INF_TESIS_cap6.tex [12
-
-
-
-]) [13]
+]
 \openout2 = `INF_TESIS_cap7.aux'.
 
- (./INF_TESIS_cap7.tex [14
+ (./INF_TESIS_cap7.tex) [7
 
 
 
-]) [15]
+]
 \openout2 = `INF_TESIS_cap8.aux'.
 
-
-(./INF_TESIS_cap8.tex) [16
+ (./INF_TESIS_cap8.tex) [8
 
 
 
 ]
 \openout2 = `INF_TESIS_cap9.aux'.
 
- (./INF_TESIS_cap9.tex [17
-
-
-
-] [18]) [19]
-\openout2 = `INF_TESIS_cap10.aux'.
-
-
-(./INF_TESIS_cap10.tex [20
-
-
-
-] [21{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 42.
-
-Overfull \hbox (10.85777pt too wide) in paragraph at lines 52--53
- [][] 
- []
-
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 6
-1.
-(/usr/local/texlive/2026/texmf-dist/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [22]) [23]
-\openout2 = `INF_TESIS_cap11.aux'.
-
-
-(./INF_TESIS_cap11.tex
-Overfull \vbox (4.27269pt too high) has occurred while \output is active []
-
-
-[24
-
-
-
-])
-\openout2 = `INF_TESIS_cap12.aux'.
-
- (./INF_TESIS_cap12.tex
-Underfull \hbox (badness 1067) in paragraph at lines 19--19
-[]|\T1/lmr/bx/n/7 Redacción Cap. II - Mar-co
- []
-
-) [25
+ (./INF_TESIS_cap9.tex) [9
 
 
 
 ]
+\openout2 = `INF_TESIS_cap10.aux'.
+
+ (./INF_TESIS_cap10.tex) [10
+
+
+
+]
+\openout2 = `INF_TESIS_cap11.aux'.
+
+ (./INF_TESIS_cap11.tex) [11
+
+
+
+]
+\openout2 = `INF_TESIS_cap12.aux'.
+
+
+(./INF_TESIS_cap12.tex
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 12.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 12.
+
+Underfull \hbox (badness 1067) in paragraph at lines 19--19
+[]|\T1/lmr/bx/n/7 Redacción Cap. II - Mar-co
+ []
+
+) [12
+
+
+
+{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}]
 \openout2 = `INF_TESIS_cap13.aux'.
 
- (./INF_TESIS_cap13.tex [26
+
+(./INF_TESIS_cap13.tex) [13
 
 
 
-] [27]) [28] (./Thesis.aux
+] (./Thesis.aux
 LaTeX Info: Redefining \. on input line 12.
 LaTeX Info: Redefining \% on input line 12.
-
-(./INF_TESIS_cap1.aux) (./INF_TESIS_cap2.aux) (./INF_TESIS_cap3.aux)
-(./INF_TESIS_cap4.aux) (./INF_TESIS_cap5.aux) (./INF_TESIS_cap6.aux)
-(./INF_TESIS_cap7.aux) (./INF_TESIS_cap8.aux) (./INF_TESIS_cap9.aux)
-(./INF_TESIS_cap10.aux) (./INF_TESIS_cap11.aux) (./INF_TESIS_cap12.aux)
-(./INF_TESIS_cap13.aux))
+ (./INF_TESIS_cap1.aux)
+(./INF_TESIS_cap2.aux) (./INF_TESIS_cap3.aux) (./INF_TESIS_cap4.aux)
+(./INF_TESIS_cap5.aux) (./INF_TESIS_cap6.aux) (./INF_TESIS_cap7.aux)
+(./INF_TESIS_cap8.aux) (./INF_TESIS_cap9.aux) (./INF_TESIS_cap10.aux)
+(./INF_TESIS_cap11.aux) (./INF_TESIS_cap12.aux) (./INF_TESIS_cap13.aux))
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-LaTeX Font Warning: Size substitutions with differences
-(Font)              up to 1.75pt have occurred.
-
 Package rerunfilecheck Info: File `Thesis.out' has not changed.
-(rerunfilecheck)             Checksum: 8ECC8FDBD93E80B7E936B0981DDF9AF3;7899.
+(rerunfilecheck)             Checksum: 7ABDB30D6A4ECEB244556AFB0387D868;4159.
  ) 
 Here is how much of TeX's memory you used:
- 26958 strings out of 467525
- 499643 string characters out of 5418983
- 953883 words of memory out of 5000000
- 55186 multiletter control sequences out of 15000+600000
- 771387 words of font info for 135 fonts, out of 8000000 for 9000
+ 26630 strings out of 467525
+ 493739 string characters out of 5418983
+ 930137 words of memory out of 5000000
+ 54927 multiletter control sequences out of 15000+600000
+ 713616 words of font info for 94 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 90i,12n,104p,1416b,792s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,12n,104p,543b,470s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/lo
 cal/texlive/2026/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texliv
 e/2026/texmf-dist/fonts/type1/public/lm/lmbx7.pfb></usr/local/texlive/2026/texm
 f-dist/fonts/type1/public/lm/lmbx9.pfb></usr/local/texlive/2026/texmf-dist/font
 s/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/p
-ublic/lm/lmex10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/l
-mmi10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmmi12.pfb>
-</usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></usr/local
-/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/20
-26/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2026/texmf-di
-st/fonts/type1/public/lm/lmr7.pfb></usr/local/texlive/2026/texmf-dist/fonts/typ
-e1/public/lm/lmr8.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm
-/lmri10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmri12.pf
-b></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/lo
-cal/texlive/2026/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/local/texlive
-/2026/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2026/texmf
--dist/fonts/type1/public/lm/lmtt12.pfb></usr/local/texlive/2026/texmf-dist/font
-s/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Thesis.pdf (34 pages, 460863 bytes).
+ublic/lm/lmr10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lm
+r12.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr7.pfb></us
+r/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/te
+xlive/2026/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
+Output written on Thesis.pdf (18 pages, 265875 bytes).
 PDF statistics:
- 537 PDF objects out of 1000 (max. 8388607)
- 449 compressed objects within 5 object streams
- 88 named destinations out of 1000 (max. 500000)
- 330 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 285 PDF objects out of 1000 (max. 8388607)
+ 241 compressed objects within 3 object streams
+ 42 named destinations out of 1000 (max. 500000)
+ 234 words of extra memory for PDF output out of 10000 (max. 10000000)
 

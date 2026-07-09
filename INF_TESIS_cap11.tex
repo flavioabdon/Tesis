@@ -12,136 +12,18 @@ Estructura de la Tabla de Contenidos proyectada para la Tesis Final, organizada 
 \vspace{-0.2cm}
 \subsubsection*{CAPÍTULO I: MARCO \\ INTRODUCTORIO}
 \vspace{-0.2cm}
-\begin{itemize}
-    \item[1.1.] \textbf{Introducci\'{o}n y contextualizaci\'{o}n}
-    \item[1.2.] \textbf{Antecedentes del problema}
-    \item[1.3.] \textbf{Planteamiento del problema}
-    \begin{itemize}
-        \item[1.3.1.] Identificaci\'{o}n del problema central
-        \item[1.3.2.] Formulaci\'{o}n de preguntas
-    \end{itemize}
-    \item[1.4.] \textbf{Objetivos de la investigaci\'{o}n}
-    \begin{itemize}
-        \item[1.4.1.] Objetivo general
-        \item[1.4.2.] Objetivos espec\'{i}ficos
-    \end{itemize}
-    \item[1.5.] \textbf{Formulaci\'{o}n de hip\'{o}tesis}
-    \begin{itemize}
-        \item[1.5.1.] Hip\'{o}tesis nula ($H_0$) e hip\'{o}tesis alternativa ($H_1$)
-        \item[1.5.2.] Definici\'{o}n de variables
-        \item[1.5.3.] Matriz de operacionalizaci\'{o}n
-    \end{itemize}
-    \item[1.6.] \textbf{Justificaci\'{o}n del estudio}
-    \begin{itemize}
-        \item[1.6.1.] Justificaci\'{o}n cient\'{i}fico-te\'{o}rica
-        \item[1.6.2.] Justificaci\'{o}n tecnol\'{o}gica
-        \item[1.6.3.] Justificaci\'{o}n metodol\'{o}gica
-    \end{itemize}
-    \item[1.7.] \textbf{Alcances y l\'{i}mites}
-    \begin{itemize}
-        \item[1.7.1.] Delimitaci\'{o}n de alcances
-        \item[1.7.2.] Restricciones y l\'{i}mites
-    \end{itemize}
-    \item[1.8.] \textbf{Aportes esperados}
-    \begin{itemize}
-        \item[1.8.1.] Aporte te\'{o}rico
-        \item[1.8.2.] Aporte pr\'{a}ctico
-    \end{itemize}
-\end{itemize}
 
 \vspace{-0.3cm}
 \subsubsection*{CAPÍTULO II: MARCO TEÓRICO}
 \vspace{-0.2cm}
-\begin{itemize}
-    \item[2.1.] \textbf{Criptograf\'{i}a post-cu\'{a}ntica}
-    \begin{itemize}
-        \item[2.1.1.] Principios de ret\'{i}culos (M-LWE)
-        \item[2.1.2.] Est\'{a}ndar FIPS~203 (ML-KEM)
-        \item[2.1.3.] Est\'{a}ndar FIPS~204 (ML-DSA)
-        \item[2.1.4.] An\'{a}lisis f\'{i}sico de payloads
-    \end{itemize}
-    \item[2.2.] \textbf{Pruebas de conocimiento cero}
-    \begin{itemize}
-        \item[2.2.1.] Verificabilidad y privacidad
-        \item[2.2.2.] Esquema Groth16 y R1CS
-        \item[2.2.3.] Optimizaci\'{o}n Poseidon hash
-    \end{itemize}
-    \item[2.3.] \textbf{Blockchain y smart contracts}
-    \begin{itemize}
-        \item[2.3.1.] Arquitectura de la EVM
-        \item[2.3.2.] El gas como unidad de c\'{o}mputo
-    \end{itemize}
-    \item[2.4.] \textbf{Sistemas de votaci\'{o}n E2E-V}
-    \begin{itemize}
-        \item[2.4.1.] Propiedades de verificabilidad
-        \item[2.4.2.] Integraci\'{o}n PQC y ZKP
-    \end{itemize}
-\end{itemize}
 
 \vspace{-0.3cm}
 \subsubsection*{CAPÍTULO III: MARCO APLICATIVO}
 \vspace{-0.2cm}
-\begin{itemize}
-    \item[3.1.] \textbf{Arquitectura general de tres capas}
-    \begin{itemize}
-        \item[3.1.1.] Flujo de datos transaccionales
-        \item[3.1.2.] Interfaces y acoplamiento
-    \end{itemize}
-    \item[3.2.] \textbf{Capa de identificaci\'{o}n PQC}
-    \begin{itemize}
-        \item[3.2.1.] Integraci\'{o}n cliente 
-        \item[3.2.2.] Firmas ML-DSA y encapsulado
-    \end{itemize}
-    \item[3.3.] \textbf{Capa de privacidad y ZKP}
-    \begin{itemize}
-        \item[3.3.1.] Dise\~{n}o del circuito en Circom
-        \item[3.3.2.] Generaci\'{o}n de commitments
-        \item[3.3.3.] Trusted Setup y Groth16
-    \end{itemize}
-    \item[3.4.] \textbf{Capa de registro inmutable}
-    \begin{itemize}
-        \item[3.4.1.] Smart contracts en Solidity
-        \item[3.4.2.] Verificador on-chain
-    \end{itemize}
-    \item[3.5.] \textbf{Entorno de simulaci\'{o}n}
-    \begin{itemize}
-        \item[3.5.1.] Red local en Hardhat
-        \item[3.5.2.] Interfaz de usuario votante
-    \end{itemize}
-\end{itemize}
 
 \vspace{-0.3cm}
 \subsubsection*{CAPÍTULO IV: PRUEBA DE HIPÓTESIS}
 \vspace{-0.2cm}
-\begin{itemize}
-    \item[4.1.] \textbf{Dise\~{n}o experimental}
-    \begin{itemize}
-        \item[4.1.1.] Delimitaci\'{o}n de variables
-        \item[4.1.2.] Validaci\'{o}n CAVP-NIST
-    \end{itemize}
-    \item[4.2.] \textbf{Pruebas de estr\'{e}s masivas}
-    \begin{itemize}
-        \item[4.2.1.] Concurrencia a 10\,000 votos
-        \item[4.2.2.] Scripts de automatizaci\'{o}n
-    \end{itemize}
-    \item[4.3.] \textbf{Tabulaci\'{o}n de m\'{e}tricas}
-    \begin{itemize}
-        \item[4.3.1.] Resultados de latencia (ms)
-        \item[4.3.2.] Resultados de CPU y RAM
-        \item[4.3.3.] Consumo de gas EVM
-    \end{itemize}
-    \item[4.4.] \textbf{Contraste de hip\'{o}tesis}
-    \begin{itemize}
-        \item[4.4.1.] Supuestos de normalidad
-        \item[4.4.2.] Prueba param\'{e}trica t-Student
-        \item[4.4.3.] Inferencia frente al umbral
-    \end{itemize}
-    \item[4.5.] \textbf{Discusi\'{o}n de resultados}
-    \begin{itemize}
-        \item[4.5.1.] Cuellos de botella de la EVM
-        \item[4.5.2.] Comparativa post-cu\'{a}ntica
-    \end{itemize}
-\end{itemize}
 
 \vspace{-0.3cm}
 \subsubsection*{CAPÍTULO V: CONCLUSIONES Y RECOMENDACIONES}
