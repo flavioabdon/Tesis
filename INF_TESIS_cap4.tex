@@ -2,14 +2,21 @@
 
 \subsection{OBJETIVO GENERAL}
 
-Desarrollar e implementar un protocolo de votación electrónica con verificabilidad de extremo a extremo resistente a ataques cuánticos, utilizando criptografía basada en retículos matemáticos y pruebas de conocimiento cero integradas en contratos inteligentes, sobre hardware convencional.\
+Analizar experimentalmente la viabilidad operativa de un protocolo de votaci\'{o}n electr\'{o}nica con criptograf\'{i}a post-cu\'{a}ntica basada en ret\'{i}culos y privacidad algor\'{i}tmica, mediante la simulaci\'{o}n de carga masiva en un entorno de contratos inteligentes sobre hardware convencional.
 
 \subsection{OBJETIVOS ESPECÍFICOS}
 
-\begin{itemize}
-\item Determinar la viabilidad técnica de sustituir los esquemas criptográficos convencionales por los algoritmos post-cuánticos ML-KEM-768 y ML-DSA-65 —estandarizados por el NIST bajo los marcos FIPS 203 y FIPS 204 (NIST, 2024)— en el proceso de cifrado y firma digital de sufragios, preservando la integridad y confidencialidad del voto en contextos electorales reales.
-\item Establecer un esquema de verificabilidad anónima del sufragio mediante pruebas zk-SNARK bajo el esquema Groth16, sustentado en circuitos aritméticos Circom y la función hash Poseidon (Grassi et al., 2021; Tortola et al., 2024), que garantice que la opción seleccionada pertenece al conjunto de candidatos válidos sin revelar la identidad ni la preferencia del votante.
-\item Demostrar que la verificación autónoma de pruebas de conocimiento cero y firmas post-cuánticas puede realizarse sobre una infraestructura de contratos inteligentes Solidity actuando como tablero de anuncios inmutable, en conformidad con los principios de arquitectura descentralizada documentados en la literatura de votación blockchain. (Poudel et al., 2024; Khan, 2025)
-\item Cuantificar el impacto del esquema propuesto sobre la latencia, el uso de recursos computacionales y el costo de verificación on-chain, con el fin de establecer los límites de escalabilidad del sistema en entornos con votación concurrente, siguiendo métricas comparables a las empleadas en la evaluación de primitivas post-cuánticas sobre hardware de recursos limitados. (Lopez, Cadena y Rahman, 2025)
-\end{itemize}
+\begin{enumerate}
+    \item Fundamentar te\'{o}rica y t\'{e}cnicamente los principios matem\'{a}ticos de la criptograf\'{i}a post-cu\'{a}ntica basada en ret\'{i}culos modulares de las normas FIPS~203 (ML-KEM) y FIPS~204 (ML-DSA), identificando el impacto te\'{o}rico del tama\~{n}o de sus llaves y firmas en la arquitectura de datos del protocolo de votaci\'{o}n.
+
+    \item Dise\~{n}ar el circuito aritm\'{e}tico de conocimiento cero (ZKP) utilizando el protocolo zk-SNARK Groth16 y la funci\'{o}n hash Poseidon en Circom, para garantizar el anonimato y la verificabilidad del voto sin comprometer la integridad de la informaci\'{o}n.
+
+    \item Construir el prototipo funcional (artefacto) del sistema de votaci\'{o}n estructurado en tres capas, integrando los m\'{o}dulos criptogr\'{a}ficos post-cu\'{a}nticos, los circuitos de privacidad y los contratos inteligentes programados en Solidity para su despliegue en un entorno local simulado.
+
+    \item Validar la implementaci\'{o}n criptogr\'{a}fica del software mediante la ejecuci\'{o}n est\'{a}tica de los vectores de prueba oficiales del Programa de Validaci\'{o}n de Algoritmos Criptogr\'{a}ficos (CAVP) del NIST, asegurando la rigurosidad y precisi\'{o}n matem\'{a}tica de los algoritmos implementados.
+
+    \item Ejecutar las pruebas experimentales de simulaci\'{o}n bajo entornos de estr\'{e}s controlado, inyectando cargas concurrentes de hasta 10\,000 votantes simulados para recopilar los datos emp\'{i}ricos de rendimiento (latencia temporal, uso de CPU/RAM y costos de gas de la EVM).
+
+    \item Evaluar estad\'{i}sticamente la viabilidad operativa del protocolo mediante el an\'{a}lisis de las m\'{e}tricas de rendimiento recolectadas, contrastando los resultados frente a la hip\'{o}tesis planteada y el umbral de aceptaci\'{o}n establecido de 200 milisegundos por voto.
+\end{enumerate}
 

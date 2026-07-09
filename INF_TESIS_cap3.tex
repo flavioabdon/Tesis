@@ -1,15 +1,17 @@
 \section{PLANTEAMIENTO DEL PROBLEMA}
 
 \subsection{PROBLEMA CENTRAL}
+Los nuevos algoritmos criptogr\'{a}ficos resistentes a ataques cu\'{a}nticos generan datos de identificaci\'{o}n y firma considerablemente m\'{a}s grandes que los esquemas cl\'{a}sicos, lo que puede afectar la velocidad y eficiencia de los sistemas que los utilizan.
 
-¿Cómo garantizar la verificabilidad de extremo a extremo y la resistencia a la computación cuántica en los sistemas de votación electrónica, ante la amenaza inminente del algoritmo de Shor sobre los estándares criptográficos convencionales de los cuales dependen los sistemas actuales ejecutados en hardware convencional?\
+¿De qué manera el uso de criptografía post-cuántica basada en retículos afecta el rendimiento computacional y la viabilidad de los sistemas de votación electrónica cuando operan bajo una alta concurrencia de usuarios?
 
-Esta interrogante sintetiza el desafío principal de la investigación: preservar la verificabilidad pública (que cada votante pueda comprobar que su voto fue emitido, registrado y contabilizado correctamente) y, simultáneamente, reemplazar la criptografía convencional vulnerable por alternativas post-cuánticas. Este problema no se limita a una sustitución directa de algoritmos, sino que exige rediseñar de forma integral el proceso criptográfico sin sacrificar la eficiencia del sistema ni requerir hardware inaccesible en entornos reales.\
 
 \subsection{PROBLEMAS SECUNDARIOS}
 
 \begin{itemize}
-\item La vulnerabilidad de los votos cifrados actuales ante ataques de tipo ``Store-Now-Decrypt-Later'' (cosechar ahora, descifrar después) por parte de adversarios cuánticos, quienes pueden interceptar y almacenar el tráfico cifrado de un proceso electoral en la actualidad con la expectativa de descifrarlo una vez que dispongan de capacidad de cómputo cuántico suficiente, riesgo señalado como prioritario por organismos del sector financiero y gubernamental. (FS-ISAC, 2023)
-\item La dificultad de implementar protocolos criptográficos complejos -que combinan criptografía post-cuántica y pruebas de conocimiento cero- en hardware de consumo sin comprometer la latencia percibida por el votante ni degradar la experiencia de uso del sistema, considerando que estudios previos han identificado sobrecargas computacionales no triviales al ejecutar estas primitivas en dispositivos de recursos limitados. (Lopez, Cadena y Rahman, 2025; Chaurasia, Sharma y Sharma, 2025)
-\item La falta de mecanismos de auditoría pública que permitan a cualquier ciudadano verificar que su voto fue ``emitido como se pretendía'' y ``contado como se emitió'' sin revelar su identidad ni la opción seleccionada, tensión que ha sido documentada extensamente en la literatura sobre resistencia a la coerción y verificabilidad E2E. (Finogina y Herranz, 2023, p. 4) y que exige soluciones basadas en pruebas de conocimiento cero capaces de operar de manera eficiente sobre una infraestructura de contratos inteligentes (Ezeh et al., 2025)
+    \item El aumento en la latencia total y retrasos al procesar el sufragio, provocado por el volumen de datos de las firmas FIPS~204 y la complejidad computacional de las restricciones en los circuitos de conocimiento cero (ZKP). (Lopez et al, 2025; Chaurasia, Sharma y Sharma, 2025)
+
+    \item El incremento en los costos transaccionales (unidades de gas) dentro de la M\'{a}quina Virtual de Ethereum (EVM), debido al esfuerzo de c\'{o}mputo necesario para procesar las operaciones de la criptograf\'{i}a basada en ret\'{i}culos. (Ezeh, Oparah, Gado, Gbaraba y Adeleke, 2025; Finogina y Herranz, 2023)
+
+    \item La saturaci\'{o}n y p\'{e}rdida de rendimiento f\'{i}sico (CPU y memoria RAM) en los nodos o servidores convencionales al gestionar m\'{u}ltiples solicitudes concurrentes de votantes bajo condiciones de alta demanda. (FS-ISAC, 2023; Lopez et al, 2025)
 \end{itemize}
