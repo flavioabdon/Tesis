@@ -1,1 +1,15 @@
 \section{PLANTEAMIENTO DEL PROBLEMA}
+\subsection{Problema Central}
+¿Cómo mantener  la integridad y la confidencialidad en sistemas de votación electrónica frente a amenazas de seguridad actuales y futuras?
+\subsection{Problemas secundarios}
+\begin{itemize}
+	\item Churata Sonco (2020) evaluó la seguridad de su sistema solo mediante desencriptación de hash y descifrado de RSA con herramientas externas (causa), sin evidencia empírica sobre la vulnerabilidad cuántica de los sistemas bolivianos de votación electrónica (efecto).
+	
+	\item Las propiedades de seguridad de un protocolo de votación dependen también de su diseño y no solo de sus primitivas criptográficas (causa), lo que permitió que sistemas como Helios y Belenios presentaran ataques no identificados hasta la verificación formal de Baloglu et al. (2021) (efecto).
+	
+	\item El análisis formal de Baloglu et al. (2021) aborda la verificabilidad electoral sin evaluar la resistencia cuántica de las primitivas criptográficas subyacentes (causa), evidenciando una separación entre el análisis del protocolo y el de sus componentes criptográficos (efecto).
+	
+	\item Fernández Tristán (2021) y Churata Sonco (2020) sustentan sus sistemas en esquemas clásicos de clave pública como RSA (causa), lo que expondría los votos a un descifrado retroactivo ante computación cuántica futura (efecto).
+	
+	\item No existen antecedentes bolivianos que apliquen los estándares FIPS 203 y FIPS 204 al diseño de protocolos de votación electrónica (causa), lo que impide contar con un marco de referencia local para evaluar primitivas post-cuánticas en este dominio (efecto).
+\end{itemize}

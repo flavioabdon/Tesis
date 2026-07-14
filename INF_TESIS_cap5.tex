@@ -2,4 +2,93 @@
 
 \subsection{Planteamiento de la Hipótesis}
 
+El diseño de un protocolo de votación electrónica basado en criptografía post-cuántica contribuye a mantener la integridad y la confidencialidad del proceso de votación frente a amenazas de seguridad actuales y futuras, manteniendo niveles de rendimiento comparables a los de esquemas criptográficos clásicos.
+
 \subsection{Definición y Clasificación de Variables}
+
+\begin{itemize}
+	\item \textbf{Variable independiente}
+	\begin{itemize}
+		\item Protocolo criptográfico empleado en el proceso de votación electrónica.
+	\end{itemize}
+	
+	\item \textbf{Variable dependiente 1}
+	\begin{itemize}
+		\item Integridad del proceso de votación.
+	\end{itemize}
+	
+	\item \textbf{Variable dependiente 2}
+	\begin{itemize}
+		\item Confidencialidad del voto.
+	\end{itemize}
+	
+	\item \textbf{Variable dependiente 3}
+	\begin{itemize}
+		\item Rendimiento del protocolo.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Matriz de Operacionalización de Variables}
+
+\begingroup
+\renewcommand{\arraystretch}{1.3}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+
+\begin{longtable}{|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{1.9cm}|>{\raggedright\arraybackslash}p{1.3cm}|>{\raggedright\arraybackslash}p{1.3cm}|>{\raggedright\arraybackslash}p{1.8cm}|}
+	\caption{Matriz de operacionalización de variables.}
+	\label{tab:operacionalizacion}\\
+	\hline
+	\textbf{Variable} &
+	\textbf{Tipo} &
+	\textbf{Definición Conceptual} &
+	\textbf{Definición Operacional} &
+	\textbf{Dimensión} &
+	\textbf{Indicadores} &
+	\textbf{Unidad / Valor} &
+	\textbf{Instrumento / Fuente} \\
+	\hline
+	Tipo de protocolo criptográfico &
+	Independiente &
+	Esquema criptográfico sobre el cual se sustenta el protocolo de votación electrónica &
+	Naturaleza del esquema criptográfico aplicado al protocolo diseñado &
+	Naturaleza del esquema &
+	Tipo de protocolo empleado &
+	Categórica: post-cuántico (FIPS 203/204) / clásico (RSA/ECDSA) &
+	Diseño experimental comparativo / implementación del protocolo \\
+	\hline
+	Integridad del proceso de votación &
+	Dependiente &
+	Correspondencia entre el voto emitido y el voto contabilizado &
+	Cumplimiento formal de la propiedad de integridad en el modelo del protocolo &
+	Correspondencia voto emitido / voto contabilizado &
+	Cumplimiento del lemma de integridad &
+	Verdadero / Falso &
+	Tamarin Prover \\
+	\hline
+	Confidencialidad del voto &
+	Dependiente &
+	Secreto del contenido del voto frente a partes no autorizadas &
+	Cumplimiento formal de la propiedad de confidencialidad en el modelo del protocolo &
+	Secreto del voto &
+	Cumplimiento del lemma de confidencialidad &
+	Verdadero / Falso &
+	Tamarin Prover \\
+	\hline
+	Rendimiento del protocolo &
+	Dependiente &
+	Comportamiento del protocolo en tiempo y recursos computacionales requeridos &
+	Medición empírica de indicadores de desempeño durante la ejecución del protocolo &
+	Latencia \newline Tiempo de ejecución \newline Consumo de memoria &
+	Tiempo de firma, verificación y encapsulamiento \newline Duración total de las operaciones criptográficas \newline Memoria utilizada durante la ejecución &
+	ms \newline ms \newline MB &
+	Implementación y simulación con distinto número de votantes \\
+	\hline
+\end{longtable}
+
+\par\vspace{-12pt}
+\begin{center}
+	\footnotesize\textit{Fuente: Elaboración propia.}
+\end{center}
+
+\endgroup

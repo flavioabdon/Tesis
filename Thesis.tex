@@ -13,6 +13,10 @@
 \usepackage{colortbl}
 \usepackage{multirow}
 \usepackage{multicol}
+\usepackage{longtable}
+\usepackage{fancyhdr}
+
+\setlength{\parindent}{0pt}
 
 \tikzset{
     arch style/.style={
@@ -64,7 +68,7 @@
 \infothesis[
     author = {Flavio Abdon Condori Vela},
     advisor = {M.Sc. Aldo Valdez Alvarado},
-    title = {An\'{a}lisis experimental de la viabilidad  de un protocolo de votaci\'{o}n electr\'{o}nica con criptograf\'{i}a post-cu\'{a}ntica basada en ret\'{i}culos},
+    title = {Protocolo para la votación electrónica basado en criptografía post-cuántica de retículos},
     perfil = {Perfil de Tesis de Grado},
     titledegree = {Tesis de Grado para obtener el T\'itulo de Licenciatura en Inform\'atica},
     degree = {Menci\'on Ingenier\'ia de Sistemas Inform\'aticos},
@@ -77,19 +81,19 @@
 \restoregeometry
 
 % --- SEGUNDA CARÁTULA: Portada (Con el margen izquierdo de 4cm para encuadernado) ---
-\infothesis[
-    author = {Flavio Abdon Condori Vela},
-    advisor = {M.Sc. Aldo Valdez Alvarado},
-    title = {An\'{a}lisis experimental de la viabilidad de un protocolo de votaci\'{o}n electr\'{o}nica con criptograf\'{i}a post-cu\'{a}ntica basada en ret\'{i}culos},
-    perfil = {Perfil de Tesis de Grado},
-    titledegree = {Tesis de Grado para obtener el T\'itulo de Licenciatura en Inform\'atica},
-    degree = {Menci\'on Ingenier\'ia de Sistemas Inform\'aticos},
-    university = {Universidad Mayor de San Andr\'es},
-    faculty = {Facultad de Ciencias Puras y Naturales},
-    department = {Carrera de Inform\'atica},
-    city = {La Paz -- Bolivia},
-    date = {2026},
-]
+%\infothesis[
+  %  author = {Flavio Abdon Condori Vela},
+   % advisor = {M.Sc. Aldo Valdez Alvarado},
+    %title = {Protocolo para la votación electrónica basado en criptografía post-cuántica de retículos},
+    %perfil = {Perfil de Tesis de Grado},
+    %titledegree = {Tesis de Grado para obtener el T\'itulo de Licenciatura en Inform\'atica},
+    %degree = {Menci\'on Ingenier\'ia de Sistemas Inform\'aticos},
+    %university = {Universidad Mayor de San Andr\'es},
+    %faculty = {Facultad de Ciencias Puras y Naturales},
+    %department = {Carrera de Inform\'atica},
+    %city = {La Paz -- Bolivia},
+    %date = {2026},
+%]
 
 %\abstractthesis[
    % titlespanish = {Desarrollo  e Implementaci\'on de un sistema de visi\'on estereosc\'opica usando FPGA},
@@ -127,21 +131,25 @@
 %  \setcounter{section}{0}%
   \mainmatter
     \renewcommand{\thesection}{\arabic{section}}
-    \pagestyle{plain}
+    % Numeración: esquina inferior derecha
+    \pagestyle{fancy}
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+    \fancyfoot[R]{\thepage}
     % \pagenumbering{arabic}
-    \include{INF_TESIS_cap1}
-    \include{INF_TESIS_cap2}
-    \include{INF_TESIS_cap3}
-    \include{INF_TESIS_cap4}
-    \include{INF_TESIS_cap5}
-    \include{INF_TESIS_cap6}
-    \include{INF_TESIS_cap7}
-    \include{INF_TESIS_cap8}
-    \include{INF_TESIS_cap9}
-    \include{INF_TESIS_cap10}
-    \include{INF_TESIS_cap11}
-    \include{INF_TESIS_cap12}
-    \include{INF_TESIS_cap13}
+    \input{INF_TESIS_cap1}
+    \input{INF_TESIS_cap2}
+    \input{INF_TESIS_cap3}
+    \input{INF_TESIS_cap4}
+    \input{INF_TESIS_cap5}
+    \input{INF_TESIS_cap6}
+    \input{INF_TESIS_cap7}
+    \input{INF_TESIS_cap8}
+    \input{INF_TESIS_cap9}
+    \input{INF_TESIS_cap10}
+    \input{INF_TESIS_cap11}
+    \input{INF_TESIS_cap12}
+    \input{INF_TESIS_cap13}
     %\appendix
     %\include{apendice}
     %\backmatter

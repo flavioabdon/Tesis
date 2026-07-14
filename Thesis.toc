@@ -1,28 +1,41 @@
 \babel@toc {spanish}{}\relax 
 \contentsline {chapter}{\'Indice general}{I}{Doc-Start}%
-\contentsline {chapter}{\'Indice de tablas}{II}{Doc-Start}%
-\contentsline {chapter}{\'{I}ndice de figuras}{III}{Doc-Start}%
+\contentsline {chapter}{\'Indice de tablas}{III}{Doc-Start}%
+\contentsline {chapter}{\'{I}ndice de figuras}{IV}{Doc-Start}%
 \contentsline {section}{\numberline {1}INTRODUCCIÓN}{1}{section.0.1}%
 \contentsline {section}{\numberline {2}ANTECEDENTES}{2}{section.0.2}%
 \contentsline {section}{\numberline {3}PLANTEAMIENTO DEL PROBLEMA}{3}{section.0.3}%
+\contentsline {subsection}{\numberline {3.1}Problema Central}{3}{subsection.0.3.1}%
+\contentsline {subsection}{\numberline {3.2}Problemas secundarios}{3}{subsection.0.3.2}%
 \contentsline {section}{\numberline {4}DEFINICIÓN DE OBJETIVOS}{4}{section.0.4}%
 \contentsline {subsection}{\numberline {4.1}OBJETIVO GENERAL}{4}{subsection.0.4.1}%
 \contentsline {subsection}{\numberline {4.2}OBJETIVOS ESPECÍFICOS}{4}{subsection.0.4.2}%
 \contentsline {section}{\numberline {5}HIPÓTESIS}{5}{section.0.5}%
 \contentsline {subsection}{\numberline {5.1}Planteamiento de la Hipótesis}{5}{subsection.0.5.1}%
 \contentsline {subsection}{\numberline {5.2}Definición y Clasificación de Variables}{5}{subsection.0.5.2}%
-\contentsline {section}{\numberline {6}JUSTIFICACIÓN}{6}{section.0.6}%
-\contentsline {subsection}{\numberline {6.1}Justificación Científica y Tecnológica}{6}{subsection.0.6.1}%
-\contentsline {subsection}{\numberline {6.2}Justificación Metodológica}{6}{subsection.0.6.2}%
-\contentsline {subsection}{\numberline {6.3}Justificación Social y Académica}{6}{subsection.0.6.3}%
-\contentsline {section}{\numberline {7}ALCANCES Y LÍMITES}{7}{section.0.7}%
-\contentsline {subsection}{\numberline {7.1}ALCANCES}{7}{subsection.0.7.1}%
-\contentsline {subsection}{\numberline {7.2}LÍMITES}{7}{subsection.0.7.2}%
-\contentsline {section}{\numberline {8}APORTES}{8}{section.0.8}%
-\contentsline {subsection}{\numberline {8.1}Aporte Pr\'{a}ctico}{8}{subsection.0.8.1}%
-\contentsline {subsection}{\numberline {8.2}Aporte Te\'{o}rico}{8}{subsection.0.8.2}%
-\contentsline {section}{\numberline {9}MARCO METODOLÓGICO}{9}{section.0.9}%
-\contentsline {section}{\numberline {10}MARCO TE\'{O}RICO}{10}{section.0.10}%
-\contentsline {section}{\numberline {11}ÍNDICE TENTATIVO}{11}{section.0.11}%
-\contentsline {section}{\numberline {12}CRONOGRAMA DE AVANCE}{12}{section.0.12}%
-\contentsline {section}{\numberline {13}BIBLIOGRAFÍA}{13}{section.0.13}%
+\contentsline {subsection}{\numberline {5.3}Matriz de Operacionalización de Variables}{6}{subsection.0.5.3}%
+\contentsline {section}{\numberline {6}JUSTIFICACIÓN}{7}{section.0.6}%
+\contentsline {subsection}{\numberline {6.1}Justificación Científica y Tecnológica}{7}{subsection.0.6.1}%
+\contentsline {subsection}{\numberline {6.2}Justificación Metodológica}{8}{subsection.0.6.2}%
+\contentsline {subsection}{\numberline {6.3}Justificación Social y Académica}{8}{subsection.0.6.3}%
+\contentsline {section}{\numberline {7}ALCANCES Y LÍMITES}{9}{section.0.7}%
+\contentsline {subsection}{\numberline {7.1}ALCANCES}{9}{subsection.0.7.1}%
+\contentsline {subsection}{\numberline {7.2}LÍMITES}{10}{subsection.0.7.2}%
+\contentsline {section}{\numberline {8}APORTES}{10}{section.0.8}%
+\contentsline {subsection}{\numberline {8.1}Aporte Práctico}{10}{subsection.0.8.1}%
+\contentsline {subsection}{\numberline {8.2}Aporte Teórico}{11}{subsection.0.8.2}%
+\contentsline {section}{\numberline {9}MARCO METODOLÓGICO}{12}{section.0.9}%
+\contentsline {subsection}{\numberline {9.1}Tipo de Investigación}{12}{subsection.0.9.1}%
+\contentsline {subsection}{\numberline {9.2}Procedimiento General (Fases de Design Science Research)}{13}{subsection.0.9.2}%
+\contentsline {subsection}{\numberline {9.3}Instrumentos y Herramientas}{14}{subsection.0.9.3}%
+\contentsline {subsection}{\numberline {9.4}Población o Caso de Estudio}{14}{subsection.0.9.4}%
+\contentsline {subsection}{\numberline {9.5}Coherencia Metodológica}{15}{subsection.0.9.5}%
+\contentsline {section}{\numberline {10}MARCO TEÓRICO}{15}{section.0.10}%
+\contentsline {subsection}{\numberline {10.1}Votación Electrónica y Propiedades de Seguridad}{16}{subsection.0.10.1}%
+\contentsline {subsection}{\numberline {10.2}Criptografía de Clave Pública Clásica y su Vulnerabilidad Cuántica}{16}{subsection.0.10.2}%
+\contentsline {subsection}{\numberline {10.3}Criptografía Post-Cuántica Basada en Retículos}{17}{subsection.0.10.3}%
+\contentsline {subsection}{\numberline {10.4}Verificación Formal de Protocolos de Seguridad}{17}{subsection.0.10.4}%
+\contentsline {subsection}{\numberline {10.5}Síntesis del Marco Teórico}{18}{subsection.0.10.5}%
+\contentsline {section}{\numberline {11}ÍNDICE TENTATIVO}{18}{section.0.11}%
+\contentsline {section}{\numberline {12}CRONOGRAMA DE AVANCE}{19}{section.0.12}%
+\contentsline {section}{\numberline {13}BIBLIOGRAFÍA}{21}{section.0.13}%

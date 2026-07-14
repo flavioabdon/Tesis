@@ -1,9 +1,22 @@
 \section{ALCANCES Y LÍMITES}
 
 \subsection{ALCANCES}
-
-
+\begin{itemize}
+	\item El diseño de un protocolo de votación electrónica que incorpora las primitivas criptográficas post-cuánticas especificadas en los estándares FIPS 203 y FIPS 204.
+	\item La fundamentación teórica del protocolo a partir de la dificultad de los problemas Module-LWE y Module-SIS.
+	\item El modelado formal del protocolo mediante Tamarin Prover bajo el modelo de atacante Dolev-Yao.
+	\item La verificación de las propiedades de confidencialidad, integridad y autenticidad mediante lemmas formales.
+	\item La implementación del protocolo con fines de simulación, orientada a medir indicadores de rendimiento --- latencia, tiempo de ejecución y consumo de memoria --- bajo distintos números de votantes.
+	\item La comparación de dichos indicadores y propiedades de seguridad con un protocolo equivalente basado en RSA/ECDSA.
+	\item El alcance metodológico se limita al análisis de la capa criptográfica del proceso de votación electrónica.
+\end{itemize}
 
 \subsection{LÍMITES}
-
+\begin{itemize}
+	\item El análisis formal y simbólico del protocolo mediante Tamarin Prover, en el cual las operaciones criptográficas de ML-KEM y ML-DSA se abstraen simbólicamente, sin modelar la estructura matemática subyacente de los retículos algebraicos.
+	\item La implementación del protocolo no constituye un sistema de votación electrónica desplegado en un proceso electoral real, sino un entorno de simulación orientado a la medición de indicadores de rendimiento.
+	\item La arquitectura de almacenamiento o registro distribuido de los votos no forma parte del estudio.
+	\item La reproducibilidad exacta de las mediciones de rendimiento no está garantizada, dado que factores como el conjunto de instrucciones del procesador y las optimizaciones de la biblioteca afectan significativamente la latencia de los algoritmos post-cuánticos (Kannwischer et al., 2019).
+	\item La comparación con el protocolo clásico se restringe a un esquema basado en RSA/ECDSA, sin extenderse a otros esquemas criptográficos clásicos o post-cuánticos adicionales.
+\end{itemize}
 

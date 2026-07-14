@@ -1,1 +1,51 @@
 \section{MARCO METODOLÓGICO}
+
+\subsection{Tipo de Investigación}
+
+La presente investigación se sustenta en el método científico, entendido como el proceso sistemático de indagación mediante el cual se formulan interrogantes sobre un dominio de la realidad y se generan conocimientos nuevos que permiten resolverlos (Sánchez, 2013); en este caso, la brecha entre los estándares FIPS 203 y FIPS 204 y su ausencia de aplicación en protocolos de votación electrónica en el contexto universitario boliviano.
+
+El estudio es de carácter aplicado, con enfoque mixto (predominancia cuantitativa) y alcance explicativo-comparativo. Se manipula la variable independiente (tipo de protocolo criptográfico: post-cuántico frente a clásico RSA/ECDSA) para observar su efecto sobre las variables dependientes de integridad, confidencialidad y rendimiento, mediante un diseño cuasi-experimental de corte transversal.
+
+Dado que el resultado esperado de la investigación es un artefacto tecnológico ---el protocolo de votación electrónica y su implementación de referencia---, el desarrollo del mismo se estructura bajo el marco metodológico \textit{Design Science Research} (DSR), propuesto por Vaishnavi y Kuechler (2004). Este marco organiza el proceso de investigación en cinco fases: \textit{Conciencia del Problema}, \textit{Sugerencia}, \textit{Desarrollo}, \textit{Evaluación} y \textit{Conclusión}.
+
+A diferencia de un procedimiento estrictamente lineal, DSR admite iteraciones entre sus fases, particularmente entre \textit{Desarrollo} y \textit{Evaluación}. Esta característica resulta pertinente para la presente investigación, ya que si la verificación formal del protocolo mediante \textit{Tamarin Prover} evidencia el incumplimiento de alguno de los \textit{lemmas} de seguridad, el diseño podrá reformularse antes de continuar con la evaluación definitiva.
+
+\subsection{Procedimiento General (Fases de Design Science Research)}
+
+La investigación sigue las cinco fases propuestas por Design Science Research, adaptadas al desarrollo y evaluación del protocolo de votación electrónica:
+
+\begin{enumerate}
+	\item \textbf{Conciencia del Problema.} Se caracteriza la brecha existente entre los estándares FIPS 203 y FIPS 204, publicados en 2024, y su escasa aplicación en protocolos de votación electrónica dentro del contexto universitario boliviano. Esta fase corresponde al planteamiento del problema desarrollado en los Capítulos I y II.
+	
+	\item \textbf{Sugerencia.} Se formula la propuesta inicial de solución mediante el diseño de un protocolo de votación electrónica basado en criptografía post-cuántica, incorporando los algoritmos ML-KEM y ML-DSA, fundamentados en los problemas matemáticos Module-LWE y Module-SIS, en concordancia con los objetivos establecidos en el Capítulo III.
+	
+	\item \textbf{Desarrollo.} Se construye el artefacto tecnológico mediante el modelado formal del protocolo en \textit{Tamarin Prover}, considerando el modelo de atacante Dolev--Yao. Asimismo, se formalizan las propiedades de confidencialidad, integridad y autenticidad mediante \textit{lemmas} y se desarrolla una implementación de referencia destinada a la simulación experimental.
+	
+	\item \textbf{Evaluación.} Se verifica el cumplimiento de las propiedades de seguridad demostrando los \textit{lemmas} definidos previamente y se miden indicadores de rendimiento como latencia, tiempo de ejecución y consumo de memoria bajo diferentes cantidades de votantes simulados. Posteriormente, se comparan estos resultados con un protocolo equivalente basado en RSA/ECDSA mediante un diseño cuasi-experimental. En caso de que alguno de los \textit{lemmas} no se satisfaga o el rendimiento resulte insuficiente, el proceso retorna a la fase de Desarrollo para ajustar el diseño del protocolo.
+	
+	\item \textbf{Conclusión.} Se consolidan y analizan los resultados obtenidos durante la investigación, los cuales constituyen la base para la prueba de hipótesis, las conclusiones y las recomendaciones finales de la tesis.
+\end{enumerate}
+
+\subsection{Instrumentos y Herramientas}
+
+El análisis formal del protocolo se realiza mediante \textit{Tamarin Prover}, herramienta ampliamente utilizada para la verificación formal de protocolos criptográficos y aplicada previamente al análisis de sistemas de votación electrónica como Helios, Belenios y Civitas (Baloglu et al., 2021). Su selección responde a su capacidad para razonar sobre protocolos con estado utilizando el modelo de atacante Dolev--Yao.
+
+La implementación de referencia del protocolo se desarrollará utilizando un lenguaje de programación compatible con las bibliotecas criptográficas post-cuánticas seleccionadas, mientras que las métricas de rendimiento se registrarán mediante instrumentos de medición de tiempo de ejecución, consumo de memoria y latencia durante las simulaciones.
+
+La descripción específica del lenguaje de programación, bibliotecas criptográficas, características del hardware utilizado e instrumentos de medición será incorporada una vez definidos estos elementos durante la fase de implementación.
+
+\subsection{Población o Caso de Estudio}
+
+La investigación no se desarrolla sobre una población de votantes reales, sino sobre el artefacto tecnológico diseñado. El caso de estudio corresponde al protocolo de votación electrónica implementado y evaluado mediante simulaciones controladas con diferentes cantidades de votantes sintéticos.
+
+Estas simulaciones permiten medir el comportamiento del protocolo respecto a sus propiedades de seguridad y rendimiento bajo distintas condiciones de carga.
+
+El rango específico de votantes considerados en las simulaciones será establecido durante el diseño experimental.
+
+\subsection{Coherencia Metodológica}
+
+La coherencia metodológica de la investigación se evidencia en la correspondencia entre el enfoque cuasi-experimental y las fases de Design Science Research.
+
+La variable independiente corresponde al tipo de protocolo criptográfico implementado (post-cuántico o clásico RSA/ECDSA), mientras que las variables dependientes son la integridad, la confidencialidad y el rendimiento del sistema. Las propiedades de integridad y confidencialidad se verifican formalmente mediante los \textit{lemmas} definidos durante la fase de Desarrollo, mientras que el rendimiento se evalúa empíricamente durante la fase de Evaluación mediante indicadores cuantitativos.
+
+Asimismo, la naturaleza iterativa de Design Science Research garantiza la consistencia del proceso investigativo, permitiendo que los resultados obtenidos durante la verificación formal retroalimenten el diseño del protocolo cuando sea necesario, sin constituir una desviación metodológica, sino una característica inherente al ciclo de construcción y evaluación del artefacto tecnológico.

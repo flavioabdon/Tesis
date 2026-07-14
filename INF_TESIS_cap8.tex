@@ -1,7 +1,14 @@
 \section{APORTES}
 
-\subsection{Aporte Pr\'{a}ctico}
+\subsection{Aporte Práctico}
 
+La investigación desarrolla el diseño de un protocolo de votación electrónica que incorpora primitivas criptográficas post-cuánticas conforme a los estándares FIPS 203 y FIPS 204, junto con su modelo formal en Tamarin Prover y una implementación orientada a la medición de indicadores de rendimiento. Dicho protocolo, junto con su modelo formal, podría emplearse como referencia para el análisis o el diseño de sistemas de votación electrónica que requieran evaluar propiedades de integridad y confidencialidad bajo primitivas criptográficas resistentes a la computación cuántica.
 
-\subsection{Aporte Te\'{o}rico}
+Dentro del alcance definido, la implementación desarrollada permite obtener mediciones de latencia, tiempo de ejecución y consumo de memoria bajo distintos números de votantes, las cuales podrían utilizarse como punto de comparación para evaluaciones de rendimiento en protocolos criptográficos aplicados a otros procesos con requerimientos similares de integridad y confidencialidad.
+
+\subsection{Aporte Teórico}
+
+La investigación sistematiza, dentro del contexto de la votación electrónica, la relación entre los estándares criptográficos post-cuánticos FIPS 203 y FIPS 204 y las propiedades de integridad, confidencialidad y autenticidad definidas mediante verificación formal, siguiendo un enfoque metodológico ya aplicado en el análisis de otros protocolos de votación electrónica. El modelo formal desarrollado en Tamarin Prover, bajo el modelo de atacante Dolev-Yao, podría constituir una referencia para investigaciones posteriores orientadas a la verificación formal de protocolos que incorporen primitivas criptográficas post-cuánticas.
+
+Los resultados de la comparación entre el protocolo post-cuántico propuesto y un protocolo equivalente basado en RSA/ECDSA podrían complementar la literatura existente sobre el rendimiento comparado de esquemas criptográficos clásicos y post-cuánticos, en un dominio de aplicación específico como el de la votación electrónica.
 
