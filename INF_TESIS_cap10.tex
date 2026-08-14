@@ -1,26 +1,18 @@
 \section{MARCO TEÓRICO}
 
-El presente marco teórico organiza los fundamentos conceptuales sobre los cuales se sustenta el diseño del protocolo propuesto, articulados en cuatro ejes: las propiedades de seguridad exigidas a un sistema de votación electrónica, la vulnerabilidad de la criptografía de clave pública clásica frente a la computación cuántica, los fundamentos matemáticos de la criptografía post-cuántica basada en retículos, y el enfoque de verificación formal empleado para constatar dichas propiedades.
+El presente marco teórico organiza los fundamentos conceptuales sobre los cuales se sustenta el diseño del protocolo propuesto, articulados en cuatro ejes: las propiedades de seguridad exigidas a un sistema de votación electrónica, la vulnerabilidad de la criptografía de clave pública clásica frente a la computación cuántica, los fundamentos matemáticos de la criptografía post-cuántica basada en retículos, y el enfoque de verificación formal empleado para constatar dichas propiedades. 
 
 \subsection{Votación Electrónica y Propiedades de Seguridad}
 
-Un sistema de votación electrónica se define, en el marco de este trabajo, como el conjunto de mecanismos que permiten la emisión, el registro y el conteo de votos mediante medios informáticos, en sustitución o complemento de los procedimientos manuales tradicionales. La literatura especializada exige a estos sistemas el cumplimiento de tres propiedades fundamentales: confidencialidad (el contenido del voto permanece secreto), integridad (el voto contabilizado corresponde al voto emitido) y autenticidad (concordancia entre el votante y la autoridad electoral). Baloglu et al. (2021) demostraron, mediante verificación formal automatizada, que estas propiedades dependen tanto de la robustez de las primitivas criptográficas empleadas como del diseño del protocolo en su conjunto, identificando ataques no detectados previamente en sistemas como Helios y Belenios. En el contexto boliviano, los antecedentes desarrollados por Churata Sonco (2020) y Fernández Tristán (2021) abordan estas propiedades mediante tecnología blockchain, sustentando la capa criptográfica en esquemas clásicos de clave pública.
+Un sistema de votación electrónica se define, en el marco de este trabajo, como el conjunto de mecanismos que permiten la emisión, el registro y el conteo de votos mediante medios informáticos, en sustitución o complemento de los procedimientos manuales tradicionales. La literatura especializada exige a estos sistemas el cumplimiento de tres propiedades fundamentales: confidencialidad (el contenido del voto permanece secreto), integridad (el voto contabilizado corresponde al voto emitido) y autenticidad (concordancia entre el votante y la autoridad electoral). Baloglu et al. (2021) demostraron, mediante verificación formal automatizada, que estas propiedades dependen tanto de la robustez de las primitivas criptográficas empleadas como del diseño del protocolo en su conjunto, identificando ataques no detectados previamente en sistemas como Helios y Belenios. Estas propiedades han sido abordadas también mediante tecnología blockchain sustentada en esquemas clásicos de clave pública, según los antecedentes revisados (Sección \ref{sec:antecedentes}).
 
 \subsection{Criptografía de Clave Pública Clásica y su Vulnerabilidad Cuántica}
 
-Los esquemas criptográficos de clave pública empleados de forma predominante en sistemas de votación electrónica --- entre ellos RSA y ECDSA --- sustentan su seguridad en la dificultad computacional de problemas matemáticos como la factorización de enteros grandes o el logaritmo discreto. Estos problemas son vulnerables, en teoría, al algoritmo cuántico de Shor, el cual permite resolverlos en tiempo polinomial mediante un computador cuántico de capacidad suficiente (Fortinet, s.f.). Esta vulnerabilidad expone a la información con requerimientos prolongados de confidencialidad a escenarios de captura de datos cifrados para un descifrado posterior, una vez que dicha capacidad computacional esté disponible (CaixaBank Tech, s.f.).
+Los esquemas criptográficos de clave pública empleados de forma predominante en sistemas de votación electrónica --- entre ellos RSA y ECDSA --- sustentan su seguridad en la dificultad computacional de problemas matemáticos como la factorización de enteros grandes o el logaritmo discreto. Estos problemas son vulnerables, en teoría, al algoritmo cuántico de Shor, el cual permite resolverlos en tiempo polinomial mediante un computador cuántico de capacidad suficiente (Shor, 1997). Esta vulnerabilidad expone a la información con requerimientos prolongados de confidencialidad a escenarios de captura de datos cifrados para un descifrado posterior, una vez que dicha capacidad computacional esté disponible (Chen et al., 2016).
 
 \subsection{Criptografía Post-Cuántica Basada en Retículos}
 
 Como respuesta a dicha vulnerabilidad, el National Institute of Standards and Technology publicó en 2024 los estándares FIPS 203 y FIPS 204 (NIST, 2024), cuya seguridad se sustenta en problemas matemáticos sobre retículos algebraicos, distintos de los que respaldan los esquemas de factorización o logaritmo discreto. El estándar FIPS 203 especifica el mecanismo de encapsulamiento de claves ML-KEM, fundamentado en la dificultad del problema Module-LWE (Learning With Errors sobre módulos), mientras que el estándar FIPS 204 especifica el esquema de firma digital ML-DSA, fundamentado en la dificultad del problema Module-SIS (Short Integer Solution sobre módulos). Ambos problemas constituyen variantes estructuradas de los problemas originales sobre retículos formulados por Regev (2005) para LWE y por Ajtai (1996) para SIS, cuya dificultad computacional no se ve reducida, hasta la fecha, por algoritmos cuánticos conocidos.
-
-\subsection{Verificación Formal de Protocolos de Seguridad}
-
-La verificación formal constituye el enfoque metodológico mediante el cual se constata, de manera sistemática, el cumplimiento de las propiedades de seguridad de un protocolo bajo un modelo de atacante definido. El modelo de atacante Dolev-Yao (Dolev y Yao, 1983) asume un adversario capaz de interceptar, modificar, reenviar o generar mensajes dentro de la red, sin capacidad de vulnerar las primitivas criptográficas subyacentes, las cuales se tratan como cajas negras perfectas. Tamarin Prover (Meier et al., 2013) es una herramienta de verificación formal que opera bajo este modelo, permitiendo formalizar propiedades de seguridad mediante lemmas y ha sido previamente empleada en el análisis de sistemas de votación electrónica como Helios, Belenios y Civitas (Baloglu et al., 2021).
-
-\subsection{Síntesis del Marco Teórico}
-
-La Figura \ref{fig:marco_teorico} representa la relación estructural entre los ejes descritos: la vulnerabilidad de los esquemas clásicos motiva la adopción de los estándares post-cuánticos, cuyas primitivas se integran en el protocolo de votación electrónica, y cuyas propiedades de seguridad se constatan mediante verificación formal bajo el modelo Dolev-Yao.
 
 \begin{figure}[h]
 	\centering
@@ -29,7 +21,7 @@ La Figura \ref{fig:marco_teorico} representa la relación estructural entre los 
 		node distance=0.9cm
 		]
 		\node (a) [box, minimum width=4.2cm] {Criptografía clásica (RSA/ECDSA)\\vulnerable al algoritmo de Shor};
-		\node (b) [box, below=of a, minimum width=4.2cm, fill=blue!8] {Estándares post-cuánticos FIPS 203/204\\(ML-KEM / ML-DSA)};
+		\node (b) [box, below=of a, minimum width=4.2cm, fill=blue!8] {Estándares post-cuánticos FIPS 203/204};
 		\node (c) [box, below=of b, minimum width=4.2cm, fill=blue!8] {Fundamentos: Module-LWE y Module-SIS};
 		\node (d) [box, below=of c, minimum width=4.2cm, fill=green!8] {Protocolo de votación electrónica\\(confidencialidad, integridad, autenticidad)};
 		\node (e) [box, below=of d, minimum width=4.2cm, fill=orange!8] {Verificación formal\\(modelo Dolev-Yao, Tamarin Prover)};
@@ -44,3 +36,12 @@ La Figura \ref{fig:marco_teorico} representa la relación estructural entre los 
 	\label{fig:marco_teorico}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
+\subsection{Verificación Formal de Protocolos de Seguridad}
+La verificación formal constituye el enfoque metodológico mediante el cual se constata, de manera sistemática, el cumplimiento de las propiedades de seguridad de un protocolo bajo un modelo de atacante definido. El modelo de atacante Dolev-Yao (Dolev y Yao, 1983) asume un adversario capaz de interceptar, modificar, reenviar o generar mensajes dentro de la red, sin capacidad de vulnerar las primitivas criptográficas subyacentes, las cuales se tratan como cajas negras perfectas.
+
+\subsection{Tamarin Prover}
+Tamarin Prover (Meier et al., 2013) es una herramienta de verificación formal que opera bajo el modelo de atacante Dolev-Yao, permitiendo formalizar propiedades de seguridad mediante lemmas. Ha sido previamente empleada en el análisis de sistemas de votación electrónica como Helios, Belenios y Civitas (Baloglu et al., 2021).
+
+\subsection{Síntesis del Marco Teórico}
+
+La Figura \ref{fig:marco_teorico} representa la relación estructural entre los ejes descritos: la vulnerabilidad de los esquemas clásicos motiva la adopción de los estándares post-cuánticos, cuyas primitivas se integran en el protocolo de votación electrónica, y cuyas propiedades de seguridad se constatan mediante verificación formal bajo el modelo Dolev-Yao.

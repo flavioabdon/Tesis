@@ -1,14 +1,22 @@
 \section{DEFINICIÓN DE OBJETIVOS}
 
-\subsection{OBJETIVO GENERAL}
+\subsection{Objetivo General}
+Diseñar un protocolo de votación electrónica basado en criptografía post-cuántica de retículos que preserve la integridad y mantenga la confidencialidad del proceso de votación frente a amenazas de seguridad actuales y futuras. 
 
-Diseñar un protocolo de votación electrónica basado en criptografía post-cuántica de retículos que mantenga la integridad y la confidencialidad del proceso de votación frente a amenazas de seguridad actuales y futuras.
 
 \subsection{OBJETIVOS ESPECÍFICOS}
 \begin{itemize}
-	\item Fundamentar teóricamente el protocolo propuesto a partir de los estándares FIPS 203 y FIPS 204 y de la dificultad de los problemas Module-LWE y Module-SIS.
-	\item Modelar formalmente el protocolo de votación electrónica mediante Tamarin Prover bajo el modelo de atacante Dolev-Yao.
-	\item Verificar, mediante lemmas formales, las propiedades de confidencialidad, integridad y autenticidad del protocolo modelado.
-	\item Determinar el rendimiento del protocolo propuesto en términos de latencia, tiempo de ejecución y consumo de memoria.
-	\item Comparar el rendimiento y las propiedades de seguridad del protocolo propuesto con un protocolo equivalente basado en RSA/ECDSA.
+
+	\item Implementar el protocolo propuesto y un protocolo equivalente basado en RSA/ECDSA, para medir la latencia de ambos bajo distintos números de votantes.
+	
+	\item Comparar el rendimiento del protocolo propuesto con el de un protocolo equivalente basado en RSA/ECDSA, determinando si su latencia no excede en más del 30\% a la de este último.
+	
+			\item Verificar  el cumplimiento de las propiedades de integridad y confidencialidad del protocolo modelado
+	
+	\item Fundamentar teóricamente un protocolo de votación electrónica basado en criptografía post-cuántica, capaz de resistir amenazas de seguridad actuales y futuras.
+	
+	\item Determinar el rendimiento del protocolo propuesto en términos de latencia y tiempo de ejecución, para establecer su viabilidad práctica frente a un cifrado más seguro.
+	
+	\item Modelar formalmente el protocolo de votación electrónica, verificando  su resistencia frente a un adversario con capacidades cuánticas.
+	
 \end{itemize}

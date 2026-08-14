@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.7.2)  14 JUL 2026 10:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.7.2)  14 AUG 2026 00:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -474,6 +474,41 @@ Package caption Info: Standard document class detected.
 \c@continuedfloat=\count323
 Package caption Info: hyperref package is loaded.
 ))
+(/usr/local/texlive/2026/texmf-dist/tex/latex/koma-script/scrextend.sty
+Package: scrextend 2026/02/02 v3.49.2 KOMA-Script package (extend other classes
+ with features of KOMA-Script classes)
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/koma-script/scrkbase.sty
+Package: scrkbase 2026/02/02 v3.49.2 KOMA-Script package (KOMA-Script-dependent
+ basics and keyval usage)
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/koma-script/scrbase.sty
+Package: scrbase 2026/02/02 v3.49.2 KOMA-Script package (KOMA-Script-independen
+t basics and keyval usage)
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/koma-script/scrlfile.sty
+Package: scrlfile 2026/02/02 v3.49.2 KOMA-Script package (file load hooks)
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/koma-script/scrlfile-hook.sty
+Package: scrlfile-hook 2026/02/02 v3.49.2 KOMA-Script package (using LaTeX hook
+s)
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/koma-script/scrlogo.sty
+Package: scrlogo 2026/02/02 v3.49.2 KOMA-Script package (logo)
+)))
+Applying: [2021/05/01] Usage of raw or classic option list on input line 254.
+Already applied: [0000/00/00] Usage of raw or classic option list on input line
+ 370.
+))
+
+LaTeX Warning: Command \@footnotemark  has changed.
+               Check if current package is valid.
+
+)
+
+LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <11.4> not available
+(Font)              size <10.95> substituted on input line 5.
+
 (/usr/local/texlive/2026/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2026/03/07 v6.0 Page Geometry
 
@@ -891,8 +926,12 @@ Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
 )
 (/usr/local/texlive/2026/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
-)
-(/usr/local/texlive/2026/texmf-dist/tex/latex/lm/lmodern.sty
+
+
+LaTeX Font Warning: Font shape `T1/cmr/m/n' in size <11.4> not available
+(Font)              size <10.95> substituted on input line 116.
+
+) (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/lmodern.sty
 Package: lmodern 2015/05/01 v1.6.1 Latin Modern Fonts
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
 (Font)                  OT1/cmr/m/n --> OT1/lmr/m/n on input line 22.
@@ -932,7 +971,7 @@ Package: pdfrender 2023-12-07 v1.8 Access to some PDF graphics parameters (HO)
 LaTeX Info: Redefining \pdfrender on input line 296.
 LaTeX Info: Redefining \textpdfrender on input line 312.
 )
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 62
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 93
 .
 
 (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/t1lmr.fd
@@ -943,33 +982,33 @@ File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count358
 )
 (./Thesis.aux
-LaTeX Info: Redefining \. on input line 12.
-LaTeX Info: Redefining \% on input line 12.
+LaTeX Info: Redefining \. on input line 13.
+LaTeX Info: Redefining \% on input line 13.
 Package babel Info: 'spanish' activates 'spanish' shorthands.
-(babel)             Reported on input line 12.
-)
+(babel)             Reported on input line 13.
+ (./apendice.aux))
 \openout1 = `Thesis.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Info: Redefining \. on input line 62.
-LaTeX Info: Redefining \% on input line 62.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 93.
+LaTeX Font Info:    ... okay on input line 93.
+LaTeX Info: Redefining \. on input line 93.
+LaTeX Info: Redefining \% on input line 93.
 
 (/usr/local/texlive/2026/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -993,7 +1032,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring OFF on input line 62.
+Package hyperref Info: Link coloring OFF on input line 93.
 
 (./Thesis.out) (./Thesis.out)
 \@outlinefile=\write4
@@ -1006,6 +1045,9 @@ Package caption Info: longtable package is loaded.
 (/usr/local/texlive/2026/texmf-dist/tex/latex/caption/ltcaption.sty
 Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
 )
+Package caption Info: scrextend package is loaded.
+\caption@addmargin@hsize=\dimen316
+\caption@addmargin@linewidth=\dimen317
 Package caption Info: End \AtBeginDocument code.
 
 *geometry* driver: auto-detecting
@@ -1017,22 +1059,22 @@ Package caption Info: End \AtBeginDocument code.
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
 * h-part:(L,W,R)=(113.81102pt, 429.3521pt, 71.13188pt)
-* v-part:(T,H,B)=(113.81102pt, 610.02708pt, 71.13188pt)
+* v-part:(T,H,B)=(110.96556pt, 612.87254pt, 71.13188pt)
 * \paperwidth=614.295pt
 * \paperheight=794.96999pt
 * \textwidth=429.3521pt
-* \textheight=610.02708pt
+* \textheight=612.87254pt
 * \oddsidemargin=41.54103pt
 * \evensidemargin=41.54103pt
-* \topmargin=9.66724pt
+* \topmargin=6.82178pt
 * \headheight=12.0pt
 * \headsep=19.8738pt
 * \topskip=12.0pt
-* \footskip=30.0pt
+* \footskip=14.22636pt
 * \marginparwidth=47.0pt
 * \marginparsep=7.0pt
 * \columnsep=10.0pt
-* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \skip\footins=10.25995pt plus 4.5595pt minus 2.28047pt
 * \hoffset=0.0pt
 * \voffset=0.0pt
 * \mag=1000
@@ -1049,22 +1091,22 @@ Package caption Info: End \AtBeginDocument code.
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
 * h-part:(L,W,R)=(71.13188pt, 472.03123pt, 71.13188pt)
-* v-part:(T,H,B)=(113.81102pt, 610.02708pt, 71.13188pt)
+* v-part:(T,H,B)=(76.82234pt, 647.01576pt, 71.13188pt)
 * \paperwidth=614.295pt
 * \paperheight=794.96999pt
 * \textwidth=472.03123pt
-* \textheight=610.02708pt
+* \textheight=647.01576pt
 * \oddsidemargin=-1.1381pt
 * \evensidemargin=-1.1381pt
-* \topmargin=9.66724pt
+* \topmargin=-27.32144pt
 * \headheight=12.0pt
 * \headsep=19.8738pt
 * \topskip=12.0pt
-* \footskip=30.0pt
+* \footskip=14.22636pt
 * \marginparwidth=47.0pt
 * \marginparsep=7.0pt
 * \columnsep=10.0pt
-* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \skip\footins=10.25995pt plus 4.5595pt minus 2.28047pt
 * \hoffset=0.0pt
 * \voffset=0.0pt
 * \mag=1000
@@ -1074,70 +1116,77 @@ Package caption Info: End \AtBeginDocument code.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package pdfrender Info: New color stack `TextRenderingMode' = 1 on input line 8
-0.
-Package pdfrender Info: New color stack `LineWidth' = 2 on input line 80.
-<image1.jpg, id=165, 125.46875pt x 240.9pt>
+Package pdfrender Info: New color stack `TextRenderingMode' = 1 on input line 1
+11.
+Package pdfrender Info: New color stack `LineWidth' = 2 on input line 111.
+<image1.jpg, id=165, 117.43875pt x 233.87375pt>
 File: image1.jpg Graphic file (type jpg)
 <use image1.jpg>
-Package pdftex.def Info: image1.jpg  used on input line 80.
-(pdftex.def)             Requested size: 148.20499pt x 284.52756pt.
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 8
-0.
+Package pdftex.def Info: image1.jpg  used on input line 111.
+(pdftex.def)             Requested size: 99.58505pt x 227.6352pt.
+LaTeX Font Info:    Calculating math sizes for size <11.4> on input line 111.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
+11.
 (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 8
-0.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
+11.
 
 (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-80.
+111.
 
 (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-80.
+111.
 
 (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 80.
+(Font)              <11.4> on input line 111.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 80.
+(Font)              <7.97995> on input line 111.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 80.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 80.
-
+(Font)              <5.7> on input line 111.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 111
+.
 
 (/usr/local/texlive/2026/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 80.
-
+LaTeX Font Info:    Trying to load font information for U+msb on input line 111
+.
 
 (/usr/local/texlive/2026/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Trying to load font information for U+lasy on input line 80
-.
+LaTeX Font Info:    Trying to load font information for U+lasy on input line 11
+1.
 
 (/usr/local/texlive/2026/texmf-dist/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
-) [1
+)
+
+LaTeX Font Warning: Font shape `U/lasy/m/n' in size <11.4> not available
+(Font)              size <10.95> substituted on input line 111.
+
+[1
 
 
 
 {/usr/local/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/loc
-al/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc} <./image1.jpg>] (./The
-sis.toc
+al/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc} <./image1.jpg>]
+(./Thesis.toc
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
  [1
+
 
 
 
@@ -1145,12 +1194,7 @@ LaTeX Info: Redefining \% on input line 1.
 \tf@toc=\write5
 \openout5 = `Thesis.toc'.
 
-LaTeX Info: Redefining \. on input line 124.
-LaTeX Info: Redefining \% on input line 124.
-Package babel Info: 'spanish' activates 'spanish' shorthands.
-(babel)             Reported on input line 124.
-
-[2] (./Thesis.lot
+ [2] (./Thesis.lot
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
 )
@@ -1158,6 +1202,7 @@ LaTeX Info: Redefining \% on input line 1.
 \openout6 = `Thesis.lot'.
 
  [3
+
 
 ] (./Thesis.lof
 LaTeX Info: Redefining \. on input line 1.
@@ -1168,121 +1213,223 @@ LaTeX Info: Redefining \% on input line 1.
 
  [4
 
-] (./INF_TESIS_cap1.tex)
-(./INF_TESIS_cap2.tex
+
+]
+(./INF_TESIS_cap1.tex
+Underfull \hbox (badness 2961) in paragraph at lines 8--9
+\T1/lmr/m/n/11.4 elec-tró-ni-ca ba-sa-dos en crip-to-gra-fía post-cuántica, sis
+-te-ma-ti-zan-do las pro-pues-tas
+ []
+
+) (./INF_TESIS_cap2.tex
+Underfull \hbox (badness 1521) in paragraph at lines 10--1
+\T1/lmr/m/n/11.4 y se con-tras-ta cuasi-experimentalmente con un pro-to-co-lo e
+qui-va-len-te ba-sa-do en
+ []
+
+
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.4 
+l.5 
      [1
 
-] [2]) (./INF_TESIS_cap3.tex
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 6
-.
 
+]
+Underfull \hbox (badness 2134) in paragraph at lines 6--7
+[]\T1/lmr/m/n/11.4 En el ám-bi-to in-ter-na-cio-nal, Ba-lo-glu, Bur-suc, Mauw y
+ Pang (2021) ana-li-za-ron
+ []
+
+
+Underfull \hbox (badness 1609) in paragraph at lines 6--7
+\T1/lmr/m/n/11.4 sis-te-má-ti-ca-men-te pro-pie-da-des de in-te-gri-dad, con-fi
+-den-cia-li-dad y au-ten-ti-ci-dad ba-jo
+ []
+
+[2]) (./INF_TESIS_cap3.tex
+Underfull \hbox (badness 1112) in paragraph at lines 12--1
+\T1/lmr/m/n/11.4 FIPS 203 y FIPS 204, re-fe-ren-cia téc-ni-ca que, a la fe-cha,
+ no ha si-do apli-ca-da
+ []
+
+
+Underfull \hbox (badness 1810) in paragraph at lines 12--1
+\T1/lmr/m/n/11.4 en los an-te-ce-den-tes na-cio-na-les re-vi-sa-dos. No se han 
+iden-ti-fi-ca-do, den-tro de la
+ []
+
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
+4.
 (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [3{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]) (./INF
 _TESIS_cap4.tex
+Underfull \hbox (badness 1377) in paragraph at lines 10--11
+[]\T1/lmr/m/n/11.4 Implementar el pro-to-co-lo pro-pues-to y un pro-to-co-lo eq
+ui-va-len-te ba-sa-do en
+ []
+
+
+Underfull \hbox (badness 1418) in paragraph at lines 16--17
+[]\T1/lmr/m/n/11.4 Fundamentar teó-ri-ca-men-te un pro-to-co-lo de vo-ta-ción e
+lec-tró-ni-ca ba-sa-do en
+ []
+
 [4]) (./INF_TESIS_cap5.tex
-Overfull \hbox (12.16351pt too wide) in paragraph at lines 47--47
-[]|\T1/lmr/bx/n/8 Indicadores|  
- []
-
-
-Overfull \hbox (1.61218pt too wide) in paragraph at lines 49--50
-[]|\T1/lmr/bx/n/8 Instrumento 
- []
-
-
-Overfull \hbox (0.9588pt too wide) in paragraph at lines 52--52
-[]|\T1/lmr/m/n/8 Independiente|  
- []
-
-
-Overfull \hbox (5.04683pt too wide) in paragraph at lines 57--57
-[]|\T1/lmr/m/n/8 Categórica: 
- []
-
-
-Overfull \hbox (20.71286pt too wide) in paragraph at lines 57--57
-\T1/lmr/m/n/8 (RSA/ECDSA)|  
- []
-
-
-Overfull \hbox (10.47258pt too wide) in paragraph at lines 62--62
-[]|\T1/lmr/m/n/8 Correspondencia 
- []
-
-
-Overfull \hbox (1.439pt too wide) in paragraph at lines 63--63
-[]|\T1/lmr/m/n/8 Cumplimiento 
- []
-
-
-Overfull \hbox (7.62756pt too wide) in paragraph at lines 64--64
-[]|\T1/lmr/m/n/8 Correspondencia 
- []
-
-
-Overfull \hbox (15.66537pt too wide) in paragraph at lines 65--65
-[]|\T1/lmr/m/n/8 Cumplimiento 
- []
-
-
-Overfull \hbox (0.79567pt too wide) in paragraph at lines 66--66
-[]|\T1/lmr/m/n/8 Verdadero 
- []
-
-
-Overfull \hbox (10.64746pt too wide) in paragraph at lines 69--69
-[]|\T1/lmr/m/n/8 Confidencialidad 
- []
-
-
-Overfull \hbox (1.439pt too wide) in paragraph at lines 72--72
-[]|\T1/lmr/m/n/8 Cumplimiento 
- []
-
-
-Overfull \hbox (15.66537pt too wide) in paragraph at lines 74--74
-[]|\T1/lmr/m/n/8 Cumplimiento 
- []
-
-
-Overfull \hbox (0.79567pt too wide) in paragraph at lines 75--75
-[]|\T1/lmr/m/n/8 Verdadero 
- []
-
-
-Overfull \hbox (11.59862pt too wide) in paragraph at lines 80--80
-[]|\T1/lmr/m/n/8 Comportamiento 
- []
-
-
-Overfull \hbox (7.80583pt too wide) in paragraph at lines 85--86
-[]|\T1/lmr/m/n/8 Implementación 
- []
-
-
-Overfull \hbox (6.36044pt too wide) in alignment at lines 38--87
- [] [] [] [] [] [] [] [] 
+Underfull \hbox (badness 1360) in paragraph at lines 14--15
+[]\T1/lmr/bx/n/11.4 Variable in-de-pen-dien-te: \T1/lmr/m/n/11.4 El pro-to-co-l
+o de vo-ta-ción elec-tró-ni-ca ba-sa-do en
  []
 
 [5]
-ignored: Infinite glue shrinkage found in box being split [6]) (./INF_TESIS_cap6.tex 
-[7]) (./INF_TESIS_cap7.tex [8] [9])
-(./INF_TESIS_cap8.tex [10]) (./INF_TESIS_cap9.tex [11] [12] [13] [14])
-(./INF_TESIS_cap10.tex [15] [16] [17]) (./INF_TESIS_cap11.tex [18])
-(./INF_TESIS_cap12.tex
+Overfull \hbox (4.04074pt too wide) in paragraph at lines 38--38
+[]|\T1/lmr/m/n/7.60005 Independiente|  
+ []
+
+
+Overfull \hbox (0.75667pt too wide) in paragraph at lines 42--42
+\T1/lmr/m/n/7.60005 (RSA/ECDSA)|  
+ []
+
+
+Overfull \hbox (1.34512pt too wide) in paragraph at lines 43--44
+\T1/lmr/m/n/7.60005 im-ple-men-ta-ción 
+ []
+
+
+Overfull \hbox (5.31158pt too wide) in paragraph at lines 49--49
+\T1/lmr/m/n/7.60005 con-fi-den-cia-li-dad|  
+ []
+
+LaTeX Font Info:    Calculating math sizes for size <7.60005> on input line 56.
+
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7.60005> on input line 56.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5.32> on input line 56.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <3.80002> on input line 56.
+
+LaTeX Font Warning: Font shape `U/lasy/m/n' in size <3.80002> not available
+(Font)              size <5> substituted on input line 56.
+
+
+Overfull \hbox (6.9268pt too wide) in paragraph at lines 57--57
+\T1/lmr/m/n/7.60005 en-cap-su-la-mien-to|  
+ []
+
+
+Overfull \hbox (2.01pt too wide) in paragraph at lines 59--60
+[]|\T1/lmr/m/n/7.60005 Implementación 
+ []
+
+
+Overfull \hbox (8.4955pt too wide) in alignment at lines 25--61
+ [] [] [] [] [] [] [] 
+ []
+
+) (./INF_TESIS_cap6.tex [6{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/l
+m/lm-mathsy.enc}]
+Underfull \hbox (badness 5431) in paragraph at lines 9--10
+\T1/lmr/m/n/11.4 crip-to-grá-fi-co ^^Vpost-cuántico y clá-si-co^^V res-pec-to d
+e va-ria-bles de in-te-gri-dad,
+ []
+
+) (./INF_TESIS_cap7.tex
+Underfull \hbox (badness 2027) in paragraph at lines 13--1
+\T1/lmr/m/n/11.4 aca-dé-mi-ca que tra-ba-ja en sis-te-mas de vo-ta-ción elec-tr
+ó-ni-ca y en la apli-ca-ción
+ []
+
+
+Underfull \hbox (badness 3229) in paragraph at lines 13--1
+\T1/lmr/m/n/11.4 de crip-to-gra-fía post-cuántica a pro-to-co-los con re-que-ri
+-mien-tos de in-te-gri-dad y
+ []
+
+[7] [8]
+Underfull \hbox (badness 1102) in paragraph at lines 19--20
+\T1/lmr/m/n/11.4 da-do que fac-to-res co-mo el con-jun-to de ins-truc-cio-nes d
+el pro-ce-sa-dor y las
+ []
+
+
+Underfull \hbox (badness 1147) in paragraph at lines 20--21
+\T1/lmr/m/n/11.4 en RSA/ECDSA, sin ex-ten-der-se a otros es-que-mas crip-to-grá
+-fi-cos clá-si-cos o
+ []
+
+) (./INF_TESIS_cap8.tex [9]
+Underfull \hbox (badness 1824) in paragraph at lines 13--14
+\T1/lmr/m/n/11.4 exis-ten-te so-bre el ren-di-mien-to com-pa-ra-do de es-que-ma
+s crip-to-grá-fi-cos clá-si-cos y
+ []
+
+) (./INF_TESIS_cap9.tex
+
+LaTeX Warning: Citation `Vaishnavi2004' on page 10 undefined on input line 8.
+
+[10]
+Underfull \hbox (badness 2027) in paragraph at lines 19--20
+\T1/lmr/m/n/11.4 Asi-mis-mo, se for-ma-li-zan las pro-pie-da-des de con-fi-den-
+cia-li-dad, in-te-gri-dad y
+ []
+
+
+Underfull \hbox (badness 1661) in paragraph at lines 21--22
+[]\T1/lmr/bx/n/11.4 Evaluación. \T1/lmr/m/n/11.4 Se ve-ri-fi-ca el cum-pli-mien
+-to de las pro-pie-da-des de se-gu-ri-dad
+ []
+
+
+Underfull \hbox (badness 1418) in paragraph at lines 21--22
+\T1/lmr/m/n/11.4 de-mos-tran-do los \T1/lmr/m/it/11.4 lem-mas \T1/lmr/m/n/11.4 
+de-fi-ni-dos pre-via-men-te y se mi-den in-di-ca-do-res de
+ []
+
+[11]
+Underfull \hbox (badness 1194) in paragraph at lines 23--24
+[]\T1/lmr/bx/n/11.4 Conclusión. \T1/lmr/m/n/11.4 Se con-so-li-dan y ana-li-zan 
+los re-sul-ta-dos ob-te-ni-dos du-ran-te la
+ []
+
+
+Underfull \hbox (badness 1596) in paragraph at lines 30--31
+\T1/lmr/m/n/11.4 me-di-ción de tiem-po de eje-cu-ción, con-su-mo de me-mo-ria y
+ la-ten-cia du-ran-te las
+ []
+
+) (./INF_TESIS_cap10.tex [12]
+Underfull \hbox (badness 1303) in paragraph at lines 7--8
+\T1/lmr/m/n/11.4 de las pri-mi-ti-vas crip-to-grá-fi-cas em-plea-das co-mo del 
+di-se-ño del pro-to-co-lo en su
+ []
+
+[13] [14]) (./INF_TESIS_cap11.tex [15]) (./INF_TESIS_cap12.tex
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <7> on input line 10.
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <5> on input line 10.
 
+Underfull \hbox (badness 3138) in paragraph at lines 17--17
+[]|\T1/lmr/bx/n/7 Redacción Cap. II - Mar-co
+ []
+
+
 Underfull \hbox (badness 1596) in paragraph at lines 19--19
 []|\T1/lmr/bx/n/7 Desarrollo Cap. III - Mar-co
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 23--23
+\T1/lmr/m/n/7 de re-fe-ren-cia del pro-to-co-lo
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 23--23
+\T1/lmr/m/n/7 pro-pues-to y del pro-to-co-lo
  []
 
 
@@ -1291,65 +1438,88 @@ Underfull \hbox (badness 1360) in paragraph at lines 25--25
  []
 
 
-Underfull \hbox (badness 2600) in paragraph at lines 27--27
-[]| \T1/lmr/m/n/7 Fa-se Eva-lua-ción: Si-mu-la-ción y
+Underfull \hbox (badness 10000) in paragraph at lines 27--27
+[]| \T1/lmr/m/n/7 Fa-se Eva-lua-ción: Si-mu-la-ción
  []
 
-[19]) (./INF_TESIS_cap13.tex [20{/usr/local/texlive/2026/texmf-dist/fonts/enc/d
-vips/lm/lm-mathsy.enc}]
+
+Underfull \hbox (badness 10000) in paragraph at lines 27--27
+\T1/lmr/m/n/7 y me-di-ción de in-di-ca-do-res de
+ []
+
+
+Underfull \hbox (badness 7238) in paragraph at lines 27--27
+\T1/lmr/m/n/7 ren-di-mien-to (in-clu-yen-do la-ten-cia
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 31--31
+[]| \T1/lmr/m/n/7 Pro-ce-sa-mien-to es-ta-dís-ti-co
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 33--33
+[]|\T1/lmr/bx/n/7 Redacción Cap. V -
+ []
+
+[16]) (./INF_TESIS_cap13.tex [17]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
 0.
 
 (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-Overfull \hbox (98.53908pt too wide) in paragraph at lines 13--14
-\T1/lmtt/m/n/12 ordenadores-[]cuanticos-[]y-[]la-[]seguridad-[]de-[]los-[]algor
-itmos-[]criptograficos-[]actuales/$[]  
- []
+) [18]) [19]
+\openout2 = `apendice.aux'.
 
-[21]
-Overfull \hbox (11.58904pt too wide) in paragraph at lines 34--35
-\T1/lmtt/m/n/12 nist-[]releases-[]first-[]3-[]finalized-[]post-[]quantum-[]encr
-yption-[]standards$[]  
- []
 
-) [22] (./Thesis.aux
-LaTeX Info: Redefining \. on input line 12.
-LaTeX Info: Redefining \% on input line 12.
-)
+(./apendice.tex [20
+
+
+
+]) (./Thesis.aux
+LaTeX Info: Redefining \. on input line 13.
+LaTeX Info: Redefining \% on input line 13.
+ (./apendice.aux))
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
+
+
+LaTeX Font Warning: Size substitutions with differences
+(Font)              up to 1.19998pt have occurred.
+
+
+LaTeX Warning: There were undefined references.
+
 Package rerunfilecheck Info: File `Thesis.out' has not changed.
-(rerunfilecheck)             Checksum: DC13697A83400C5B687BDF430F3B878F;7482.
+(rerunfilecheck)             Checksum: D7ECA8419D79A4C83427DCF79A233A4C;7714.
  ) 
 Here is how much of TeX's memory you used:
- 27143 strings out of 467525
- 499904 string characters out of 5418983
- 942072 words of memory out of 5000000
- 55439 multiletter control sequences out of 15000+600000
- 727546 words of font info for 100 fonts, out of 8000000 for 9000
+ 28054 strings out of 467525
+ 517962 string characters out of 5418983
+ 984206 words of memory out of 5000000
+ 56333 multiletter control sequences out of 15000+600000
+ 736892 words of font info for 115 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 90i,13n,104p,1188b,796s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 108i,13n,107p,1158b,802s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/lo
 cal/texlive/2026/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texliv
 e/2026/texmf-dist/fonts/type1/public/lm/lmbx7.pfb></usr/local/texlive/2026/texm
 f-dist/fonts/type1/public/lm/lmbx8.pfb></usr/local/texlive/2026/texmf-dist/font
-s/type1/public/lm/lmbx9.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/pub
-lic/lm/lmcsc10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lm
-r10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr12.pfb></u
-sr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr6.pfb></usr/local/tex
-live/2026/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/local/texlive/2026/te
-xmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/local/texlive/2026/texmf-dist/fon
-ts/type1/public/lm/lmri10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/p
-ublic/lm/lmri12.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/l
-msy7.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmtt12.pfb>
-Output written on Thesis.pdf (27 pages, 442379 bytes).
+s/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/p
+ublic/lm/lmr10.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lm
+r12.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr6.pfb></us
+r/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/local/texl
+ive/2026/texmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/local/texlive/2026/tex
+mf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2026/texmf-dist/fo
+nts/type1/public/lm/lmri12.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/
+public/lm/lmsy7.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/l
+msy8.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmtt12.pfb>
+Output written on Thesis.pdf (25 pages, 437184 bytes).
 PDF statistics:
- 445 PDF objects out of 1000 (max. 8388607)
- 380 compressed objects within 4 object streams
- 72 named destinations out of 1000 (max. 500000)
+ 432 PDF objects out of 1000 (max. 8388607)
+ 369 compressed objects within 4 object streams
+ 65 named destinations out of 1000 (max. 500000)
  338 words of extra memory for PDF output out of 10000 (max. 10000000)
 

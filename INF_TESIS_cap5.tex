@@ -1,41 +1,28 @@
 \section{HIPÓTESIS}
 
 \subsection{Planteamiento de la Hipótesis}
+Considerando el problema principal del actual trabajo de investigación se plantea la siguiente hipótesis.
 
-El diseño de un protocolo de votación electrónica basado en criptografía post-cuántica contribuye a mantener la integridad y la confidencialidad del proceso de votación frente a amenazas de seguridad actuales y futuras, manteniendo niveles de rendimiento comparables a los de esquemas criptográficos clásicos.
+H1.``El protocolo de votación electrónica basado en criptografía post-cuántica de retículos coadyuvará a mantener la integridad y la confidencialidad del proceso de votación, verificadas formalmente mediante Tamarin Prover, con una latencia que no exceda en más del 30\% a la de un protocolo equivalente basado en RSA/ECDSA.''
 
-\subsection{Definición y Clasificación de Variables}
+
+
+\subsection{Definición de Variables}
+De acuerdo a la hipótesis podemos sacar las siguientes variables:
 
 \begin{itemize}
-	\item \textbf{Variable independiente}
-	\begin{itemize}
-		\item Protocolo criptográfico empleado en el proceso de votación electrónica.
-	\end{itemize}
-	
-	\item \textbf{Variable dependiente 1}
-	\begin{itemize}
-		\item Integridad del proceso de votación.
-	\end{itemize}
-	
-	\item \textbf{Variable dependiente 2}
-	\begin{itemize}
-		\item Confidencialidad del voto.
-	\end{itemize}
-	
-	\item \textbf{Variable dependiente 3}
-	\begin{itemize}
-		\item Rendimiento del protocolo.
-	\end{itemize}
+	\item \textbf{Variable independiente:} El protocolo de votación electrónica basado en criptografía post-cuántica de retículos.
+	\item \textbf{Variable dependiente 1:} Mantenimiento de la integridad y la confidencialidad del proceso de votación.
+	\item \textbf{Variable dependiente 2:} Latencia del protocolo, con un umbral de aceptación de hasta el 30\% adicional respecto al protocolo basado en RSA/ECDSA.
 \end{itemize}
 
+\newpage
 \subsection{Matriz de Operacionalización de Variables}
-
 \begingroup
 \renewcommand{\arraystretch}{1.3}
 \scriptsize
 \setlength{\tabcolsep}{3pt}
-
-\begin{longtable}{|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{1.9cm}|>{\raggedright\arraybackslash}p{1.3cm}|>{\raggedright\arraybackslash}p{1.3cm}|>{\raggedright\arraybackslash}p{1.8cm}|}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{2.0cm}|>{\raggedright\arraybackslash}p{1.6cm}|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{1.9cm}|>{\raggedright\arraybackslash}p{1.9cm}|}
 	\caption{Matriz de operacionalización de variables.}
 	\label{tab:operacionalizacion}\\
 	\hline
@@ -43,52 +30,37 @@ El diseño de un protocolo de votación electrónica basado en criptografía pos
 	\textbf{Tipo} &
 	\textbf{Definición Conceptual} &
 	\textbf{Definición Operacional} &
-	\textbf{Dimensión} &
 	\textbf{Indicadores} &
 	\textbf{Unidad / Valor} &
 	\textbf{Instrumento / Fuente} \\
 	\hline
-	Tipo de protocolo criptográfico &
+	El protocolo de votación electrónica basado en criptografía post-cuántica de retículos &
 	Independiente &
 	Esquema criptográfico sobre el cual se sustenta el protocolo de votación electrónica &
 	Naturaleza del esquema criptográfico aplicado al protocolo diseñado &
-	Naturaleza del esquema &
 	Tipo de protocolo empleado &
 	Categórica: post-cuántico (FIPS 203/204) / clásico (RSA/ECDSA) &
 	Diseño experimental comparativo / implementación del protocolo \\
 	\hline
-	Integridad del proceso de votación &
+	Mantenimiento de la integridad y la confidencialidad del proceso de votación &
 	Dependiente &
-	Correspondencia entre el voto emitido y el voto contabilizado &
-	Cumplimiento formal de la propiedad de integridad en el modelo del protocolo &
-	Correspondencia voto emitido / voto contabilizado &
-	Cumplimiento del lemma de integridad &
+	Correspondencia entre el voto emitido y el contabilizado, y secreto del contenido del voto frente a partes no autorizadas &
+	Cumplimiento formal de las propiedades de integridad y confidencialidad en el modelo del protocolo &
+	Cumplimiento de los lemmas de integridad y de confidencialidad &
 	Verdadero / Falso &
 	Tamarin Prover \\
 	\hline
-	Confidencialidad del voto &
+	Latencia del protocolo &
 	Dependiente &
-	Secreto del contenido del voto frente a partes no autorizadas &
-	Cumplimiento formal de la propiedad de confidencialidad en el modelo del protocolo &
-	Secreto del voto &
-	Cumplimiento del lemma de confidencialidad &
-	Verdadero / Falso &
-	Tamarin Prover \\
-	\hline
-	Rendimiento del protocolo &
-	Dependiente &
-	Comportamiento del protocolo en tiempo y recursos computacionales requeridos &
-	Medición empírica de indicadores de desempeño durante la ejecución del protocolo &
-	Latencia \newline Tiempo de ejecución \newline Consumo de memoria &
-	Tiempo de firma, verificación y encapsulamiento \newline Duración total de las operaciones criptográficas \newline Memoria utilizada durante la ejecución &
-	ms \newline ms \newline MB &
+	Comportamiento del protocolo en el tiempo requerido para ejecutar sus operaciones criptográficas &
+	Medición empírica de la latencia; se considera aceptable cuando no exceda en más del 30\% a la del protocolo RSA/ECDSA &
+	Tiempo de firma, verificación y encapsulamiento &
+	ms (umbral: $\le$ 30\% adicional respecto a RSA/ECDSA) &
 	Implementación y simulación con distinto número de votantes \\
 	\hline
 \end{longtable}
-
 \par\vspace{-12pt}
 \begin{center}
 	\footnotesize\textit{Fuente: Elaboración propia.}
 \end{center}
-
 \endgroup

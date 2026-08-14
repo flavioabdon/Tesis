@@ -276,31 +276,35 @@
     \clearpage
 \fi\begin{minipage}[c][\textheight][c]{\textwidth}
     \centering
+    \vspace{0cm}
     \pdfrender{TextRenderingMode=FillStroke, LineWidth=0.3pt}%
-    \begin{spacing}{1.2}
+    \begin{spacing}{1.8}
     \@university
     \@faculty
     \@department
     \end{spacing}
-    \vspace{1cm}
-    \includegraphics[height=\@logosize]{\@logouniversity}\\
-    \vspace{1cm}
-    \@perfil
+    \vspace{0.0cm}
+    \includegraphics[height=8cm,width=3.5cm]{\@logouniversity}\\
     \vspace{0.5cm}
-    \begin{spacing}{1.2}
+    \@perfil
+    \vspace{1.0cm}
+    \begin{spacing}{1.4}
     \@title
     \end{spacing}
-    \vspace{0.2cm}
-    \begin{spacing}{1.2}
+    %\vspace{0.5cm}
+    \begin{spacing}{1}
     \@titledegree
     \@degree
     \end{spacing}
-    \vspace{0.8cm}
+    \vspace{1.2cm}
     \@author
     \@advisor
     \vfill
+    \vspace{0.8cm}
     \@city
     \@date
+    \vspace{0.8cm}
+
 \end{minipage}
 \if@twoside
     \clearpage
@@ -313,22 +317,22 @@
 \pagestyle{headings}%
 }
 
-\define@key{values}{author}{\def\@author{{\fontsize{13}{15.6}\selectfont\textbf{POR: \MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{author}{\def\@author{{\fontsize{15.2}{18.24}\selectfont\textbf{POR: \MakeUppercase{#1}}}\\[1ex]}}
 \define@key{values}{degreeauthor}{\def\@degreeauthor{}}
 \define@key{values}{code}{\def\@code{}}
-\define@key{values}{advisor}{\def\@advisor{{\fontsize{12}{14.4}\selectfont\textbf{TUTOR: \MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{advisor}{\def\@advisor{{\fontsize{13.3}{15.96}\selectfont\textbf{TUTOR: \MakeUppercase{#1}}}\\[1ex]}}
 \define@key{values}{degreeadvisor}{\def\@degreeadvisor{}}
 \define@key{values}{coadvisor}{\def\@coadvisor{}}
 \define@key{values}{degreecoadvisor}{\def\@degreecoadvisor{}}
-\define@key{values}{title}{\def\@title{{\fontsize{13}{15.6}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
-\define@key{values}{perfil}{\def\@perfil{{\fontsize{13}{15.6}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
-\define@key{values}{titledegree}{\def\@titledegree{{\fontsize{10}{12}\selectfont\textbf{#1}}\\[1ex]}}
-\define@key{values}{degree}{\def\@degree{{\fontsize{10}{12}\selectfont\textbf{#1}}\\[1ex]}}
-\define@key{values}{university}{\def\@university{{\fontsize{17}{20.4}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
-\define@key{values}{faculty}{\def\@faculty{{\fontsize{13}{15.6}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
-\define@key{values}{department}{\def\@department{{\fontsize{13}{15.6}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
-\define@key{values}{city}{\def\@city{{\fontsize{9}{10.8}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
-\define@key{values}{date}{\def\@date{{\fontsize{9}{10.8}\selectfont\textbf{#1}}\\[-2ex]}}
+\define@key{values}{title}{\def\@title{{\fontsize{15.2}{18.24}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{perfil}{\def\@perfil{{\fontsize{15.2}{18.24}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{titledegree}{\def\@titledegree{{\fontsize{10.5}{12.6}\selectfont\textbf{#1}}\\[1ex]}}
+\define@key{values}{degree}{\def\@degree{{\fontsize{10.5}{12.6}\selectfont\textbf{#1}}\\[1ex]}}
+\define@key{values}{university}{\def\@university{{\fontsize{19}{22.8}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{faculty}{\def\@faculty{{\fontsize{15.2}{18.24}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{department}{\def\@department{{\fontsize{15.2}{18.24}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{city}{\def\@city{{\fontsize{11.4}{13.68}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{date}{\def\@date{{\fontsize{11.4}{13.68}\selectfont\textbf{#1}}\\[-2ex]}}
 
 \def\abstractthesis{\@ifnextchar[\@valueAbstract{}}
 \def\@valueAbstract[#1]{\setkeys{values}{#1}
@@ -501,6 +505,26 @@
   \pagestyle{headings}
   \@mymainmatterfalse
   \pagenumbering{Roman}
+  % Nombres en español (mayúsculas) para cuerpo y listas
+  \renewcommand{\tablename}{TABLA}
+  \renewcommand{\figurename}{FIGURA}
+  % Formato de entradas en Índice de Tablas: "TABLA 1. Caption..."
+  \renewcommand*{\l@table}[2]{%
+    \bgroup
+      \def\numberline####1{\tablename~####1.\enspace}%
+      \@dottedtocline{1}{0em}{0em}{##1}{##2}%
+    \egroup}
+  % Formato de entradas en Índice de Figuras: "FIGURA 1. Caption..."
+  \renewcommand*{\l@figure}[2]{%
+    \bgroup
+      \def\numberline####1{\figurename~####1.\enspace}%
+      \@dottedtocline{1}{0em}{0em}{##1}{##2}%
+    \egroup}
+  % Inyectar override en .lot y .lof para anular el reset de babel a "Cuadro"
+  % Babel escribe \babel@toc{spanish}{} al inicio del .lot/.lof y resetea los nombres.
+  % Este \addtocontents escribe la corrección justo después en el mismo archivo.
+  \addtocontents{lot}{\protect\renewcommand{\protect\tablename}{TABLA}}
+  \addtocontents{lof}{\protect\renewcommand{\protect\figurename}{FIGURA}}
   \setstretch{\@space}
   \def\bigrule{\titlerule[1pt]}
   \def\bigaboverule{\rule{\textwidth}{1.5pt}\hspace{-\textwidth}\rule[-3.5pt]{\textwidth}{0.5pt}\\[1ex]}

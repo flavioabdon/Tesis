@@ -1,15 +1,28 @@
 \section{PLANTEAMIENTO DEL PROBLEMA}
 \subsection{Problema Central}
-¿Cómo mantener  la integridad y la confidencialidad en sistemas de votación electrónica frente a amenazas de seguridad actuales y futuras?
+¿Cómo preservar la integridad y mantener la confidencialidad en sistemas de votación electrónica frente a amenazas de seguridad actuales y futuras?
+
+
+
+
 \subsection{Problemas secundarios}
+Para el desarrollo del trabajo de investigación se identificaron los siguientes problemas:
+
 \begin{itemize}
-	\item Churata Sonco (2020) evaluó la seguridad de su sistema solo mediante desencriptación de hash y descifrado de RSA con herramientas externas (causa), sin evidencia empírica sobre la vulnerabilidad cuántica de los sistemas bolivianos de votación electrónica (efecto).
 	
-	\item Las propiedades de seguridad de un protocolo de votación dependen también de su diseño y no solo de sus primitivas criptográficas (causa), lo que permitió que sistemas como Helios y Belenios presentaran ataques no identificados hasta la verificación formal de Baloglu et al. (2021) (efecto).
 	
-	\item El análisis formal de Baloglu et al. (2021) aborda la verificabilidad electoral sin evaluar la resistencia cuántica de las primitivas criptográficas subyacentes (causa), evidenciando una separación entre el análisis del protocolo y el de sus componentes criptográficos (efecto).
+	\item La mayoría de los sistemas de votación electrónica actuales fueron diseñados pensando en amenazas de hoy, sin considerar cómo podrían evolucionar los ataques en los próximos años.
+
 	
-	\item Fernández Tristán (2021) y Churata Sonco (2020) sustentan sus sistemas en esquemas clásicos de clave pública como RSA (causa), lo que expondría los votos a un descifrado retroactivo ante computación cuántica futura (efecto).
+	\item No se ha determinado cuánto tiempo adicional tomaría emitir y contar un voto si se usa un cifrado más seguro, lo cual genera dudas sobre su viabilidad práctica.
 	
-	\item No existen antecedentes bolivianos que apliquen los estándares FIPS 203 y FIPS 204 al diseño de protocolos de votación electrónica (causa), lo que impide contar con un marco de referencia local para evaluar primitivas post-cuánticas en este dominio (efecto).
+		\item Los sistemas de votación electrónica actuales solo se prueban con herramientas externas básicas, lo cual hace que no se sepa con certeza si resistirían un ataque de una computadora cuántica.
+	
+	
+		\item Los estudios que revisan la seguridad de los sistemas de votación suelen enfocarse en que el voto se cuente correctamente, sin revisar si el cifrado resistiría una computadora cuántica, dejando ambos aspectos sin evaluarse juntos.
+	
+	
+		\item Los desarrolladores de sistemas de votación priorizan la facilidad de uso y la rapidez del sistema, lo cual hace que la seguridad a largo plazo del cifrado quede en segundo plano.
+	
+
 \end{itemize}
