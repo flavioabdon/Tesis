@@ -1,109 +1,59 @@
 # Plantilla de Tesis — UMSA · Carrera de Informática
 
-Plantilla LaTeX para la elaboración del Perfil y la Tesis de Grado de la **Universidad Mayor de San Andrés (UMSA)**, Carrera de Informática.
+> **Créditos:** Basado en la plantilla de tesis de **Ariel Condo M.** y adaptado para los formatos requeridos por la Carrera de Informática de la Universidad Mayor de San Andrés (UMSA).
 
 ---
 
-## Estructura del proyecto
+## 🏷️ Meta Etiquetas / Información del Proyecto
+
+* **Carrera:** Informática (Carrera de Informática UMSA)
+* **Institución:** Universidad Mayor de San Andrés (UMSA)
+* **Tipo:** Plantilla de Tesis de Grado y Perfil según formato UMSA
+
+---
+
+## 📁 Estructura General del Proyecto
 
 ```
 .
 ├── Thesis.tex                  # Documento principal (punto de entrada)
-├── thesisUMSA.cls              # Clase LaTeX personalizada para la UMSA
-├── compile_and_export.sh       # Script de compilación y exportación
-├── INF_TESIS_cap1.tex          # Cap. 1 - Introducción
-├── INF_TESIS_cap2.tex          # Cap. 2 - Antecedentes
-├── INF_TESIS_cap3.tex          # Cap. 3 - Planteamiento del problema
-├── INF_TESIS_cap4.tex          # Cap. 4 - Definición de objetivos
-├── INF_TESIS_cap5.tex          # Cap. 5 - Marco Referencial
-├── INF_TESIS_cap6.tex          # Cap. 6 - Justificación
-├── INF_TESIS_cap7.tex          # Cap. 7 - Alcances y limitaciones
-├── INF_TESIS_cap8.tex          # Cap. 8 - Aportes
-├── INF_TESIS_cap9.tex          # Cap. 9 - Marco Metodológico
-├── INF_TESIS_cap10.tex         # Cap. 10 - Marco Teórico
-├── INF_TESIS_cap11.tex         # Cap. 11 - Hipótesis
-├── INF_TESIS_cap12.tex         # Cap. 12 - Cronograma
-├── INF_TESIS_cap13.tex         # Cap. 13 - Referencias bibliográficas
-├── apendice.tex                # Página de Anexos
-├── image1.jpg                  # Logotipo de la universidad
-├── Exports/                    # PDFs exportados (ignorado por git)
+├── thesisUMSA.cls              # Clase LaTeX personalizada (basada en Ariel Condo M.)
+├── compile_and_export.sh       # Script de compilación automática
+├── README.md                   # Documentación del repositorio
+├── image1.jpg                  # Logotipo institucional
+├── Capitulos_perfil/           # Archivos del Perfil de Tesis (Rama: main)
+│   └── INF_TESIS_cap1.tex a cap13.tex
+├── Capitulos_tesis/            # Archivos de la Tesis Final (Rama: tesis)
+│   └── TESIS_cap1.tex a cap5.tex y referencias
+├── Exports/                    # PDFs compilados con marca de tiempo (ignorado en Git)
 └── .gitignore
 ```
 
 ---
 
-## Ramas Git
+## 📐 Márgenes del Documento (Normativa UMSA)
 
-El proyecto usa **dos ramas** para separar el Perfil de la Tesis:
+Configurados de forma global en `Thesis.tex` usando el paquete `geometry`:
 
-| Rama    | Propósito                              |
-|---------|----------------------------------------|
-| `main`  | Perfil de tesis finalizado y aprobado  |
-| `tesis` | Escritura activa de la tesis de grado  |
+### Cuerpo del Documento
+| Borde | Medida | Propósito |
+| :--- | :--- | :--- |
+| **Izquierdo** | `4.0 cm` | Espacio reservado para el encuadernado |
+| **Superior** | `4.0 cm` | Margen de cabecera estándar |
+| **Derecho** | `2.5 cm` | Margen lateral |
+| **Inferior** | `2.5 cm` | Margen de pie de página |
 
-### Ver en qué rama estás
-
-```zsh
-git branch
-```
-
-### Cambiar de rama
-
-```zsh
-# Ir al perfil (solo lectura / referencia)
-git checkout main
-
-# Ir a la tesis (trabajo activo)
-git checkout tesis
-```
-
-### Guardar cambios en la rama activa
-
-```zsh
-git add .
-git commit -m "Descripción del avance"
-```
+### Carátula (`\infothesis`)
+La carátula anula temporalmente los márgenes generales mediante `\newgeometry` para lograr una distribución óptima del espacio:
+* **Margen Superior:** `2.7 cm`
+* **Margen Inferior:** `2.5 cm`
+* **Márgenes Laterales:** `2.5 cm` (centrado físico sobre la hoja)
 
 ---
 
-## Compilación y exportación del PDF
+## 🔤 Tipografías Incluidas y Corrección de Escala
 
-### Requisito
-Tener instalado **TeX Live** (incluye `pdflatex`).
-
-```zsh
-# Verificar instalación
-pdflatex --version
-```
-
-### Ejecutar el script
-
-```zsh
-./compile_and_export.sh
-```
-
-El script realiza automáticamente:
-1. **Primera pasada** de `pdflatex` → genera índice, lista de tablas/figuras y referencias.
-2. **Segunda pasada** de `pdflatex` → actualiza todas las referencias cruzadas.
-3. **Exporta** el PDF resultante a la carpeta `Exports/` con el nombre:
-
-```
-Exports/Thesis_<rama>_DD_MM_AA_HH_MM_SS.pdf
-```
-
-**Ejemplo de salida:**
-```
-Exports/Thesis_tesis_25_08_26_12_30_45.pdf
-Exports/Thesis_main_25_08_26_09_00_00.pdf
-```
-
-> La carpeta `Exports/` está en `.gitignore` y no se versiona.
-
----
-
-## Configuración de tipografía
-
-La tipografía del documento se controla con **una sola línea** al inicio de `Thesis.tex`:
+La plantilla permite alternar entre dos fuentes de forma sencilla mediante un switch al inicio de `Thesis.tex`:
 
 ```latex
 % ==============================================================
@@ -115,96 +65,47 @@ La tipografía del documento se controla con **una sola línea** al inicio de `T
 \useTNRtrue   % <-- CAMBIAR AQUÍ
 ```
 
-### Opciones disponibles
+### Tabla Comparativa de Comportamiento:
 
-| Valor          | Tipografía              | Tamaño base | Tamaños de carátula         |
-|----------------|-------------------------|-------------|------------------------------|
-| `\useTNRtrue`  | **Times New Roman**     | 12 pt       | Originales (20 pt, 16 pt…)   |
-| `\useTNRfalse` | **Latin Modern** (LaTeX)| 11.4 pt*    | Escalados ×0.9508 (19 pt, 15.2 pt…) |
+| Parámetro | `\useTNRtrue` (Times New Roman) | `\useTNRfalse` (Latin Modern / LaTeX) |
+| :--- | :--- | :--- |
+| **Fuente** | `mathptmx` | `lmodern` |
+| **Tamaño Base** | `12pt` estándar | `11.4pt` corregido |
+| **Tamaños Carátula** | Originales de Word (20pt, 16pt, 14pt...) | Escalados por el factor `0.9508` (19pt, 15.2pt...) |
 
-> \* `scrextend` ajusta el tamaño base de 12 pt a 11.4 pt para que el texto de
-> Latin Modern ocupe físicamente el mismo espacio que Times New Roman 12 pt en Word.
-
-### ¿Por qué la corrección de escala?
-Latin Modern tiene una proporción interna mayor que Times New Roman: un texto de
-12 pt en LaTeX/LM mide **~5.29 mm** de alto, mientras que en Word/TNR mide
-**~5.03 mm**. El factor 0.9508 corrige esta diferencia para que ambas versiones
-sean equivalentes cuando se imprimen.
+#### ¿Por qué existe esta corrección?
+La fuente *Latin Modern* nativa de LaTeX tiene una altura de ojo y rasgos tipográficos mayores que *Times New Roman*. Un tamaño de 12 pt en LaTeX equivale visualmente a un tamaño de 12.6 pt en Word. Al aplicar el factor de corrección `0.9508` en el modo `\useTNRfalse` (Latin Modern), el documento mantiene la misma altura física en milímetros ($5.03\text{ mm}$ de alto real de letra para los títulos principales) que un documento Word redactado en Times New Roman 12 pt.
 
 ---
 
-## Configuración de la carátula
+## 🔀 Ramas de Trabajo (Git)
 
-Los datos de la carátula se editan en `Thesis.tex` dentro del bloque `\infothesis[...]`:
+Para una correcta transición del perfil a la tesis de grado, el proyecto utiliza dos ramas independientes:
 
-```latex
-\infothesis[
-    author     = {Nombre Completo del Autor},
-    advisor    = {M.Sc. Nombre del Tutor},
-    title      = {Título de la tesis},
-    perfil     = {Perfil de Tesis de Grado},
-    titledegree= {Tesis de Grado para obtener el Título de Licenciatura en Informática},
-    degree     = {Mención Ingeniería de Sistemas Informáticos},
-    university = {Universidad Mayor de San Andrés},
-    faculty    = {Facultad de Ciencias Puras y Naturales},
-    department = {Carrera de Informática},
-    city       = {La Paz -- Bolivia},
-    date       = {2026},
-]
-```
+* **`main`**: Contiene la estructura y textos correspondientes al **Perfil de Tesis** (13 capítulos cortos).
+* **`tesis`** (rama activa): Contiene la estructura y desarrollo de la **Tesis de Grado** en 5 capítulos consolidados.
 
-Para cambiar el logotipo:
-```latex
-\logouniversity[100mm]{image1.jpg}
+### Cambiar de Rama
+```zsh
+# Para revisar o compilar el Perfil de Tesis
+git checkout main
+
+# Para continuar escribiendo la Tesis de Grado
+git checkout tesis
 ```
 
 ---
 
-## Márgenes del documento
+## ⚙️ Compilación y Exportación Automatizada
 
-Configurados en `Thesis.tex` según normativa UMSA:
+Para compilar el documento y generar el PDF con toda la información de la rama activa y fecha del sistema, utiliza el script integrado:
 
-| Margen    | Valor  |
-|-----------|--------|
-| Izquierdo | 4.0 cm (encuadernado) |
-| Superior  | 4.0 cm |
-| Derecho   | 2.5 cm |
-| Inferior  | 2.5 cm |
+```zsh
+./compile_and_export.sh
+```
 
-La carátula usa márgenes propios definidos con `\newgeometry{...}` y restaurados
-con `\restoregeometry` al finalizar.
-
----
-
-## Numeración de páginas
-
-- **Páginas preliminares** (índices, listas): numeración **romana** (I, II, III…) en esquina inferior derecha.
-- **Cuerpo del documento**: numeración **arábiga** (1, 2, 3…) en esquina inferior derecha a 1.5 cm del borde.
-
----
-
-## Dependencias LaTeX requeridas
-
-Los siguientes paquetes deben estar disponibles en la instalación de TeX Live:
-
-| Paquete       | Uso                                      |
-|---------------|------------------------------------------|
-| `geometry`    | Configuración de márgenes                |
-| `fancyhdr`    | Estilo de encabezado/pie de página       |
-| `titlesec`    | Formato de secciones y subsecciones      |
-| `mathptmx`    | Tipografía Times New Roman (modo TNR)    |
-| `lmodern`     | Tipografía Latin Modern (modo LM)        |
-| `scrextend`   | Ajuste de tamaño base de fuente          |
-| `pdfrender`   | Efecto extra-bold en títulos de sección  |
-| `setspace`    | Control de interlineado                  |
-| `longtable`   | Tablas multipágina                       |
-| `multirow`    | Celdas combinadas en tablas              |
-| `tikz`        | Diagramas y gráficos vectoriales         |
-| `xcolor`      | Colores                                  |
-| `graphicx`    | Inclusión de imágenes                    |
-| `babel`       | Soporte de idioma español                |
-| `inputenc`    | Codificación UTF-8                       |
-| `fontenc`     | Codificación de fuente T1                |
-| `float`       | Control de posición de flotantes         |
-
-Todos estos paquetes están incluidos en una instalación estándar de **TeX Live**.
+El script se encarga de:
+1. Realizar una doble pasada de `pdflatex` para renderizar correctamente tablas, figuras, citas y el Índice de Contenidos.
+2. Identificar la rama Git en la que te encuentras (`main` o `tesis`).
+3. Almacenar el archivo PDF final en la carpeta `Exports/` con la nomenclatura:
+   `Exports/Thesis_<rama>_DD_MM_AA_HH_MM_SS.pdf`
