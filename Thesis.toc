@@ -20,22 +20,22 @@
 \contentsline {subsection}{\numberline {6.3}Justificación Social y Académica}{7}{subsection.0.6.3}%
 \contentsline {section}{\numberline {7}ALCANCES Y LÍMITES}{8}{section.0.7}%
 \contentsline {subsection}{\numberline {7.1}ALCANCES}{8}{subsection.0.7.1}%
-\contentsline {subsection}{\numberline {7.2}LÍMITES}{8}{subsection.0.7.2}%
+\contentsline {subsection}{\numberline {7.2}LÍMITES}{9}{subsection.0.7.2}%
 \contentsline {section}{\numberline {8}APORTES}{9}{section.0.8}%
 \contentsline {subsection}{\numberline {8.1}Aporte Práctico}{9}{subsection.0.8.1}%
 \contentsline {subsection}{\numberline {8.2}Aporte Teórico}{10}{subsection.0.8.2}%
 \contentsline {section}{\numberline {9}MARCO METODOLÓGICO}{10}{section.0.9}%
-\contentsline {subsection}{\numberline {9.1}Metodología de Investigación Científica}{10}{subsection.0.9.1}%
+\contentsline {subsection}{\numberline {9.1}Metodología de Investigación Científica}{11}{subsection.0.9.1}%
 \contentsline {subsection}{\numberline {9.2}Metodología para el Diseño y Desarrollo del Protocolo: Design Science Research}{11}{subsection.0.9.2}%
 \contentsline {subsection}{\numberline {9.3}Procedimiento General (Fases de Design Science Research)}{11}{subsection.0.9.3}%
 \contentsline {subsection}{\numberline {9.4}Instrumentos y Herramientas}{12}{subsection.0.9.4}%
-\contentsline {section}{\numberline {10}MARCO TEÓRICO}{12}{section.0.10}%
+\contentsline {section}{\numberline {10}MARCO TEÓRICO}{13}{section.0.10}%
 \contentsline {subsection}{\numberline {10.1}Votación Electrónica y Propiedades de Seguridad}{13}{subsection.0.10.1}%
-\contentsline {subsection}{\numberline {10.2}Criptografía de Clave Pública Clásica y su Vulnerabilidad Cuántica}{13}{subsection.0.10.2}%
+\contentsline {subsection}{\numberline {10.2}Criptografía de Clave Pública Clásica y su Vulnerabilidad Cuántica}{14}{subsection.0.10.2}%
 \contentsline {subsection}{\numberline {10.3}Criptografía Post-Cuántica Basada en Retículos}{14}{subsection.0.10.3}%
-\contentsline {subsection}{\numberline {10.4}Verificación Formal de Protocolos de Seguridad}{15}{subsection.0.10.4}%
+\contentsline {subsection}{\numberline {10.4}Verificación Formal de Protocolos de Seguridad}{14}{subsection.0.10.4}%
 \contentsline {subsection}{\numberline {10.5}Tamarin Prover}{15}{subsection.0.10.5}%
 \contentsline {subsection}{\numberline {10.6}Síntesis del Marco Teórico}{15}{subsection.0.10.6}%
-\contentsline {section}{\numberline {11}ÍNDICE TENTATIVO}{15}{section.0.11}%
-\contentsline {section}{\numberline {12}CRONOGRAMA DE AVANCE}{16}{section.0.12}%
+\contentsline {section}{\numberline {11}ÍNDICE TENTATIVO}{16}{section.0.11}%
+\contentsline {section}{\numberline {12}CRONOGRAMA DE AVANCE}{17}{section.0.12}%
 \contentsline {section}{\numberline {13}REFERENICAS}{18}{section.0.13}%

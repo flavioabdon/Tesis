@@ -1,7 +1,36 @@
 
 % -------------------------------------------------------------------------------------
 \documentclass[12pt, letterpaper, onehalfspace]{thesisUMSA}
-\usepackage[fontsize=11.4pt]{scrextend}
+
+% ==============================================================
+% SWITCH DE TIPOGRAFÍA  ── CAMBIAR SOLO ESTA LÍNEA ──
+%   \useTNRtrue   → Times New Roman  (tamaños Word originales)
+%   \useTNRfalse  → Latin Modern     (tamaños escalados ×0.9508)
+% ==============================================================
+\newif\ifuseTNR
+\useTNRtrue   % <-- CAMBIAR AQUÍ
+
+\ifuseTNR
+  % --- Times New Roman ---
+  % Paquete de tipografía (no requiere ajuste de fontsize)
+  % Los tamaños por defecto del CLS ya son los valores correctos para TNR
+\else
+  % --- Latin Modern (defecto LaTeX) ---
+  % Escala 12pt → 11.4pt para igualar físicamente Word 12pt
+  \usepackage[fontsize=11.4pt]{scrextend}
+  % Redefine los tamaños de carátula con el factor de correción 0.9508
+  \def\@cv@author@sz{15.2}      \def\@cv@author@bl{18.24}
+  \def\@cv@advisor@sz{13.3}     \def\@cv@advisor@bl{15.96}
+  \def\@cv@title@sz{15.2}       \def\@cv@title@bl{18.24}
+  \def\@cv@perfil@sz{15.2}      \def\@cv@perfil@bl{18.24}
+  \def\@cv@titledeg@sz{10.5}    \def\@cv@titledeg@bl{12.6}
+  \def\@cv@degree@sz{10.5}      \def\@cv@degree@bl{12.6}
+  \def\@cv@univ@sz{19}          \def\@cv@univ@bl{22.8}
+  \def\@cv@faculty@sz{15.2}     \def\@cv@faculty@bl{18.24}
+  \def\@cv@dept@sz{15.2}        \def\@cv@dept@bl{18.24}
+  \def\@cv@city@sz{11.4}        \def\@cv@city@bl{13.68}
+  \def\@cv@date@sz{11.4}        \def\@cv@date@bl{13.68}
+\fi
 
 \usepackage[left=4cm, top=3.9cm, right=2.5cm, bottom=2.5cm, footskip=0.5cm]{geometry}
 
@@ -87,7 +116,11 @@
 % **** --------------------------------------------------------------------------------
 % -------------------------------------------------------------------------------------
 \usepackage[T1]{fontenc}
-\usepackage{lmodern}
+\ifuseTNR
+  \usepackage{mathptmx}   % Times New Roman
+\else
+  \usepackage{lmodern}    % Latin Modern
+\fi
 \usepackage{pdfrender}
 
 \begin{document}

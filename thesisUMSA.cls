@@ -317,22 +317,39 @@
 \pagestyle{headings}%
 }
 
-\define@key{values}{author}{\def\@author{{\fontsize{15.2}{18.24}\selectfont\textbf{POR: \MakeUppercase{#1}}}\\[1ex]}}
+% ---------------------------------------------------------------
+% Macros de tamaño de tipografía para la carátula.
+% Valores por defecto: Times New Roman (sin corrección de escala).
+% Thesis.tex los redefine si se usa Latin Modern (escala ×0.9508).
+% ---------------------------------------------------------------
+\def\@cv@author@sz{16}       \def\@cv@author@bl{19.2}
+\def\@cv@advisor@sz{14}      \def\@cv@advisor@bl{16.8}
+\def\@cv@title@sz{16}        \def\@cv@title@bl{19.2}
+\def\@cv@perfil@sz{16}       \def\@cv@perfil@bl{19.2}
+\def\@cv@titledeg@sz{11}     \def\@cv@titledeg@bl{13.2}
+\def\@cv@degree@sz{11}       \def\@cv@degree@bl{13.2}
+\def\@cv@univ@sz{20}         \def\@cv@univ@bl{24}
+\def\@cv@faculty@sz{16}      \def\@cv@faculty@bl{19.2}
+\def\@cv@dept@sz{16}         \def\@cv@dept@bl{19.2}
+\def\@cv@city@sz{12}         \def\@cv@city@bl{14.4}
+\def\@cv@date@sz{12}         \def\@cv@date@bl{14.4}
+
+\define@key{values}{author}{\def\@author{{\fontsize{\@cv@author@sz}{\@cv@author@bl}\selectfont\textbf{POR: \MakeUppercase{#1}}}\\[1ex]}}
 \define@key{values}{degreeauthor}{\def\@degreeauthor{}}
 \define@key{values}{code}{\def\@code{}}
-\define@key{values}{advisor}{\def\@advisor{{\fontsize{13.3}{15.96}\selectfont\textbf{TUTOR: \MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{advisor}{\def\@advisor{{\fontsize{\@cv@advisor@sz}{\@cv@advisor@bl}\selectfont\textbf{TUTOR: \MakeUppercase{#1}}}\\[1ex]}}
 \define@key{values}{degreeadvisor}{\def\@degreeadvisor{}}
 \define@key{values}{coadvisor}{\def\@coadvisor{}}
 \define@key{values}{degreecoadvisor}{\def\@degreecoadvisor{}}
-\define@key{values}{title}{\def\@title{{\fontsize{15.2}{18.24}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
-\define@key{values}{perfil}{\def\@perfil{{\fontsize{15.2}{18.24}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
-\define@key{values}{titledegree}{\def\@titledegree{{\fontsize{10.5}{12.6}\selectfont\textbf{#1}}\\[1ex]}}
-\define@key{values}{degree}{\def\@degree{{\fontsize{10.5}{12.6}\selectfont\textbf{#1}}\\[1ex]}}
-\define@key{values}{university}{\def\@university{{\fontsize{19}{22.8}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
-\define@key{values}{faculty}{\def\@faculty{{\fontsize{15.2}{18.24}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
-\define@key{values}{department}{\def\@department{{\fontsize{15.2}{18.24}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
-\define@key{values}{city}{\def\@city{{\fontsize{11.4}{13.68}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
-\define@key{values}{date}{\def\@date{{\fontsize{11.4}{13.68}\selectfont\textbf{#1}}\\[-2ex]}}
+\define@key{values}{title}{\def\@title{{\fontsize{\@cv@title@sz}{\@cv@title@bl}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{perfil}{\def\@perfil{{\fontsize{\@cv@perfil@sz}{\@cv@perfil@bl}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{titledegree}{\def\@titledegree{{\fontsize{\@cv@titledeg@sz}{\@cv@titledeg@bl}\selectfont\textbf{#1}}\\[1ex]}}
+\define@key{values}{degree}{\def\@degree{{\fontsize{\@cv@degree@sz}{\@cv@degree@bl}\selectfont\textbf{#1}}\\[1ex]}}
+\define@key{values}{university}{\def\@university{{\fontsize{\@cv@univ@sz}{\@cv@univ@bl}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{faculty}{\def\@faculty{{\fontsize{\@cv@faculty@sz}{\@cv@faculty@bl}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{department}{\def\@department{{\fontsize{\@cv@dept@sz}{\@cv@dept@bl}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{city}{\def\@city{{\fontsize{\@cv@city@sz}{\@cv@city@bl}\selectfont\textbf{\MakeUppercase{#1}}}\\[1ex]}}
+\define@key{values}{date}{\def\@date{{\fontsize{\@cv@date@sz}{\@cv@date@bl}\selectfont\textbf{#1}}\\[-2ex]}}
 
 \def\abstractthesis{\@ifnextchar[\@valueAbstract{}}
 \def\@valueAbstract[#1]{\setkeys{values}{#1}
