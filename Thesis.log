@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.7.2)  25 AUG 2026 12:23
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.7.2)  25 AUG 2026 12:45
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1183,7 +1183,8 @@ Package fancyhdr Warning: \footskip is too small (14.22636pt):
 
 [4
 
-] (./INF_TESIS_cap1.tex) (./INF_TESIS_cap2.tex
+] (./Capitulos_perfil/INF_TESIS_cap1.tex)
+(./Capitulos_perfil/INF_TESIS_cap2.tex
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1208,7 +1209,7 @@ Package fancyhdr Warning: \footskip is too small (14.22636pt):
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
-[2]) (./INF_TESIS_cap3.tex
+[2]) (./Capitulos_perfil/INF_TESIS_cap3.tex
 Underfull \hbox (badness 1552) in paragraph at lines 12--1
 []\T1/ptm/m/n/12 El Na-tio-nal Ins-ti-tu-te of Stan-dards and Tech-no-logy (202
 4) pu-bli-có los es-tán-da-res
@@ -1236,7 +1237,7 @@ Package fancyhdr Warning: \footskip is too small (14.22636pt):
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
-[3]) (./INF_TESIS_cap4.tex
+[3]) (./Capitulos_perfil/INF_TESIS_cap4.tex
 Underfull \hbox (badness 2326) in paragraph at lines 10--11
 []\T1/ptm/m/n/12 Implementar el pro-to-co-lo pro-pues-to y un pro-to-co-lo equi
 -va-len-te ba-sa-do en
@@ -1259,7 +1260,7 @@ Underfull \hbox (badness 3428) in paragraph at lines 20--21
 ni-ca, ve-ri-fi-can-do su
  []
 
-) (./INF_TESIS_cap5.tex
+) (./Capitulos_perfil/INF_TESIS_cap5.tex
 Underfull \hbox (badness 4181) in paragraph at lines 14--15
 []\T1/ptm/b/n/12 Variable in-de-pen-dien-te: \T1/ptm/m/n/12 El pro-to-co-lo de 
 vo-ta-ción elec-tró-ni-ca ba-sa-do en
@@ -1291,7 +1292,7 @@ Overfull \hbox (8.4955pt too wide) in alignment at lines 25--61
  [] [] [] [] [] [] [] 
  []
 
-) (./INF_TESIS_cap6.tex
+) (./Capitulos_perfil/INF_TESIS_cap6.tex
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1315,7 +1316,7 @@ Underfull \hbox (badness 1400) in paragraph at lines 9--10
 ra-mien-tas y es-tán-da-res
  []
 
-) (./INF_TESIS_cap7.tex
+) (./Capitulos_perfil/INF_TESIS_cap7.tex
 Underfull \hbox (badness 3271) in paragraph at lines 13--1
 \T1/ptm/m/n/12 aca-dé-mi-ca que tra-ba-ja en sis-te-mas de vo-ta-ción elec-tró-
 ni-ca y en la apli-ca-ción
@@ -1356,7 +1357,7 @@ Underfull \hbox (badness 1681) in paragraph at lines 20--21
 i-cos clá-si-cos o
  []
 
-) (./INF_TESIS_cap8.tex
+) (./Capitulos_perfil/INF_TESIS_cap8.tex
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1374,7 +1375,7 @@ Underfull \hbox (badness 2277) in paragraph at lines 13--14
 crip-to-grá-fi-cos clá-si-cos y
  []
 
-) (./INF_TESIS_cap9.tex
+) (./Capitulos_perfil/INF_TESIS_cap9.tex
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1448,7 +1449,7 @@ Underfull \hbox (badness 2351) in paragraph at lines 30--31
 a-ten-cia du-ran-te las
  []
 
-) (./INF_TESIS_cap10.tex
+) (./Capitulos_perfil/INF_TESIS_cap10.tex
 Underfull \hbox (badness 1248) in paragraph at lines 32--1
 []\T1/ptm/m/n/12 La des-crip-ción es-pe-cí-fi-ca del len-gua-je de pro-gra-ma-c
 ión, bi-blio-te-cas crip-to-grá-fi-cas,
@@ -1474,13 +1475,13 @@ Package fancyhdr Warning: \footskip is too small (14.22636pt):
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
-[14]) (./INF_TESIS_cap11.tex
+[14]) (./Capitulos_perfil/INF_TESIS_cap11.tex
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
-[15]) (./INF_TESIS_cap12.tex
+[15]) (./Capitulos_perfil/INF_TESIS_cap12.tex
 Underfull \hbox (badness 3179) in paragraph at lines 21--21
 []| \T1/ptm/m/n/7 Fa-se De-sa-rro-llo: Mo-de-la-do for-mal de
  []
@@ -1505,7 +1506,7 @@ Package fancyhdr Warning: \footskip is too small (14.22636pt):
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
-[16]) (./INF_TESIS_cap13.tex
+[16]) (./Capitulos_perfil/INF_TESIS_cap13.tex
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1552,13 +1553,13 @@ Package rerunfilecheck Info: File `Thesis.out' has not changed.
 (rerunfilecheck)             Checksum: D7ECA8419D79A4C83427DCF79A233A4C;7714.
  ) 
 Here is how much of TeX's memory you used:
- 27178 strings out of 467525
- 499061 string characters out of 5418983
- 943170 words of memory out of 5000000
+ 27179 strings out of 467525
+ 500625 string characters out of 5418983
+ 943303 words of memory out of 5000000
  55481 multiletter control sequences out of 15000+600000
  712645 words of font info for 146 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 90i,13n,104p,1158b,798s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,13n,104p,1175b,798s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 ></usr/local/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sftt1200.pfb><
 /usr/local/texlive/2026/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local

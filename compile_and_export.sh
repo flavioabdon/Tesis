@@ -1,7 +1,8 @@
 #!/bin/zsh
 # =============================================================
 # compile_and_export.sh
-# Compila Thesis.tex y exporta el PDF con fecha/hora al directorio Exports/
+# Compila Thesis.tex y exporta el PDF con rama git + fecha/hora
+# Formato: Exports/Thesis_<rama>_DD_MM_AA_HH_MM_SS.pdf
 # Uso: ./compile_and_export.sh
 # =============================================================
 
@@ -15,6 +16,9 @@ mkdir -p "$EXPORT_DIR"
 
 # Nombre del archivo fuente
 SOURCE="Thesis"
+
+# Rama git actual (si no está en un repo git, usa "sin-rama")
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "sin-rama")
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  Compilando $SOURCE.tex ..."
@@ -49,9 +53,9 @@ if [ ! -f "$SOURCE.pdf" ]; then
   exit 1
 fi
 
-# Generar nombre de exportación con fecha y hora: Thesis_DD_MM_AA_HH_MM_SS
+# Generar nombre: Thesis_<rama>_DD_MM_AA_HH_MM_SS.pdf
 TIMESTAMP=$(date +"%d_%m_%y_%H_%M_%S")
-EXPORT_NAME="Thesis_${TIMESTAMP}.pdf"
+EXPORT_NAME="Thesis_${BRANCH}_${TIMESTAMP}.pdf"
 EXPORT_PATH="$EXPORT_DIR/$EXPORT_NAME"
 
 # Copiar el PDF al directorio de exportación
@@ -59,7 +63,8 @@ cp "$SOURCE.pdf" "$EXPORT_PATH"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "   Compilación exitosa."
+echo "   Compilacion exitosa."
+echo "   Rama: $BRANCH"
 echo "   Exportado como:"
 echo "     $EXPORT_PATH"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
