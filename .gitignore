@@ -5,3 +5,16 @@ imagesThesis
 residual
 scripts
 Exports
+
+# Archivos temporales de compilación LaTeX
+*.aux
+*.log
+*.toc
+*.lof
+*.lot
+*.out
+*.synctex.gz
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
