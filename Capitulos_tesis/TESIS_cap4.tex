@@ -1,0 +1,23 @@
+\chapter{PRUEBA DE HIPÓTESIS}
+
+Este capítulo aborda la fase de Evaluación del marco de \textit{Design Science Research} (DSR). Se presentan los resultados obtenidos mediante el análisis formal y empírico del protocolo propuesto, contrastando su seguridad y su rendimiento computacional frente al protocolo de control clásico basado en RSA/ECDSA para comprobar la hipótesis de investigación formulada en esta tesis.
+
+\section{Fase de Evaluación: Verificación del Cumplimiento de los Lemmas Formales}
+% TODO: Mostrar y discutir los resultados arrojados por Tamarin Prover.
+% Confirmar si los lemmas fueron demostrados válidos (proven) o si se encontraron contraejemplos.
+Se reporta el resultado de la verificación automatizada del modelo del protocolo en Tamarin Prover. Se detalla el estado de la verificación para cada uno de los lemmas lógicos formalizados (confidencialidad, integridad y autenticidad).
+
+\section{Medición de Indicadores de Rendimiento (Latencia, Tiempo de Ejecución, Consumo de Memoria)}
+% TODO: Presentar tablas o gráficos con las mediciones empíricas de rendimiento 
+% bajo distintos números de votantes simulados.
+Se presentan las métricas de rendimiento recolectadas durante las simulaciones experimentales, evaluando el comportamiento temporal de las operaciones del protocolo post-cuántico bajo diferentes cargas de trabajo (número de votaciones concurrentes).
+
+\section{Comparación del Protocolo Propuesto frente al Protocolo Basado en RSA/ECDSA}
+% TODO: Presentar un análisis comparativo entre la implementación post-cuántica y la clásica.
+% Evaluar la diferencia de tiempos en términos de porcentaje y latencia absoluta.
+Se realiza un análisis comparativo y estadístico directo de los indicadores de rendimiento entre el protocolo propuesto y el clásico (RSA/ECDSA), determinando el costo computacional adicional que representa la migración hacia criptografía post-cuántica.
+
+\section{Contraste de la Hipótesis de Investigación}
+% TODO: Aplicar la prueba estadística correspondiente (ej. t-Student para muestras independientes) 
+% para confirmar si se cumple el umbral del 30% de latencia máxima adicional planteado en H1.
+Se realiza el contraste formal de la hipótesis de investigación (\textbf{H1}) con base en los resultados de la verificación de lemmas en Tamarin Prover y el análisis de significancia estadística de la latencia medida.

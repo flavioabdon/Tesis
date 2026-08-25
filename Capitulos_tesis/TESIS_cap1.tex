@@ -1,0 +1,163 @@
+\chapter{MARCO INTRODUCTORIO}
+
+\section{Introducción}
+Los procesos electorales constituyen uno de los mecanismos mediante los cuales las sociedades democráticas expresan su voluntad colectiva, y su legitimidad depende de la integridad y la confidencialidad de la información que generan (Baloglu et al., 2021). La incorporación de tecnologías digitales al voto ha trasladado al ámbito electoral los riesgos propios de la seguridad informática.
+
+La seguridad de la votación electrónica se ha estudiado principalmente sobre esquemas de clave pública como RSA. Baloglu et al. (2021) emplearon verificación formal para analizar propiedades de integridad, confidencialidad y autenticidad en Helios y Belenios, evidenciando que estas dependen tanto de las primitivas criptográficas como del diseño del protocolo. Sin embargo, estos esquemas son vulnerables, en teoría, al algoritmo cuántico de Shor. Como respuesta, el NIST publicó en 2024 los estándares FIPS 203 y FIPS 204, sustentados en problemas sobre retículos algebraicos --- Module-LWE y Module-SIS.
+
+Esta transición hacia primitivas post-cuánticas aún no se refleja en los antecedentes sobre votación electrónica basada en blockchain, incluidos los del ámbito universitario boliviano (Churata Sonco, 2020; Fernández Tristán, 2021), lo que evidencia una brecha vigente incluso a nivel internacional.
+
+Ramos y Gómez (2023) realizaron una revisión sistemática de protocolos de votación electrónica basados en criptografía post-cuántica, sistematizando las propuestas reportadas en la literatura internacional. Dicho trabajo se circunscribe a la síntesis del estado del arte y no propone, diseña ni verifica formalmente un protocolo propio, ni aborda el contexto universitario boliviano; constituye un antecedente secundario que evidencia el interés creciente por el área, sin cubrir el vacío relativo al diseño y verificación formal de un protocolo específico en dicho contexto.
+
+El presente trabajo, \textit{Protocolo para la votación electrónica basado en criptografía post-cuántica de retículos}, se sitúa en dicho espacio, estructurado bajo \textit{Design Science Research} de Vaishnavi y Kuechler (2004): se diseña un protocolo con las primitivas ML-KEM y ML-DSA, modelado en \textit{Tamarin Prover} bajo el modelo Dolev--Yao, y se contrasta cuasi-experimentalmente con un protocolo equivalente basado en RSA/ECDSA.
+
+\section{Antecedentes}
+La investigación sobre la seguridad de la votación electrónica se ha desarrollado, durante la última década, principalmente en torno a la verificación formal de protocolos sustentados en criptografía de clave pública clásica, como RSA y ElGamal. A partir de 2024, con la publicación de los primeros estándares de criptografía post-cuántica por parte del NIST, este campo comienza a extenderse hacia el análisis de protocolos que incorporan primitivas resistentes a la computación cuántica, un desplazamiento aún incipiente tanto en la literatura internacional como en los antecedentes producidos en el contexto boliviano.
+
+En el ámbito internacional, Baloglu, Bursuc, Mauw y Pang (2021) analizaron la verificabilidad electoral de los sistemas Helios y Belenios mediante verificación formal automatizada con la herramienta Tamarin Prover. El objetivo fue evaluar sistemáticamente propiedades de integridad, confidencialidad y autenticidad bajo distintos escenarios de corrupción. Los resultados permitieron formalizar nuevas garantías de seguridad y detectar ataques no identificados previamente en versiones desplegadas de dichos sistemas, lo que evidencia la utilidad de la verificación formal como método de análisis en protocolos de votación electrónica.
+
+En el ámbito nacional, y particularmente en la Universidad Mayor de San Andrés, Fernández Tristán (2021) propuso un sistema de votación electrónica sustentado en tecnología blockchain, orientado a mejorar la seguridad y la transparencia del registro de votos. En un contexto universitario boliviano distinto al de la UMSA, Churata Sonco (2020) desarrolló, en la Universidad Pública de El Alto, un sistema de votación electrónica basado en protocolos blockchain combinados con cifrado RSA, aplicado como caso de estudio en un proceso electoral universitario. Ambos trabajos comparten el uso de blockchain como mecanismo de integridad del registro de votos, mientras que la protección criptográfica de los datos permanece basada en esquemas clásicos de clave pública, sin considerar la vulnerabilidad de dichos esquemas frente a la computación cuántica.
+
+En el plano de las revisiones de literatura, Ramos y Gómez (2023) realizaron una revisión sistemática de protocolos de votación electrónica basados en criptografía post-cuántica, mediante la cual sistematizaron y compararon las propuestas reportadas en la literatura internacional sobre esta línea de investigación. Dicho trabajo se circunscribe a la síntesis del estado del arte y no propone, diseña ni verifica formalmente un protocolo propio, ni aborda su aplicación en el contexto universitario boliviano; constituye, por tanto, un antecedente de carácter secundario que evidencia el interés creciente por el área, pero no cubre el vacío relativo al diseño y verificación formal de un protocolo específico de votación electrónica en dicho contexto.
+
+El National Institute of Standards and Technology (2024) publicó los estándares FIPS 203 y FIPS 204, referencia técnica que, a la fecha, no ha sido aplicada en los antecedentes nacionales revisados. No se han identificado, dentro de la literatura consultada, antecedentes recientes que aborden específicamente la aplicación de criptografía post-cuántica al diseño de protocolos de votación electrónica, lo que constituye el espacio de investigación en el que se sitúa el presente trabajo.
+
+\section{Planteamiento del Problema}
+
+\subsection{Problema Central}
+¿Cómo preservar la integridad y mantener la confidencialidad en sistemas de votación electrónica frente a amenazas de seguridad actuales y futuras?
+
+\subsection{Problemas Secundarios}
+Para el desarrollo del trabajo de investigación se identificaron los siguientes problemas:
+
+\begin{itemize}
+	\item La mayoría de los sistemas de votación electrónica actuales fueron diseñados pensando en amenazas de hoy, sin considerar cómo podrían evolucionar los ataques en los próximos años.
+	\item No se ha determinado cuánto tiempo adicional tomaría emitir y contar un voto si se usa un cifrado más seguro, lo cual genera dudas sobre su viabilidad práctica.
+	\item Los sistemas de votación electrónica actuales solo se prueban con herramientas externas básicas, lo cual hace que no se sepa con certeza si resistirían un ataque de una computadora cuántica.
+	\item Los estudios que revisan la seguridad de los sistemas de votación suelen enfocarse en que el voto se cuente correctamente, sin revisar si el cifrado resistiría una computadora cuántica, dejando ambos aspectos sin evaluarse juntos.
+	\item Los desarrolladores de sistemas de votación priorizan la facilidad de uso y la rapidez del sistema, lo cual hace que la seguridad a largo plazo del cifrado quede en segundo plano.
+\end{itemize}
+
+\section{Objetivos}
+
+\subsection{Objetivo General}
+Diseñar un protocolo de votación electrónica basado en criptografía post-cuántica de retículos que preserve la integridad y mantenga la confidencialidad del proceso de votación frente a amenazas de seguridad actuales y futuras. 
+
+\subsection{Objetivos Específicos}
+\begin{itemize}
+	\item Implementar el protocolo propuesto y un protocolo equivalente basado en RSA/ECDSA, para medir la latencia de ambos bajo distintos números de votantes.
+	\item Comparar el rendimiento del protocolo propuesto con el de un protocolo equivalente basado en RSA/ECDSA, determinando si su latencia no excede en más del 30\% a la de este último.
+	\item Verificar el cumplimiento de las propiedades de integridad y confidencialidad del protocolo modelado.
+	\item Fundamentar teóricamente un protocolo de votación electrónica basado en criptografía post-cuántica, capaz de resistir amenazas de seguridad actuales y futuras.
+	\item Determinar el rendimiento del protocolo propuesto en términos de latencia y tiempo de ejecución, para establecer su viabilidad práctica frente a un cifrado más seguro.
+	\item Modelar formalmente el protocolo de votación electrónica, verificando su resistencia frente a un adversario con capacidades cuánticas.
+\end{itemize}
+
+\section{Hipótesis}
+
+\subsection{Planteamiento de la Hipótesis}
+Considerando el problema principal del actual trabajo de investigación se plantea la siguiente hipótesis:
+
+\textbf{H1.} ``El protocolo de votación electrónica basado en criptografía post-cuántica de retículos coadyuvará a mantener la integridad y la confidencialidad del proceso de votación, verificadas formalmente mediante Tamarin Prover, con una latencia que no exceda en más del 30\% a la de un protocolo equivalente basado en RSA/ECDSA.''
+
+\subsection{Definición de Variables}
+De acuerdo a la hipótesis podemos extraer las siguientes variables:
+
+\begin{itemize}
+	\item \textbf{Variable independiente:} El protocolo de votación electrónica basado en criptografía post-cuántica de retículos.
+	\item \textbf{Variable dependiente 1:} Mantenimiento de la integridad y la confidencialidad del proceso de votación.
+	\item \textbf{Variable dependiente 2:} Latencia del protocolo, con un umbral de aceptación de hasta el 30\% adicional respecto al protocolo basado en RSA/ECDSA.
+\end{itemize}
+
+\subsection{Matriz de Operacionalización de Variables}
+\begingroup
+\renewcommand{\arraystretch}{1.3}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{2.0cm}|>{\raggedright\arraybackslash}p{1.6cm}|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}p{1.9cm}|>{\raggedright\arraybackslash}p{1.9cm}|}
+	\caption{Matriz de operacionalización de variables.}
+	\label{tab:operacionalizacion_tesis}\\
+	\hline
+	\textbf{Variable} &
+	\textbf{Tipo} &
+	\textbf{Definición Conceptual} &
+	\textbf{Definición Operacional} &
+	\textbf{Indicadores} &
+	\textbf{Unidad / Valor} &
+	\textbf{Instrumento / Fuente} \\
+	\hline
+	El protocolo de votación electrónica basado en criptografía post-cuántica de retículos &
+	Independiente &
+	Esquema criptográfico sobre el cual se sustenta el protocolo de votación electrónica &
+	Naturaleza del esquema criptográfico aplicado al protocolo diseñado &
+	Tipo de protocolo empleado &
+	Categórica: post-cuántico (FIPS 203/204) / clásico (RSA/ECDSA) &
+	Diseño experimental comparativo / implementación del protocolo \\
+	\hline
+	Mantenimiento de la integridad y la confidencialidad del proceso de votación &
+	Dependiente &
+	Correspondencia entre el voto emitido y el contabilizado, y secreto del contenido del voto frente a partes no autorizadas &
+	Cumplimiento formal de las propiedades de integridad y confidencialidad en el modelo del protocolo &
+	Cumplimiento de los lemmas de integridad y de confidencialidad &
+	Verdadero / Falso &
+	Tamarin Prover \\
+	\hline
+	Latencia del protocolo &
+	Dependiente &
+	Comportamiento del protocolo en el tiempo requerido para ejecutar sus operaciones criptográficas &
+	Medición empírica de la latencia; se considera aceptable cuando no exceda en más del 30\% a la del protocolo RSA/ECDSA &
+	Tiempo de firma, verificación y encapsulamiento &
+	ms (umbral: $\le$ 30\% adicional respecto a RSA/ECDSA) &
+	Implementación y simulación con distinto número de votantes \\
+	\hline
+\end{longtable}
+\par\vspace{-12pt}
+\begin{center}
+	\footnotesize\textit{Fuente: Elaboración propia.}
+\end{center}
+\endgroup
+
+\section{Justificación}
+
+\subsection{Justificación Científica y Tecnológica}
+La adopción de esquemas criptográficos de clave pública basados en la dificultad de factorización de enteros, como RSA, en sistemas de votación electrónica, no ha sido examinada de forma generalizada frente a la disponibilidad de estándares criptográficos post-cuánticos, según los antecedentes revisados. El National Institute of Standards and Technology (2024) publicó los estándares FIPS 203 y FIPS 204, cuya seguridad se sustenta en problemas matemáticos distintos de los vulnerables a algoritmos cuánticos como el de Shor (Shor, 1997). La investigación se relaciona con el estado del arte en verificación formal de protocolos de votación electrónica, en el cual Baloglu et al. (2021) evidenciaron que las propiedades de seguridad de un protocolo dependen tanto de sus primitivas criptográficas como de su diseño formal. El estudio se sitúa en el vacío identificado, a nivel internacional, entre la disponibilidad de dichos estándares y su aplicación específica al diseño y verificación formal de protocolos de votación electrónica.
+
+\subsection{Justificación Metodológica}
+El problema de investigación plantea una comparación entre dos tipos de protocolo criptográfico —post-cuántico y clásico— respecto de variables de integridad, confidencialidad y rendimiento, lo que corresponde a un diseño que combina análisis formal y medición empírica. La verificación formal mediante Tamarin Prover permite evaluar propiedades de integridad, confidencialidad y autenticidad de forma sistemática, siguiendo un enfoque metodológico ya aplicado en el análisis de protocolos de votación electrónica como Helios y Belenios (Baloglu et al., 2021). La medición de indicadores de rendimiento mediante implementación y simulación permite obtener valores comparables entre el protocolo post-cuántico propuesto y un protocolo equivalente basado en RSA/ECDSA. El procedimiento descrito, al basarse en herramientas y estándares documentados públicamente, resulta reproducible en investigaciones posteriores que aborden otros protocolos criptográficos o contextos de aplicación distintos al proceso de votación electrónica.
+
+\subsection{Justificación Social y Académica}
+El conocimiento generado por la investigación resulta pertinente para la comunidad académica que trabaja en sistemas de votación electrónica y en la aplicación de criptografía post-cuántica a protocolos con requerimientos de integridad y confidencialidad, un área de interés creciente en la literatura internacional. En el ámbito local, el estudio examina un problema no abordado en los antecedentes universitarios bolivianos identificados. Los resultados de la verificación formal y de la comparación de rendimiento entre esquemas post-cuánticos y clásicos podrían constituir una referencia para investigaciones futuras que analicen la transición de otros protocolos de comunicación hacia primitivas criptográficas resistentes a la computación cuántica, dentro del área de la seguridad informática.
+
+\section{Alcances y Límites}
+
+\subsection{Alcances}
+\begin{itemize}
+	\item El diseño de un protocolo de votación electrónica que incorpora las primitivas criptográficas post-cuánticas especificadas en los estándares FIPS 203 y FIPS 204.
+	\item La fundamentación teórica del protocolo a partir de la dificultad de los problemas Module-LWE y Module-SIS.
+	\item El modelado formal del protocolo mediante Tamarin Prover bajo el modelo de atacante Dolev-Yao.
+	\item La verificación de las propiedades de confidencialidad, integridad y autenticidad mediante lemmas formales.
+	\item La implementación del protocolo con fines de simulación, orientada a medir indicadores de rendimiento --- latencia, tiempo de ejecución y consumo de memoria --- bajo distintos números de votantes.
+	\item La comparación de dichos indicadores y propiedades de seguridad con un protocolo equivalente basado en RSA/ECDSA.
+	\item El alcance metodológico se limita al análisis de la capa criptográfica del proceso de votación electrónica.
+\end{itemize}
+
+\subsection{Límites}
+\begin{itemize}
+	\item El análisis formal y simbólico del protocolo mediante Tamarin Prover, en el cual las operaciones criptográficas especificadas en los estándares FIPS 203 y FIPS 204 se abstraen simbólicamente, sin modelar la estructura matemática subyacente de los retículos algebraicos.
+	\item La implementación del protocolo no constituye un sistema de votación electrónica desplegado en un proceso electoral real, sino un entorno de simulación orientado a la medición de indicadores de rendimiento.
+	\item La arquitectura de almacenamiento o registro distribuido de los votos no forma parte del estudio.
+	\item La reproducibilidad exacta de las mediciones de rendimiento no está garantizada, dado que factores como el conjunto de instrucciones del procesador y las optimizaciones de la biblioteca afectan significativamente la latencia de los algoritmos post-cuánticos (Kannwischer et al., 2019).
+	\item La comparación con el protocolo clásico se restringe a un esquema basado en RSA/ECDSA, sin extenderse a otros esquemas criptográficos clásicos o post-cuánticos adicionales.
+\end{itemize}
+
+\section{Aportes}
+
+\subsection{Aporte Práctico}
+La investigación desarrolla el diseño de un protocolo de votación electrónica que incorpora primitivas criptográficas post-cuánticas conforme a los estándares FIPS 203 y FIPS 204, junto con su modelo formal en Tamarin Prover y una implementación orientada a la medición de indicadores de rendimiento. Dicho protocolo, junto con su modelo formal, podría emplearse como referencia para el análisis o el diseño de sistemas de votación electrónica que requieran evaluar propiedades de integridad y confidencialidad bajo primitivas criptográficas resistentes a la computación cuántica.
+
+Dentro del alcance definido, la implementación desarrollada permite obtener mediciones de latencia, tiempo de ejecución y consumo de memoria bajo distintos números de votantes, las cuales podrían utilizarse como punto de comparación para evaluaciones de rendimiento en protocolos criptográficos aplicados a otros procesos con requerimientos similares de integridad y confidencialidad.
+
+\subsection{Aporte Teórico}
+La investigación sistematiza, dentro del contexto de la votación electrónica, la relación entre los estándares criptográficos post-cuánticos FIPS 203 y FIPS 204 y las propiedades de integridad, confidencialidad y autenticidad definidas mediante verificación formal, siguiendo un enfoque metodológico ya aplicado en el análisis de otros protocolos de votación electrónica. El modelo formal desarrollado en Tamarin Prover, bajo el modelo de atacante Dolev-Yao, podría constituir una referencia para investigaciones posteriores orientadas a la verificación formal de protocolos que incorporen primitivas criptográficas post-cuánticas.
+
+Los resultados de la comparación entre el protocolo post-cuántico propuesto y un protocolo equivalente basado en RSA/ECDSA podrían complementar la literatura existente sobre el rendimiento comparado de esquemas criptográficos clásicos y post-cuánticos, en un dominio de aplicación específico como el de la votación electrónica.

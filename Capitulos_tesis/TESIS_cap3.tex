@@ -1,0 +1,40 @@
+\chapter{MARCO APLICATIVO}
+
+El presente capítulo detalla la fase de Sugerencia y la fase de Desarrollo bajo el marco metodológico de \textit{Design Science Research} (DSR). Se describe la especificación de diseño del protocolo criptográfico propuesto, su fundamentación matemática, el modelado formal de sus propiedades de seguridad en \textit{Tamarin Prover} y la descripción de su implementación de referencia tanto para el esquema post-cuántico como para el clásico.
+
+\section{Fase de Sugerencia: Formulación de la Propuesta del Protocolo}
+% TODO: Describir aquí la arquitectura y flujo general del protocolo propuesto.
+% Detallar los roles de los participantes (votante, autoridad electoral, urna digital, etc.)
+% y los pasos del intercambio de mensajes y claves.
+En esta sección se formula la propuesta de solución mediante el diseño del protocolo de votación electrónica. Se establece el flujo de mensajes y la secuencia de transacciones criptográficas para la emisión, cifrado, firma y registro del voto.
+
+\section{Fase de Desarrollo: Fundamentación Teórica del Protocolo (Module-LWE / Module-SIS)}
+% TODO: Detallar la fundamentación matemática basada en retículos.
+% Explicar cómo se integran el cifrado ML-KEM (basado en Module-LWE) y 
+% la firma digital ML-DSA (basada en Module-SIS) en la protección del voto.
+Se fundamentan las primitivas criptográficas del protocolo, describiendo el uso de ML-KEM para el establecimiento de claves y el secreto del voto (confidencialidad), y de ML-DSA para la firma digital de la boleta y del registro (integridad y autenticidad).
+
+\section{Modelado Formal del Protocolo en Tamarin Prover}
+% TODO: Presentar la especificación simbólica del protocolo en el lenguaje de reglas de Tamarin.
+% Describir las reglas de transición de estado para los agentes y el canal de comunicación.
+Se detalla la traducción del protocolo al lenguaje formal de Tamarin Prover, especificando las reglas para la generación de claves, el canal de comunicación bajo el modelo de atacante Dolev-Yao, y las transiciones del proceso de votación.
+
+\section{Formalización de Lemmas de Confidencialidad, Integridad y Autenticidad}
+% TODO: Escribir los lemmas matemáticos/lógicos en sintaxis de Tamarin Prover.
+% Explicar qué representa cada lemma (ej. secreto de la opción elegida, no falsificación, etc.).
+Se formalizan las propiedades de seguridad mediante lemmas lógicos de primer orden en Tamarin Prover, permitiendo la verificación automática de:
+\begin{itemize}
+	\item Secreto del voto (confidencialidad).
+	\item Integridad del conteo (el voto del elector no es alterado).
+	\item Autenticidad (solo votantes registrados y válidos pueden emitir un voto).
+\end{itemize}
+
+\section{Implementación de Referencia del Protocolo Propuesto}
+% TODO: Detallar el lenguaje de programación y las bibliotecas post-cuánticas utilizadas 
+% (ej. liboqs, OpenSSL 3.x, etc.) para programar el protocolo propuesto.
+Se describe el desarrollo de la implementación de referencia del protocolo post-cuántico propuesto, especificando la configuración del entorno de software, el manejo de claves en memoria y la estructura del código.
+
+\section{Implementación del Protocolo Equivalente Basado en RSA/ECDSA}
+% TODO: Describir la implementación de control clásica (RSA y ECDSA)
+% utilizada para comparar el rendimiento.
+Con el propósito de evaluar comparativamente el rendimiento del protocolo propuesto, se detalla la implementación clásica de control utilizando el estándar clásico RSA para el cifrado y ECDSA para la firma digital.

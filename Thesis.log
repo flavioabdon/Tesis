@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.7.2)  25 AUG 2026 12:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.7.2)  25 AUG 2026 12:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1078,7 +1078,7 @@ Package caption Info: End \AtBeginDocument code.
 Package pdfrender Info: New color stack `TextRenderingMode' = 1 on input line 1
 44.
 Package pdfrender Info: New color stack `LineWidth' = 2 on input line 144.
-<image1.jpg, id=165, 117.43875pt x 233.87375pt>
+<image1.jpg, id=206, 117.43875pt x 233.87375pt>
 File: image1.jpg Graphic file (type jpg)
 <use image1.jpg>
 Package pdftex.def Info: image1.jpg  used on input line 144.
@@ -1143,7 +1143,13 @@ Package fancyhdr Warning: \footskip is too small (14.22636pt):
 
 
 
-])
+]
+Underfull \hbox (badness 10000) in paragraph at lines 31--31
+ [][] [][]\T1/ptm/m/n/12 Criptografía Post-Cuántica Ba-sa-da en Re-tícu-los (Mo
+dule-LWE, 
+ []
+
+)
 \tf@toc=\write5
 \openout5 = `Thesis.toc'.
 
@@ -1183,8 +1189,8 @@ Package fancyhdr Warning: \footskip is too small (14.22636pt):
 
 [4
 
-] (./Capitulos_perfil/INF_TESIS_cap1.tex)
-(./Capitulos_perfil/INF_TESIS_cap2.tex
+] (./Capitulos_tesis/TESIS_cap1.tex
+Cap\'{\i }tulo 1.
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1195,11 +1201,13 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.5 
-     [1
+l.10 R
+      amos y GÃ³mez (2023) realizaron una revisiÃ³n sistemÃ¡tica de protocol...
+[1
+
 
 ]
-Underfull \hbox (badness 1270) in paragraph at lines 6--7
+Underfull \hbox (badness 1270) in paragraph at lines 17--18
 []\T1/ptm/m/n/12 En el ám-bi-to in-ter-na-cio-nal, Ba-lo-glu, Bur-suc, Mauw y P
 ang (2021) ana-li-za-ron la
  []
@@ -1209,27 +1217,33 @@ Package fancyhdr Warning: \footskip is too small (14.22636pt):
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
-[2]) (./Capitulos_perfil/INF_TESIS_cap3.tex
-Underfull \hbox (badness 1552) in paragraph at lines 12--1
+[2]
+Underfull \hbox (badness 1552) in paragraph at lines 23--24
 []\T1/ptm/m/n/12 El Na-tio-nal Ins-ti-tu-te of Stan-dards and Tech-no-logy (202
 4) pu-bli-có los es-tán-da-res
  []
 
 
-Underfull \hbox (badness 1776) in paragraph at lines 12--1
+Underfull \hbox (badness 1776) in paragraph at lines 23--24
 \T1/ptm/m/n/12 FIPS 203 y FIPS 204, re-fe-ren-cia téc-ni-ca que, a la fe-cha, n
 o ha si-do apli-ca-da
  []
 
 
-Underfull \hbox (badness 2600) in paragraph at lines 12--1
+Underfull \hbox (badness 2600) in paragraph at lines 23--24
 \T1/ptm/m/n/12 en los an-te-ce-den-tes na-cio-na-les re-vi-sa-dos. No se han id
 en-ti-fi-ca-do, den-tro de la
  []
 
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 1
+
+Package fancyhdr Warning: \footskip is too small (14.22636pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\footskip}{14.49998pt}.
+
+[3]
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 3
 4.
-(/usr/local/texlive/2026/texmf-dist/tex/latex/psnfss/ts1ptm.fd
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
 
@@ -1237,33 +1251,22 @@ Package fancyhdr Warning: \footskip is too small (14.22636pt):
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
-[3]) (./Capitulos_perfil/INF_TESIS_cap4.tex
-Underfull \hbox (badness 2326) in paragraph at lines 10--11
+[4]
+Underfull \hbox (badness 2326) in paragraph at lines 48--49
 []\T1/ptm/m/n/12 Implementar el pro-to-co-lo pro-pues-to y un pro-to-co-lo equi
 -va-len-te ba-sa-do en
  []
 
 
-Underfull \hbox (badness 2653) in paragraph at lines 16--17
+Underfull \hbox (badness 2653) in paragraph at lines 51--52
 []\T1/ptm/m/n/12 Fundamentar teó-ri-ca-men-te un pro-to-co-lo de vo-ta-ción ele
 c-tró-ni-ca ba-sa-do en
  []
 
 
-Package fancyhdr Warning: \footskip is too small (14.22636pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\footskip}{14.49998pt}.
-
-[4]
-Underfull \hbox (badness 3428) in paragraph at lines 20--21
+Underfull \hbox (badness 3428) in paragraph at lines 53--54
 []\T1/ptm/m/n/12 Modelar for-mal-men-te el pro-to-co-lo de vo-ta-ción elec-tró-
 ni-ca, ve-ri-fi-can-do su
- []
-
-) (./Capitulos_perfil/INF_TESIS_cap5.tex
-Underfull \hbox (badness 4181) in paragraph at lines 14--15
-[]\T1/ptm/b/n/12 Variable in-de-pen-dien-te: \T1/ptm/m/n/12 El pro-to-co-lo de 
-vo-ta-ción elec-tró-ni-ca ba-sa-do en
  []
 
 
@@ -1272,140 +1275,131 @@ Package fancyhdr Warning: \footskip is too small (14.22636pt):
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
 [5]
-Overfull \hbox (1.66446pt too wide) in paragraph at lines 49--49
+Underfull \hbox (badness 4181) in paragraph at lines 67--68
+[]\T1/ptm/b/n/12 Variable in-de-pen-dien-te: \T1/ptm/m/n/12 El pro-to-co-lo de 
+vo-ta-ción elec-tró-ni-ca ba-sa-do en
+ []
+
+
+Overfull \hbox (1.66446pt too wide) in paragraph at lines 101--101
 \T1/ptm/m/n/8 con-fi-den-cia-li-dad|  
  []
 
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 56.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 108.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 56.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 108.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 56.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 108.
 
-Overfull \hbox (2.55235pt too wide) in paragraph at lines 57--57
+Overfull \hbox (2.55235pt too wide) in paragraph at lines 109--109
 \T1/ptm/m/n/8 en-cap-su-la-mien-to|  
  []
 
 
-Overfull \hbox (8.4955pt too wide) in alignment at lines 25--61
+Overfull \hbox (8.4955pt too wide) in alignment at lines 77--113
  [] [] [] [] [] [] [] 
  []
 
-) (./Capitulos_perfil/INF_TESIS_cap6.tex
+
+ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
 [6]
-Underfull \hbox (badness 6842) in paragraph at lines 9--10
-\T1/ptm/m/n/12 crip-to-grá-fi-co ^^Vpost-cuántico y clá-si-co^^V res-pec-to de 
-va-ria-bles de in-te-gri-dad,
- []
-
-
-Underfull \hbox (badness 1596) in paragraph at lines 9--10
-\T1/ptm/m/n/12 en-tre el pro-to-co-lo post-cuántico pro-pues-to y un pro-to-co-
-lo equi-va-len-te ba-sa-do en
- []
-
-
-Underfull \hbox (badness 1400) in paragraph at lines 9--10
-\T1/ptm/m/n/12 RSA/ECDSA. El pro-ce-di-mien-to des-cri-to, al ba-sar-se en he-r
-ra-mien-tas y es-tán-da-res
- []
-
-) (./Capitulos_perfil/INF_TESIS_cap7.tex
-Underfull \hbox (badness 3271) in paragraph at lines 13--1
-\T1/ptm/m/n/12 aca-dé-mi-ca que tra-ba-ja en sis-te-mas de vo-ta-ción elec-tró-
-ni-ca y en la apli-ca-ción
- []
-
-
-Underfull \hbox (badness 5064) in paragraph at lines 13--1
-\T1/ptm/m/n/12 de crip-to-gra-fía post-cuántica a pro-to-co-los con re-que-ri-m
-ien-tos de in-te-gri-dad y
- []
-
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
 [7]
+Underfull \hbox (badness 6842) in paragraph at lines 126--127
+\T1/ptm/m/n/12 crip-to-grá-fi-co ^^Vpost-cuántico y clá-si-co^^V res-pec-to de 
+va-ria-bles de in-te-gri-dad,
+ []
+
+
+Underfull \hbox (badness 1596) in paragraph at lines 126--127
+\T1/ptm/m/n/12 en-tre el pro-to-co-lo post-cuántico pro-pues-to y un pro-to-co-
+lo equi-va-len-te ba-sa-do en
+ []
+
+
+Underfull \hbox (badness 1400) in paragraph at lines 126--127
+\T1/ptm/m/n/12 RSA/ECDSA. El pro-ce-di-mien-to des-cri-to, al ba-sar-se en he-r
+ra-mien-tas y es-tán-da-res
+ []
+
+
+Underfull \hbox (badness 3271) in paragraph at lines 129--130
+\T1/ptm/m/n/12 aca-dé-mi-ca que tra-ba-ja en sis-te-mas de vo-ta-ción elec-tró-
+ni-ca y en la apli-ca-ción
+ []
+
+
+Underfull \hbox (badness 5064) in paragraph at lines 129--130
+\T1/ptm/m/n/12 de crip-to-gra-fía post-cuántica a pro-to-co-los con re-que-ri-m
+ien-tos de in-te-gri-dad y
+ []
+
+
+Underfull \hbox (badness 1127) in paragraph at lines 129--130
+\T1/ptm/m/n/12 con-fi-den-cia-li-dad, un área de in-te-rés cre-cien-te en la li
+-te-ra-tu-ra in-ter-na-cio-nal. En el
+ []
+
+
+Underfull \hbox (badness 1831) in paragraph at lines 129--130
+\T1/ptm/m/n/12 ám-bi-to lo-cal, el es-tu-dio exa-mi-na un pro-ble-ma no abor-da
+-do en los an-te-ce-den-tes
+ []
+
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
 [8]
-Underfull \hbox (badness 1590) in paragraph at lines 19--20
-\T1/ptm/m/n/12 da-do que fac-to-res co-mo el con-jun-to de ins-truc-cio-nes del
- pro-ce-sa-dor y las
- []
-
-
-Underfull \hbox (badness 1460) in paragraph at lines 19--20
-\T1/ptm/m/n/12 op-ti-mi-za-cio-nes de la bi-blio-te-ca afec-tan sig-ni-fi-ca-ti
--va-men-te la la-ten-cia de los
- []
-
-
-Underfull \hbox (badness 1681) in paragraph at lines 20--21
-\T1/ptm/m/n/12 en RSA/ECDSA, sin ex-ten-der-se a otros es-que-mas crip-to-grá-f
-i-cos clá-si-cos o
- []
-
-) (./Capitulos_perfil/INF_TESIS_cap8.tex
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
 [9]
-Underfull \hbox (badness 1648) in paragraph at lines 13--14
-\T1/ptm/m/n/12 pro-to-co-lo equi-va-len-te ba-sa-do en RSA/ECDSA po-drían com-p
-le-men-tar la li-te-ra-tu-ra
+Underfull \hbox (badness 1590) in paragraph at lines 149--150
+\T1/ptm/m/n/12 da-do que fac-to-res co-mo el con-jun-to de ins-truc-cio-nes del
+ pro-ce-sa-dor y las
  []
 
 
-Underfull \hbox (badness 2277) in paragraph at lines 13--14
-\T1/ptm/m/n/12 exis-ten-te so-bre el ren-di-mien-to com-pa-ra-do de es-que-mas 
-crip-to-grá-fi-cos clá-si-cos y
+Underfull \hbox (badness 1460) in paragraph at lines 149--150
+\T1/ptm/m/n/12 op-ti-mi-za-cio-nes de la bi-blio-te-ca afec-tan sig-ni-fi-ca-ti
+-va-men-te la la-ten-cia de los
  []
 
-) (./Capitulos_perfil/INF_TESIS_cap9.tex
+
+Underfull \hbox (badness 1681) in paragraph at lines 150--151
+\T1/ptm/m/n/12 en RSA/ECDSA, sin ex-ten-der-se a otros es-que-mas crip-to-grá-f
+i-cos clá-si-cos o
+ []
+
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
-[10]
-Underfull \hbox (badness 1521) in paragraph at lines 7--7
-|[]\T1/ptm/b/n/12 Metodología pa-ra el Di-se-ño y De-sa-rro-llo del Pro-to-co-l
-o: De-sign Scien-ce
+[10]) (./Capitulos_tesis/TESIS_cap2.tex
+Underfull \hbox (badness 1648) in paragraph at lines 163--1
+\T1/ptm/m/n/12 pro-to-co-lo equi-va-len-te ba-sa-do en RSA/ECDSA po-drían com-p
+le-men-tar la li-te-ra-tu-ra
  []
 
 
-LaTeX Warning: Citation `Vaishnavi2004' on page 11 undefined on input line 8.
-
-
-Underfull \hbox (badness 1033) in paragraph at lines 17--18
-[]\T1/ptm/b/n/12 Sugerencia. \T1/ptm/m/n/12 Se for-mu-la la pro-pues-ta ini-cia
-l de so-lu-ción me-dian-te el di-se-ño
- []
-
-
-Underfull \hbox (badness 2913) in paragraph at lines 17--18
-\T1/ptm/m/n/12 in-cor-po-ran-do los al-go-rit-mos ML-KEM y ML-DSA, fun-da-men-t
-a-dos en los
- []
-
-
-Underfull \hbox (badness 2512) in paragraph at lines 19--20
-\T1/ptm/m/n/12 Asi-mis-mo, se for-ma-li-zan las pro-pie-da-des de con-fi-den-ci
-a-li-dad, in-te-gri-dad y
+Underfull \hbox (badness 2277) in paragraph at lines 163--1
+\T1/ptm/m/n/12 exis-ten-te so-bre el ren-di-mien-to com-pa-ra-do de es-que-mas 
+crip-to-grá-fi-cos clá-si-cos y
  []
 
 
@@ -1414,53 +1408,24 @@ Package fancyhdr Warning: \footskip is too small (14.22636pt):
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
 [11]
-Underfull \hbox (badness 2781) in paragraph at lines 21--22
-[]\T1/ptm/b/n/12 Evaluación. \T1/ptm/m/n/12 Se ve-ri-fi-ca el cum-pli-mien-to d
-e las pro-pie-da-des de se-gu-ri-dad
- []
-
-
-Underfull \hbox (badness 2088) in paragraph at lines 21--22
-\T1/ptm/m/n/12 de-mos-tran-do los \T1/ptm/m/it/12 lem-mas \T1/ptm/m/n/12 de-fi-
-ni-dos pre-via-men-te y se mi-den in-di-ca-do-res de
- []
-
-
-Underfull \hbox (badness 2698) in paragraph at lines 23--24
-[]\T1/ptm/b/n/12 Conclusión. \T1/ptm/m/n/12 Se con-so-li-dan y ana-li-zan los r
-e-sul-ta-dos ob-te-ni-dos du-ran-te la
- []
-
-
-Underfull \hbox (badness 1168) in paragraph at lines 28--29
-[]\T1/ptm/m/n/12 El aná-li-sis for-mal del pro-to-co-lo se rea-li-za me-dian-te
- \T1/ptm/m/it/12 Ta-ma-rin Pro-ver\T1/ptm/m/n/12 , he-rra-mien-ta
- []
-
-
-Underfull \hbox (badness 1009) in paragraph at lines 30--31
-\T1/ptm/m/n/12 mien-tras que las mé-tri-cas de ren-di-mien-to se re-gis-tra-rán
- me-dian-te ins-tru-men-tos de
- []
-
-
-Underfull \hbox (badness 2351) in paragraph at lines 30--31
-\T1/ptm/m/n/12 me-di-ción de tiem-po de eje-cu-ción, con-su-mo de me-mo-ria y l
-a-ten-cia du-ran-te las
- []
-
-) (./Capitulos_perfil/INF_TESIS_cap10.tex
-Underfull \hbox (badness 1248) in paragraph at lines 32--1
-[]\T1/ptm/m/n/12 La des-crip-ción es-pe-cí-fi-ca del len-gua-je de pro-gra-ma-c
-ión, bi-blio-te-cas crip-to-grá-fi-cas,
- []
-
+Cap\'{\i }tulo 2.
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
-[12]
+[12
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 10--10
+|[]\T1/ptm/b/n/12 CRIPTOGRAFÍA DE CLA-VE PÚ-BLI-CA CLÁ-SI-CA Y SU
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 13--13
+|[]\T1/ptm/b/n/12 CRIPTOGRAFÍA POST-CUÁNTICA BA-SA-DA EN RE-TÍCU-LOS
+ []
+
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1468,37 +1433,26 @@ Package fancyhdr Warning: \footskip is too small (14.22636pt):
 
 [13]
 
-LaTeX Warning: `h' float specifier changed to `ht'.
+Package fancyhdr Warning: \footskip is too small (14.22636pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
+[14]) (./Capitulos_tesis/TESIS_cap3.tex
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
-[14]) (./Capitulos_perfil/INF_TESIS_cap11.tex
+[15]
+Cap\'{\i }tulo 3.
 
-Package fancyhdr Warning: \footskip is too small (14.22636pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\footskip}{14.49998pt}.
-
-[15]) (./Capitulos_perfil/INF_TESIS_cap12.tex
-Underfull \hbox (badness 3179) in paragraph at lines 21--21
-[]| \T1/ptm/m/n/7 Fa-se De-sa-rro-llo: Mo-de-la-do for-mal de
+Underfull \hbox (badness 2181) in paragraph at lines 5--5
+|[]\T1/ptm/b/n/12 FASE DE SU-GE-REN-CIA: FOR-MU-LA-CIÓN DE LA PRO-PUES-TA DEL
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 23--23
-[]| \T1/ptm/m/n/7 Fa-se De-sa-rro-llo: Im-ple-men-ta-ción de
- []
-
-
-Underfull \hbox (badness 1668) in paragraph at lines 23--23
-\T1/ptm/m/n/7 re-fe-ren-cia del pro-to-co-lo pro-pues-to y del
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 31--31
-[]| \T1/ptm/m/n/7 Pro-ce-sa-mien-to es-ta-dís-ti-co com-pa-ra-ti-vo
+Underfull \hbox (badness 10000) in paragraph at lines 11--11
+|[]\T1/ptm/b/n/12 FASE DE DE-SA-RRO-LLO: FUN-DA-MEN-TA-CIÓN TEÓ-RI-CA DEL
  []
 
 
@@ -1506,7 +1460,19 @@ Package fancyhdr Warning: \footskip is too small (14.22636pt):
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
-[16]) (./Capitulos_perfil/INF_TESIS_cap13.tex
+[16
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 22--22
+|[]\T1/ptm/b/n/12 FORMALIZACIÓN DE LEM-MAS DE CON-FI-DEN-CIA-LI-DAD,
+ []
+
+
+Underfull \hbox (badness 2111) in paragraph at lines 37--37
+|[]\T1/ptm/b/n/12 IMPLEMENTACIÓN DEL PRO-TO-CO-LO EQUI-VA-LEN-TE BA-SA-DO EN
+ []
+
+) (./Capitulos_tesis/TESIS_cap4.tex
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1518,23 +1484,75 @@ Package fancyhdr Warning: \footskip is too small (14.22636pt):
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
-[18{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc
+[18]
+Cap\'{\i }tulo 4.
+
+Underfull \hbox (badness 2894) in paragraph at lines 13--14
+[]\T1/ptm/m/n/12 Se pre-sen-tan las mé-tri-cas de ren-di-mien-to re-co-lec-ta-d
+as du-ran-te las si-mu-la-cio-nes
+ []
+
+
+Package fancyhdr Warning: \footskip is too small (14.22636pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\footskip}{14.49998pt}.
+
+[19
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 15--15
+|[]\T1/ptm/b/n/12 COMPARACIÓN DEL PRO-TO-CO-LO PRO-PUES-TO FREN-TE AL
+ []
+
+
+Underfull \hbox (badness 1939) in paragraph at lines 18--19
+\T1/ptm/m/n/12 en-tre el pro-to-co-lo pro-pues-to y el clá-si-co (RSA/ECDSA), d
+e-ter-mi-nan-do el cos-to
+ []
+
+) (./Capitulos_tesis/TESIS_cap5.tex
+
+Package fancyhdr Warning: \footskip is too small (14.22636pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\footskip}{14.49998pt}.
+
+[20]
+Cap\'{\i }tulo 5.
+
+Package fancyhdr Warning: \footskip is too small (14.22636pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\footskip}{14.49998pt}.
+
+[21
+
+]) (./Capitulos_tesis/TESIS_cap13.tex
+
+Package fancyhdr Warning: \footskip is too small (14.22636pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\footskip}{14.49998pt}.
+
+[22{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc
 }]
 Overfull \hbox (11.49084pt too wide) in paragraph at lines 37--38
 \T1/cmtt/m/n/12 nist-[]releases-[]first-[]3-[]finalized-[]post-[]quantum-[]encr
 yption-[]standards$[]  
  []
 
-)
 
 Package fancyhdr Warning: \footskip is too small (14.22636pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\footskip}{14.49998pt}.
 
-[19]
+[23])
+
+Package fancyhdr Warning: \footskip is too small (14.22636pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\footskip}{14.49998pt}.
+
+[24]
 \openout2 = `apendice.aux'.
 
- (./apendice.tex [20
+ (./apendice.tex [25
 
 
 ]) (./Thesis.aux
@@ -1545,30 +1563,26 @@ LaTeX Info: Redefining \% on input line 12.
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
 Package rerunfilecheck Info: File `Thesis.out' has not changed.
-(rerunfilecheck)             Checksum: D7ECA8419D79A4C83427DCF79A233A4C;7714.
+(rerunfilecheck)             Checksum: D411C4B0B9A3DC580215694E036745A9;11358.
  ) 
 Here is how much of TeX's memory you used:
- 27179 strings out of 467525
- 500625 string characters out of 5418983
- 943303 words of memory out of 5000000
- 55481 multiletter control sequences out of 15000+600000
- 712645 words of font info for 146 fonts, out of 8000000 for 9000
+ 27133 strings out of 467525
+ 498196 string characters out of 5418983
+ 906857 words of memory out of 5000000
+ 55446 multiletter control sequences out of 15000+600000
+ 707475 words of font info for 140 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 90i,13n,104p,1175b,798s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,12n,104p,1136b,798s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 ></usr/local/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sftt1200.pfb><
 /usr/local/texlive/2026/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local
 /texlive/2026/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2
 026/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Thesis.pdf (25 pages, 167435 bytes).
+Output written on Thesis.pdf (30 pages, 169046 bytes).
 PDF statistics:
- 378 PDF objects out of 1000 (max. 8388607)
- 336 compressed objects within 4 object streams
- 65 named destinations out of 1000 (max. 500000)
- 338 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 451 PDF objects out of 1000 (max. 8388607)
+ 403 compressed objects within 5 object streams
+ 79 named destinations out of 1000 (max. 500000)
+ 418 words of extra memory for PDF output out of 10000 (max. 10000000)
 
