@@ -832,7 +832,7 @@
     \fi
     \@smalltitletrue
     \if@spanish
-        \renewcommand{\contentsname}{\'Indice general}
+        \renewcommand{\contentsname}{\'INDICE}
     \fi
     \def\chapternumberorfigure{\;\,\includegraphics[height=49pt]{imagesThesis/table_of_contents_graph}\;\,}
     \chapter{\contentsname}

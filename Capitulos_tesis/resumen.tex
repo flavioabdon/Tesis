@@ -1,0 +1,29 @@
+\chapter*{RESUMEN}
+\addcontentsline{toc}{chapter}{Resumen}
+
+% Escribir el resumen en español aquí (máximo 250 palabras aprox.)
+
+El presente trabajo de investigación propone el diseño de un protocolo de votación electrónica basado en criptografía post-cuántica de retículos, con el objetivo de preservar la integridad y la confidencialidad del proceso de votación frente a amenazas de seguridad actuales y futuras.
+
+La criptografía de clave pública clásica, empleada en la mayoría de los sistemas de votación electrónica actuales, es vulnerable al algoritmo cuántico de Shor. En respuesta, el National Institute of Standards and Technology (NIST) publicó en 2024 los estándares FIPS 203 y FIPS 204, sustentados en los problemas matemáticos Module-LWE y Module-SIS sobre retículos algebraicos.
+
+El protocolo propuesto integra el mecanismo de encapsulamiento de claves ML-KEM (FIPS 203) para garantizar la confidencialidad del voto, y el esquema de firma digital ML-DSA (FIPS 204) para asegurar la integridad y la autenticidad de cada boleta emitida. El modelado formal del protocolo se realiza mediante Tamarin Prover, bajo el modelo de atacante Dolev-Yao, verificando el cumplimiento de propiedades de seguridad a través de lemmas lógicos. Adicionalmente, se implementa una versión de referencia del protocolo y se compara su rendimiento computacional con un protocolo equivalente basado en RSA/ECDSA, determinando si la latencia del esquema post-cuántico no excede en más del 30\% a la del protocolo clásico.
+
+\bigskip
+\noindent\textbf{Palabras clave:} criptografía post-cuántica, votación electrónica, ML-KEM, ML-DSA, retículos, verificación formal, Tamarin Prover, FIPS 203, FIPS 204.
+
+\bigskip
+
+\chapter*{ABSTRACT}
+\addcontentsline{toc}{chapter}{Abstract}
+
+% Write the English abstract here (approx. 250 words)
+
+This research proposes the design of an electronic voting protocol based on lattice-based post-quantum cryptography, with the aim of preserving the integrity and confidentiality of the voting process against current and future security threats.
+
+Classical public-key cryptography, used in most current electronic voting systems, is vulnerable to Shor's quantum algorithm. In response, the National Institute of Standards and Technology (NIST) published in 2024 the FIPS 203 and FIPS 204 standards, grounded in the mathematical problems Module-LWE and Module-SIS over algebraic lattices.
+
+The proposed protocol integrates the ML-KEM key encapsulation mechanism (FIPS 203) to guarantee vote confidentiality, and the ML-DSA digital signature scheme (FIPS 204) to ensure the integrity and authenticity of each ballot cast. The formal modeling of the protocol is carried out using Tamarin Prover under the Dolev-Yao adversary model, verifying the compliance of security properties through logical lemmas. Additionally, a reference implementation of the protocol is developed and its computational performance is compared against an equivalent RSA/ECDSA-based protocol, determining whether the post-quantum scheme's latency does not exceed 30\% of the classical protocol's latency.
+
+\bigskip
+%\noindent\textbf{Keywords:} post-quantum cryptography, electronic voting, ML-KEM, ML-DSA, lattices, formal verification, Tamarin Prover, FIPS 203, FIPS 204.
