@@ -1,0 +1,41 @@
+\section{Funciones Esponja y el Rol Estructural del Estándar FIPS 202}
+% =============================================================================
+
+Un aspecto técnico fundamental en el diseño de los esquemas post-cuánticos sobre retículos es su estrecha interdependencia con el estándar \textbf{FIPS 202} (\textit{SHA-3 Standard: Permutation-Based Hash and Extendable-Output Functions}) (NIST, 2015).
+
+\subsection{La Construcción de Esponja Keccak}
+
+FIPS 202 especifica una familia de primitivas basadas en la permutación criptográfica Keccak-$f[1600]$, estructuradas bajo el modelo de absorción y exprimido de esponja (\textit{sponge construction}):
+\begin{itemize}
+	\item \textbf{Funciones Hash Fijas:} SHA3-256 y SHA3-512, utilizadas para condensar mensajes de entrada arbitraria a una huella digital determinista.
+	\item \textbf{Funciones de Salida Extensible (XOF):} SHAKE128 y SHAKE256, las cuales permiten generar un flujo pseudoaleatorio continuo de longitud arbitraria a partir de una semilla inicial.
+\end{itemize}
+
+\subsection{Interconexión con FIPS 203 y FIPS 204}
+
+Lejos de constituir un componente accesorio, las primitivas de FIPS 202 actúan como cimientos operativos indispensables en los algoritmos del protocolo de votación:
+
+\begin{table}[htbp]
+	\centering
+	\small
+	\begin{tabular}{p{2.6cm} p{2.8cm} p{8.2cm}}
+		\toprule
+		\textbf{Estándar} & \textbf{Primitiva FIPS 202} & \textbf{Función Criptográfica en el Protocolo} \\
+		\midrule
+		\multirow{3}{2.6cm}{\textbf{ML-KEM (FIPS 203)}} & SHAKE128 & Expansión determinista de la matriz pública $\mathbf{A}$ desde semilla $\rho$ (32 bytes). \\
+		& SHAKE256 & Función pseudoaleatoria (PRF) para muestrear vectores de ruido $\mathbf{e}, \mathbf{e}_1, e_2$. \\
+		& SHA3-256 / 512 & Derivación de clave y hash de confirmación en la transformada Fujisaki-Okamoto. \\
+		\midrule
+		\multirow{3}{2.6cm}{\textbf{ML-DSA (FIPS 204)}} & SHAKE128 & Mapeo determinista de la matriz $\mathbf{A} \in R_q^{k \times \ell}$ a partir de $\rho$. \\
+		& SHAKE256 & Expansión de máscaras $\mathbf{y}$ y muestreo del polinomio desafío $c$. \\
+		& SHAKE256 & Generación del hash contextual del voto $\mu = H(\text{tr} \,\|\, M)$. \\
+		\bottomrule
+	\end{tabular}
+	\caption{Rol operativo de las funciones del estándar FIPS 202 en ML-KEM y ML-DSA.}
+	\label{tab:fips202_roles}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia a partir de NIST FIPS 202, 203 y 204.}}
+\end{table}
+
+En particular, la capacidad de expandir matrices completas $k \times k$ en $R_q$ mediante SHAKE128 a partir de una única semilla de 256 bits permite que la clave pública de ML-KEM-768 se compacte a tan solo 1184 bytes, haciendo factible la transmisión ágil de las papeletas electorales sobre redes de datos universitarias.
+
+% =============================================================================

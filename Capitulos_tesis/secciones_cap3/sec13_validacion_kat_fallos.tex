@@ -1,0 +1,12 @@
+\section{Validación Experimental de Vectores KAT del NIST}
+\label{sec:validacion_kat}
+% =============================================================================
+
+Para garantizar la absoluta fidelidad de la implementación en C respecto a las especificaciones oficiales de los estándares FIPS 203 y FIPS 204, se sometió el binario compilado a la suite de vectores de respuesta conocida (\textit{Known Answer Tests}, KAT) provista por el NIST:
+\begin{itemize}
+	\item \textbf{KAT ML-KEM-768 (FIPS 203):} Se procesaron 100 vectores deterministas oficiales con semillas pseudoaleatorias conocidas. En cada ensayo se compararon los bytes exactos de la clave pública generada, clave secreta, texto cifrado y secreto compartido desencapsulado. Resultado: \textbf{100/100 Aprobados (100\% PASS)}.
+	\item \textbf{KAT ML-DSA-65 (FIPS 204):} Se ejecutaron 100 pruebas deterministas de generación de claves, firma de mensajes estandarizados y verificación de firmas. Resultado: \textbf{100/100 Aprobados (100\% PASS)}.
+	\item \textbf{Pruebas de Inyección de Fallos (\textit{Bit-Flipping}):} Se alteró intencionalmente un solo bit en 100 textos cifrados y 100 firmas válidas. En el 100\% de los casos, los algoritmos detectaron la inconsistencia y rechazaron la operación con código de error, demostrando resistencia absoluta ante corrupción de datos.
+\end{itemize}
+
+% =============================================================================

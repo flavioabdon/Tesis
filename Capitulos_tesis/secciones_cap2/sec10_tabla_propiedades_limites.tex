@@ -1,0 +1,37 @@
+% =============================================================================
+\section{Matriz de Propiedades de Seguridad del Protocolo y Límites Declarados}
+\label{sec:tabla_propiedades_limites}
+% =============================================================================
+
+Con el propósito de delimitar de manera rigurosa y transparente el alcance del protocolo de votación electrónica diseñado, el Cuadro \ref{tab:propiedades_limites_protocolo} sistematiza cada una de las propiedades de seguridad fundamentales, indicando su nivel de cobertura en el sistema, los mecanismos criptográficos u operativos implementados y la evidencia formal o experimental que las sustenta.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\small
+\caption{Matriz de correspondencia entre propiedades de seguridad y evidencia formal.}
+\label{tab:propiedades_limites_protocolo}
+\begin{tabularx}{\textwidth}{|>{\bfseries}p{3.2cm}|c|>{\raggedright\arraybackslash}p{4.2cm}|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{Propiedad} & \textbf{¿Cubierta?} & \textbf{Mecanismo Tecnológico} & \textbf{Tipo de Evidencia / Soporte} \\
+\hline
+Confidencialidad del Voto & Sí (parcial) & KEM-DEM híbrido: ML-KEM-768 + AES-256-GCM (AAD) & Lema formal \texttt{secreto\_voto} en Tamarin y reducción IND-CCA2 \\
+\hline
+Integridad del Sufragio & Sí & Firma post-cuántica ML-DSA-65 (FIPS 204) & Lema \texttt{integridad\_voto} y reducción EUF-CMA de Module-SIS \\
+\hline
+Autenticidad y Anti-Replay & Sí & Credencial institucional AR y acuerdo inyectivo & Lema \texttt{autenticidad\_votante} en Tamarin Prover \\
+\hline
+Unicidad y Elegibilidad & Sí & Control de estado lineal en base de datos (transacción atómica) & Lema formal \texttt{unicidad} (modelo de estado no mutable) \\
+\hline
+Verificabilidad E2E Individual & Parcial & Recibo firmado con digest criptográfico SHA3-256 & Pruebas funcionales de auditoría mediante hash de recibo \\
+\hline
+Verificabilidad Universal & No & Requiere tablón público auditable completo o Mix-Net & Límite declarado del diseño actual (trabajo futuro) \\
+\hline
+Libertad de Recibo (Receipt-Freeness) & No & No se proporcionan credenciales simuladas ni claves alternas & Límite explícito declarado (Sección \ref{sec:alcances_limites_tesis}) \\
+\hline
+Resistencia a la Coacción (Coercion Resistance) & No & No se contempla revocación ni emisión múltiple anuladora & Límite explícito declarado (Sección \ref{sec:alcances_limites_tesis}) \\
+\hline
+\end{tabularx}
+\end{table}
+
+Esta formalización separa de manera inequívoca lo que la plataforma garantiza matemática y computacionalmente de las propiedades avanzadas contra coerción que escapan al modelo formal implementado, dotando a la investigación de honestidad académica y precisión técnica.

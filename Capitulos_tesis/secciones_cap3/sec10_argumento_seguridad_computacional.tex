@@ -1,0 +1,36 @@
+% =============================================================================
+\section{Argumento de Seguridad Computacional y Reducción Criptográfica}
+\label{sec:argumento_seguridad_computacional}
+% =============================================================================
+
+Mientras que la verificación simbólica en Tamarin Prover demuestra que la lógica del flujo de mensajes está libre de ataques estructurales bajo el modelo Dolev--Yao, la resistencia efectiva frente a computadoras cuánticas se fundamenta mediante un \textbf{argumento de reducción de seguridad computacional}. Este argumento demuestra que cualquier adversario en tiempo polinomial probabilístico que vulnere una propiedad de seguridad del protocolo puede ser transformado de forma constructiva en un algoritmo capaz de romper los supuestos matemáticos de las primitivas subyacentes:
+
+\begin{enumerate}
+	\item \textbf{Paso 1: Confidencialidad del Sufragio (Reducción IND-CCA2 + AEAD):}
+	El cifrado del voto sigue el paradigma estándar KEM-DEM (\textit{Key Encapsulation Mechanism / Data Encapsulation Mechanism}) de Cramer y Shoup (2003):
+	\begin{itemize}
+		\item El mecanismo KEM (ML-KEM-768, FIPS 203) garantiza seguridad IND-CCA2 (indistinguibilidad frente a ataques adaptativos de texto cifrado elegido), basada en la dureza del problema Module-LWE sobre retículos algebraicos.
+		\item El mecanismo DEM (AES-256-GCM) proporciona confidencialidad semántica (IND-CPA) e integridad de texto cifrado (INT-CTXT).
+		\item \textit{Teorema de Composición:} Si un adversario $\mathcal{A}$ pudiese distinguir el contenido de dos votos $m_0, m_1$ con ventaja no despreciable $\epsilon$, entonces $\mathcal{A}$ podría ser utilizado para distinguir el secreto $K$ derivado por ML-KEM-768 de una cadena puramente aleatoria, o para vulnerar la etiqueta de autenticación GMAC de AES-GCM. Dado que la ventaja contra ML-KEM-768 se reduce a Module-LWE con $\epsilon \le \text{negl}(\lambda)$ frente a algoritmos cuánticos de Shor y Grover, la confidencialidad del sufragio es computacionalmente post-cuántica.
+	\end{itemize}
+
+	\item \textbf{Paso 2: Integridad y Autenticidad (Reducción EUF-CMA):}
+	La autenticidad de la credencial emitida por la AR y la integridad de la boleta firmada por el votante se sustentan en el esquema ML-DSA-65 (FIPS 204), el cual satisface la noción de seguridad EUF-CMA (\textit{Existential Unforgeability under Chosen Message Attacks}):
+	\begin{itemize}
+		\item La seguridad de ML-DSA-65 se reduce asintóticamente a la dureza del problema Module-SIS sobre retículos en dimensión $k \times \ell = 6 \times 5$.
+		\item Ningún adversario que intercepte boletas firmadas en la red puede generar una boleta válida alternativa o falsificar la firma de un ciudadano legítimo sin resolver una instancia de Module-SIS de norma pequeña ($\|\mathbf{z}\|_\infty < \gamma_1 - \beta$), lo cual se conjetura intratable para computadoras cuánticas.
+	\end{itemize}
+
+	\item \textbf{Paso 3: Unicidad del Sufragio por Control de Estado en el Servidor:}
+	La prevención del doble voto no descansa en supuestos criptográficos computacionales, sino en el control de estado transaccional atómico en el servidor de base de datos.
+	\begin{itemize}
+		\item La verificación formal en Tamarin modela este control mediante la transición lineal estricta $\text{NoHaVotado}(id_V) \to \text{YaVoto}(id_V)$.
+		\item En el prototipo físico, esto se materializa mediante una transacción atómica con nivel de aislamiento serializable:
+		\begin{verbatim}
+UPDATE padron_electoral 
+SET ha_votado = TRUE, fecha_sufragio = NOW() 
+WHERE id_votante = ? AND id_eleccion = ? AND ha_votado = FALSE;
+		\end{verbatim}
+		Si la sentencia afecta cero filas (porque el votante ya sufragó en una solicitud previa concurrente o idéntica), el servidor rechaza inmediatamente la boleta sin invocar operaciones de ánfora, garantizando unicidad estricta y absoluta independencia de la capacidad de cómputo del adversario.
+	\end{itemize}
+\end{enumerate}

@@ -1,0 +1,44 @@
+\section{Criptografía de Clave Pública Clásica y su Vulnerabilidad Cuántica}
+% =============================================================================
+
+Los esquemas criptográficos de clave pública empleados históricamente de forma predominante en sistemas de votación electrónica ---entre ellos RSA y ECDSA--- sustentan su seguridad computacional en dos problemas aritméticos fundamentales: la factorización de enteros grandes y el logaritmo discreto sobre grupos finitos o curvas elípticas.
+
+\subsection{El Mecanismo Clásico de RSA}
+
+Propuesto por Rivest, Shamir y Adleman (1978), el esquema RSA basa su asimetría en que la multiplicación de dos números primos grandes $p$ y $q$ es trivialmente calculable en milisegundos, mientras que la operación inversa ---factorizar el módulo compuesto $N = p \cdot q$--- requiere un esfuerzo computacional que crece de forma subexponencial con el algoritmo clásico más avanzado conocido (la Criba General del Cuerpo de Números, GNFS).
+
+La función de cifrado de un mensaje $m \in \mathbb{Z}_N$ bajo el exponente público $e$ se define como:
+\begin{equation}
+	c \equiv m^e \pmod N
+\end{equation}
+Para descifrar, el receptor legítimo requiere calcular el exponente privado $d \equiv e^{-1} \pmod{\phi(N)}$, donde $\phi(N) = (p-1)(q-1)$ corresponde a la función totiente de Euler:
+\begin{equation}
+	m \equiv c^d \pmod N
+\end{equation}
+Un atacante que intente deducir $d$ únicamente a partir de la información pública $(e, N)$ se enfrenta a la necesidad insalvable de factorizar $N$. Para una clave estándar de RSA-2048, el esfuerzo computacional clásico demandaría miles de años de cómputo en supercomputadoras actuales.
+
+\subsection{El Algoritmo Cuántico de Shor}
+
+La seguridad de RSA y de los esquemas basados en curvas elípticas colapsa teóricamente frente al advenimiento de una computadora cuántica de escala suficiente debido al algoritmo de factorización y logaritmo discreto formulado por Peter Shor (1997).
+
+Shor demostró que el problema de factorizar un entero compuesto $N$ puede reducirse matemáticamente al problema de encontrar el \textit{período} $r$ de una función periódica definida sobre el grupo multiplicativo $(\mathbb{Z}_N)^*$:
+\begin{equation}
+	f(x) = a^x \pmod N
+\end{equation}
+donde $a$ es un entero coprimo con $N$. Dicha función es estrictamente periódica: satisface $f(x + r) = f(x)$, con $a^r \equiv 1 \pmod N$. Si el período $r$ es par, se cumple:
+\begin{equation}
+	a^r - 1 \equiv (a^{r/2} - 1)(a^{r/2} + 1) \equiv 0 \pmod N
+\end{equation}
+Al calcular el máximo común divisor mediante el algoritmo euclídeo clásico:
+\begin{equation}
+	\gcd(a^{r/2} - 1, N) \quad \text{y} \quad \gcd(a^{r/2} + 1, N)
+\end{equation}
+se obtienen de forma no trivial los factores primos $p$ y $q$ de $N$.
+
+Mientras que una computadora clásica requiere tiempo exponencial o subexponencial para hallar dicho período evaluando combinaciones punto por punto, una computadora cuántica ejecuta la \textbf{Transformada Cuántica de Fourier} (\textit{Quantum Fourier Transform}, QFT). La QFT aprovecha el fenómeno de superposición cuántica y la interferencia destructiva para concentrar las amplitudes de probabilidad en las frecuencias resonantes correspondientes al período $r$, resolviendo la búsqueda en tiempo polinomial estricto $\mathcal{O}((\log N)^3)$.
+
+\subsection{La Amenaza ``Cosechar Ahora, Descifrar Después''}
+
+La vulnerabilidad cuántica no representa únicamente un riesgo futuro, sino una amenaza operativa inmediata clasificada por las agencias de estandarización técnica bajo el término \textit{Harvest Now, Decrypt Later} (HNDL; cosechar ahora para descifrar después) (Chen et al., 2016). Un adversario puede interceptar y almacenar pasivamente las boletas y credenciales electorales transmitidas en los procesos democráticos contemporáneos cifrados con RSA o ECDSA. Una vez que se cuente con un procesador cuántico tolerante a fallos (\textit{Fault-Tolerant Quantum Computer}, FTQC), dicho registro histórico podrá ser descifrado retroactivamente, vulnerando permanentemente la confidencialidad del voto de los electores.
+
+% =============================================================================

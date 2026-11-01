@@ -9,7 +9,7 @@ Esta transición hacia primitivas post-cuánticas aún no se refleja en los ante
 
 Ramos y Gómez (2023) realizaron una revisión sistemática de protocolos de votación electrónica basados en criptografía post-cuántica, sistematizando las propuestas reportadas en la literatura internacional. Dicho trabajo se circunscribe a la síntesis del estado del arte y no propone, diseña ni verifica formalmente un protocolo propio, ni aborda el contexto universitario boliviano; constituye un antecedente secundario que evidencia el interés creciente por el área, sin cubrir el vacío relativo al diseño y verificación formal de un protocolo específico en dicho contexto.
 
-El presente trabajo, \textit{Protocolo para la votación electrónica basado en criptografía post-cuántica de retículos}, se sitúa en dicho espacio, estructurado bajo \textit{Design Science Research} de Vaishnavi y Kuechler (2004): se diseña un protocolo con las primitivas ML-KEM y ML-DSA, modelado en \textit{Tamarin Prover} bajo el modelo Dolev--Yao, y se contrasta cuasi-experimentalmente con un protocolo equivalente basado en RSA/ECDSA.
+El presente trabajo, \textit{Protocolo para la votación electrónica basado en criptografía post-cuántica de retículos}, se sitúa en dicho espacio, estructurado bajo \textit{Design Science Research} de Vaishnavi y Kuechler (2004): se diseña un protocolo con las primitivas ML-KEM y ML-DSA, modelado en \textit{Tamarin Prover} bajo el modelo Dolev--Yao, y se contrasta mediante una evaluación experimental controlada (benchmark) con un protocolo equivalente basado en RSA/ECDSA.
 
 \section{Antecedentes}
 La investigación sobre la seguridad de la votación electrónica se ha desarrollado, durante la última década, principalmente en torno a la verificación formal de protocolos sustentados en criptografía de clave pública clásica, como RSA y ElGamal. A partir de 2024, con la publicación de los primeros estándares de criptografía post-cuántica por parte del NIST, este campo comienza a extenderse hacia el análisis de protocolos que incorporan primitivas resistentes a la computación cuántica, un desplazamiento aún incipiente tanto en la literatura internacional como en los antecedentes producidos en el contexto boliviano.
@@ -50,7 +50,7 @@ Diseñar un protocolo de votación electrónica basado en criptografía post-cu�
 	\item Verificar el cumplimiento de las propiedades de integridad y confidencialidad del protocolo modelado.
 	\item Fundamentar teóricamente un protocolo de votación electrónica basado en criptografía post-cuántica, capaz de resistir amenazas de seguridad actuales y futuras.
 	\item Determinar el rendimiento del protocolo propuesto en términos de latencia y tiempo de ejecución, para establecer su viabilidad práctica frente a un cifrado más seguro.
-	\item Modelar formalmente el protocolo de votación electrónica, verificando su resistencia frente a un adversario con capacidades cuánticas.
+	\item Modelar formalmente el protocolo y verificar en Tamarin Prover sus propiedades de integridad y confidencialidad bajo el modelo Dolev-Yao, y argumentar su seguridad frente a adversarios cuánticos mediante reducción a los supuestos de seguridad de FIPS 203 y FIPS 204.
 \end{itemize}
 
 \section{Hipótesis}
@@ -58,7 +58,7 @@ Diseñar un protocolo de votación electrónica basado en criptografía post-cu�
 \subsection{Planteamiento de la Hipótesis}
 Considerando el problema principal del actual trabajo de investigación se plantea la siguiente hipótesis:
 
-\textbf{H1.} ``El protocolo de votación electrónica basado en criptografía post-cuántica de retículos coadyuvará a mantener la integridad y la confidencialidad del proceso de votación, verificadas formalmente mediante Tamarin Prover, con una latencia que no exceda en más del 30\% a la de un protocolo equivalente basado en RSA/ECDSA.''
+\textbf{H1.} ``El protocolo de votación electrónica basado en criptografía post-cuántica de retículos coadyuvará a mantener la integridad y la confidencialidad del proceso de votación, verificadas simbólicamente y sustentadas en las garantías computacionales de FIPS 203/204, con una latencia que no exceda en más del 30\% a la de un protocolo equivalente basado en RSA/ECDSA.''
 
 \subsection{Definición de Variables}
 De acuerdo a la hipótesis podemos extraer las siguientes variables:
@@ -129,6 +129,7 @@ El problema de investigación plantea una comparación entre dos tipos de protoc
 El conocimiento generado por la investigación resulta pertinente para la comunidad académica que trabaja en sistemas de votación electrónica y en la aplicación de criptografía post-cuántica a protocolos con requerimientos de integridad y confidencialidad, un área de interés creciente en la literatura internacional. En el ámbito local, el estudio examina un problema no abordado en los antecedentes universitarios bolivianos identificados. Los resultados de la verificación formal y de la comparación de rendimiento entre esquemas post-cuánticos y clásicos podrían constituir una referencia para investigaciones futuras que analicen la transición de otros protocolos de comunicación hacia primitivas criptográficas resistentes a la computación cuántica, dentro del área de la seguridad informática.
 
 \section{Alcances y Límites}
+\label{sec:alcances_limites_tesis}
 
 \subsection{Alcances}
 \begin{itemize}
@@ -148,6 +149,7 @@ El conocimiento generado por la investigación resulta pertinente para la comuni
 	\item La arquitectura de almacenamiento o registro distribuido de los votos no forma parte del estudio.
 	\item La reproducibilidad exacta de las mediciones de rendimiento no está garantizada, dado que factores como el conjunto de instrucciones del procesador y las optimizaciones de la biblioteca afectan significativamente la latencia de los algoritmos post-cuánticos (Kannwischer et al., 2019).
 	\item La comparación con el protocolo clásico se restringe a un esquema basado en RSA/ECDSA, sin extenderse a otros esquemas criptográficos clásicos o post-cuánticos adicionales.
+	\item La libertad de recibo (\textit{receipt-freeness}) y la resistencia a la coacción (\textit{coercion resistance}): el protocolo no implementa mecanismos de desvío de credenciales ni credenciales falsificables bajo coacción, por lo que estas propiedades quedan fuera del alcance del presente trabajo y se declaran como un límite explícito del diseño formal e implementado.
 \end{itemize}
 
 \section{Aportes}

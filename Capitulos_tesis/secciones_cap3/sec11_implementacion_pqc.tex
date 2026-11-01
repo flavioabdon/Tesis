@@ -1,0 +1,102 @@
+\section{Implementación del Prototipo Post-Cuántica (PQC)}
+\label{sec:implementacion_software_pqc}
+% =============================================================================
+
+\subsection{Ingeniería del Núcleo en Lenguaje C y Biblioteca Dinámica}
+
+El núcleo computacional del prototipo se implementó en lenguaje C nativo compilando el código fuente de referencia del proyecto PQClean correspondiente a las primitivas estandarizadas por el NIST:
+\begin{itemize}
+	\item \textbf{FIPS 203 (ML-KEM-768):} Funciones \texttt{pqc\_mlkem768\_keypair}, \texttt{pqc\_mlkem768\_encaps} y \texttt{pqc\_mlkem768\_decaps}.
+	\item \textbf{FIPS 204 (ML-DSA-65):} Funciones \texttt{pqc\_mldsa65\_keypair}, \texttt{pqc\_mldsa65\_sign} y \texttt{pqc\_mldsa65\_verify}.
+\end{itemize}
+
+El archivo de cabecera \texttt{src/pqc/pqc\_core.h} define la interfaz exportada:
+\begin{verbatim}
+#ifndef PQC_CORE_H
+#define PQC_CORE_H
+
+#include <stdint.h>
+#include <stddef.h>
+
+// ML-KEM-768 (FIPS 203)
+#define MLKEM768_PUBLICKEYBYTES   1184
+#define MLKEM768_SECRETKEYBYTES   2400
+#define MLKEM768_CIPHERTEXTBYTES  1088
+#define MLKEM768_SSBYTES          32
+
+int pqc_mlkem768_keypair(uint8_t *pk, uint8_t *sk);
+int pqc_mlkem768_encaps(uint8_t *ct, uint8_t *ss, const uint8_t *pk);
+int pqc_mlkem768_decaps(uint8_t *ss, const uint8_t *ct, const uint8_t *sk);
+
+// ML-DSA-65 (FIPS 204)
+#define MLDSA65_PUBLICKEYBYTES    1952
+#define MLDSA65_SECRETKEYBYTES    4032
+#define MLDSA65_SIGNATUREBYTES    3309
+
+int pqc_mldsa65_keypair(uint8_t *pk, uint8_t *sk);
+int pqc_mldsa65_sign(uint8_t *sig, size_t *siglen, const uint8_t *m, 
+                     size_t mlen, const uint8_t *sk);
+int pqc_mldsa65_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, 
+                       size_t mlen, const uint8_t *pk);
+
+#endif
+\end{verbatim}
+
+La compilación genera la biblioteca compartida \texttt{libpqc\_core.dylib} (en entorno macOS ARM64) o \texttt{libpqc\_core.so} (en servidores Linux x86\_64) empleando el compilador Clang/GCC con banderas de máxima optimización (\texttt{-O3 -fPIC -shared}).
+
+\subsection{Gestión Segura de Memoria y Enlace FFI en Python}
+
+La integración con Python a través de \texttt{pqc\_wrapper.py} aplica un control estricto sobre el manejo de memoria:
+\begin{enumerate}
+	\item \textbf{Preasignación Contigua:} Antes de invocar a C, Python asigna buffers contiguos de bytes con longitud exacta mediante \texttt{ctypes.create\_string\_buffer}.
+	\item \textbf{Purga Segura de Secretos:} Los datos sensibles de claves privadas se limpian en memoria antes de que intervenga el recolector de basura de Python, sobrescribiendo los arreglos volátiles mediante llamadas de bajo nivel para prevenir ataques de volcado de memoria.
+\end{enumerate}
+
+\subsection{Métricas Estructurales de Memoria del Protocolo PQC}
+
+El Cuadro \ref{tab:tamanos_estructuras_didactico} consolida los tamaños exactos en bytes de cada elemento criptográfico generado por el prototipo.
+
+\begingroup
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{4pt}
+\begin{table}[htbp]
+	\centering
+	\small
+	\begin{tabular}{|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{3.2cm}|r|>{\raggedright\arraybackslash}p{5.5cm}|}
+		\hline
+		\textbf{Elemento Criptográfico} & \textbf{Primitiva / Estándar} & \textbf{Tamaño (Bytes)} & \textbf{Observaciones Técnicas} \\
+		\hline
+		Clave Pública ($pk$) & ML-KEM-768 (FIPS 203) & 1184 & Polinomios $\mathbf{t} \in R_q^k$ comprimidos + semilla $\rho$. \\
+		\hline
+		Clave Privada ($sk$) & ML-KEM-768 (FIPS 203) & 2400 & Vector secreto $\mathbf{s} \in R_q^k$ + datos de clave pública + $z$. \\
+		\hline
+		Texto Cifrado ($ct$) & ML-KEM-768 (FIPS 203) & 1088 & Vector $\mathbf{u}$ comprimido (960 B) + $v$ comprimido (128 B). \\
+		\hline
+		Secreto Compartido ($K$) & ML-KEM-768 (FIPS 203) & 32 & Clave simétrica efímera de 256 bits. \\
+		\hline
+		Clave Pública ($pk$) & ML-DSA-65 (FIPS 204) & 1952 & Semilla $\rho$ (32 B) + vector $\mathbf{t}_1$ empaquetado (1920 B). \\
+		\hline
+		Clave Privada ($sk$) & ML-DSA-65 (FIPS 204) & 4032 & Semillas $\rho, K, \text{tr}$ + vectores secretos $\mathbf{s}_1, \mathbf{s}_2, \mathbf{t}_0$. \\
+		\hline
+		Firma Digital ($\sigma$) & ML-DSA-65 (FIPS 204) & 3309 & Desafío $\tilde{c}$ (48 B) + vector $\mathbf{z}$ (3200 B) + pistas $\mathbf{h}$ (61 B) = 3309 B. \\
+		\hline
+		Hash de Boleta ($h_b$) & SHA3-256 (FIPS 202) & 32 & Digest inmutable de 256 bits (64 hex). \\
+		\hline
+		\textbf{Paquete de Voto Total} & PQC Híbrido & \textbf{16293} & Boleta completa + firmas + credenciales codificadas. \\
+		\hline
+	\end{tabular}
+	\caption{Dimensiones exactas en bytes de las estructuras de datos post-cuánticas.}
+	\label{tab:tamanos_estructuras_didactico}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Mediciones experimentales directas del prototipo.}}
+\end{table}
+\endgroup
+
+\subsection{Backend Web y Dashboard Interactivo en Flask}
+
+En el subdirectorio \texttt{src/web/app.py} se implementó el servidor de demostración que permite emular la experiencia comicial en tiempo real:
+\begin{itemize}
+	\item \textbf{Votación Interactiva:} Los electores acceden a la cabina web, visualizan las opciones electorales habilitadas, formulan su voto y presencian el cifrado y la firma en tiempo real.
+	\item \textbf{Dashboard de Escrutinio y Auditoría:} Tras el cierre, el sistema ejecuta el desencapsulamiento seguro y renderiza mediante gráficos dinámicos (Chart.js) la distribución de votos y la tabla de comprobantes con sus códigos QR correspondientes.
+\end{itemize}
+
+% =============================================================================

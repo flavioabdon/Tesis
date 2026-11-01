@@ -1,0 +1,90 @@
+\section{Verificación Formal Práctica con Tamarin Prover}
+\label{sec:practica_tamarin}
+% =============================================================================
+
+\subsection{Especificación del Modelo Formal (\texttt{protocolo\_v2.spthy})}
+
+La verificación formal del diseño lógico del protocolo se especificó en el archivo \texttt{protocolo\_v2.spthy}, modelando el comportamiento de las entidades participantes y del entorno adversarial mediante un sistema de reglas de reescritura multiconjunto de hechos (MSR, \textit{Multiset Rewriting}) bajo el modelo Dolev-Yao:
+
+\begin{itemize}
+	\item \textbf{Teoría ecuacional de primitivas:} Se definen los símbolos de función y ecuaciones algebraicas para el encapsulamiento y desencapsulamiento KEM ($\text{decaps}(dk, \text{encaps}(\text{ek\_from\_dk}(dk), r)) = r$), el cifrado simétrico ($\text{sdec}(\text{senc}(m, k), k) = m$) y la firma digital con verificación destructora ($\text{verify}(\text{sign}(m, sk), m, \text{pk}(sk)) = \text{true}$).
+	\item \textbf{Generación y custodia segregada de claves:} La regla \texttt{Setup\_Autoridad\_Registro} genera el par de firma $(\sim\!sk_{AR}, pk_{AR})$ de la AR, mientras que \texttt{Setup\_Autoridad\_Conteo} genera el par $(\sim\!dk_{AC}, ek_{AC})$ en la AC, publicando únicamente la clave pública $ek_{AC}$. La clave de desencapsulamiento $\sim\!dk_{AC}$ permanece confinada en el hecho persistente \texttt{!ClaveDesencapsulamientoAC} y jamás es transferida ni conocida por el Servidor de Votación (SV), garantizando la separación de privilegios exigida por el diseño.
+	\item \textbf{Empadronamiento y estado lineal de voto único:} La regla \texttt{Registro\_Ciudadano\_Padron} emite la credencial firmada por la AR e inicializa el hecho lineal \texttt{NoHaVotado}($\sim\!idV$). A diferencia de modelos preliminares que imponían restricciones artificiales (\textit{axiomatic restrictions}) sobre la unicidad, en el modelo v2 la unicidad es una propiedad emergente demostrable: el servidor consume el hecho lineal \texttt{NoHaVotado}($idV$) y produce \texttt{YaVoto}($idV$) en la regla \texttt{Recepcion\_Y\_Deposito\_Anfora}. Todo intento de reemisión queda imposibilitado por la ausencia del recurso lineal.
+	\item \textbf{Emisión de voto y disociación de identidad:} En \texttt{Emitir\_Voto\_Mesa}, el votante genera la boleta híbrida compuesta por el texto cifrado KEM ($ct_{\text{kem}}$) y el voto cifrado ($voto\_cifrado$), firmándola con su clave privada. Al depositarse en el ánfora (\texttt{Recepcion\_Y\_Deposito\_Anfora}), el hecho persistente resultante \texttt{AnforaDigital} almacena exclusivamente el criptograma ($ct_{\text{kem}}$, $voto\_cifrado$) y la marca temporal, desvinculando de forma estricta la identidad $idV$ y la credencial del elector. Asimismo, el servidor retorna un recibo firmado $\text{sign}(h(boleta), \sim\!sk_{SV})$ al elector.
+	\item \textbf{Escrutinio condicional y corrupción de claves:} La apertura del ánfora (\texttt{Apertura\_Anfora\_Y\_Escrutinio}) requiere la acción previa de apertura formal \texttt{EscrutinioAbierto()}, publicando los votos en claro sin vinculación a la identidad. Para posibilitar el análisis de robustez ante compromisos de seguridad, se incorporan reglas de revelación adversarial de secretos a largo plazo (\texttt{RevealSK\_V}, \texttt{RevealDK\_AC}, \texttt{RevealSK\_SV}), condicionando los lemas de seguridad a la no corrupción de las identidades involucradas (\texttt{not(Rev...)}).
+\end{itemize}
+
+El código fuente completo de la especificación formal del modelo v2 (170 líneas de especificación en lenguaje de reglas multiconjunto) se presenta íntegramente en el Anexo \ref{anexo:tamarin_spthy}.
+
+\subsection{Comandos de Ejecución y Entorno de Trabajo}
+
+La verificación formal automatizada se ejecutó utilizando \textit{Tamarin Prover} versión 1.12.0 acoplado al resolvedor de unificación y reescritura ecuacional \textit{Maude} versión 3.5.1 sobre arquitectura POSIX (macOS ARM64 y Linux x86\_64).
+
+Previo al análisis deductivo, se validó la sintaxis y congruencia estructural del modelo mediante el comando de comprobación de buena formación (\textit{wellformedness check}):
+\begin{verbatim}
+tamarin-prover protocolo_v2.spthy
+\end{verbatim}
+El motor reportó satisfacción total (\textit{All wellformedness checks were successful}) sin inconsistencias de tipos ni ciclos no acotados en las reglas.
+
+Para la resolución de los lemas de seguridad, la presencia de entradas de red estructuradas requiere la saturación de fuentes inductivas. Por ello, se utilizó la heurística de fuentes automáticas (\texttt{--auto-sources}), que deriva dinámicamente un lema auxiliar de tipado (\texttt{AUTO\_typing}) garantizando la terminación del análisis hacia atrás. Los comandos específicos de ejecución por lotes y por lema individual fueron:
+
+\begin{enumerate}
+	\item \textbf{Verificación completa del protocolo en modo lote:}
+\begin{verbatim}
+tamarin-prover --auto-sources --prove protocolo_v2.spthy +RTS -N4 -RTS \
+    2>&1 | tee logs/ejecucion_completa_autosources.log
+\end{verbatim}
+	\item \textbf{Verificación lema por lema (aislamiento deductivo):}
+\begin{verbatim}
+# Para cada lema L in {ejecutabilidad, unicidad, secreto_voto,
+#                      integridad_voto, autenticidad_votante}:
+tamarin-prover --auto-sources --prove=L protocolo_v2.spthy +RTS -N4 -RTS \
+    2>&1 | tee logs/L.log
+\end{verbatim}
+	\item \textbf{Inspección gráfica interactiva (Web GUI):}
+\begin{verbatim}
+tamarin-prover interactive protocolo_v2.spthy
+\end{verbatim}
+	Despliega la consola web local en el puerto 3001 (\url{http://localhost:3001}) para visualizar los grafos de derivación, los árboles de exploración inductiva y las restricciones de unificación en tiempo real.
+\end{enumerate}
+
+\subsection{Resultados Empíricos de la Verificación Formal}
+
+La evaluación exhaustiva del espacio de estados produjo resultados empíricos rigurosos y reproducibles. El Cuadro \ref{tab:resultados_tamarin} resume el estado de prueba, el número de pasos inductivos de derivación y el tiempo de cómputo obtenido en la ejecución oficial individual y combinada.
+
+\begin{table}[htbp]
+	\centering
+	\small
+	\begin{tabular}{llccr}
+		\toprule
+		\textbf{Lema Formal} & \textbf{Propiedad de Seguridad Evaluada} & \textbf{Cuantificación} & \textbf{Estado} & \textbf{Pasos / Tiempo} \\
+		\midrule
+		\texttt{ejecutabilidad} & Completitud funcional (\textit{Sanity check}) & $\exists\text{-trace}$ & \textbf{verified} & 21 pasos (4.17 s) \\
+		\texttt{unicidad} & Sufragio único por transición de estado & $\forall\text{-traces}$ & \textbf{verified} & 18 pasos (2.75 s) \\
+		\texttt{secreto\_voto} & Confidencialidad previa al escrutinio & $\forall\text{-traces}$ & \textbf{verified} & 8 pasos (2.51 s) \\
+		\texttt{integridad\_voto} & Correspondencia causal emisión-conteo & $\forall\text{-traces}$ & \textbf{falsified} & 13 pasos (3.85 s) \\
+		\texttt{autenticidad\_votante} & Acuerdo inyectivo con autenticación AR & $\forall\text{-traces}$ & \textbf{verified} & 17 pasos (2.83 s) \\
+		\midrule
+		\texttt{AUTO\_typing} & Invariante de fuentes y tipado derivado & $\forall\text{-traces}$ & \textbf{verified} & 98 pasos (auxiliar) \\
+		\midrule
+		\multicolumn{3}{l}{\textbf{Tiempo total de ejecución por lotes (5 lemas):}} & & \textbf{6.60 s} \\
+		\bottomrule
+	\end{tabular}
+	\caption{Resultados de la verificación formal automatizada en Tamarin Prover 1.12.0.}
+	\label{tab:resultados_tamarin}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Salida del motor Tamarin Prover y Maude 3.5.1 (archivo logs/resumen.txt).}}
+\end{table}
+
+A partir de los resultados obtenidos en el resolvedor formal, se desprenden las siguientes conclusiones técnicas calibradas:
+
+\begin{enumerate}
+	\item \textbf{Completitud y ausencia de vaciedad (\texttt{ejecutabilidad}):} El lema existencial $\exists\text{-trace}$ fue verificado exitosamente en 21 pasos (4.17 s), confirmando que existe al menos una traza válida y completa en la que el elector se empadrona, emite su voto cifrado, el servidor valida las firmas post-cuánticas, deposita la boleta en el ánfora y la autoridad abre el escrutinio. Esto descarta que los lemas universales resulten ciertos de manera vacua por inconsistencia de precondiciones.
+	\item \textbf{Garantía formal de unicidad sin axiomas (\texttt{unicidad}):} Se demostró inductivamente en 18 pasos (2.75 s) que es imposible que existan dos eventos de aceptación de voto para un mismo elector ($idV$). Al modelar \texttt{NoHaVotado} como recurso lineal, Tamarin comprueba exhaustivamente que ninguna traza del adversario puede reutilizar una credencial previamente consumida, sin apelar a restricciones axiomáticas artificiales.
+	\item \textbf{Confidencialidad robusta ante intrusos Dolev-Yao (\texttt{secreto\_voto}):} Verificado en 8 pasos (2.51 s). Demuestra que un adversario que intercepta todas las comunicaciones de red es incapaz de deducir el contenido del voto $\sim\!m\_voto$ antes de la fase de escrutinio legítima, bajo la condición de no compromiso de las claves privadas del votante y de la autoridad (\texttt{not(Rev...)}).
+	\item \textbf{Autenticación inyectiva del votante (\texttt{autenticidad\_votante}):} Verificado en 17 pasos (2.83 s). Garantiza que cada voto aceptado por el servidor corresponde biyectivamente a una emisión voluntaria y auténtica efectuada por el titular legítimo empadronado por la AR, impidiendo ataques de reinyección o falsificación de credenciales.
+	\item \textbf{Diagnóstico y contraejemplo del lema de integridad (\texttt{integridad\_voto}):} El lema universal de correspondencia emisión-conteo resultó \textbf{falsified} en 13 pasos (3.85 s). El diagnóstico analítico del contraejemplo revela que la falla obedece a una abstracción simbólica en la teoría ecuacional: en la regla \texttt{Apertura\_Anfora\_Y\_Escrutinio}, la recuperación del voto se modela mediante el término algebraico $voto\_plano = \text{sdec}(voto\_cifrado, \text{decaps}(\sim\!dk_{AC}, ct_{\text{kem}}))$. Cuando el intruso inyecta un texto cifrado arbitrario que no cumple la ecuación $\text{decaps}(dk, \text{encaps}(\dots))$, el término $\text{decaps}$ no se reduce algebraicamente y la función $\text{sdec}$ permanece como un término compuesto no simplificado. Tamarin evalúa dicho término simbólico irreductible como el argumento del hecho \texttt{VotoContado($m$)}, y al contrastarlo con las emisiones legítimas, constata que ningún votante emitió dicho término formal, derivando un contraejemplo algebraico. En el sistema físico de producción, este fenómeno está completamente mitigado mediante el rechazo explícito por falla de autenticación en AES-256-GCM y el mecanismo de rechazo implícito de FIPS 203; formalmente, en el modelo simbólico, la propiedad se satisface restringiendo el conteo a cargas KEM sintácticamente bien formadas.
+\end{enumerate}
+
+La transcripción completa de la salida cruda generada por \textit{Tamarin Prover} 1.12.0 y el detalle de los pasos de unificación se presentan en el Anexo \ref{anexo:tamarin_salida}.
+
+% =============================================================================

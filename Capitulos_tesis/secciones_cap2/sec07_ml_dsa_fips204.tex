@@ -1,0 +1,69 @@
+\section{Esquema de Firma Digital ML-DSA (FIPS 204) y Module-SIS}
+% =============================================================================
+
+El estándar \textbf{FIPS 204} (NIST, 2024), basado en el protocolo CRYSTALS-Dilithium, especifica el algoritmo \textbf{ML-DSA} para asegurar la integridad, la autenticidad y el no repudio en transacciones críticas como el sufragio digital.
+
+\subsection{El Problema Short Integer Solution (Module-SIS)}
+
+Así como el cifrado se fundamenta en LWE, las firmas digitales sobre retículos se respaldan en la intratabilidad del problema \textbf{Module-SIS} (Ajtai, 1996; Langlois y Stehlé, 2015).
+
+Dada una matriz aleatoria $\mathbf{A} \in R_q^{k \times \ell}$ sobre el anillo polinomial, el problema Module-SIS consiste en encontrar un vector no nulo de polinomios $\mathbf{z} \in R_q^\ell \setminus \{\mathbf{0}\}$ tal que:
+\begin{equation}
+	\mathbf{A} \cdot \mathbf{z} \equiv \mathbf{0} \pmod q \quad \text{con} \quad \|\mathbf{z}\|_\infty \le \beta \ll q
+\end{equation}
+Hallar soluciones con coeficientes arbitrarios es resoluble por métodos gaussianos, pero acotar la norma euclídea o infinita por debajo de una cota pequeña $\beta$ es equivalente a resolver SVP sobre un retículo de dimensión $n \cdot \ell$.
+
+\subsubsection{La Intuición de SIS: La Balanza Multidimensional}
+De forma didáctica, el problema Module-SIS puede imaginarse como una \textbf{balanza de equilibrio multidimensional}. Cada columna de la matriz pública $\mathbf{A}$ representa un vector de pesas en múltiples dimensiones. El objetivo es encontrar una combinación ponderada de estas pesas que logre un equilibrio perfecto (es decir, que la suma total sea idénticamente cero módulo $q$), pero con una restricción fundamental: las cantidades de pesas utilizadas ($\mathbf{z}$) deben ser estrictamente valores pequeños ($\|\mathbf{z}\|_\infty \le \beta \ll q$). 
+
+Si se permitiera usar números enteros gigantescos, encontrar un punto de equilibrio sería elemental mediante simple eliminación lineal. Sin embargo, encontrar un punto de equilibrio empleando únicamente coeficientes enteros muy pequeños exige explorar un espacio combinatorio exponencial en alta dimensión, problema que resulta intratable tanto para computadoras clásicas como cuánticas.
+
+\subsection{La Fuga de Información y el Muestreo con Rechazo de Lyubashevsky}
+
+El paradigma clásico de firmas tipo Schnorr sobre retículos calcula una respuesta lineal de la forma:
+\begin{equation}
+	\mathbf{z} = \mathbf{y} + c \cdot \mathbf{s}
+\end{equation}
+donde $\mathbf{y}$ es un vector máscara efímero, $c$ es un desafío escalar derivado del hash del mensaje, y $\mathbf{s}$ es la clave privada. Sin embargo, en retículos, la distribución geométrica de $\mathbf{z}$ depende directamente de la dirección del vector secreto $\mathbf{s}$. Un adversario que recopile un conjunto representativo de firmas válidas $\{\mathbf{z}_1, \mathbf{z}_2, \dots, \mathbf{z}_N\}$ puede aplicar análisis de correlación estadística para recuperar $\mathbf{s}$.
+
+Para mitigar esta fuga de información, Vadim Lyubashevsky (2009, 2012) concibió la técnica de \textbf{muestreo con rechazo} (\textit{Fiat-Shamir with aborts}):
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[scale=0.88]
+		\node (init) [box, fill=BoxBgPurple, draw=PQCPurple, text width=3.4cm] {1. Vector máscara $\mathbf{y}$\\aleatorio uniforme};
+		\node (hash) [box, right=1.2cm of init, fill=BoxBgBlue, draw=PQCMainBlue, text width=3.4cm] {2. Desafío polinomial\\$c = H(\mathbf{A}\mathbf{y}, \mu)$};
+		\node (cand) [box, right=1.2cm of hash, fill=BoxBgTeal, draw=PQCTeal, text width=3.4cm] {3. Firma candidata\\$\mathbf{z} = \mathbf{y} + c\mathbf{s}$};
+		
+		\node (dec) [diamond, draw=PQCAmber, fill=BoxBgAmber, aspect=2, below=1.2cm of hash, font=\footnotesize\bfseries] {¿$\|\mathbf{z}\|_\infty < \gamma - \beta$?};
+		\node (pub) [box, right=1.8cm of dec, fill=BoxBgGreen, draw=PQCGreen, text width=3.2cm] {\textbf{Firma Aceptada}\\$\sigma = (\mathbf{z}, c)$};
+		\node (abort) [box, left=1.8cm of dec, fill=red!10, draw=PQCCrimson, text width=3.0cm] {\textbf{Abortar}\\Reintentar nuevo $\mathbf{y}$};
+		
+		\draw[-{Latex[length=2mm]}, thick] (init) -- (hash);
+		\draw[-{Latex[length=2mm]}, thick] (hash) -- (cand);
+		\draw[-{Latex[length=2mm]}, thick] (cand) |- (dec);
+		\draw[-{Latex[length=2mm]}, thick, PQCGreen] (dec) -- node[above, font=\scriptsize] {Sí} (pub);
+		\draw[-{Latex[length=2mm]}, thick, PQCCrimson] (dec) -- node[above, font=\scriptsize] {No} (abort);
+		\draw[-{Latex[length=2mm]}, thick, dashed, PQCCrimson] (abort) |- (init);
+	\end{tikzpicture}
+	\caption{Algoritmo de firma ML-DSA con muestreo por rechazo (\textit{Fiat-Shamir with aborts}).}
+	\label{fig:mldsa_abort}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia a partir de Lyubashevsky (2012).}}
+\end{figure}
+
+Si el vector resultante $\mathbf{z}$ cae dentro de una distancia $\beta$ de las fronteras del dominio de muestreo, el firmante descarta la firma y reinicia el procedimiento con un nuevo $\mathbf{y}$. De este modo, la distribución estadística condicional de las firmas publicadas es idéntica a la distribución de $\mathbf{y}$, haciendo que la firma sea estadísticamente independiente de la clave privada $\mathbf{s}$.
+
+\subsection{Verificación Pública}
+
+Cualquier nodo o autoridad puede comprobar la firma $\sigma = (\mathbf{z}, c)$ sobre el mensaje $\mu$ aplicando la clave pública $\mathbf{t} = \mathbf{A}\mathbf{s} + \mathbf{e}$:
+\begin{enumerate}
+	\item Verifica que la norma del vector firma sea acotada: $\|\mathbf{z}\|_\infty < \gamma - \beta$.
+	\item Reconstruye el compromiso algebraico:
+	\begin{equation}
+		\mathbf{w}' = \mathbf{A}\mathbf{z} - c\mathbf{t} \pmod q
+	\end{equation}
+	\item Verifica la coincidencia del hash del desafío: $H(\mathbf{w}', \mu) \stackrel{?}{=} c$.
+\end{enumerate}
+Dado que $\mathbf{A}\mathbf{z} - c\mathbf{t} = \mathbf{A}(\mathbf{y} + c\mathbf{s}) - c(\mathbf{A}\mathbf{s} + \mathbf{e}) \approx \mathbf{A}\mathbf{y}$, la verificación reproduce el reto sin revelar el secreto del firmante.
+
+% =============================================================================

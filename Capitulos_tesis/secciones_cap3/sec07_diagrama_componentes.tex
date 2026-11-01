@@ -1,0 +1,70 @@
+\section{Diagrama de Componentes de Software UML}
+\label{sec:diagrama_componentes}
+% =============================================================================
+
+La Figura \ref{fig:uml_componentes} expone el Diagrama UML de Componentes de Software, modelando los paquetes, las dependencias de compilación y las interfaces de enlace nativo.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[
+		node distance=0.8cm and 1.2cm,
+		comp/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=3pt, minimum width=4.0cm, minimum height=0.9cm, font=\scriptsize\sffamily, align=center},
+		dep/.style={-{Latex[length=2mm]}, thick, dashed, draw=PQCDark}
+	]
+		% Capa 1: C Nativo
+		\node[comp, fill=BoxBgTeal] (c_core) at (0, 0) {
+			\guillemotleft component\guillemotright\\
+			\textbf{PQClean C Core}\\
+			\textit{ML-KEM-768 / ML-DSA-65}
+		};
+		\node[comp, fill=BoxBgTeal] (c_dyn) at (6.5, 0) {
+			\guillemotleft artifact\guillemotright\\
+			\textbf{libpqc\_core.dylib}\\
+			\textit{Binario compilado ARM64/x86}
+		};
+		
+		% Capa 2: FFI Wrapper & Utils
+		\node[comp, fill=BoxBgGreen] (wrapper) at (0, -2.2) {
+			\guillemotleft component\guillemotright\\
+			\textbf{Python FFI Wrapper}\\
+			\textit{pqc\_wrapper.py (ctypes)}
+		};
+		\node[comp, fill=BoxBgGreen] (utils) at (6.5, -2.2) {
+			\guillemotleft component\guillemotright\\
+			\textbf{Crypto Utilities}\\
+			\textit{AES-GCM, SHA3, canonical\_json}
+		};
+		
+		% Capa 3: Actores
+		\node[comp, fill=BoxBgPurple] (actores) at (3.25, -4.4) {
+			\guillemotleft component\guillemotright\\
+			\textbf{Módulos de Entidades Electorales}\\
+			\textit{Votante, AR, Servidor, Conteo (Tally)}
+		};
+		
+		% Capa 4: Orquestador & UI
+		\node[comp, fill=BoxBgAmber] (orch) at (0, -6.6) {
+			\guillemotleft component\guillemotright\\
+			\textbf{Orquestador E2E}\\
+			\textit{protocolo\_pqc.py}
+		};
+		\node[comp, fill=BoxBgAmber] (web) at (6.5, -6.6) {
+			\guillemotleft component\guillemotright\\
+			\textbf{Dashboard Web \& REST API}\\
+			\textit{Flask app.py + Chart.js}
+		};
+		
+		% Conexiones
+		\draw[dep] (c_core) -- (c_dyn) node[midway, above, font=\tiny] {compilación gcc/clang};
+		\draw[dep] (wrapper) -- (c_dyn) node[midway, right, font=\tiny] {dlopen / ctypes};
+		\draw[dep] (actores) -- (wrapper);
+		\draw[dep] (actores) -- (utils);
+		\draw[dep] (orch) -- (actores);
+		\draw[dep] (web) -- (actores);
+	\end{tikzpicture}
+	\caption{Diagrama UML de Componentes de Software de la implementación PQC.}
+	\label{fig:uml_componentes}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+% =============================================================================

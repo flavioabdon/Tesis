@@ -1,0 +1,66 @@
+\section{Aritmética Modular y el Problema Learning With Errors (LWE)}
+% =============================================================================
+
+\subsection{De Ecuaciones Lineales Exactas a Sistemas Ruidosos}
+
+En el anillo de enteros módulo $q$, denotado por $\mathbb{Z}_q = \{0, 1, \dots, q-1\}$, un sistema lineal exacto de la forma:
+\begin{equation}
+	\mathbf{A} \cdot \mathbf{s} \equiv \mathbf{b} \pmod q
+\end{equation}
+con $\mathbf{A} \in \mathbb{Z}_q^{m \times n}$, $\mathbf{s} \in \mathbb{Z}_q^n$ y $\mathbf{b} \in \mathbb{Z}_q^m$, puede resolverse de manera determinista mediante eliminación gaussiana en tiempo polinomial $\mathcal{O}(m n^2)$. La linealidad perfecta permite a un observador eliminar incógnitas sistemáticamente mediante combinaciones lineales de filas.
+
+\subsubsection{La Intuición de la Perturbación: Por qué Falla Gauss}
+Consideremos la analogía básica del álgebra lineal: despejar un sistema lineal de ecuaciones es equivalente a encontrar la intersección exacta de varios hiperplanos. Si las ecuaciones son exactas, la eliminación gaussiana va pivoteando y restando múltiplos de filas hasta triangular la matriz y despejar cada incógnita limpiamente.
+
+Sin embargo, si a cada ecuación se le inyecta un pequeño vector de perturbación estocástica $\mathbf{e}$:
+\begin{equation}
+	\mathbf{A} \cdot \mathbf{s} + \mathbf{e} \equiv \mathbf{b} \pmod q
+\end{equation}
+el método de eliminación gaussiana colapsa de forma estrepitosa: al multiplicar una fila por un escalar para anular un coeficiente de otra fila, el término de error $\mathbf{e}$ también se multiplica y se acumula; a medida que se avanza en las etapas de eliminación, el ruido residual crece de manera exponencial, destruyendo cualquier correlación lineal con la incógnita original. Resolver este sistema ruidoso equivale a encontrar el vector del retículo más cercano al punto perturbado (CVP), problema que carece de algoritmos eficientes tanto clásicos como cuánticos.
+
+\subsection{Formulación de LWE (Regev, 2005)}
+
+Oded Regev (2005) demostró que si cada ecuación lineal es perturbada por un término de error discreto e independiente $\mathbf{e}$, la estructura lineal colapsa:
+\begin{equation}
+	\mathbf{b} = \mathbf{A} \cdot \mathbf{s} + \mathbf{e} \pmod q
+\end{equation}
+donde las entradas de $\mathbf{A}$ se eligen uniformemente al azar en $\mathbb{Z}_q$, el vector secreto $\mathbf{s}$ proviene de una distribución pequeña, y el vector de error $\mathbf{e} \in \mathbb{Z}_q^m$ se muestrea a partir de una distribución gaussiana discreta centrada en cero con desviación estándar $\sigma \ll q$.
+
+Existen dos formulaciones de este problema:
+\begin{itemize}
+	\item \textbf{LWE de Búsqueda (\textit{Search-LWE}):} Recuperar el vector secreto exacto $\mathbf{s} \in \mathbb{Z}_q^n$ a partir de la observación pública $(\mathbf{A}, \mathbf{b})$.
+	\item \textbf{LWE de Decisión (\textit{Decision-LWE}):} Distinguir computacionalmente entre muestras genuinas $(\mathbf{A}, \mathbf{A}\mathbf{s} + \mathbf{e})$ y pares uniformemente aleatorios $(\mathbf{A}, \mathbf{u}) \in \mathbb{Z}_q^{m \times n} \times \mathbb{Z}_q^m$.
+\end{itemize}
+
+Cuando un atacante intenta aplicar combinaciones lineales tipo Gauss sobre el sistema ruidoso, los términos de error se propagan y multiplican, transformando la señal útil en ruido estocástico incoherente. Regev (2005) probó formalmente que resolver Decision-LWE es tan difícil como resolver aproximaciones cuánticas de problemas clásicos de retículos (GapSVP) en dimensión $n$.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[scale=0.9]
+		% Señal periódica clásica
+		\begin{scope}[shift={(0,2.2)}]
+			\node[font=\footnotesize\bfseries, text=PQCCrimson, align=left] at (4.5, 1.2) 
+			{\textbf{Esquemas Clásicos (RSA/ECC):} Estructura periódica $f(x)=a^x \pmod N$ $\to$ Shor la detecta};
+			\draw[line width=1.4pt, PQCCrimson, domain=0:9, samples=150] plot (\x, {0.5*sin(\x*180/3.14*1.2)});
+			\draw[dashed, PQCAmber, line width=1pt] (0,-0.6) -- (9,-0.6);
+			\draw[{Latex[length=2mm]}-{Latex[length=2mm]}, PQCAmber, thick] (0,-0.6) -- (2.62,-0.6) 
+			node[midway, below, font=\scriptsize] {Período $r$};
+		\end{scope}
+		
+		% LWE Ruidoso
+		\begin{scope}[shift={(0,0)}]
+			\node[font=\footnotesize\bfseries, text=PQCGreen, align=left] at (4.5, 1.1) 
+			{\textbf{Criptografía de Retículos (LWE):} Datos con ruido aleatorio $\mathbf{e}$ $\to$ Ausencia de período (Inmune a Shor)};
+			\foreach \x in {0.2,0.5,...,8.8} {
+				\pgfmathsetmacro\yr{(rand)*0.55}
+				\draw[line width=1.3pt, PQCGreen!80!black] (\x, 0) -- (\x, \yr);
+			}
+			\draw[line width=0.8pt, gray!60] (0,0) -- (9,0);
+		\end{scope}
+	\end{tikzpicture}
+	\caption{Comparación estructural: la periodicidad explotada por la Transformada Cuántica de Fourier frente a la dispersión aperiódica del ruido en LWE.}
+	\label{fig:shor_vs_lwe}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+% =============================================================================

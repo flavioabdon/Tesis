@@ -2,7 +2,50 @@
 \thispagestyle{empty}
 \vspace*{\fill}
 \begin{center}
-    {\fontsize{40}{48}\selectfont\textbf{ANEXOS}}
+    {\fontsize{36}{44}\selectfont\textbf{ANEXOS}}
 \end{center}
 \vspace*{\fill}
 \clearpage
+
+% =============================================================================
+\chapter{Especificación Formal en Tamarin Prover (\texttt{protocolo\_v2.spthy})}
+\label{anexo:tamarin_spthy}
+% =============================================================================
+
+El presente anexo contiene la especificación completa del modelo de seguridad formal del protocolo de votación electrónica en el lenguaje de reescritura multiconjunto de \textbf{Tamarin Prover}. El modelo incorpora la generación de $dk_{\text{AC}}$ en la Autoridad de Conteo, el control de unicidad sustentado en la transición de estados lineales $\text{NoHaVotado}(id_V) \to \text{YaVoto}(id_V)$, la desvinculación de la identidad del votante en el ánfora digital, la emisión de recibos firmados por el servidor y las reglas de revelación de secretos para análisis de corrupción de claves.
+
+\begin{small}
+\verbatiminput{tamarin_protocolo.spthy}
+\end{small}
+
+\clearpage
+
+% =============================================================================
+\chapter{Salida del Motor de Verificación Formal Tamarin Prover}
+\label{anexo:tamarin_salida}
+% =============================================================================
+
+A continuación se transcribe la salida cruda generada por el ejecutable \texttt{tamarin-prover} versión 1.12.0 sobre el motor Maude 3.5.1 en modo de lotes con fuentes automáticas (\texttt{--auto-sources}), demostrando formalmente los lemas de ejecutabilidad funcional (\texttt{ejecutabilidad}, 21 pasos), unicidad del sufragio por transición de estado lineal (\texttt{unicidad}, 18 pasos), confidencialidad previa al escrutinio (\texttt{secreto\_voto}, 8 pasos) y autenticidad del votante (\texttt{autenticidad\_votante}, 17 pasos), e incluyendo el reporte de la traza de falsificación simbólica identificada en el lema de correspondencia causal (\texttt{integridad\_voto}, 13 pasos) detallada en la Sección \ref{sec:practica_tamarin}.
+
+\begin{scriptsize}
+\verbatiminput{salida_tamarin.txt}
+\end{scriptsize}
+
+\clearpage
+
+% =============================================================================
+\chapter{Entorno de Evaluación Experimental y Dependencias de Compilación}
+\label{anexo:entorno_benchmark}
+% =============================================================================
+
+Para asegurar la reproducibilidad rigurosa de las mediciones de latencia y pruebas de vectores KAT, a continuación se detallan las especificaciones técnicas del entorno de pruebas:
+
+\begin{itemize}
+    \item \textbf{Arquitectura de Procesamiento:} Apple Silicon M-series (ARM64) / x86-64 con soporte de instrucciones vectoriales NEON / AVX2.
+    \item \textbf{Sistema Operativo:} macOS Sonoma 14.x / Ubuntu Linux 22.04 LTS (Kernel 6.5).
+    \item \textbf{Compilador:} Apple Clang versión 15.0.0 / GCC 12.3.0, con banderas de optimización estricta \texttt{-O3 -fPIC -fvisibility=hidden}.
+    \item \textbf{Motor Formal:} Tamarin Prover 1.12.0 compilado con Glasgow Haskell Compiler (GHC 9.6.4), acoplado al resolvedor Maude versión 3.5.1.
+    \item \textbf{Biblioteca Post-Cuántica:} PQClean (commit \texttt{76e73bb}, conforme a las versiones definitivas NIST FIPS 203 y FIPS 204 publicadas en agosto de 2024), compilada como biblioteca dinámica compartida \texttt{libpqc\_core.dylib}.
+    \item \textbf{Pila Criptográfica Clásica:} OpenSSL 3.2.1 / libcrypto (implementando RSA-OAEP-2048 y ECDSA P-256).
+    \item \textbf{Capa de Aplicación y Pruebas:} Python 3.11.8 con enlace CTypes de bajo nivel y suite de pruebas deterministas.
+\end{itemize}

@@ -1,0 +1,69 @@
+\section{Fundamentos Geométricos de la Criptografía Basada en Retículos}
+% =============================================================================
+
+Frente a la debilidad de las estructuras cíclicas multiplicativas, la criptografía post-cuántica recurre a problemas de álgebra lineal geométrica sobre espacios euclídeos discretos: los \textbf{retículos} (\textit{lattices}).
+
+\subsection{Definición Formal de Retículo}
+
+Dado un conjunto de $k$ vectores linealmente independientes $\mathbf{B} = \{\mathbf{b}_1, \mathbf{b}_2, \dots, \mathbf{b}_k\} \subset \mathbb{R}^m$, el retículo $\Lambda$ generado por la base $\mathbf{B}$ se define como el conjunto de todas las combinaciones lineales con coeficientes enteros (Micciancio y Goldwasser, 2002):
+\begin{equation}
+	\Lambda = \mathcal{L}(\mathbf{B}) = \left\{ \sum_{i=1}^{k} z_i \mathbf{b}_i \;\middle|\; z_i \in \mathbb{Z} \right\}
+\end{equation}
+El entero $k$ se denomina el \textit{rango} del retículo y $m$ su \textit{dimensión}. Cuando $k = m$, el retículo se considera de rango completo.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[scale=0.85]
+		% Puntos del retículo
+		\foreach \x in {-2,...,3} {
+			\foreach \y in {-2,...,2} {
+				\coordinate (P) at ({\x*1.5 + \y*0.7}, {\x*0.4 + \y*1.8});
+				\fill[PQCMainBlue!80!black] (P) circle (2.2pt);
+			}
+		}
+		\coordinate (O) at (0,0);
+		\node[below left, font=\scriptsize\bfseries] at (O) {$\mathbf{0}$};
+		
+		% Base buena
+		\draw[-{Latex[length=2.5mm]}, line width=1.5pt, PQCTeal] (O) -- (1.5, 0.4) 
+		node[midway, below right, font=\footnotesize\bfseries] {$\mathbf{b}_1$};
+		\draw[-{Latex[length=2.5mm]}, line width=1.5pt, PQCGreen] (O) -- (0.7, 1.8) 
+		node[midway, above left, font=\footnotesize\bfseries] {$\mathbf{b}_2$};
+		
+		% Punto CVP con ruido
+		\coordinate (Closest) at ({1*1.5 + 1*0.7}, {1*0.4 + 1*1.8});
+		\coordinate (T) at ({1*1.5 + 1*0.7 + 0.35}, {1*0.4 + 1*1.8 + 0.45});
+		\fill[PQCCrimson] (T) circle (2.6pt) node[above right, font=\scriptsize\bfseries, text=PQCCrimson] {$\mathbf{t} = \mathbf{v} + \mathbf{e}$};
+		\draw[-{Latex[length=2mm]}, line width=1.1pt, PQCAmber] (Closest) -- (T) node[midway, right, font=\tiny\bfseries] {ruido $\mathbf{e}$};
+		\draw[PQCGreen, line width=1.2pt, dashed] (Closest) circle (6pt);
+	\end{tikzpicture}
+	\caption{Retículo bidimensional con vectores base y punto objetivo perturbado por ruido en el problema CVP.}
+	\label{fig:reticulo_2d}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+\subsection{Bases Cortas (Buenas) versus Bases Distorsionadas (Malas)}
+
+Una propiedad geométrica central es que un mismo retículo puede ser generado por infinitas matrices base distintas vinculadas mediante matrices unimodulares $\mathbf{U} \in \mathbb{Z}^{k \times k}$ tales que $\det(\mathbf{U}) = \pm 1$:
+\begin{equation}
+	\mathbf{B}' = \mathbf{B} \cdot \mathbf{U}
+\end{equation}
+\begin{itemize}
+	\item \textbf{Base ``Buena'' (ortogonal y corta):} Sus vectores poseen normas euclídeas reducidas y ángulos cercanos a $90^\circ$. Permite delimitar celdas fundamentales convexas y resolver problemas de cercanía mediante redondeo simple de coordenadas.
+	\item \textbf{Base ``Mala'' (larga y altamente sesgada):} Formada por vectores de gran magnitud y direcciones casi colineales. Sus celdas fundamentales son hiperparalelepípedos elongados que oscurecen la geometría del retículo.
+\end{itemize}
+
+Esta disparidad constituye la base de la puerta trampa en retículos: la clave privada corresponde a una base reducida y corta, mientras que la clave pública consiste en una base algebraicamente equivalente pero distorsionada.
+
+\subsection{Problemas Computacionales Intratables: SVP y CVP}
+
+La seguridad de las construcciones post-cuánticas se fundamenta en la intratabilidad demostrada de dos problemas geométricos en dimensiones elevadas ($n \ge 500$):
+
+\begin{enumerate}
+	\item \textbf{Problema del Vector Más Corto (Shortest Vector Problem, SVP):} Dado un retículo $\Lambda$, hallar un vector no nulo $\mathbf{v} \in \Lambda \setminus \{\mathbf{0}\}$ tal que su norma euclídea sea mínima: $\|\mathbf{v}\| = \lambda_1(\Lambda) = \min_{\mathbf{x} \in \Lambda \setminus \{\mathbf{0}\}} \|\mathbf{x}\|$.
+	\item \textbf{Problema del Vector Más Cercano (Closest Vector Problem, CVP):} Dado un retículo $\Lambda$ y un vector arbitrario $\mathbf{t} \in \mathbb{R}^m$ que no pertenece al retículo, hallar el punto $\mathbf{v} \in \Lambda$ que minimice la distancia euclídea $\|\mathbf{t} - \mathbf{v}\|$.
+\end{enumerate}
+
+Ajtai (1996) estableció una propiedad fundamental para la criptografía: las reducciones \textit{worst-case to average-case}. Esto significa que resolver una instancia típica o aleatoria generada por un esquema criptográfico es tan difícil como resolver la peor instancia posible del problema geométrico sobre retículos. Los algoritmos cuánticos conocidos no ofrecen una ventaja más allá de mejoras polinomiales en el exponente de los algoritmos de reducción de base (como BKZ cuántico), requiriendo tiempo asintótico $\mathcal{O}(2^{c \cdot n})$.
+
+% =============================================================================

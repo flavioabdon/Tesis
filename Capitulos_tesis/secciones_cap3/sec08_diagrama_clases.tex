@@ -1,0 +1,129 @@
+\section{Diagrama de Clases UML Detallado y Estructuras de Datos}
+\label{sec:diagrama_clases_detallado}
+% =============================================================================
+
+\subsection{Diagrama de Clases Detallado del Sistema}
+
+La Figura \ref{fig:uml_clases_detallado} especifica de manera exhaustiva el Diagrama de Clases UML del prototipo, detallando la visibilidad de atributos, tipos concretos de datos de longitud fija, signaturas completas de métodos con parámetros y tipos de retorno, y relaciones de composición y asociación.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[
+		cls/.style={rectangle, draw=PQCMainBlue, thick, fill=white, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=4pt},
+		assoc/.style={-{Latex[length=2mm]}, thick, draw=black!75},
+		comp/.style={-{Diamond[length=3mm, fill=black]}, thick, draw=black!75}
+	]
+		% Clase Votante
+		\node[cls] (V) at (-4.2, 3.2) {
+			\textbf{\textsf{VotantePQC}}\\
+			\rule{5.0cm}{0.3pt}\\
+			- id\_v: str\\
+			- sk\_v: bytes [4032]\\
+			- pk\_v: bytes [1952]\\
+			- credencial: CredencialVotante\\
+			\rule{5.0cm}{0.3pt}\\
+			+ formular\_voto(candidato: str): PaqueteVoto\\
+			+ encapsular\_clave(ek\_sv: bytes): Tuple[bytes, bytes]\\
+			+ firmar\_boleta(boleta: BoletaSufragio): bytes\\
+			+ to\_dict(): dict
+		};
+		
+		% Clase AR
+		\node[cls] (AR) at (-4.2, -1.8) {
+			\textbf{\textsf{AutoridadRegistroPQC}}\\
+			\rule{5.0cm}{0.3pt}\\
+			- nombre: str\\
+			- sk\_ar: bytes [4032]\\
+			- pk\_ar: bytes [1952]\\
+			- padron\_electoral: Dict[str, dict]\\
+			\rule{5.0cm}{0.3pt}\\
+			+ registrar\_ciudadano(id\_v: str, pk\_v: bytes): CredencialVotante\\
+			+ verificar\_identidad(id\_v: str): bool\\
+			+ exportar\_clave\_publica(): bytes
+		};
+		
+		% Clase Servidor
+		\node[cls] (SV) at (4.2, 3.2) {
+			\textbf{\textsf{ServidorVotacionPQC}}\\
+			\rule{5.2cm}{0.3pt}\\
+			- ek\_sv: bytes [1184]\\
+			- \_dk\_sv: bytes [2400]\\
+			- sk\_sv: bytes [4032]\\
+			- pk\_sv: bytes [1952]\\
+			- pk\_ar: bytes [1952]\\
+			- anfora\_digital: List[BoletaSufragio]\\
+			- registro\_sufragio: Set[str]\\
+			\rule{5.2cm}{0.3pt}\\
+			+ recepcionar\_voto(paquete: PaqueteVoto): ReciboVotacion\\
+			+ verificar\_credencial(cred: CredencialVotante): bool\\
+			+ verificar\_firma\_boleta(blt: BoletaSufragio, sig: bytes): bool\\
+			+ emitir\_recibo(blt: BoletaSufragio): ReciboVotacion\\
+			+ obtener\_dk\_para\_conteo(): bytes
+		};
+		
+		% Clase Conteo
+		\node[cls] (AC) at (4.2, -1.8) {
+			\textbf{\textsf{AutoridadConteoPQC}}\\
+			\rule{5.2cm}{0.3pt}\\
+			- \_dk\_servidor: bytes [2400]\\
+			- pk\_ar: bytes [1952]\\
+			- resultados\_conteo: Dict[str, int]\\
+			\rule{5.2cm}{0.3pt}\\
+			+ desencapsular\_urna(anfora: List[BoletaSufragio]): ResultadoEscrutinio\\
+			+ descifrar\_boleta(blt: BoletaSufragio): str\\
+			+ emitir\_acta\_escrutinio(): ResultadoEscrutinio
+		};
+		
+		% Clases de Datos
+		\node[cls, fill=BoxBgBlue] (Blt) at (0, 0.6) {
+			\textbf{\textsf{BoletaSufragio}}\\
+			\rule{4.4cm}{0.3pt}\\
+			+ ciphertext\_kem: bytes [1088]\\
+			+ voto\_cifrado: bytes\\
+			+ nonce\_aead: bytes [12]\\
+			+ credencial: CredencialVotante\\
+			+ timestamp\_emision: float\\
+			\rule{4.4cm}{0.3pt}\\
+			+ payload\_bytes(): bytes\\
+			+ to\_dict(): dict
+		};
+		
+		\node[cls, fill=BoxBgGreen] (Rec) at (0, -4.2) {
+			\textbf{\textsf{ReciboVotacion}}\\
+			\rule{4.4cm}{0.3pt}\\
+			+ hash\_boleta: bytes [32]\\
+			+ timestamp\_recibo: float\\
+			+ firma\_servidor: bytes [3309]\\
+			\rule{4.4cm}{0.3pt}\\
+			+ payload\_bytes(): bytes\\
+			+ to\_dict(): dict
+		};
+		
+		% Relaciones
+		\draw[assoc] (V) -- (SV) node[midway, above, font=\tiny\sffamily] {envía PaqueteVoto};
+		\draw[assoc] (AR) -- (V) node[midway, left, font=\tiny\sffamily] {emite Credencial};
+		\draw[assoc] (SV) -- (AC) node[midway, right, font=\tiny\sffamily] {entrega Ánfora};
+		\draw[comp] (Blt) -- (V);
+		\draw[assoc] (SV) -- (Rec) node[midway, right, font=\tiny\sffamily] {genera};
+	\end{tikzpicture}
+	\caption{Diagrama UML de Clases detallado y estructuras de datos.}
+	\label{fig:uml_clases_detallado}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+\subsection{Estructuras de Datos y Serialización Canónica RFC 8785}
+
+Para evitar vulnerabilidades de maleabilidad en las que dos representaciones de un mismo diccionario JSON generen firmas distintas debido a espacios en blanco o el orden de las claves, el módulo \texttt{crypto\_utils.py} implementa la serialización determinista canónica según el estándar RFC 8785:
+\begin{verbatim}
+def canonical_json(data: dict) -> bytes:
+    """Serializa un diccionario JSON de forma canonica y determinista (RFC 8785)."""
+    return json.dumps(
+        data,
+        sort_keys=True,
+        separators=(',', ':'),
+        ensure_ascii=False
+    ).encode('utf-8')
+\end{verbatim}
+Esta función garantiza que en cualquier entorno de ejecución, los datos firmados por el votante y recibidos por el servidor coincidan bit a bit sin discrepancias sintácticas.
+
+% =============================================================================

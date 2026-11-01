@@ -1,0 +1,92 @@
+\section{Diagramas de Máquina de Estados UML}
+\label{sec:diagramas_estados}
+% =============================================================================
+
+El protocolo modela dos máquinas de estados finitos complementarias: el ciclo de vida por el cual transita una boleta individual de sufragio y los estados institucionales del proceso comicial.
+
+\subsection{Máquina de Estados de la Boleta de Sufragio}
+
+La Figura \ref{fig:uml_estados_boleta} ilustra las transiciones de estado de una boleta, incluyendo los estados terminales de rechazo.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[
+		scale=0.88,
+		state/.style={rectangle, draw=PQCDark, fill=BoxBgBlue, thick, rounded corners=5pt, minimum height=0.8cm, font=\scriptsize\bfseries, align=center, inner sep=5pt},
+		errstate/.style={rectangle, draw=PQCCrimson, fill=red!10, thick, rounded corners=5pt, minimum height=0.8cm, font=\scriptsize\bfseries, align=center, inner sep=5pt},
+		trans/.style={-{Latex[length=2mm]}, thick, draw=black!80, font=\tiny\sffamily},
+		init/.style={circle, fill=black, inner sep=4pt},
+		final/.style={circle, draw=black, thick, fill=white, inner sep=4pt}
+	]
+		\node[init] (s0) at (0, 0) {};
+		\node[state] (s1) at (2.4, 0) {1. En Edición\\(Preferencia en claro)};
+		\node[state] (s2) at (6.6, 0) {2. Cifrada Híbrida\\(KEM-DEM)};
+		\node[state] (s3) at (10.8, 0) {3. Firmada Digitalmente\\(ML-DSA-65)};
+		
+		\node[state] (s4) at (10.8, -2.6) {4. En Transmisión\\(Canal Red Dolev-Yao)};
+		\node[state, fill=BoxBgTeal] (s5) at (6.6, -2.6) {5. Custodiada en Urna\\(Ánfora Digital)};
+		\node[state, fill=BoxBgGreen] (s6) at (2.4, -2.6) {6. Desencapsulada\\(Apertura con $dk_{AC}$)};
+		
+		\node[final] (sf) at (0, -2.6) {};
+		\node[circle, fill=black, inner sep=2.5pt] at (sf.center) {};
+		
+		% Estados de Error
+		\node[errstate] (err_rej) at (8.7, -4.8) {Rechazada\\(Firma Inválida / No Empadronado)};
+		\node[errstate] (err_dup) at (4.0, -4.8) {Descartada\\(Intento de Voto Duplicado)};
+		
+		% Transiciones de Éxito
+		\draw[trans] (s0) -- (s1) node[midway, above] {Emitir};
+		\draw[trans] (s1) -- (s2) node[midway, above] {$\text{Encaps}(ek_{SV})$};
+		\draw[trans] (s2) -- (s3) node[midway, above] {$\text{Sign}(sk_V)$};
+		\draw[trans] (s3) -- (s4) node[midway, right] {Enviar};
+		\draw[trans] (s4) -- (s5) node[midway, above] {Validación OK};
+		\draw[trans] (s5) -- (s6) node[midway, above] {Escrutinio};
+		\draw[trans] (s6) -- (sf) node[midway, above] {Totalizar};
+		
+		% Transiciones de Falla
+		\draw[trans, draw=PQCCrimson] (s4) |- (err_rej) node[near start, right] {Firma corrupta};
+		\draw[trans, draw=PQCCrimson] (s4) |- (err_dup) node[near start, left] {Ya votó};
+	\end{tikzpicture}
+	\caption{Diagrama de Estados UML del ciclo de vida de la boleta de sufragio.}
+	\label{fig:uml_estados_boleta}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+\subsection{Máquina de Estados del Proceso Electoral Institucional}
+
+La Figura \ref{fig:uml_estados_eleccion} modela las fases administrativas y los eventos de sincronización del proceso comicial.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[
+		scale=0.9,
+		st/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=4pt, font=\scriptsize\bfseries, align=center, inner sep=6pt, minimum height=0.75cm},
+		arr/.style={-{Latex[length=2.5mm]}, thick, draw=black!85, font=\tiny\sffamily},
+		i/.style={circle, fill=black, inner sep=4pt},
+		f/.style={circle, draw=black, thick, fill=white, inner sep=4pt}
+	]
+		\node[i] (start) at (0, 0) {};
+		\node[st] (st1) at (2.4, 0) {1. Configuración\\y Generación Claves};
+		\node[st] (st2) at (6.8, 0) {2. Empadronamiento\\y Registro AR};
+		\node[st, fill=BoxBgGreen] (st3) at (11.2, 0) {3. Jornada Electoral\\(Votación Abierta)};
+		
+		\node[st, fill=BoxBgAmber] (st4) at (11.2, -2.4) {4. Clausura Comicial\\(Recepción Cerrada)};
+		\node[st, fill=BoxBgPurple] (st5) at (6.8, -2.4) {5. Desencapsulamiento\\y Escrutinio AC};
+		\node[st, fill=BoxBgTeal] (st6) at (2.4, -2.4) {6. Auditoría y\\Proclamación Oficial};
+		\node[f] (end) at (0, -2.4) {};
+		\node[circle, fill=black, inner sep=2.5pt] at (end.center) {};
+		
+		\draw[arr] (start) -- (st1);
+		\draw[arr] (st1) -- node[midway, above] {Claves listas} (st2);
+		\draw[arr] (st2) -- node[midway, above] {Apertura comicios} (st3);
+		\draw[arr] (st3) -- node[midway, right] {Cierre de mesas} (st4);
+		\draw[arr] (st4) -- node[midway, above] {Transferir $dk_{AC}$} (st5);
+		\draw[arr] (st5) -- node[midway, above] {Publicar acta} (st6);
+		\draw[arr] (st6) -- (end);
+	\end{tikzpicture}
+	\caption{Diagrama de Estados UML del proceso comicial institucional.}
+	\label{fig:uml_estados_eleccion}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+% =============================================================================

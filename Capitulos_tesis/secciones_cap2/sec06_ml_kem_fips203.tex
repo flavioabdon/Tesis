@@ -1,0 +1,65 @@
+\section{Mecanismo de Encapsulamiento de Claves ML-KEM (FIPS 203)}
+% =============================================================================
+
+El estándar \textbf{FIPS 203} (NIST, 2024), derivado del algoritmo CRYSTALS-Kyber, formaliza el esquema \textbf{ML-KEM} como estándar post-cuántico para el establecimiento y encapsulamiento seguro de claves simétricas.
+
+\subsection{Concepto de KEM en Votación Electrónica}
+
+A diferencia de los criptosistemas asimétricos convencionales, ML-KEM no cifra directamente datos voluminosos. En su lugar, opera como un mecanismo de transporte de clave de alta seguridad: la cabina del votante utiliza ML-KEM para acordar una clave simétrica efímera compartida $K \in \{0, 1\}^{256}$ con el servidor electoral, la cual se emplea posteriormente para cifrar el contenido del voto mediante un algoritmo simétrico autenticado (como AES-256-GCM).
+
+\subsection{Fases del Protocolo ML-KEM}
+
+El protocolo articula tres algoritmos probabilísticos:
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[scale=0.9]
+		\node (aut) [box, fill=BoxBgBlue, draw=PQCMainBlue, text width=3.8cm] {\textbf{Servidor Electoral}\\\small Genera $(\mathbf{A}, \mathbf{b})$ con secreto $\mathbf{s}$};
+		\node (vot) [box, right=3.5cm of aut, fill=BoxBgPurple, draw=PQCPurple, text width=3.8cm] {\textbf{Terminal del Votante}\\\small Encapsula secreto $K$ en $c = (\mathbf{u}, v)$};
+		
+		\draw[-{Latex[length=2.5mm]}, thick, PQCMainBlue] ([yshift=3mm]aut.east) -- ([yshift=3mm]vot.west) 
+		node[midway, above, font=\footnotesize] {1. Clave pública $PK = (\mathbf{A}, \mathbf{b})$};
+		
+		\draw[-{Latex[length=2.5mm]}, thick, PQCPurple] ([yshift=-3mm]vot.west) -- ([yshift=-3mm]aut.east) 
+		node[midway, below, font=\footnotesize] {2. Boleta cifrada $c = (\mathbf{u}, v)$};
+		
+		\node (dec) [box, below=1.0cm of aut, fill=BoxBgGreen, draw=PQCGreen, text width=4.2cm] {\textbf{Desencapsulamiento}\\\small Calcula $v - \mathbf{s}^T\mathbf{u}$ y redondea para recuperar $K$};
+		\draw[-{Latex[length=2mm]}, thick, PQCGreen] (aut) -- (dec);
+	\end{tikzpicture}
+	\caption{Flujo secuencial de operaciones en el estándar FIPS 203 (ML-KEM).}
+	\label{fig:kem_flow}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia a partir de FIPS PUB 203.}}
+\end{figure}
+
+\begin{enumerate}
+	\item \textbf{Generación de Claves (\texttt{ML-KEM.KeyGen}):}
+	El receptor genera la matriz de polinomios $\mathbf{A} \sim R_q^{k \times k}$ y muestrea los vectores pequeños $\mathbf{s}, \mathbf{e} \sim \chi^k$. Calcula:
+	\begin{equation}
+		\mathbf{b} = \mathbf{A}\mathbf{s} + \mathbf{e} \pmod q
+	\end{equation}
+	Publica la clave pública $PK = (\mathbf{A}, \mathbf{b})$ y almacena la clave privada $SK = \mathbf{s}$.
+	
+	\item \textbf{Encapsulamiento (\texttt{ML-KEM.Encaps}):}
+	El emisor recibe $PK$, muestrea un vector efímero $\mathbf{r} \sim \chi^k$ y vectores de ruido $\mathbf{e}_1 \sim \chi^k$, $e_2 \sim \chi$. A partir de un mensaje aleatorio $m \in \{0, 1\}^{256}$, calcula el texto cifrado $c = (\mathbf{u}, v)$:
+	\begin{align}
+		\mathbf{u} &= \mathbf{A}^T \mathbf{r} + \mathbf{e}_1 \pmod q \\
+		v &= \mathbf{b}^T \mathbf{r} + e_2 + \text{Codificar}(m) \pmod q
+	\end{align}
+	donde $\text{Codificar}(m)$ proyecta cada bit al elemento dipolar $0$ o $\lfloor q/2 \rceil \in \mathbb{Z}_q$.
+	
+	\item \textbf{Desencapsulamiento (\texttt{ML-KEM.Decaps}):}
+	El receptor computa la diferencia matricial utilizando su secreto $\mathbf{s}$:
+	\begin{align}
+		v - \mathbf{s}^T \mathbf{u} &= \left( \mathbf{b}^T \mathbf{r} + e_2 + \text{Codificar}(m) \right) - \mathbf{s}^T \left( \mathbf{A}^T \mathbf{r} + \mathbf{e}_1 \right) \nonumber \\
+		&= \left( (\mathbf{A}\mathbf{s} + \mathbf{e})^T \mathbf{r} + e_2 + \text{Codificar}(m) \right) - \left( \mathbf{s}^T \mathbf{A}^T \mathbf{r} + \mathbf{s}^T \mathbf{e}_1 \right) \nonumber \\
+		&= \text{Codificar}(m) + \underbrace{\left( \mathbf{e}^T \mathbf{r} + e_2 - \mathbf{s}^T \mathbf{e}_1 \right)}_{\mathbf{e}_{\text{residual}}} \pmod q
+	\end{align}
+\end{enumerate}
+
+Los términos de alta magnitud $(\mathbf{s}^T \mathbf{A}^T \mathbf{r})$ se cancelan exactamente. Como el término de ruido residual $\mathbf{e}_{\text{residual}}$ es pequeño por construcción ($\|\mathbf{e}_{\text{residual}}\|_\infty < q/4$), un redondeo umbral decodifica el bit $m_i = 0$ si el coeficiente se ubica en $[0, q/4) \cup (3q/4, q)$, y $m_i = 1$ si se ubica en $(q/4, 3q/4)$.
+
+\subsection{Seguridad IND-CCA2 y Transformada Fujisaki-Okamoto}
+
+Para prevenir ataques de texto cifrado escogido activo (IND-CCA2), el estándar FIPS 203 envuelve este esquema básico mediante una variante rigurosa de la \textit{Transformada de Fujisaki-Okamoto} (FO) (Fujisaki y Okamoto, 2013). Durante el desencapsulamiento, el algoritmo re-encripta el mensaje recuperado $m'$ utilizando los parámetros públicos y verifica si el criptograma resultante coincide idénticamente con el texto recibido $c$. Si detecta una discrepancia infinitesimal, aborta emitiendo un valor pseudoaleatorio ciego, impidiendo cualquier ataque de oráculo de descifrado.
+
+% =============================================================================

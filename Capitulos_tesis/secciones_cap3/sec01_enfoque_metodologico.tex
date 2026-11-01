@@ -1,0 +1,30 @@
+\section{Enfoque Metodológico de Desarrollo e Ingeniería de Software}
+\label{sec:metodologia_desarrollo}
+% =============================================================================
+
+La construcción del prototipo de votación electrónica se enmarca en las directrices de la investigación en ciencias del diseño (DSR), articulando un ciclo iterativo orientado a la resolución de problemas reales de seguridad de la información.
+
+\subsection{El Ciclo DSR en la Construcción del Artefacto}
+
+El desarrollo del artefacto se estructuró a lo largo de las fases metodológicas de DSR:
+\begin{enumerate}
+	\item \textbf{Conciencia del Problema (\textit{Awareness of Problem}):} Identificación de la vulnerabilidad crítica de los sistemas electorales contemporáneos frente a la computación cuántica (Shor) y a la recolección pasiva de boletas para descifrado futuro (amenaza HNDL), detallada en los Capítulos 1 y 2.
+	\item \textbf{Sugerencia (\textit{Suggestion}):} Concepción de un protocolo híbrido post-cuántico que combine encapsulamiento asimétrico sobre retículos (FIPS 203), firmas de retículos (FIPS 204), cifrado simétrico autenticado (AES-256-GCM) y recibos deterministas inmutables (SHA3-256).
+	\item \textbf{Desarrollo (\textit{Development}):} Ingeniería y programación del prototipo de software en lenguaje C nativo (PQClean) con enlace mediante wrappers Python FFI, arquitectura por capas, persistencia relacional y servidor web con API REST.
+	\item \textbf{Evaluación (\textit{Evaluation}):} Demostración matemática exhaustiva mediante verificación formal automatizada en Tamarin Prover, validación determinista de vectores KAT del NIST y pruebas empíricas de desempeño computacional.
+	\item \textbf{Conclusión (\textit{Conclusion}):} Consolidación de métricas de viabilidad operativa y contraste formal de hipótesis en el ámbito de las elecciones universitarias.
+\end{enumerate}
+
+\subsection{Requerimientos de Ingeniería del Prototipo}
+
+El diseño del artefacto atiende a requerimientos funcionales y no funcionales claramente definidos:
+\begin{itemize}
+	\item \textbf{RF1 - Acreditación y Sufragio Único:} Todo votante debe contar con una credencial digital firmada por la Autoridad de Registro (AR) antes de poder emitir su voto, garantizando que ninguna identidad vote más de una vez.
+	\item \textbf{RF2 - Secreto Absoluto del Voto:} El contenido de la boleta debe permanecer cifrado en todo momento durante el transporte y custodia en el ánfora; la clave privada de desencapsulamiento ($dk_{AC}$) reside de forma exclusiva en la Autoridad de Conteo (AC) fuera de línea.
+	\item \textbf{RF3 - Integridad y No Repudio:} Toda boleta transmitida debe estar firmada digitalmente por la clave privada del elector ($sk_V$) vinculada a su credencial, impidiendo la alteración del voto por terceros.
+	\item \textbf{RF4 - Auditabilidad Universal y Recibo Compacto:} El votante debe recibir un comprobante firmado por el servidor que contenga el hash SHA3-256 determinista de su boleta, verificable públicamente sin vulnerar el secreto electoral.
+	\item \textbf{RNF1 - Eficiencia y Rendimiento:} El tiempo de cifrado y empaquetado en la cabina de votación no debe exceder los 100 ms para terminales convencionales, garantizando una experiencia de usuario ágil.
+	\item \textbf{RNF2 - Modularidad y Aislamiento de Memoria:} El núcleo criptográfico nativo en C debe operar con preasignación de buffers estáticos y purga segura de memoria volátil mediante ceros lógicos (\texttt{memzero}), neutralizando fugas por canales laterales de memoria.
+\end{itemize}
+
+% =============================================================================

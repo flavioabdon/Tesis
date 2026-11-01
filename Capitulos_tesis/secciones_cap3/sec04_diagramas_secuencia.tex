@@ -1,0 +1,132 @@
+\section{Diagramas de Secuencia UML del Protocolo}
+\label{sec:diagramas_secuencia}
+% =============================================================================
+
+Para modelar la dinámica temporal de las transacciones y los parámetros de los mensajes, el protocolo se divide en dos fases operativas: la fase de emisión y recepción del voto, y la fase de apertura de ánfora y escrutinio.
+
+\subsection{Secuencia 1: Emisión, Validación Multinivel y Custodia del Voto}
+
+La Figura \ref{fig:uml_secuencia_votacion} detalla el intercambio de mensajes durante la jornada electoral activa.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[
+		node distance=1.1cm and 3.2cm,
+		lifeline/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, minimum width=2.8cm, minimum height=0.7cm, font=\bfseries\scriptsize, align=center},
+		msg/.style={-{Latex[length=2mm]}, thick, draw=black!85},
+		retmsg/.style={-{Latex[length=2mm]}, thick, dashed, draw=black!85},
+		note/.style={rectangle, draw=gray!50, fill=BoxBgAmber, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3pt}
+	]
+		% Cabeceras
+		\node[lifeline] (V)  at (0, 0) {Votante ($V$)};
+		\node[lifeline] (AR) at (5.0, 0) {Autoridad Reg. ($AR$)};
+		\node[lifeline] (SV) at (10.2, 0) {Servidor Votación ($SV$)};
+		
+		% Ejes verticales
+		\draw[draw=gray!50, dashed] (V) -- ++(0,-9.2);
+		\draw[draw=gray!50, dashed] (AR) -- ++(0,-9.2);
+		\draw[draw=gray!50, dashed] (SV) -- ++(0,-9.2);
+		
+		% Bloques de activación
+		\draw[fill=white, draw=gray!70] ([xshift=-1.5mm, yshift=-0.8cm]V.center) rectangle ++(3mm, -1.8cm);
+		\draw[fill=white, draw=gray!70] ([xshift=-1.5mm, yshift=-1.2cm]AR.center) rectangle ++(3mm, -1.2cm);
+		\draw[fill=white, draw=gray!70] ([xshift=-1.5mm, yshift=-3.4cm]V.center) rectangle ++(3mm, -2.8cm);
+		\draw[fill=white, draw=gray!70] ([xshift=-1.5mm, yshift=-4.8cm]SV.center) rectangle ++(3mm, -3.2cm);
+		
+		% Mensajes Registro
+		\draw[msg] ([yshift=-1.2cm]V.center) -- ([yshift=-1.2cm]AR.center)
+		node[midway, above, font=\scriptsize] {1: \texttt{SolicitudRegistro(id\_v, pk\_v)}};
+		
+		\draw[retmsg] ([yshift=-2.2cm]AR.center) -- ([yshift=-2.2cm]V.center)
+		node[midway, above, font=\scriptsize] {2: \texttt{CredencialVotante(id\_v, pk\_v, ts, firma\_ar)}};
+		
+		% Cifrado local
+		\node[note, right=0.2cm of V, yshift=-3.7cm] {
+			\textbf{Operaciones Locales en Cabina:}\\
+			$\bullet$ $(K, ct_{kem}) \leftarrow \text{ML-KEM.Encaps}(ek_{SV})$\\
+			$\bullet$ $c_{voto} \leftarrow \text{AES-GCM.Encrypt}(K, m, nonce)$\\
+			$\bullet$ $\text{Boleta} = \langle ct_{kem}, c_{voto}, nonce, \text{Credencial}, ts \rangle$\\
+			$\bullet$ $\sigma_V \leftarrow \text{ML-DSA.Sign}(sk_V, \text{canonical}(\text{Boleta}))$
+		};
+		
+		% Envío de voto
+		\draw[msg, color=PQCMainBlue] ([yshift=-5.0cm]V.center) -- ([yshift=-5.0cm]SV.center)
+		node[midway, above, font=\scriptsize\bfseries] {3: \texttt{POST /api/votar} $(\text{PaqueteVoto} = (\text{Boleta}, \sigma_V))$};
+		
+		% Validación en Servidor
+		\node[note, left=0.2cm of SV, yshift=-5.8cm] {
+			\textbf{Verificación Multinivel:}\\
+			$\bullet$ $\text{ML-DSA.Verify}(\sigma_{AR}, \text{Cred}, pk_{AR}) \stackrel{?}{=} \text{OK}$\\
+			$\bullet$ $\text{ML-DSA.Verify}(\sigma_V, \text{Boleta}, pk_V) \stackrel{?}{=} \text{OK}$\\
+			$\bullet$ $\text{ControlAntiDuplicado}(id\_v) \stackrel{?}{=} \text{No ha votado}$\\
+			$\bullet$ $\text{Urna}.\text{append}(\text{Boleta}); \; \text{Padron}[id\_v] = \text{'Ya Votó'}$
+		};
+		
+		% Retorno de Recibo
+		\draw[retmsg, color=PQCGreen] ([yshift=-7.6cm]SV.center) -- ([yshift=-7.6cm]V.center)
+		node[midway, above, font=\scriptsize\bfseries] {4: \texttt{ReciboVotacion(h\_boleta, timestamp, firma\_sv)}};
+	\end{tikzpicture}
+	\caption{Diagrama de Secuencia UML: Emisión, verificación y recepción de recibo.}
+	\label{fig:uml_secuencia_votacion}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+\subsection{Secuencia 2: Clausura Comicial, Desencapsulamiento y Escrutinio}
+
+La Figura \ref{fig:uml_secuencia_conteo} ilustra la fase de cierre de urna, apertura controlada y totalización auditable efectuada por la Autoridad de Conteo.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[
+		node distance=1.1cm and 3.5cm,
+		lifeline/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, minimum width=2.8cm, minimum height=0.7cm, font=\bfseries\scriptsize, align=center},
+		msg/.style={-{Latex[length=2mm]}, thick, draw=black!85},
+		retmsg/.style={-{Latex[length=2mm]}, thick, dashed, draw=black!85},
+		note/.style={rectangle, draw=gray!50, fill=BoxBgAmber, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3pt}
+	]
+		% Cabeceras
+		\node[lifeline] (SV) at (0, 0) {Servidor Votación ($SV$)};
+		\node[lifeline] (AC) at (5.5, 0) {Autoridad Conteo ($AC$)};
+		\node[lifeline] (PUB) at (11.0, 0) {Tablero Público / Auditoría};
+		
+		% Ejes verticales
+		\draw[draw=gray!50, dashed] (SV) -- ++(0,-8.0);
+		\draw[draw=gray!50, dashed] (AC) -- ++(0,-8.0);
+		\draw[draw=gray!50, dashed] (PUB) -- ++(0,-8.0);
+		
+		% Activaciones
+		\draw[fill=white, draw=gray!70] ([xshift=-1.5mm, yshift=-0.8cm]SV.center) rectangle ++(3mm, -1.5cm);
+		\draw[fill=white, draw=gray!70] ([xshift=-1.5mm, yshift=-1.5cm]AC.center) rectangle ++(3mm, -5.2cm);
+		\draw[fill=white, draw=gray!70] ([xshift=-1.5mm, yshift=-6.2cm]PUB.center) rectangle ++(3mm, -1.2cm);
+		
+		% Mensajes
+		\draw[msg, color=PQCPurple] ([yshift=-1.2cm]SV.center) -- ([yshift=-1.2cm]AC.center)
+		node[midway, above, font=\scriptsize\bfseries] {1: Clausura de mesa $\to$ Entrega Lote de Boletas Cifradas};
+		
+		% Nota Desencapsulamiento
+		\node[note, right=0.2cm of AC, yshift=-3.2cm] {
+			\textbf{Procesamiento por la AC (Air-Gapped):}\\
+			$\bullet$ Carga de clave privada de desencapsulamiento $dk_{AC}$\\
+			$\bullet$ \textbf{Para cada boleta} $i \in \{1, \dots, N\}$:\\
+			\quad 1) $K_i \leftarrow \text{ML-KEM.Decaps}(dk_{AC}, ct_{kem, i})$\\
+			\quad 2) $m_i \leftarrow \text{AES-GCM.Decrypt}(K_i, c_{voto, i}, nonce_i)$\\
+			\quad 3) Comprobar firma $\sigma_{V, i}$ contra credencial\\
+			\quad 4) Acumular conteo: $\text{Total}[m_i] \leftarrow \text{Total}[m_i] + 1$\\
+			\quad 5) Calcular $h_i = \text{SHA3-256}(\text{Boleta}_i)$
+		};
+		
+		% Publicación
+		\draw[msg, color=PQCGreen] ([yshift=-6.4cm]AC.center) -- ([yshift=-6.4cm]PUB.center)
+		node[midway, above, font=\scriptsize\bfseries] {2: Publicar Acta Oficial de Cómputo + Lista de Hashes $\{h_i\}$};
+		
+		\node[note, left=0.2cm of PUB, yshift=-7.2cm] {
+			\textbf{Auditoría Ciudadana Universal:}\\
+			Los electores comparan el hash de su recibo contra la lista pública oficial.
+		};
+	\end{tikzpicture}
+	\caption{Diagrama de Secuencia UML: Escrutinio y publicación de cómputo oficial.}
+	\label{fig:uml_secuencia_conteo}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+% =============================================================================
