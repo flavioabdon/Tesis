@@ -1,0 +1,285 @@
+/*
+================================================================================
+  TESIS DE GRADO: PROTOCOLO DE VOTACIÓN ELECTRÓNICA BASADO EN CRIPTOGRAFÍA
+                  POST-CUÁNTICA DE RETÍCULOS (ML-KEM-768 + ML-DSA-65)
+  Universidad Mayor de San Andrés (UMSA) — Carrera de Informática — 2026
+  Modelo formal v3: fase de clausura, revelaciones granulares, lemas refinados
+================================================================================
+  Base: protocolo_v2b.spthy
+  SHA-256 base: f52366622f7614d1d2ffe5c229735425ecc26dd428c21d3b1898db8be9f7c1c4
+  Cambios respecto a v2b:
+    - Nueva regla Cierre_Votacion y restriction Cierre_Unico (cambio 1)
+    - Restriction NoVotoTrasCierre: todo VotoAceptado ocurre antes de Cierre()
+    - Regla Apertura_Anfora_Y_Escrutinio exige !UrnaCerrada() (cambio 1)
+    - Nuevas reglas Reveal_Clave_AR y Reveal_Clave_SV (cambio 2)
+    - Lemas con exclusiones granulares comentadas (cambio 3)
+    - Restrictions Setup*_Unico conservadas como supuestos declarados (cambio 4)
+================================================================================
+*/
+
+theory ProtocoloVotacionPQC_v3
+begin
+
+builtins: dest-signing, symmetric-encryption
+
+// -----------------------------------------------------------------------------
+// 1. ABSTRACCIÓN SIMBÓLICA DE PRIMITIVAS CRIPTOGRÁFICAS
+// -----------------------------------------------------------------------------
+functions:
+    encaps/2,          // encaps(pk_kem, secret_k) -> ciphertext_kem
+    decaps/2,          // decaps(sk_kem, ciphertext_kem) -> secret_k
+    ek_from_dk/1,      // deriva la clave pública desde la privada
+    h/1                // función hash SHA3-256
+
+equations:
+    decaps(dk, encaps(ek_from_dk(dk), r)) = r
+
+// -----------------------------------------------------------------------------
+// 2. RESTRICCIONES (AXIOMAS DE ESTADO)
+// -----------------------------------------------------------------------------
+
+// Verificación de igualdad simbólica (heredada de v2b)
+restriction Verificacion_Exitosa:
+    "All x y #i. Eq(x, y) @i ==> x = y"
+
+// [Cambio 4] Unicidad de instancias de setup — supuestos declarados explícitos.
+// Garantizan que en cualquier traza considerada solo existe una AC, una AR
+// y un SV, reflejando el despliegue real del sistema electoral.
+restriction SetupAC_Unico:
+    "All a b #i #j. SetupAC(a) @i & SetupAC(b) @j ==> #i = #j"
+
+restriction SetupAR_Unico:
+    "All a b #i #j. SetupAR(a) @i & SetupAR(b) @j ==> #i = #j"
+
+restriction SetupSV_Unico:
+    "All a b #i #j. SetupSV(a) @i & SetupSV(b) @j ==> #i = #j"
+
+// [Cambio 1] Unicidad de la clausura: el cierre de urna ocurre a lo sumo una
+// vez. Refleja el control de integridad del proceso electoral donde la ventana
+// de votación tiene inicio y fin deterministas.
+restriction Cierre_Unico:
+    "All #i #j. Cierre() @i & Cierre() @j ==> #i = #j"
+
+// [Cambio 1] Toda aceptación de voto debe ocurrir antes del cierre de urna.
+// Impide que el adversario inyecte boletas después de declarado el cierre,
+// cerrando la brecha de orden temporal en el modelo.
+restriction NoVotoTrasCierre:
+    "All id blt sig #ta #tc.
+        VotoAceptado(id, blt, sig) @ta & Cierre() @tc ==> #ta < #tc"
+
+// -----------------------------------------------------------------------------
+// 3. REGLAS DEL PROTOCOLO
+// -----------------------------------------------------------------------------
+
+// Setup Autoridad de Registro (AR)
+rule Setup_Autoridad_Registro:
+    let pk_AR = pk(~sk_AR) in
+    [ Fr(~sk_AR) ]
+  --[ SetupAR(pk_AR) ]->
+    [ !ClavePrivadaAR('AR', ~sk_AR)
+    , !ClavePublicaAR('AR', pk_AR)
+    , Out(pk_AR) ]
+
+// Setup Autoridad de Conteo (AC) — dk_AC generada en AC y retenida en secreto
+rule Setup_Autoridad_Conteo:
+    let ek_AC = ek_from_dk(~dk_AC) in
+    [ Fr(~dk_AC) ]
+  --[ SetupAC(ek_AC) ]->
+    [ !ClaveDesencapsulamientoAC('AC', ~dk_AC)
+    , !ClavePublicaKEM_AC('AC', ek_AC)
+    , Out(ek_AC) ]
+
+// Setup Servidor de Votacion (SV)
+rule Setup_Servidor_Votacion:
+    let pk_SV = pk(~sk_SV) in
+    [ Fr(~sk_SV) ]
+  --[ SetupSV(pk_SV) ]->
+    [ !ClavePrivadaFirma_SV('SV', ~sk_SV)
+    , !ClavePublicaFirma_SV('SV', pk_SV)
+    , Out(pk_SV) ]
+
+// Registro Ciudadano en el Padrón (AR)
+rule Registro_Ciudadano_Padron:
+    let pk_V       = pk(~sk_V)
+        credencial = <~idV, pk_V, ~ts_reg>
+        firma_AR   = sign(credencial, ~sk_AR) in
+    [ Fr(~sk_V), Fr(~ts_reg), Fr(~idV)
+    , !ClavePrivadaAR('AR', ~sk_AR) ]
+  --[ RegistroVotante(~idV, pk_V) ]->
+    [ !CredencialVotante(~idV, ~sk_V, credencial, firma_AR)
+    , !PadronElectoral(~idV, pk_V)
+    , NoHaVotado(~idV) ]
+
+// Emisión del Voto (Votante) — Cifrado KEM-DEM con ek_AC y firma ML-DSA
+rule Emitir_Voto_Mesa:
+    let ct_kem       = encaps(ek_AC, ~k_efimera)
+        voto_cifrado = senc(~m_voto, ~k_efimera)
+        boleta       = <ct_kem, voto_cifrado, credencial, ~ts_voto>
+        firma_V      = sign(boleta, ~sk_V) in
+    [ Fr(~k_efimera), Fr(~m_voto), Fr(~ts_voto)
+    , !CredencialVotante(~idV, ~sk_V, credencial, firma_AR)
+    , !ClavePublicaKEM_AC('AC', ek_AC) ]
+  --[ VotoEmitido(~idV, ~m_voto)
+    , VotoEnviado(~idV, boleta, firma_V)
+    , SecretoVoto(~m_voto) ]->
+    [ Out(<boleta, firma_V, firma_AR>) ]
+
+// Recepción y Depósito en Ánfora (SV)
+rule Recepcion_Y_Deposito_Anfora:
+    let credencial   = <idV, pk_V, ts_reg>
+        boleta       = <ct_kem, voto_cifrado, credencial, ts_voto>
+        recibo_hash  = h(<boleta, ~ts_recibo>)
+        firma_SV     = sign(recibo_hash, ~sk_SV) in
+    [ In(<boleta, firma_V, firma_AR>)
+    , NoHaVotado(idV)
+    , !ClavePublicaAR('AR', pk_AR)
+    , !PadronElectoral(idV, pk_V)
+    , !ClavePrivadaFirma_SV('SV', ~sk_SV)
+    , Fr(~ts_recibo) ]
+  --[ Eq(verify(firma_AR, credencial, pk_AR), true)
+    , Eq(verify(firma_V, boleta, pk_V), true)
+    , VotoAceptado(idV, boleta, firma_V)
+    , VotoRegistrado(idV, ct_kem, voto_cifrado) ]->
+    [ YaVoto(idV)
+    , AnforaDigital(ct_kem, voto_cifrado, ts_voto)
+    , Out(<recibo_hash, firma_SV>) ]
+
+// [Cambio 1] Clausura de la urna de votación.
+// Produce el hecho persistente !UrnaCerrada() que habilita el escrutinio.
+// Restriction Cierre_Unico garantiza que esta regla se dispara a lo sumo una vez.
+// Restriction NoVotoTrasCierre garantiza que todos los VotoAceptado precedan
+// a esta acción de cierre.
+rule Cierre_Votacion:
+    [ ]
+  --[ Cierre() ]->
+    [ !UrnaCerrada() ]
+
+// [Cambio 1] Apertura y Escrutinio (AC).
+// Ahora exige !UrnaCerrada() como premisa: el escrutinio solo puede iniciarse
+// una vez que la urna ha sido formalmente cerrada, forzando el orden temporal
+// clausura -> escrutinio en el modelo.
+rule Apertura_Anfora_Y_Escrutinio:
+    let k_recuperada = decaps(~dk_AC, ct_kem)
+        voto_plano   = sdec(voto_cifrado, k_recuperada) in
+    [ AnforaDigital(ct_kem, voto_cifrado, ts_voto)
+    , !ClaveDesencapsulamientoAC('AC', ~dk_AC)
+    , !UrnaCerrada() ]
+  --[ EscrutinioAbierto()
+    , VotoContado(voto_plano) ]->
+    [ Out(voto_plano) ]
+
+// -----------------------------------------------------------------------------
+// 4. REGLAS DE CORRUPCIÓN (REVEAL) — [Cambio 2]
+// Se añaden Rev('AR','AR') y Rev('SV','SV') para permitir análisis de
+// robustez bajo corrupción granular de cada entidad del sistema.
+// -----------------------------------------------------------------------------
+
+// Revelación de clave privada del votante (heredada de v2b)
+rule Reveal_Clave_Votante:
+    [ !CredencialVotante(idV, ~sk_V, credencial, firma_AR) ]
+  --[ Rev('Votante', idV) ]->
+    [ Out(~sk_V) ]
+
+// Revelación de clave de desencapsulamiento de la AC (heredada de v2b)
+rule Reveal_Clave_AC:
+    [ !ClaveDesencapsulamientoAC('AC', ~dk_AC) ]
+  --[ Rev('AC', 'AC') ]->
+    [ Out(~dk_AC) ]
+
+// [Cambio 2] Revelación de clave privada de firma de la AR.
+// Permite modelar el escenario en que la AR es comprometida: el adversario
+// podría forjar credenciales de registro para votantes no empadronados.
+rule Reveal_Clave_AR:
+    [ !ClavePrivadaAR('AR', ~sk_AR) ]
+  --[ Rev('AR', 'AR') ]->
+    [ Out(~sk_AR) ]
+
+// [Cambio 2] Revelación de clave privada de firma del SV.
+// Permite modelar la corrupción del servidor de votación: el adversario podría
+// forjar recibos, pero no descifrar votos (dk_AC permanece en la AC).
+rule Reveal_Clave_SV:
+    [ !ClavePrivadaFirma_SV('SV', ~sk_SV) ]
+  --[ Rev('SV', 'SV') ]->
+    [ Out(~sk_SV) ]
+
+// -----------------------------------------------------------------------------
+// 5. LEMAS DE SEGURIDAD FORMAL — [Cambio 3]
+// -----------------------------------------------------------------------------
+
+// Sanity check de ejecutabilidad — sin cambios de fondo respecto a v2b.
+// Verifica que existe al menos una traza completa sin revelaciones.
+lemma ejecutabilidad:
+    exists-trace
+    "Ex idV m blt sig #t1 #t2 #t3.
+        VotoEmitido(idV, m)         @#t1
+      & VotoAceptado(idV, blt, sig)  @#t2
+      & VotoContado(m)               @#t3
+      & #t1 < #t2
+      & #t2 < #t3
+      & not(Ex ent id #r. Rev(ent, id) @#r)"
+
+// Unicidad — sin cambios de fondo respecto a v2b.
+// La restricción NoVotoTrasCierre y SetupSV_Unico refuerzan el contexto,
+// pero la propiedad emerge directamente del estado lineal NoHaVotado->YaVoto.
+lemma unicidad:
+    all-traces
+    "All id b1 sig1 b2 sig2 #i #j.
+        VotoAceptado(id, b1, sig1) @#i & VotoAceptado(id, b2, sig2) @#j ==> #i = #j"
+
+// [Cambio 3] Confidencialidad — exclusión solo de Rev('AC','AC').
+// Justificación: la confidencialidad del voto depende únicamente del secreto
+// de dk_AC (clave de desencapsulamiento de la AC). Si el votante, la AR o el SV
+// son comprometidos, el atacante no obtiene dk_AC y, por tanto, no puede
+// descifrar el voto almacenado en el ánfora. Excluir Rev('AC','AC') es la
+// condición mínima y suficiente; excluir más entidades sobreprotegería el lema.
+// Conclusión refinada: el atacante conoce m solo tras Cierre() y EscrutinioAbierto().
+lemma secreto_voto:
+    all-traces
+    "All m #t1 #t2.
+        SecretoVoto(m) @#t1
+      & K(m) @#t2
+      & not(Ex #r. Rev('AC', 'AC') @#r)
+      ==> Ex #tc #te. Cierre() @#tc & EscrutinioAbierto() @#te & #tc < #t2 & #te < #t2"
+
+// [Cambio 3] Autenticidad inyectiva — excluye Rev('Votante', idV) del votante
+// concreto y Rev('AR','AR').
+// Justificación: si el votante idV es comprometido, el adversario puede forjar
+// firmas en nombre de ese votante específico, invalidando el acuerdo inyectivo
+// solo para él. Si la AR es comprometida, el adversario obtiene sk_AR para
+// falsificar firmas sobre credenciales. Excluir AC o SV no es necesario porque
+// VotoAceptado no depende del secreto de dk_AC ni de sk_SV para su validez.
+lemma autenticidad_votante:
+    all-traces
+    "All idV blt sig #ta.
+        VotoAceptado(idV, blt, sig) @#ta
+      & not(Ex #r. Rev('Votante', idV) @#r)
+      & not(Ex #r. Rev('AR', 'AR') @#r)
+      ==> ( Ex #ts.
+            VotoEnviado(idV, blt, sig) @#ts
+          & #ts < #ta
+          & not( Ex #ta2.
+                 VotoAceptado(idV, blt, sig) @#ta2
+               & not(#ta = #ta2) ) )"
+
+// [Cambio 3] Integridad del sufragio — exclusión mínima: not(Ex id #r. Rev('Votante', id) @#r).
+// Justificación: dado que AnforaDigital desvincula idV de la boleta, VotoContado(m)
+// no parametriza el idV del emisor. Si algún votante registrado id sufre la
+// revelación de su clave de firma (~sk_V vía Reveal_Clave_Votante), el atacante
+// puede fabricar una boleta arbitraria <ct_kem, voto_cifrado, credencial, ts_voto>,
+// firmarla con ~sk_V sin pasar por la regla Emitir_Voto_Mesa (por lo que nunca
+// se registra VotoEmitido(id, m)), depositarla en el ánfora y hacer que se cuente
+// en Apertura_Anfora_Y_Escrutinio (falsificando el lema en 12 pasos).
+// En cambio, NO es necesario excluir Rev('AC','AC'), Rev('AR','AR') ni Rev('SV','SV'):
+//   - Rev('AC','AC') revela dk_AC pero no permite inyectar boletas en AnforaDigital;
+//   - Rev('AR','AR') revela sk_AR pero Recepcion_Y_Deposito_Anfora exige el hecho
+//     de servidor !PadronElectoral(idV, pk_V) generado solo en Registro_Ciudadano_Padron;
+//   - Rev('SV','SV') revela sk_SV que solo firma recibos de salida.
+lemma integridad_voto:
+    all-traces
+    "All m #tc.
+        VotoContado(m) @#tc
+      & not(Ex id #r. Rev('Votante', id) @#r)
+      ==> Ex idV #te. VotoEmitido(idV, m) @#te & #te < #tc"
+
+end
+

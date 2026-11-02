@@ -1,0 +1,22 @@
+80e6b10bf1bb27e2105cdb784d16e79be71a8d58af779d8e221d1290557a6e89  protocolo_v2.spthy
+# SHA-256: 80e6b10bf1bb27e2105cdb784d16e79be71a8d58af779d8e221d1290557a6e89  protocolo_v2.spthy
+# Fecha: 2026-11-01T18:39:18-04:00
+# Comando: tamarin-prover --auto-sources --prove protocolo_v2.spthy +RTS -N4 -RTS
+# Tamarin: 1.12.0 | Maude: 3.5.1
+
+==============================================================================
+summary of summaries:
+
+analyzed: protocolo_v2.spthy
+
+  processing time: 4.60s
+
+  ejecutabilidad (exists-trace): verified (21 steps)
+  unicidad (all-traces): verified (18 steps)
+  secreto_voto (all-traces): verified (8 steps)
+  integridad_voto (all-traces): falsified - found trace (13 steps)
+  autenticidad_votante (all-traces): verified (17 steps)
+  AUTO_typing (all-traces): verified (98 steps)
+
+==============================================================================
+

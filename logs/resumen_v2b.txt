@@ -1,0 +1,25 @@
+f52366622f7614d1d2ffe5c229735425ecc26dd428c21d3b1898db8be9f7c1c4  protocolo_v2b.spthy
+# SHA-256: f52366622f7614d1d2ffe5c229735425ecc26dd428c21d3b1898db8be9f7c1c4  protocolo_v2b.spthy
+# SHA-256 base (v2): 80e6b10bf1bb27e2105cdb784d16e79be71a8d58af779d8e221d1290557a6e89  protocolo_v2.spthy
+# Fecha: 2026-11-01T18:39:59-04:00
+# Comando: tamarin-prover --auto-sources --prove protocolo_v2b.spthy +RTS -N4 -RTS
+# Tamarin: 1.12.0 | Maude: 3.5.1
+# Diferencia vs v2: +3 restrictions (SetupAC_Unico, SetupAR_Unico, SetupSV_Unico)
+# Reglas y lemas: sin cambios
+
+==============================================================================
+summary of summaries:
+
+analyzed: protocolo_v2b.spthy
+
+  processing time: 4.46s
+
+  ejecutabilidad (exists-trace): verified (21 steps)
+  unicidad (all-traces): verified (18 steps)
+  secreto_voto (all-traces): verified (8 steps)
+  integridad_voto (all-traces): verified (29 steps)
+  autenticidad_votante (all-traces): verified (17 steps)
+  AUTO_typing (all-traces): verified (98 steps)
+
+==============================================================================
+

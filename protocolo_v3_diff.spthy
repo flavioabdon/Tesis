@@ -1,0 +1,135 @@
+/*
+================================================================================
+  TESIS DE GRADO: PROTOCOLO DE VOTACIÓN ELECTRÓNICA BASADO EN CRIPTOGRAFÍA
+                  POST-CUÁNTICA DE RETÍCULOS (ML-KEM-768 + ML-DSA-65)
+  Universidad Mayor de San Andrés (UMSA) — Carrera de Informática — 2026
+  Modelo formal v3_diff: prueba de equivalencia observacional (--diff)
+  intercambiando los votos de dos votantes registrados (Basin, Dreier & Sasse, 2015)
+================================================================================
+*/
+
+theory ProtocoloVotacionPQC_v3_diff
+begin
+
+builtins: dest-signing, symmetric-encryption
+
+functions:
+    encaps/2,
+    decaps/2,
+    ek_from_dk/1,
+    h/1
+
+equations:
+    decaps(dk, encaps(ek_from_dk(dk), r)) = r
+
+restriction Verificacion_Exitosa:
+    "All x y #i. Eq(x, y) @i ==> x = y"
+
+restriction SetupAC_Unico:
+    "All a b #i #j. SetupAC(a) @i & SetupAC(b) @j ==> #i = #j"
+
+restriction SetupAR_Unico:
+    "All a b #i #j. SetupAR(a) @i & SetupAR(b) @j ==> #i = #j"
+
+restriction SetupSV_Unico:
+    "All a b #i #j. SetupSV(a) @i & SetupSV(b) @j ==> #i = #j"
+
+restriction Cierre_Unico:
+    "All #i #j. Cierre() @i & Cierre() @j ==> #i = #j"
+
+restriction NoVotoTrasCierre:
+    "All id blt sig #ta #tc.
+        VotoAceptado(id, blt, sig) @ta & Cierre() @tc ==> #ta < #tc"
+
+rule Setup_Autoridad_Registro:
+    let pk_AR = pk(~sk_AR) in
+    [ Fr(~sk_AR) ]
+  --[ SetupAR(pk_AR) ]->
+    [ !ClavePrivadaAR('AR', ~sk_AR)
+    , !ClavePublicaAR('AR', pk_AR)
+    , Out(pk_AR) ]
+
+rule Setup_Autoridad_Conteo:
+    let ek_AC = ek_from_dk(~dk_AC) in
+    [ Fr(~dk_AC) ]
+  --[ SetupAC(ek_AC) ]->
+    [ !ClaveDesencapsulamientoAC('AC', ~dk_AC)
+    , !ClavePublicaKEM_AC('AC', ek_AC)
+    , Out(ek_AC) ]
+
+rule Setup_Servidor_Votacion:
+    let pk_SV = pk(~sk_SV) in
+    [ Fr(~sk_SV) ]
+  --[ SetupSV(pk_SV) ]->
+    [ !ClavePrivadaFirma_SV('SV', ~sk_SV)
+    , !ClavePublicaFirma_SV('SV', pk_SV)
+    , Out(pk_SV) ]
+
+// Registro y emisión de dos votantes con votos intercambiados mediante diff:
+// Sistema izquierdo: V1 vota 'candA', V2 vota 'candB'
+// Sistema derecho:   V1 vota 'candB', V2 vota 'candA'
+rule Emision_Dos_Votantes_Diff:
+    let pk_V1      = pk(~sk_V1)
+        pk_V2      = pk(~sk_V2)
+        cred1      = <~idV1, pk_V1, ~ts_reg1>
+        cred2      = <~idV2, pk_V2, ~ts_reg2>
+        firma_AR1  = sign(cred1, ~sk_AR)
+        firma_AR2  = sign(cred2, ~sk_AR)
+        v1         = diff('candA', 'candB')
+        v2         = diff('candB', 'candA')
+        ct1        = encaps(ek_AC, ~k1)
+        ct2        = encaps(ek_AC, ~k2)
+        vc1        = senc(v1, ~k1)
+        vc2        = senc(v2, ~k2)
+        boleta1    = <ct1, vc1, cred1, ~ts_v1>
+        boleta2    = <ct2, vc2, cred2, ~ts_v2>
+        firma_V1   = sign(boleta1, ~sk_V1)
+        firma_V2   = sign(boleta2, ~sk_V2)
+    in
+    [ Fr(~sk_V1), Fr(~sk_V2), Fr(~ts_reg1), Fr(~ts_reg2), Fr(~idV1), Fr(~idV2)
+    , Fr(~k1), Fr(~k2), Fr(~ts_v1), Fr(~ts_v2)
+    , !ClavePrivadaAR('AR', ~sk_AR)
+    , !ClavePublicaKEM_AC('AC', ek_AC) ]
+  --[ VotoEmitido(~idV1, v1), VotoEmitido(~idV2, v2) ]->
+    [ !PadronElectoral(~idV1, pk_V1)
+    , !PadronElectoral(~idV2, pk_V2)
+    , NoHaVotado(~idV1)
+    , NoHaVotado(~idV2)
+    , Out(<boleta1, firma_V1, firma_AR1>)
+    , Out(<boleta2, firma_V2, firma_AR2>) ]
+
+rule Recepcion_Y_Deposito_Anfora:
+    let credencial   = <idV, pk_V, ts_reg>
+        boleta       = <ct_kem, voto_cifrado, credencial, ts_voto>
+        recibo_hash  = h(<boleta, ~ts_recibo>)
+        firma_SV     = sign(recibo_hash, ~sk_SV) in
+    [ In(<boleta, firma_V, firma_AR>)
+    , NoHaVotado(idV)
+    , !ClavePublicaAR('AR', pk_AR)
+    , !PadronElectoral(idV, pk_V)
+    , !ClavePrivadaFirma_SV('SV', ~sk_SV)
+    , Fr(~ts_recibo) ]
+  --[ Eq(verify(firma_AR, credencial, pk_AR), true)
+    , Eq(verify(firma_V, boleta, pk_V), true)
+    , VotoAceptado(idV, boleta, firma_V) ]->
+    [ YaVoto(idV)
+    , AnforaDigital(ct_kem, voto_cifrado, ts_voto)
+    , Out(<recibo_hash, firma_SV>) ]
+
+rule Cierre_Votacion:
+    [ ]
+  --[ Cierre() ]->
+    [ !UrnaCerrada() ]
+
+rule Apertura_Anfora_Y_Escrutinio:
+    let k_recuperada = decaps(~dk_AC, ct_kem)
+        voto_plano   = sdec(voto_cifrado, k_recuperada) in
+    [ AnforaDigital(ct_kem, voto_cifrado, ts_voto)
+    , !ClaveDesencapsulamientoAC('AC', ~dk_AC)
+    , !UrnaCerrada() ]
+  --[ EscrutinioAbierto()
+    , VotoContado(voto_plano) ]->
+    [ Out(voto_plano) ]
+
+end
+

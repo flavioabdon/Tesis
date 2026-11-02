@@ -1,0 +1,29 @@
+bdd31ea1a0e4ce511afc598d921e8c052bf04332658d3ff77a9c65e65598da85  protocolo_v3.spthy
+# SHA-256 base (v2b): f52366622f7614d1d2ffe5c229735425ecc26dd428c21d3b1898db8be9f7c1c4  protocolo_v2b.spthy
+# Fecha: 2026-11-01T19:38:58-04:00
+# Comando lote: tamarin-prover --auto-sources --prove protocolo_v3.spthy +RTS -N4 -M8G -RTS
+# Tamarin: 1.12.0 | Maude: 3.5.1
+
+==============================================================================
+summary of summaries:
+
+analyzed: protocolo_v3.spthy
+
+  processing time: 4.58s
+  
+  ejecutabilidad (exists-trace): verified (22 steps)
+  unicidad (all-traces): verified (18 steps)
+  secreto_voto (all-traces): verified (8 steps)
+  autenticidad_votante (all-traces): verified (17 steps)
+  integridad_voto (all-traces): verified (33 steps)
+  AUTO_typing (all-traces): verified (85 steps)
+
+==============================================================================
+
+# Tiempos individuales (lema por lema, logs/v3_<lema>.log):
+# - ejecutabilidad:       verified (22 steps), 3.43s
+# - unicidad:             verified (18 steps), 2.31s
+# - secreto_voto:         verified (8 steps),  2.43s
+# - autenticidad_votante: verified (17 steps), 2.63s
+# - integridad_voto:      verified (33 steps), 2.92s
+

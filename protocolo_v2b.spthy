@@ -1,0 +1,192 @@
+/*
+================================================================================
+  TESIS DE GRADO: PROTOCOLO DE VOTACIÓN ELECTRÓNICA BASADO EN CRIPTOGRAFÍA
+                  POST-CUÁNTICA DE RETÍCULOS (ML-KEM-768 + ML-DSA-65)
+  Universidad Mayor de San Andrés (UMSA) — Carrera de Informática — 2026
+  Modelo formal corregido bajo el estándar FIPS 203 y FIPS 204
+================================================================================
+*/
+
+theory ProtocoloVotacionPQC
+begin
+
+builtins: dest-signing, symmetric-encryption
+
+// -----------------------------------------------------------------------------
+// 1. ABSTRACCIÓN SIMBÓLICA DE PRIMITIVAS CRIPTOGRÁFICAS
+// -----------------------------------------------------------------------------
+functions: 
+    encaps/2,          // encaps(pk_kem, secret_k) -> ciphertext_kem
+    decaps/2,          // decaps(sk_kem, ciphertext_kem) -> secret_k
+    ek_from_dk/1,      // deriva la clave pública desde la privada
+    h/1                // función hash SHA3-256
+
+equations: 
+    decaps(dk, encaps(ek_from_dk(dk), r)) = r
+
+// -----------------------------------------------------------------------------
+// 2. RESTRICCIONES (AXIOMAS DE ESTADO)
+// -----------------------------------------------------------------------------
+restriction Verificacion_Exitosa:
+    "All x y #i. Eq(x, y) @i ==> x = y"
+
+restriction SetupAC_Unico:
+    "All a b #i #j. SetupAC(a) @i & SetupAC(b) @j ==> #i = #j"
+
+restriction SetupAR_Unico:
+    "All a b #i #j. SetupAR(a) @i & SetupAR(b) @j ==> #i = #j"
+
+restriction SetupSV_Unico:
+    "All a b #i #j. SetupSV(a) @i & SetupSV(b) @j ==> #i = #j"
+
+// -----------------------------------------------------------------------------
+// 3. REGLAS DEL PROTOCOLO
+// -----------------------------------------------------------------------------
+
+// Setup Autoridad de Registro (AR)
+rule Setup_Autoridad_Registro:
+    let pk_AR = pk(~sk_AR) in
+    [ Fr(~sk_AR) ]
+  --[ SetupAR(pk_AR) ]->
+    [ !ClavePrivadaAR('AR', ~sk_AR)
+    , !ClavePublicaAR('AR', pk_AR)
+    , Out(pk_AR) ]
+
+// Setup Autoridad de Conteo (AC) - dk_AC generada en AC y retenida en secreto
+rule Setup_Autoridad_Conteo:
+    let ek_AC = ek_from_dk(~dk_AC) in
+    [ Fr(~dk_AC) ]
+  --[ SetupAC(ek_AC) ]->
+    [ !ClaveDesencapsulamientoAC('AC', ~dk_AC)
+    , !ClavePublicaKEM_AC('AC', ek_AC)
+    , Out(ek_AC) ]
+
+// Setup Servidor de Votacion (SV) - Claves para emisión de recibos firmados
+rule Setup_Servidor_Votacion:
+    let pk_SV = pk(~sk_SV) in
+    [ Fr(~sk_SV) ]
+  --[ SetupSV(pk_SV) ]->
+    [ !ClavePrivadaFirma_SV('SV', ~sk_SV)
+    , !ClavePublicaFirma_SV('SV', pk_SV)
+    , Out(pk_SV) ]
+
+// Registro Ciudadano en el Padrón (AR) - Inicializa el estado lineal NoHaVotado
+rule Registro_Ciudadano_Padron:
+    let pk_V       = pk(~sk_V)
+        credencial = <~idV, pk_V, ~ts_reg>
+        firma_AR   = sign(credencial, ~sk_AR) in
+    [ Fr(~sk_V), Fr(~ts_reg), Fr(~idV)
+    , !ClavePrivadaAR('AR', ~sk_AR) ]
+  --[ RegistroVotante(~idV, pk_V) ]->
+    [ !CredencialVotante(~idV, ~sk_V, credencial, firma_AR)
+    , !PadronElectoral(~idV, pk_V)
+    , NoHaVotado(~idV) ]
+
+// Emisión del Voto (Votante) - Cifrado KEM-DEM con ek_AC y firma ML-DSA
+rule Emitir_Voto_Mesa:
+    let ct_kem       = encaps(ek_AC, ~k_efimera)
+        voto_cifrado = senc(~m_voto, ~k_efimera)
+        boleta       = <ct_kem, voto_cifrado, credencial, ~ts_voto>
+        firma_V      = sign(boleta, ~sk_V) in
+    [ Fr(~k_efimera), Fr(~m_voto), Fr(~ts_voto)
+    , !CredencialVotante(~idV, ~sk_V, credencial, firma_AR)
+    , !ClavePublicaKEM_AC('AC', ek_AC) ]
+  --[ VotoEmitido(~idV, ~m_voto)
+    , VotoEnviado(~idV, boleta, firma_V)
+    , SecretoVoto(~m_voto) ]->
+    [ Out(<boleta, firma_V, firma_AR>) ]
+
+// Recepción y Depósito en Ánfora (SV) - Control de estado lineal y recibo firmado
+rule Recepcion_Y_Deposito_Anfora:
+    let credencial   = <idV, pk_V, ts_reg>
+        boleta       = <ct_kem, voto_cifrado, credencial, ts_voto>
+        recibo_hash  = h(<boleta, ~ts_recibo>)
+        firma_SV     = sign(recibo_hash, ~sk_SV) in
+    [ In(<boleta, firma_V, firma_AR>)
+    , NoHaVotado(idV)
+    , !ClavePublicaAR('AR', pk_AR)
+    , !PadronElectoral(idV, pk_V)
+    , !ClavePrivadaFirma_SV('SV', ~sk_SV)
+    , Fr(~ts_recibo) ]
+  --[ Eq(verify(firma_AR, credencial, pk_AR), true)
+    , Eq(verify(firma_V, boleta, pk_V), true)
+    , VotoAceptado(idV, boleta, firma_V)
+    , VotoRegistrado(idV, ct_kem, voto_cifrado) ]->
+    [ YaVoto(idV)
+    , AnforaDigital(ct_kem, voto_cifrado, ts_voto)
+    , Out(<recibo_hash, firma_SV>) ]
+
+// Apertura y Escrutinio (AC) - Desasociación total: Ánfora no posee idV
+rule Apertura_Anfora_Y_Escrutinio:
+    let k_recuperada = decaps(~dk_AC, ct_kem)
+        voto_plano   = sdec(voto_cifrado, k_recuperada) in
+    [ AnforaDigital(ct_kem, voto_cifrado, ts_voto)
+    , !ClaveDesencapsulamientoAC('AC', ~dk_AC) ]
+  --[ EscrutinioAbierto()
+    , VotoContado(voto_plano) ]->
+    [ Out(voto_plano) ]
+
+// -----------------------------------------------------------------------------
+// 4. REGLAS DE CORRUPCIÓN (REVEAL)
+// -----------------------------------------------------------------------------
+rule Reveal_Clave_Votante:
+    [ !CredencialVotante(idV, ~sk_V, credencial, firma_AR) ]
+  --[ Rev('Votante', idV) ]->
+    [ Out(~sk_V) ]
+
+rule Reveal_Clave_AC:
+    [ !ClaveDesencapsulamientoAC('AC', ~dk_AC) ]
+  --[ Rev('AC', 'AC') ]->
+    [ Out(~dk_AC) ]
+
+// -----------------------------------------------------------------------------
+// 5. LEMAS DE SEGURIDAD FORMAL
+// -----------------------------------------------------------------------------
+
+// Sanity check de ejecutabilidad
+lemma ejecutabilidad:
+    exists-trace
+    "Ex idV m blt sig #t1 #t2 #t3.
+        VotoEmitido(idV, m)         @#t1
+      & VotoAceptado(idV, blt, sig)  @#t2
+      & VotoContado(m)               @#t3
+      & #t1 < #t2
+      & #t2 < #t3
+      & not(Ex ent id #r. Rev(ent, id) @#r)"
+
+// Unicidad demostrada por el estado lineal (NoHaVotado -> YaVoto)
+lemma unicidad:
+    all-traces
+    "All id b1 sig1 b2 sig2 #i #j.
+        VotoAceptado(id, b1, sig1) @#i & VotoAceptado(id, b2, sig2) @#j ==> #i = #j"
+
+// Confidencialidad antes del escrutinio (sin revelación de dk_AC)
+lemma secreto_voto:
+    all-traces
+    "All m #t1 #t2.
+        SecretoVoto(m) @#t1 & K(m) @#t2
+        & not(Ex ent id #r. Rev(ent, id) @#r)
+        ==> Ex #t3. EscrutinioAbierto() @#t3 & #t3 < #t2"
+
+// Integridad del sufragio
+lemma integridad_voto:
+    all-traces
+    "All m #tc.
+        VotoContado(m) @#tc
+        & not(Ex ent id #r. Rev(ent, id) @#r)
+        ==> Ex idV #te. VotoEmitido(idV, m) @#te & #te < #tc"
+
+// Autenticidad del votante (Injective Agreement)
+lemma autenticidad_votante:
+    all-traces
+    "All idV blt sig #ta.
+        VotoAceptado(idV, blt, sig) @#ta
+        & not(Ex ent id #r. Rev(ent, id) @#r)
+        ==> ( Ex #ts.
+            VotoEnviado(idV, blt, sig) @#ts
+          & #ts < #ta
+          & not( Ex #ta2.
+                VotoAceptado(idV, blt, sig) @#ta2
+              & not(#ta = #ta2) ) )"
+
+end

@@ -1,3 +1,4 @@
+80e6b10bf1bb27e2105cdb784d16e79be71a8d58af779d8e221d1290557a6e89  protocolo_v2.spthy
 ==============================================================================
 RESUMEN DE VERIFICACIÓN FORMAL — PROTOCOLO DE VOTACIÓN ELECTRÓNICA PQC
 ==============================================================================
@@ -50,3 +51,4 @@ DICTAMEN POR LEMA:
    ánfora fue emitido previamente por el votante legítimo acreditado por la AR,
    impidiendo ataques de inyección y repetición (anti-replay).
 ==============================================================================
+
