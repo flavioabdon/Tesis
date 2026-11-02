@@ -1,0 +1,112 @@
+\section{Modelado de Requisitos Web (UWE)}
+\label{sec:casos_uso_actividades}
+\label{sec:requisitos_uwe}
+% =============================================================================
+
+Conforme a la metodología UWE (Koch et al., 2008), la captura de requisitos de una aplicación web trasciende la especificación tradicional de casos de uso al clasificar explícitamente cada funcionalidad según su impacto estructural en el sistema: las interacciones de exploración y consulta de información se anotan con el estereotipo \texttt{«navigation»}, mientras que las transacciones que ejecutan lógica de negocio, transformaciones criptográficas o mutaciones persistentes en la base de datos se anotan con el estereotipo \texttt{«process»}.
+
+\subsection{Diagrama de Casos de Uso Web con Estereotipos UWE}
+\label{subsec:casos_uso_uwe}
+
+La Figura \ref{fig:uml_casos_uso} expone el Diagrama de Casos de Uso Web UWE del sistema, detallando los cuatro actores del protocolo (Votante $V$, Autoridad de Registro $AR$, Servidor de Votación $SV$ y Autoridad de Conteo $AC$), la distinción estereotipada entre casos de uso de navegación (\texttt{«navigation»}) y de proceso (\texttt{«process»}), y las relaciones formales de inclusión (\guillemotleft include\guillemotright) y extensión (\guillemotleft extend\guillemotright).
+
+\begin{figure}[!htbp]
+	\centering
+	\resizebox{0.86\textwidth}{!}{%
+	\begin{tikzpicture}[
+		actor/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=3pt, minimum width=2.5cm, minimum height=0.8cm, font=\bfseries\scriptsize, align=center},
+		uc_nav/.style={ellipse, draw=PQCTeal, fill=BoxBgTeal, thick, minimum width=4.8cm, minimum height=0.72cm, font=\scriptsize, align=center, inner sep=1.2pt},
+		uc_proc/.style={ellipse, draw=PQCDark, fill=white, thick, minimum width=4.8cm, minimum height=0.72cm, font=\scriptsize, align=center, inner sep=1.2pt},
+		uc_err/.style={ellipse, draw=PQCCrimson, fill=red!6, thick, minimum width=4.8cm, minimum height=0.72cm, font=\scriptsize, align=center, inner sep=1.2pt},
+		systembox/.style={rectangle, draw=gray!60, dashed, fill=gray!3, rounded corners=6pt, inner sep=8pt},
+		assoc/.style={thick, draw=black!75},
+		include/.style={-{Latex[length=2mm]}, dashed, draw=PQCTeal, font=\tiny\bfseries},
+		extend/.style={-{Latex[length=2mm]}, dashed, draw=PQCCrimson, font=\tiny\bfseries}
+	]
+		% Actores Izquierda
+		\node[actor] (votante) at (-5.8, 0.5) {Votante ($V$)\\(Ciudadano / Auditor)};
+		\node[actor] (ar) at (-5.8, -3.8) {Autoridad de\\Registro ($AR$)};
+		
+		% Actores Derecha
+		\node[actor] (sv) at (5.8, 0.5) {Servidor de\\Votación ($SV$)};
+		\node[actor] (ac) at (5.8, -3.8) {Autoridad de\\Conteo ($AC$)};
+		
+		% Casos de Uso con Estereotipos UWE
+		\node[uc_nav] (uc1) at (0, 3.2) {\guillemotleft navigation\guillemotright\\CU1: Consultar Padrón y Acceder a Cabina};
+		\node[uc_proc] (uc2) at (0, 2.0) {\guillemotleft process\guillemotright\\CU2: Emitir Credencial ML-DSA-65 ($AR$)};
+		\node[uc_proc] (uc3) at (0, 0.8) {\guillemotleft process\guillemotright\\CU3: Seleccionar y Cifrar Voto (KEM-DEM)};
+		\node[uc_proc] (uc4) at (0, -0.4) {\guillemotleft process\guillemotright\\CU4: Firmar Boleta Digitalmente (ML-DSA-65)};
+		\node[uc_proc] (uc5) at (0, -1.6) {\guillemotleft process\guillemotright\\CU5: Validar Boleta y Control de Voto Único};
+		\node[uc_proc] (uc6) at (0, -2.8) {\guillemotleft process\guillemotright\\CU6: Custodiar en Ánfora y Emitir Recibo};
+		\node[uc_proc] (uc7) at (0, -4.0) {\guillemotleft process\guillemotright\\CU7: Desencapsular Lote Permutado ($dk_{\text{AC}}$)};
+		\node[uc_nav] (uc8) at (0, -5.2) {\guillemotleft navigation\guillemotright\\CU8: Auditar Recibo SHA3-256 y Acta Oficial};
+		\node[uc_err] (uc9) at (0, -6.4) {\guillemotleft process\guillemotright\\CU9: Bloquear y Alertar Intento de Doble Voto};
+		
+		% Límite del Sistema
+		\begin{scope}[on background layer]
+			\node[systembox, fit=(uc1) (uc9), label={[font=\bfseries\small, text=PQCDark]north:Límite de la Aplicación Web Electoral Post-Cuántica (Perfil UWE — FIPS 203 / 204)}] (sys) {};
+		\end{scope}
+		
+		% Relaciones Votante
+		\draw[assoc] (votante) -- (uc1);
+		\draw[assoc] (votante) -- (uc3);
+		\draw[assoc] (votante) -- (uc8);
+		
+		% Relaciones AR
+		\draw[assoc] (ar) -- (uc1);
+		\draw[assoc] (ar) -- (uc2);
+		
+		% Relaciones SV
+		\draw[assoc] (sv) -- (uc5);
+		\draw[assoc] (sv) -- (uc6);
+		
+		% Relaciones AC
+		\draw[assoc] (ac) -- (uc7);
+		\draw[assoc] (ac) -- (uc8);
+		
+		% Inclusiones y extensiones
+		\draw[include] (uc3) -- (uc4) node[midway, right] {\guillemotleft include\guillemotright};
+		\draw[include] (uc5) -- (uc6) node[midway, right] {\guillemotleft include\guillemotright};
+		\draw[include] (uc7) -- (uc8) node[midway, right] {\guillemotleft include\guillemotright};
+		\draw[extend] (uc9) -- (uc5) node[midway, right] {\guillemotleft extend\guillemotright};
+	\end{tikzpicture}
+	}%
+	\caption{Diagrama de Casos de Uso Web UWE con estereotipos \texttt{«navigation»} y \texttt{«process»}.}
+	\label{fig:uml_casos_uso}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia basada en el perfil UWE (Koch et al., 2008).}}
+\end{figure}
+
+El modelado UWE distingue con precisión semántica la naturaleza de cada interacción:
+\begin{itemize}
+	\item \textbf{Casos de uso navegacionales (\texttt{«navigation»} — CU1 y CU8):} Representan consultas de estado sin efectos secundarios sobre el ánfora electoral. En \textbf{CU1}, el ciudadano verifica su habilitación en el padrón y navega hacia la cabina de sufragio; en \textbf{CU8}, cualquier elector o auditor consulta el portal público para verificar la inclusión del resumen SHA3-256 de su recibo en el acta oficial de escrutinio.
+	\item \textbf{Casos de uso de proceso (\texttt{«process»} — CU2 a CU7 y CU9):} Encapsulan secuencias transaccionales y criptográficas deterministas. \textbf{CU2} modela el proceso administrativo en el panel de la AR que genera el par ML-DSA-65 del elector y expide su credencial firmada; \textbf{CU3} y \textbf{CU4} conforman el proceso crítico en cabina de selección, empaquetado a 32 bytes, encapsulamiento ML-KEM-768 contra $ek_{\text{AC}}$, cifrado AES-256-GCM con AAD y firma digital con $sk_V$; \textbf{CU5} y \textbf{CU6} ejecutan la validación multinivel en el Servidor de Votación, el consumo atómico de elegibilidad, la disociación de identidad y la firma del recibo; si el estado del padrón indica sufragio previo, se dispara por extensión \textbf{CU9}, abortando el proceso y registrando la alerta; finalmente, \textbf{CU7} ejecuta el proceso por lotes de desencapsulamiento en la estación \textit{air-gapped} de la AC tras la clausura comicial.
+\end{itemize}
+
+\subsection{Matriz de Trazabilidad: Requisitos, Casos de Uso UWE y Primitivas Criptográficas}
+\label{subsec:matriz_trazabilidad_uwe}
+
+Para garantizar que ningún requisito funcional quede huérfano en la capa de interfaz y que toda vista o proceso web responda a una propiedad formal del protocolo, la Tabla \ref{tab:trazabilidad_uwe} establece la matriz de trazabilidad bidireccional entre los requerimientos de ingeniería (Sección \ref{subsec:requerimientos_ingenieria}), los casos de uso UWE, las clases de navegación y proceso, los mecanismos criptográficos subyacentes y los lemas verificados en \textit{Tamarin Prover}.
+
+\begin{table}[!htbp]
+	\centering
+	\renewcommand{\arraystretch}{1.28}
+	\footnotesize
+	\caption{Matriz de trazabilidad entre requisitos funcionales, casos de uso UWE, modelos de diseño y primitivas criptográficas.}
+	\label{tab:trazabilidad_uwe}
+	\begin{tabularx}{\textwidth}{|>{\bfseries\raggedright\arraybackslash}p{1.0cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{3.3cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{2.8cm}|}
+		\hline
+		\textbf{Req.} & \textbf{Caso de Uso UWE (Estereotipo)} & \textbf{Nodos en Modelos de Navegación / Procesos UWE} & \textbf{Componente / Proceso Criptográfico y de Persistencia} & \textbf{Lema Formal en Tamarin} \\
+		\hline
+		\textbf{RF1} & \textbf{CU1} (\texttt{«navigation»}) \newline \textbf{CU2} (\texttt{«process»}) \newline \textbf{CU5, CU9} (\texttt{«process»}) & \texttt{«navigation class»} \newline \texttt{VerificacionPadron} \newline \texttt{«process class»} \newline \texttt{ProcesoRegistroAR} & Firma de credencial AR con ML-DSA-65 (\texttt{ctx="ELEC\_CRED\_AR\_V1"}). Control transaccional \texttt{ha\_votado} en \texttt{tbl\_padron\_votantes} y restricción OCL \texttt{NoRetornoTrasVotar}. & \texttt{unicidad} \newline \texttt{autenticidad\_} \allowbreak \texttt{votante} \\
+		\hline
+		\textbf{RF2} & \textbf{CU3} (\texttt{«process»}) \newline \textbf{CU6} (\texttt{«process»}) \newline \textbf{CU7} (\texttt{«process»}) & \texttt{«navigation class»} \newline \texttt{CabinaVotacion} \newline \texttt{«process class»} \newline \texttt{ProcesoEmisionVoto} & Empaquetado fijo (32 B), encapsulamiento $\text{ML-KEM-768.Encaps}(ek_{\text{AC}})$, cifrado AES-256-GCM con $\text{AAD}=\langle id_{\text{elec}}, ct_{\text{kem}} \rangle$ e inserción disociada en \texttt{tbl\_anfora\_boletas}. & \texttt{secreto\_voto} \newline (Reducción IND-CCA2) \\
+		\hline
+		\textbf{RF3} & \textbf{CU4} (\texttt{«process»}) \newline \textbf{CU5} (\texttt{«process»}) & \texttt{«navigation class»} \newline \texttt{ConfirmacionResumen} \newline \texttt{«process class»} \newline \texttt{ProcesoEmisionVoto} & Serialización canónica determinista y firma digital $\text{ML-DSA-65.Sign}(sk_V)$ con separación de dominio (\texttt{ctx="ELEC\_BOLETA\_V1"}); verificación en SV con $pk_V$. & \texttt{integridad\_voto} \newline \texttt{autenticidad\_} \allowbreak \texttt{votante} \\
+		\hline
+		\textbf{RF4} & \textbf{CU6} (\texttt{«process»}) \newline \textbf{CU8} (\texttt{«navigation»}) & \texttt{«navigation class»} \newline \texttt{ReciboYCierre} \newline \texttt{«query»} \newline \texttt{BuscadorReciboSHA3} & Cálculo de resumen inmutable $h_b = \text{SHA3-256}(\text{Boleta})$ (FIPS 202), firma del servidor $\sigma_{\text{SV}}$ (\texttt{ctx="ELEC\_RECIBO\_SV\_V1"}) e índice B-Tree \texttt{UNIQUE} en ánfora. & \texttt{ejecutabilidad} \newline (Auditoría funcional E2E) \\
+		\hline
+	\end{tabularx}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{table}
+
+% =============================================================================

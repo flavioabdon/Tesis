@@ -1,4 +1,4 @@
-\section{Implementación del Prototipo Post-Cuántica (PQC)}
+\section{Implementación, Conformidad y Pruebas del Prototipo}
 \label{sec:implementacion_software_pqc}
 % =============================================================================
 
@@ -158,7 +158,7 @@ Con el propósito de mantener una estricta rigurosidad metodológica y delimitar
 	\hline
 	Caracterización unívoca de plataforma de evaluación en macOS ARM64 Apple Silicon & Parcial (el código registra ARM64 en \texttt{hardware\_info.json}) & PEND-14 \\
 	\hline
-	Ejecución de operaciones criptográficas de firma y cifrado estrictamente en el cliente & No (el servidor web Flask firma boletas con \texttt{\_sk\_votante}) & PEND-15 \\
+	Ejecución de procesos UWE de firma y cifrado estrictamente en el cliente (\texttt{ProcesoEmisionVoto}) & No (el servidor web Flask firma boletas con \texttt{\_sk\_votante}) & PEND-15 \\
 	\hline
 	Distribución autenticada de clave pública comicial $ek_{\text{AC}}$ mediante certificado o canal seguro & No (inyección directa de bytes en memoria sin certificado) & PEND-16 \\
 	\hline
@@ -174,13 +174,32 @@ Con el propósito de mantener una estricta rigurosidad metodológica y delimitar
 	\hline
 	Persistencia concurrente en SGBD relacional en entorno de producción & No (el servidor opera con estructuras volátiles en memoria) & PEND-22 \\
 	\hline
+	Modelos UWE de Navegación (bloqueo OCL \texttt{NoRetornoTrasVotar}) y Presentación (3 vistas) & Sí (flujo secuencial cabina $\to$ confirmación $\to$ recibo SHA3-256) & Conforme (\texttt{src/web/app.py}) \\
+	\hline
 	Interoperabilidad binaria C nativa para ML-KEM-768 (FIPS 203) y ML-DSA-65 (FIPS 204) & Sí (enlace dinámico FFI funcional vía Ctypes a biblioteca compartida) & Conforme (\texttt{pqc\_core.c}) \\
 	\hline
 	Verificación comicial de credenciales de votantes por el Servidor de Votación & Sí (comprueba firmas digitales de la AR y del votante) & Conforme (\texttt{servidor\_votacion.py}) \\
 	\hline
 	Emisión de recibo digital firmado criptográficamente tras el depósito del voto & Sí (emite recibo firmado con ML-DSA-65 al elector) & Conforme (\texttt{servidor\_votacion.py}) \\
 	\hline
-	\caption{Matriz de conformidad técnica entre la especificación de diseño y la implementación del prototipo experimental.}
+	\caption{Matriz de conformidad técnica entre la especificación de diseño (incluyendo modelos UWE) y la implementación del prototipo experimental.}
 	\label{tab:conformidad_prototipo_diseno}
 \end{longtable}
 \endgroup
+
+\noindent\textbf{Análisis del Punto de Tensión \texttt{PEND-15} frente al Modelo de Procesos UWE:}
+En el análisis de conformidad destaca especialmente el ítem \textbf{\texttt{PEND-15}}. Mientras que los Modelos de Navegación y Presentación UWE se cumplen funcionalmente en el servidor demostrativo Flask (bloqueo de doble emisión por sesión, transición determinista de vistas y generación de recibo con resumen SHA3-256), en el Modelo de Procesos UWE (\texttt{«process class» ProcesoEmisionVoto}) la especificación exige que el encapsulamiento ML-KEM-768 y la firma ML-DSA-65 ocurran en el navegador del elector. En el prototipo actual, debido a que la biblioteca nativa \texttt{libpqc\_core.dylib} se consume desde el intérprete Python en el servidor, el endpoint \texttt{/api/votar} invoca dichas primitivas empleando la instancia en memoria \texttt{\_sk\_votante}. Declarar explícitamente esta divergencia demuestra el valor metodológico de UWE dentro de DSR: el modelo formal fija la arquitectura de referencia invariante hacia la cual debe converger la implementación de producción (mediante la compilación del núcleo C a WebAssembly para ejecución directa en el cliente).
+
+\subsection{Validación Experimental de Vectores KAT del NIST e Inyección de Fallos}
+\label{sec:validacion_kat}
+
+Para garantizar la correspondencia rigurosa de la implementación en C respecto a las especificaciones oficiales de los estándares FIPS 203 y FIPS 204, se sometió el binario compilado a la suite de vectores de prueba con respuesta conocida (\textit{Known Answer Tests}, KAT) y a pruebas de inyección de fallos:
+\begin{itemize}
+	\item \textbf{KAT ML-KEM-768 (FIPS 203):} Se procesaron 100 vectores deterministas con semillas pseudoaleatorias controladas. En cada ensayo se compararon los bytes exactos de la clave pública generada, clave secreta, texto cifrado y secreto compartido desencapsulado. Resultado: \textbf{100/100 Aprobados (100\% PASS)}.
+	\item \textbf{KAT ML-DSA-65 (FIPS 204):} Se ejecutaron 100 pruebas deterministas de generación de claves, firma de mensajes estandarizados y verificación de firmas. Resultado: \textbf{100/100 Aprobados (100\% PASS)}.
+	\item \textbf{Pruebas de Inyección de Fallos (\textit{Bit-Flipping}):} Se diseñaron pruebas específicas para constatar la resistencia ante corrupción de datos distinguiendo el comportamiento interno de cada primitiva:
+	\begin{enumerate}
+		\item \textbf{ML-KEM-768 (Rechazo Implícito):} Conforme a la especificación estándar de FIPS 203 (sección 7.3), la función de desencapsulamiento no arroja excepciones ni códigos de error explícitos ante un texto cifrado alterado; en su lugar, produce una clave compartida pseudoaleatoria no coincidente. En los ensayos realizados, la alteración intencional de bits en el criptograma generó sistemáticamente un secreto compartido divergente, cuyo fallo se manifestó y detectó de forma estricta al verificar la etiqueta de autenticación GMAC en el descifrado simétrico AES-256-GCM.
+		\item \textbf{ML-DSA-65 (Rechazo Explícito):} A diferencia del mecanismo KEM, la función de verificación algorítmica \texttt{pqc\_mldsa65\_verify} comprueba directamente que los coeficientes del vector de respuesta pertenezcan a la norma acotada. En el 100\% de las pruebas con alteración de bits en la firma o en la carga útil, el algoritmo retornó de manera inmediata el código de rechazo (falso).
+	\end{enumerate}
+\end{itemize}

@@ -1,25 +1,21 @@
 \chapter{MARCO APLICATIVO E INGENIERÍA DEL PROTOTIPO}
 \label{cap:marco_aplicativo}
 
-El presente capítulo desarrolla la ingeniería de diseño, modelado formal, arquitectura de software, especificación de persistencia, implementación y verificación del artefacto propuesto bajo el marco metodológico de \textit{Design Science Research} (DSR) formulado por Vaishnavi y Kuechler (2004). 
+El presente capítulo desarrolla la ingeniería de diseño, el modelado web basado en UML (UWE), la arquitectura de software, la especificación de persistencia disociada, la verificación formal simbólica y la implementación del artefacto propuesto bajo el marco metodológico de \textit{Design Science Research} (DSR) formulado por Vaishnavi y Kuechler (2004) y las siete directrices de Hevner et al. (2004).
 
-En estricta correspondencia con los fundamentos teóricos establecidos en el Capítulo 2 sobre criptografía post-cuántica de retículos (estándares FIPS 203 ML-KEM, FIPS 204 ML-DSA y FIPS 202 SHA3-256) y el modelo formal de seguridad Dolev-Yao, este capítulo se enfoca en la \textbf{materialización práctica del prototipo informático}. Para garantizar una documentación de ingeniería de software rigurosa, reproducible y comprensible para la comunidad académica, el sistema se formaliza mediante el estándar de modelado visual UML (\textit{Unified Modeling Language}): diagramas de arquitectura, despliegue físico-lógico, casos de uso, actividades operativas, secuencias temporales de mensajes, máquinas de estados finitos, componentes de software y un diagrama de clases detallado.
-
-Asimismo, se expone el diseño de persistencia de datos mediante el Modelo Entidad-Relación y el Modelo Relacional formal en Tercera Forma Normal (3FN), demostrando la disociación estricta entre la identidad del elector y el ánfora digital para asegurar el secreto del voto. Se documenta la verificación formal en el modelo simbólico mediante \textit{Tamarin Prover} 1.12.0 acoplado al motor de reescritura ecuacional \textit{Maude} 3.5.1, la implementación de bajo nivel en lenguaje C con enlace dinámico FFI a Python, la interfaz REST en Flask y la validación de vectores de respuesta conocida (KAT) del NIST. Finalmente, se detalla la implementación del protocolo de control clásico basado en RSA-2048 y ECDSA P-256 para el análisis comparativo experimental del Capítulo 4.
+En estricta correspondencia con los fundamentos teóricos establecidos en el Capítulo 2 sobre criptografía post-cuántica de retículos (estándares FIPS 203 ML-KEM-768, FIPS 204 ML-DSA-65 y FIPS 202 SHA3-256), el modelo formal de seguridad Dolev--Yao y el perfil estándar de ingeniería web UWE (Koch et al., 2008), este capítulo se enfoca en la \textbf{materialización sistemática del prototipo informático}. La estructura secuencial del capítulo articula la ingeniería de la capa de aplicación web (modelos de requisitos, contenido, navegación con restricciones en lenguaje OCL, presentación abstracta y procesos web acoplados a diagramas de secuencia y máquinas de estados) con la ingeniería criptográfica del protocolo (ceremonia de claves \textit{air-gapped} de la Autoridad de Conteo, reducciones computacionales IND-CCA2 y EUF-CMA, implementación en lenguaje C nativo con enlace FFI a Python, matriz de conformidad frente al prototipo demostrativo, verificación en \textit{Tamarin Prover} 1.12.0 y línea base clásica RSA-2048/ECDSA P-256).
 
 % =============================================================================
 
 \input{Capitulos_tesis/secciones_cap3/sec01_enfoque_metodologico}
+\input{Capitulos_tesis/secciones_cap3/sec02_requisitos_uwe}
 \input{Capitulos_tesis/secciones_cap3/sec02_arquitectura_despliegue}
-\input{Capitulos_tesis/secciones_cap3/sec03_casos_uso_procesos}
-\input{Capitulos_tesis/secciones_cap3/sec04_diagramas_secuencia}
-\input{Capitulos_tesis/secciones_cap3/sec05_maquina_estados}
-\input{Capitulos_tesis/secciones_cap3/sec06_diseno_base_datos}
-\input{Capitulos_tesis/secciones_cap3/sec07_diagrama_componentes}
-\input{Capitulos_tesis/secciones_cap3/sec08_diagrama_clases}
+\input{Capitulos_tesis/secciones_cap3/sec04_modelo_contenido_uwe}
+\input{Capitulos_tesis/secciones_cap3/sec05_modelo_navegacion_uwe}
+\input{Capitulos_tesis/secciones_cap3/sec06_modelo_presentacion_uwe}
+\input{Capitulos_tesis/secciones_cap3/sec07_modelo_procesos_uwe}
 \input{Capitulos_tesis/secciones_cap3/sec09_ceremonia_claves_identidad}
 \input{Capitulos_tesis/secciones_cap3/sec10_argumento_seguridad_computacional}
 \input{Capitulos_tesis/secciones_cap3/sec11_implementacion_pqc}
 \input{Capitulos_tesis/secciones_cap3/sec12_verificacion_tamarin}
-\input{Capitulos_tesis/secciones_cap3/sec13_validacion_kat_fallos}
 \input{Capitulos_tesis/secciones_cap3/sec14_protocolo_clasico_benchmark}

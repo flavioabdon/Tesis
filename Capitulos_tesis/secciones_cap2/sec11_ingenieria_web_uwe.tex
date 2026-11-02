@@ -1,0 +1,91 @@
+% =============================================================================
+\section{Ingeniería Web Basada en UML (UWE) y Marco Metodológico DSR}
+\label{sec:ingenieria_web_uwe}
+% =============================================================================
+
+La materialización de un protocolo criptográfico de votación electrónica en un artefacto de software funcional exige articular dos planos metodológicos complementarios pero estrictamente delimitados: por un lado, el marco epistemológico y científico de \textit{Design Science Research} (DSR) formulado por Vaishnavi y Kuechler (2004) y sistematizado por Hevner et al. (2004), que guía el ciclo de investigación, la verificación formal y la evaluación experimental; por otro lado, la metodología de ingeniería web \textit{UML-based Web Engineering} (UWE), propuesta por Koch et al. (2008), que proporciona un perfil formal basado en estándares para modelar de manera sistemática la capa de aplicación web (cabina de votación, panel de registro electoral y portal público de auditoría).
+
+\subsection{Fundamentos de la Metodología UWE y Perfil Estándar UML}
+\label{subsec:fundamentos_uwe}
+
+\textit{UML-based Web Engineering} (UWE) es un enfoque metodológico de ingeniería de software dirigido por modelos (\textit{Model-Driven Engineering}, MDE) concebido específicamente para la especificación, diseño y construcción sistemática de aplicaciones web complejas (Koch et al., 2008). Su principio rector consiste en adherirse rigurosamente a los estándares del \textit{Object Management Group} (OMG), definiendo un perfil ligero (\textit{lightweight UML profile}) mediante mecanismos nativos de extensión de UML: estereotipos (\texttt{«stereotype»}), valores etiquetados (\textit{tagged values}) y restricciones formales expresadas en el lenguaje \textit{Object Constraint Language} (OCL, OMG, 2014).
+
+A diferencia de los métodos de diseño de propósito general que tratan la interfaz de usuario como un componente monolítico, UWE aplica el principio de separación de preocupaciones (\textit{separation of concerns}) descomponiendo la arquitectura de una aplicación web en vistas ortogonales interconectadas:
+
+\begin{enumerate}
+	\item \textbf{Modelo de Requisitos (\textit{Requirements Model}):} Extiende los diagramas de casos de uso de UML mediante estereotipos específicos que distinguen entre interacciones puramente hipertextuales o de consulta (\texttt{«navigation»}), transacciones que alteran el estado del sistema o ejecutan lógica de negocio (\texttt{«process»}) y vistas personalizadas (\texttt{«personalized»}).
+	\item \textbf{Modelo de Contenido (\textit{Content Model}):} Representa los conceptos del dominio del problema y la estructura de los datos persistentes mediante un diagrama de clases UML convencional (\texttt{«content class»}), desacoplado de la lógica de navegación hipertextual.
+	\item \textbf{Modelo de Navegación (\textit{Navigation Model}):} Define la estructura de caminos hipertextuales a través de los cuales el usuario explora la aplicación. Introduce estereotipos formales como \texttt{«navigation class»} (nodos visitables con información del modelo de contenido), \texttt{«menu»} (alternativas heterogéneas de selección), \texttt{«index»} (listas homogéneas de elementos seleccionables), \texttt{«query»} (formularios de búsqueda por criterios), \texttt{«guided tour»} (recorridos secuenciales), \texttt{«navigation link»} (enlaces directos entre nodos) y \texttt{«process link»} (transiciones que entran o salen de un nodo de proceso).
+	\item \textbf{Modelo de Presentación (\textit{Presentation Model}):} Describe la disposición estructural abstracta de la interfaz de usuario con independencia del motor de renderizado físico (HTML5/CSS3). Emplea estereotipos contenedores y atómicos como \texttt{«presentation page»}, \texttt{«view port»}, \texttt{«presentation group»}, \texttt{«input form»}, \texttt{«selection»}, \texttt{«button»}, \texttt{«text»} y \texttt{«anchored collection»}.
+	\item \textbf{Modelo de Procesos (\textit{Process Model}):} Especifica el flujo de control y de datos de las transacciones complejas mediante clases de proceso (\texttt{«process class»}) vinculadas a diagramas de actividades UML detallados, donde se modelan las validaciones, transformaciones criptográficas, llamadas a servicios y manejo de excepciones.
+	\item \textbf{Modelo de Adaptación (\textit{Adaptation Model}):} Contempla reglas transversales orientadas al ajuste dinámico según el perfil del usuario o el contexto ambiental. En el ámbito de la votación electrónica, este submodelo se excluye deliberadamente del alcance para garantizar la neutralidad e invariabilidad absoluta de la boleta electoral frente a todos los votantes.
+\end{enumerate}
+
+\subsection{Comparación Metodológica y Justificación de la Elección de UWE}
+\label{subsec:comparativa_uwe}
+
+En la literatura de ingeniería web destacan cuatro metodologías consolidadas: \textbf{OOHDM} (\textit{Object-Oriented Hypermedia Design Method}, Schwabe y Rossi, 1998), \textbf{WebML / IFML} (\textit{Web Modeling Language / Interaction Flow Modeling Language}, Ceri et al., 2000; Brambilla y Fraternali, 2014), \textbf{OO-H} (\textit{Object-Oriented Hypermedia}, Gómez et al., 2001) y \textbf{UWE} (Koch et al., 2008). La Tabla \ref{tab:comparativa_metodologias_web} contrasta estas propuestas bajo cinco criterios técnicos determinantes para un sistema criptográfico de votación.
+
+\begin{table}[!htbp]
+	\centering
+	\renewcommand{\arraystretch}{1.28}
+	\footnotesize
+	\caption{Comparación técnica de metodologías de ingeniería web para el modelado del prototipo electoral.}
+	\label{tab:comparativa_metodologias_web}
+	\begin{tabularx}{\textwidth}{|>{\bfseries\raggedright\arraybackslash}p{2.7cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}p{2.5cm}|}
+		\hline
+		\textbf{Criterio de Evaluación} & \textbf{UWE (Koch et al., 2008)} & \textbf{WebML / IFML (Ceri et al., 2000)} & \textbf{OOHDM (Schwabe y Rossi, 1998)} & \textbf{OO-H (Gómez et al., 2001)} \\
+		\hline
+		Base notacional & \textbf{100\% perfil UML estándar (OMG)} con estereotipos formales. & Notación gráfica propia (WebML) o perfil IFML orientado a datos. & Notación propia híbrida (tarjetas ADV y contextos navegacionales). & Diagramas NAD propietarios que extienden parcialmente UML. \\
+		\hline
+		Soporte de procesos y flujos de negocio & \textbf{Alto:} integra \texttt{«process class»} con diagramas de actividades UML. & Medio-Alto: unidades de operación acopladas a entidades de datos. & Limitado: concebido originalmente para hipermedia estática. & Medio: enlaces de servicio invocados desde diagramas NAD. \\
+		\hline
+		Manejo formal de restricciones (OCL) & \textbf{Nativo:} soporte completo de invariantes y pre/postcondiciones OCL. & Limitado: expresiones booleanas propias sobre flujos de datos. & Ausente: utiliza lógica configuracional en cartas ADV. & Parcial: filtros OCL restringidos a enlaces navegacionales. \\
+		\hline
+		Herramientas y ecosistema & MagicUWE, ArgoUWE, Papyrus, PlantUML / TikZ estándar. & WebRatio (comercial/propietario). & Entornos académicos discontinuados. & VisualWADE (académico/propietario). \\
+		\hline
+		Curva de adopción e integración UML & \textbf{Mínima:} reutiliza directamente diagramas UML de clases y secuencia. & Media-Alta: exige aprender semántica de unidades de datos. & Alta: requiere dominar formalismos ADV y contextos propios. & Media: requiere aprender sintaxis de diagramas NAD. \\
+		\hline
+	\end{tabularx}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia con base en Koch et al. (2008), Ceri et al. (2000), Schwabe y Rossi (1998) y Gómez et al. (2001).}}
+\end{table}
+
+La elección de UWE como método de ingeniería para la capa web de esta tesis se fundamenta en tres argumentos técnicos:
+\begin{enumerate}
+	\item \textbf{Coherencia notacional directa con el modelado UML del protocolo:} Dado que la arquitectura del sistema, las estructuras criptográficas en C/Python, las secuencias de mensajes y las máquinas de estados finitos están especificadas en UML 2.x, UWE permite integrar el diseño de las vistas web sin introducir notaciones gráficas ajenas ni romper la continuidad semántica de la documentación de ingeniería.
+	\item \textbf{Expresión formal de restricciones de navegación irreversibles en OCL:} Un sistema de votación electrónica no es un portal web de navegación libre; requiere transiciones unidireccionales estrictas. Mediante invariantes y precondiciones OCL sobre el modelo de navegación UWE, es posible especificar formalmente que ningún elector sin credencial válida de la AR acceda a la cabina y que, una vez emitido el sufragio y generado el recibo SHA3-256, el enlace de retorno a la cabina quede permanentemente inhabilitado en la sesión (\texttt{self.haVotado = true implies self.linkCabina.disabled = true}).
+	\item \textbf{Trazabilidad funcional hacia las primitivas criptográficas del backend:} El modelo de procesos UWE permite descomponer la acción de usuario \textit{``Emitir Voto''} en actividades atómicas trazables hacia el empaquetado de longitud fija (32 bytes), el encapsulamiento ML-KEM-768 (FIPS 203), el cifrado autenticado AES-256-GCM con AAD y la firma digital ML-DSA-65 (FIPS 204).
+\end{enumerate}
+
+\subsection{Articulación con las Directrices de Design Science Research (Hevner et al., 2004)}
+\label{subsec:directrices_hevner_dsr}
+
+Con el propósito de preservar el rigor metodológico, es indispensable establecer que UWE no sustituye al marco DSR ni al verificador formal \textit{Tamarin Prover}: \textbf{DSR constituye el paradigma científico de investigación}, \textbf{Tamarin Prover y las reducciones a retículos proveen la validación matemática de seguridad}, y \textbf{UWE aporta la ingeniería sistemática de la capa de aplicación web}. La Tabla \ref{tab:directrices_hevner_dsr} sintetiza el cumplimiento de las siete directrices canónicas de Hevner et al. (2004) en el presente proyecto de grado.
+
+\begin{table}[!htbp]
+	\centering
+	\renewcommand{\arraystretch}{1.28}
+	\footnotesize
+	\caption{Cumplimiento de las siete directrices de Design Science Research (Hevner et al., 2004) y su articulación con UWE.}
+	\label{tab:directrices_hevner_dsr}
+	\begin{tabularx}{\textwidth}{|>{\bfseries\raggedright\arraybackslash}p{3.1cm}|>{\raggedright\arraybackslash}p{4.2cm}|>{\raggedright\arraybackslash}X|}
+		\hline
+		\textbf{Directriz de Hevner et al. (2004)} & \textbf{Exigencia Metodológica en DSR} & \textbf{Materialización en la Tesis y Rol de UWE / Criptografía} \\
+		\hline
+		1. Diseño como un artefacto (\textit{Design as an Artifact}) & Producir un artefacto viable (constructo, modelo, método o instanciación). & Se producen tres artefactos acoplados: (a) la especificación simbólica \texttt{protocolo\_v3.spthy}, (b) los modelos de ingeniería web UWE (requisitos, contenido, navegación, presentación y procesos) y (c) la instanciación en C/Python (\texttt{libpqc\_core.dylib} + API Flask). \\
+		\hline
+		2. Relevancia del problema (\textit{Problem Relevance}) & Desarrollar soluciones tecnológicas a problemas importantes y vigentes. & Aborda la vulnerabilidad cuántica (algoritmo de Shor y ataques \textit{Store-Now-Decrypt-Later}) que compromete la confidencialidad e integridad de los sistemas de votación basados en RSA/ECDSA. \\
+		\hline
+		3. Evaluación del diseño (\textit{Design Evaluation}) & Demostrar rigurosamente la utilidad, calidad y eficacia del artefacto. & Evaluación tripartita: (1) demostración formal de 5 lemas en \textit{Tamarin Prover} 1.12.0, (2) validación de 200 vectores KAT del NIST y conformidad funcional UWE/OCL, y (3) benchmark estadístico frente a RSA-2048/ECDSA P-256. \\
+		\hline
+		4. Contribuciones de la investigación (\textit{Research Contributions}) & Aportar contribuciones claras y verificables en el área del artefacto. & Primer protocolo de votación electrónica post-cuántica en el contexto académico local que integra FIPS 203/204, verificación formal Dolev--Yao, segregación \textit{air-gapped} de $dk_{\text{AC}}$ y modelado web UWE trazable. \\
+		\hline
+		5. Rigor de la investigación (\textit{Research Rigor}) & Aplicar métodos formales tanto en la construcción como en la evaluación. & Construcción guiada por estándares NIST (FIPS 202/203/204), normalización relacional 3FN y perfil estándar UWE/OCL; evaluación mediante reescritura multiconjunto en \textit{Maude} 3.5.1 y reducción a Module-LWE/SIS. \\
+		\hline
+		6. Diseño como un proceso de búsqueda (\textit{Design as a Search Process}) & Iterar sobre el espacio de soluciones sujeta a leyes y restricciones del entorno. & Evolución iterativa documentada desde \texttt{protocolo\_v2} hasta \texttt{protocolo\_v3.spthy}, y auditoría de 22 ítems de conformidad (\texttt{PEND-01} a \texttt{PEND-22}) donde el modelo UWE fija la arquitectura objetivo frente al prototipo demostrativo. \\
+		\hline
+		7. Comunicación de la investigación (\textit{Communication of Research}) & Presentar eficazmente el trabajo a audiencias tecnológicas y de gestión. & Exposición estructurada mediante diagramas formales UML/UWE, tablas de visibilidad de adversarios, código fuente reproducible y métricas empíricas de latencia. \\
+		\hline
+	\end{tabularx}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia adaptada de Hevner et al. (2004) y Vaishnavi y Kuechler (2004).}}
+\end{table}

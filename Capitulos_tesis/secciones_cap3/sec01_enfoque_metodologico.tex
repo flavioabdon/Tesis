@@ -2,29 +2,58 @@
 \label{sec:metodologia_desarrollo}
 % =============================================================================
 
-La construcción del prototipo de votación electrónica se enmarca en las directrices de la investigación en ciencias del diseño (DSR), articulando un ciclo iterativo orientado a la resolución de problemas reales de seguridad de la información.
+La construcción del prototipo de votación electrónica se enmarca en las directrices de la investigación en ciencias del diseño (\textit{Design Science Research}, DSR) de Vaishnavi y Kuechler (2004) y Hevner et al. (2004), articulando un ciclo iterativo orientado a la resolución de problemas reales de seguridad de la información. Dentro de este marco científico, la ingeniería de la capa de aplicación web se instrumenta mediante la metodología \textit{UML-based Web Engineering} (UWE) propuesta por Koch et al. (2008), manteniendo una estricta separación de preocupaciones entre el método de investigación, el diseño de la interfaz web y la verificación criptográfica formal.
 
-\subsection{El Ciclo DSR en la Construcción del Artefacto}
+\subsection{Articulación Metodológica DSR--UWE e Ingeniería Criptográfica}
+\label{subsec:articulacion_dsr_uwe}
 
-El desarrollo del artefacto se estructuró a lo largo de las fases metodológicas de DSR:
+El desarrollo del artefacto se estructuró a lo largo de las cinco fases metodológicas del ciclo general de DSR (Vaishnavi y Kuechler, 2004), integrando en las fases de sugerencia, desarrollo y evaluación los cinco modelos operativos de UWE (requisitos, contenido, navegación, presentación y procesos):
+
 \begin{enumerate}
-	\item \textbf{Conciencia del Problema (\textit{Awareness of Problem}):} Identificación de la vulnerabilidad crítica de los sistemas electorales contemporáneos frente a la computación cuántica (Shor) y a la recolección pasiva de boletas para descifrado futuro (amenaza HNDL), detallada en los Capítulos 1 y 2.
-	\item \textbf{Sugerencia (\textit{Suggestion}):} Concepción de un protocolo híbrido post-cuántico que combine encapsulamiento asimétrico sobre retículos (FIPS 203), firmas de retículos (FIPS 204), cifrado simétrico autenticado (AES-256-GCM) y recibos deterministas inmutables (SHA3-256).
-	\item \textbf{Desarrollo (\textit{Development}):} Ingeniería y programación del prototipo de software en lenguaje C nativo (PQClean) con enlace mediante wrappers Python FFI, arquitectura por capas, persistencia relacional y servidor web con API REST.
-	\item \textbf{Evaluación (\textit{Evaluation}):} Demostración matemática mediante verificación formal simbólica en Tamarin Prover, validación determinista de vectores KAT del NIST y pruebas experimentales de desempeño computacional.
-	\item \textbf{Conclusión (\textit{Conclusion}):} Consolidación de métricas de viabilidad operativa y contraste formal de hipótesis en el ámbito de las elecciones universitarias.
+	\item \textbf{Conciencia del Problema (\textit{Awareness of Problem}):} Identificación de la vulnerabilidad crítica de los sistemas electorales contemporáneos frente a la computación cuántica (algoritmo de Shor) y a la recolección pasiva de boletas para descifrado futuro (\textit{Store-Now-Decrypt-Later}, HNDL), así como de los riesgos de suplantación y doble sufragio en interfaces web carentes de control formal de navegación, detallados en los Capítulos 1 y 2.
+	\item \textbf{Sugerencia (\textit{Suggestion}):} Concepción de una arquitectura socio-técnica que acopla un protocolo híbrido post-cuántico —encapsulamiento asimétrico sobre retículos ML-KEM-768 (FIPS 203), firmas digitales ML-DSA-65 (FIPS 204), cifrado autenticado AES-256-GCM y recibos deterministas SHA3-256 (FIPS 202)— con un modelo de requisitos web UWE clasificados mediante estereotipos \texttt{«navigation»} y \texttt{«process»}.
+	\item \textbf{Desarrollo (\textit{Development}):} Ingeniería sistemática del artefacto en dos frentes sincronizados: (a) el modelado UWE de la capa web (Modelo de Contenido acoplado al esquema relacional 3FN con disociación de identidad, Modelo de Navegación restringido por invariantes OCL, Modelo de Presentación abstracto y Modelo de Procesos web), y (b) la programación del núcleo criptográfico nativo en lenguaje C (\texttt{PQClean}), su enlace mediante wrappers Python FFI (\texttt{ctypes}) y la API REST en Flask.
+	\item \textbf{Evaluación (\textit{Evaluation}):} Validación multidimensional mediante demostración matemática simbólica de cinco lemas en \textit{Tamarin Prover} 1.12.0 y \textit{Maude} 3.5.1, comprobación determinista de 200 vectores KAT oficiales del NIST, verificación de conformidad de los flujos de navegación y procesos UWE frente al prototipo (incluyendo la auditoría del inventario \texttt{PEND-01} a \texttt{PEND-22}) y pruebas experimentales de desempeño frente a la línea base clásica (RSA-2048/ECDSA P-256).
+	\item \textbf{Conclusión (\textit{Conclusion}):} Consolidación de métricas de viabilidad operativa, síntesis de la contribución del modelado UWE en la trazabilidad de la seguridad y contraste formal de la hipótesis de investigación (\textbf{H1}).
 \end{enumerate}
 
-\subsection{Requerimientos de Ingeniería del Prototipo}
+La Tabla \ref{tab:mapeo_dsr_uwe_cripto} formaliza la correspondencia estructural entre las fases del ciclo DSR, las actividades de modelado de la metodología UWE y los componentes de ingeniería criptográfica y verificación formal.
 
-El diseño del artefacto atiende a requerimientos funcionales y no funcionales claramente definidos:
+\begin{table}[!htbp]
+	\centering
+	\renewcommand{\arraystretch}{1.28}
+	\footnotesize
+	\caption{Mapeo metodológico entre las fases de DSR (Vaishnavi y Kuechler, 2004), el modelado UWE y la ingeniería criptográfica.}
+	\label{tab:mapeo_dsr_uwe_cripto}
+	\begin{tabularx}{\textwidth}{|>{\bfseries\raggedright\arraybackslash}p{2.6cm}|>{\raggedright\arraybackslash}p{4.3cm}|>{\raggedright\arraybackslash}p{4.3cm}|>{\raggedright\arraybackslash}X|}
+		\hline
+		\textbf{Fase DSR} & \textbf{Actividades en Ingeniería Web (UWE)} & \textbf{Actividades en Criptografía y Verificación Formal} & \textbf{Salidas y Artefactos Verificables} \\
+		\hline
+		1. Conciencia del Problema & Identificación de actores web ($V$, $AR$, $SV$, Auditor) y riesgos de navegación repetida o fuga de estado. & Análisis de amenaza cuántica (Shor/Grover) y formulación del modelo adversarial Dolev--Yao. & Definición de requerimientos RF1--RF4, RNF1--RNF2 y matriz de visibilidad de adversarios. \\
+		\hline
+		2. Sugerencia & Modelado de Requisitos Web UWE (\texttt{«navigation»} y \texttt{«process»}) y matriz de trazabilidad funcional. & Diseño del esquema híbrido KEM-DEM (ML-KEM-768 + AES-256-GCM con AAD) y firmas ML-DSA-65 con separación de dominio. & Diagrama de casos de uso UWE (Sección \ref{sec:casos_uso_actividades}) y diseño de ceremonia \textit{air-gapped} de $dk_{\text{AC}}$. \\
+		\hline
+		3. Desarrollo & Elaboración de los modelos UWE de Contenido, Navegación (con reglas OCL), Presentación y Procesos web. & Compilación de \texttt{libpqc\_core.dylib} en C, wrappers FFI, especificación MSR \texttt{protocolo\_v3.spthy} y línea base RSA/ECDSA. & Modelos UWE (Secciones \ref{sec:diagrama_clases_detallado}--\ref{sec:modelo_procesos_uwe}), esquema 3FN y prototipo funcional. \\
+		\hline
+		4. Evaluación & Verificación de conformidad funcional del prototipo respecto a los modelos UWE y auditoría de \texttt{PEND-15}. & Prueba automatizada de lemas en \textit{Tamarin Prover}, validación de vectores KAT NIST y benchmark de latencia. & Traza \texttt{salida\_tamarin.txt}, Tabla de Conformidad (\ref{tab:conformidad_prototipo_diseno}) y contraste estadístico de H1 (Cap.\ 4). \\
+		\hline
+		5. Conclusión & Síntesis del aporte de la ingeniería web dirigida por modelos en sistemas electorales críticos. & Delimitación de garantías probadas frente a límites simbólicos (\textit{diff-equivalence}, coacción) y hoja de ruta Wasm. & Conclusiones y recomendaciones técnicas para despliegue en navegador vía WebAssembly (Cap.\ 5). \\
+		\hline
+	\end{tabularx}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia basada en Vaishnavi y Kuechler (2004) y Koch et al. (2008).}}
+\end{table}
+
+\subsection{Requerimientos de Ingeniería del Prototipo}
+\label{subsec:requerimientos_ingenieria}
+
+El diseño del artefacto atiende a requerimientos funcionales (RF) y no funcionales (RNF) claramente acotados que vinculan la capa de interfaz web con el núcleo criptográfico:
 \begin{itemize}
-	\item \textbf{RF1 - Acreditación y Sufragio Único:} Todo votante debe contar con una credencial digital firmada por la Autoridad de Registro (AR) antes de poder emitir su voto, garantizando que ninguna identidad vote más de una vez.
-	\item \textbf{RF2 - Secreto del Voto:} El contenido de la boleta debe permanecer cifrado en todo momento durante el transporte y custodia en el ánfora; la clave privada de desencapsulamiento ($dk_{AC}$) reside de forma exclusiva en la Autoridad de Conteo (AC) fuera de línea.
-	\item \textbf{RF3 - Integridad y No Repudio:} Toda boleta transmitida debe estar firmada digitalmente por la clave privada del elector ($sk_V$) vinculada a su credencial, impidiendo la alteración del voto por terceros.
-	\item \textbf{RF4 - Auditabilidad Universal y Recibo Compacto:} El votante debe recibir un comprobante firmado por el servidor que contenga el hash SHA3-256 determinista de su boleta, verificable públicamente sin vulnerar el secreto electoral.
-	\item \textbf{RNF1 - Eficiencia y Rendimiento:} El tiempo de cifrado y empaquetado en la cabina de votación no debe exceder los 100 ms para terminales convencionales, garantizando una experiencia de usuario ágil.
-	\item \textbf{RNF2 - Modularidad y Aislamiento de Memoria:} El núcleo criptográfico nativo en C debe operar con preasignación de buffers estáticos y purga segura de memoria volátil mediante ceros lógicos (\texttt{memzero}), neutralizando fugas por canales laterales de memoria.
+	\item \textbf{RF1 - Acreditación y Sufragio Único:} Todo votante debe contar con una credencial digital firmada por la Autoridad de Registro (AR) con contexto \texttt{ELEC\_CRED\_AR\_V1} antes de acceder a la cabina web de votación, garantizando que ninguna identidad emita más de un sufragio válido.
+	\item \textbf{RF2 - Secreto del Voto y Disociación:} El contenido de la boleta debe permanecer cifrado en todo momento durante el transporte y custodia en el ánfora; la clave privada de desencapsulamiento ($dk_{\text{AC}}$) reside de forma exclusiva en la Autoridad de Conteo (AC) fuera de línea, y el almacenamiento relacional desacopla toda referencia entre el padrón y el voto cifrado.
+	\item \textbf{RF3 - Integridad, Autenticidad y No Repudio Comicial:} Toda boleta transmitida desde el proceso web de emisión debe estar firmada digitalmente mediante ML-DSA-65 por la clave privada del elector ($sk_V$) vinculada a su credencial, impidiendo la alteración del voto en tránsito.
+	\item \textbf{RF4 - Auditabilidad Individual y Recibo Inmutable:} Tras el depósito en el ánfora, la interfaz debe presentar y permitir descargar un comprobante firmado por el Servidor de Votación ($sk_{\text{SV}}$) que contenga el resumen determinista SHA3-256 de la boleta, verificable públicamente en el portal de auditoría sin revelar el sentido del voto.
+	\item \textbf{RNF1 - Eficiencia y Rendimiento Operativo:} El tiempo de cifrado, firma y procesamiento por sufragio debe mantener una sobrecarga de latencia que no exceda en más del 30\% a la del protocolo clásico equivalente (RSA-2048/ECDSA P-256), garantizando una respuesta interactiva fluida en la cabina web.
+	\item \textbf{RNF2 - Modularidad, Navegación Irreversible y Aislamiento de Memoria:} La capa de navegación web debe bloquear mediante restricciones formales toda transición de retorno a la cabina una vez emitido el voto, mientras que el núcleo nativo en C debe operar con buffers estáticos preasignados para el enlace FFI.
 \end{itemize}
 
 % =============================================================================

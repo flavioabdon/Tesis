@@ -2,9 +2,9 @@
 \label{sec:arquitectura_sistema}
 % =============================================================================
 
-\subsection{Arquitectura en Capas del Sistema}
+\subsection{Arquitectura en Capas del Sistema y Ubicación de Modelos UWE}
 
-Para garantizar una alta cohesión, bajo acoplamiento y facilidad de mantenimiento, el prototipo se estructura según un modelo de arquitectura multicapa, como se ilustra en la Figura \ref{fig:uml_arquitectura}.
+Para garantizar una alta cohesión, bajo acoplamiento y facilidad de mantenimiento, el prototipo se estructura según un modelo de arquitectura multicapa de seis niveles, como se ilustra en la Figura \ref{fig:uml_arquitectura}. Los artefactos de ingeniería web UWE gobiernan directamente las dos capas superiores (Presentación/Navegación y Control de Procesos REST), acoplándose con las capas de dominio electoral, abstracción FFI, núcleo nativo en C y persistencia relacional.
 
 \begin{figure}[!htbp]
 	\centering
@@ -16,23 +16,23 @@ Para garantizar una alta cohesión, bajo acoplamiento y facilidad de mantenimien
 	]
 		% Capa 1: Presentación
 		\node[layer, fill=BoxBgBlue] (capa1) at (0, 0) {
-			\textbf{Capa 1: Presentación y Cliente de Votación}\\
+			\textbf{Capa 1: Presentación y Navegación Web UWE (Cliente de Votación)}\\
 		};
-		\node[subcomp] at (-4.2, -0.15) {Web UI / Dashboard (HTML5, JS)};
-		\node[subcomp] at (0, -0.15) {Terminal CLI de Cabina Elector};
-		\node[subcomp] at (4.2, -0.15) {Portal Ciudadano de Auditoría};
+		\node[subcomp] at (-4.3, -0.15) {Cabina Web UWE (\texttt{«presentation page»})};
+		\node[subcomp] at (0.0, -0.15) {Panel Registro AR (\texttt{«input form»})};
+		\node[subcomp] at (4.3, -0.15) {Portal Ciudadano Auditoría (\texttt{«query»})};
 
 		% Capa 2: Servicios Web y API REST
 		\node[layer, fill=BoxBgTeal, below=0.6cm of capa1] (capa2) {
-			\textbf{Capa 2: Servicios Web y API REST (Flask WSGI)}\\
+			\textbf{Capa 2: Servicios Web, Controlador de Procesos UWE y API REST (Flask WSGI)}\\
 		};
 		\node[subcomp] at (-4.5, -1.75) {Endpoints: \texttt{/api/votar}, \texttt{/api/escrutinio}};
 		\node[subcomp] at (0.2, -1.75) {Serializador Canónico (\texttt{canonical\_json})};
-		\node[subcomp] at (4.6, -1.75) {Controlador de Sesión y CORS};
+		\node[subcomp] at (4.6, -1.75) {Guarda de Estado OCL y Sesión};
 
 		% Capa 3: Lógica del Dominio Electoral
 		\node[layer, fill=BoxBgPurple, below=0.6cm of capa2] (capa3) {
-			\textbf{Capa 3: Lógica del Dominio y Actores Electorales (Python)}\\
+			\textbf{Capa 3: Lógica del Dominio y Modelo de Contenido UWE (Python)}\\
 		};
 		\node[subcomp] at (-4.5, -3.35) {\texttt{VotantePQC}: Formulación y Cifrado};
 		\node[subcomp] at (-1.2, -3.35) {\texttt{AutoridadRegistro}: Padrón};
@@ -56,7 +56,7 @@ Para garantizar una alta cohesión, bajo acoplamiento y facilidad de mantenimien
 
 		% Capa 6: Persistencia
 		\node[layer, fill=gray!12, below=0.6cm of capa5] (capa6) {
-			\textbf{Capa 6: Persistencia y Almacenamiento Relacional (PostgreSQL / SQLite)}\\
+			\textbf{Capa 6: Persistencia y Almacenamiento Relacional Disociado (PostgreSQL / SQLite)}\\
 		};
 		\node[subcomp] at (-4.2, -8.15) {Padrón Electoral (\texttt{tbl\_padron})};
 		\node[subcomp] at (0.0, -8.15) {Ánfora Digital Cifrada (\texttt{tbl\_anfora})};
@@ -70,24 +70,24 @@ Para garantizar una alta cohesión, bajo acoplamiento y facilidad de mantenimien
 		\draw[dep] (capa3.east) to[bend left=45] (capa6.east);
 	\end{tikzpicture}
 	}%
-	\caption{Diagrama de Arquitectura en Capas del sistema de votación post-cuántica.}
+	\caption{Diagrama de Arquitectura en Capas del sistema de votación post-cuántica articulado con UWE.}
 	\label{fig:uml_arquitectura}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
 
 Cada capa mantiene responsabilidades rigurosamente delimitadas:
 \begin{itemize}
-	\item \textbf{Capa de Presentación:} Provee las interfaces visuales responsivas para los votantes, jurados de mesa y auditores, construida con HTML5, hojas de estilo CSS modernas y Chart.js para visualización de cómputos.
-	\item \textbf{Capa de Servicios Web:} Expone los puntos de entrada REST. Implementa la serialización determinista canónica para asegurar que los diccionarios de datos posean representaciones binarias predecibles antes de ser firmados o procesados criptográficamente.
-	\item \textbf{Capa de Lógica del Dominio:} Orquesta la lógica del protocolo y coordina a los cuatro actores: validación de identidad ciudadana, verificación de firmas digitales, detección de intentos de doble votación y escrutinio final.
-	\item \textbf{Capa FFI Ctypes:} Realiza la conversión de tipos entre las estructuras de Python y los punteros de memoria contigua en lenguaje C.
-	\item \textbf{Capa C Core:} Ejecuta el procesamiento sobre retículos (multiplicación polinomial NTT, convolución negacíclica, expansión pseudoaleatoria Keccak SHAKE-128/256), compilado con optimizaciones nativas para la arquitectura destino.
-	\item \textbf{Capa de Persistencia:} Almacena de forma transaccional y normalizada los registros electorales, manteniendo una separación estricta entre el padrón y el ánfora de votos.
+	\item \textbf{Capa 1 (Presentación y Navegación Web UWE):} Materializa los modelos de Navegación y Presentación de UWE. Provee las interfaces visuales responsivas para la cabina del votante, el panel de registro de la AR y el portal ciudadano de auditoría, aplicando en el cliente las transiciones entre vistas (\texttt{«view port»}) y las guardas de navegación.
+	\item \textbf{Capa 2 (Servicios Web, Procesos UWE y API REST):} Expone los puntos de entrada REST y orquesta las clases de proceso UWE (\texttt{«process class»}). Verifica las precondiciones OCL de sesión e implementa la serialización determinista canónica antes del procesamiento criptográfico.
+	\item \textbf{Capa 3 (Lógica del Dominio y Contenido UWE):} Instancia las clases del Modelo de Contenido UWE y coordina a los cuatro actores electorales: validación de credenciales, verificación de firmas digitales, detección de intentos de doble votación y escrutinio final.
+	\item \textbf{Capa 4 (Abstracción FFI Ctypes):} Realiza la conversión segura de tipos entre las estructuras de Python y los buffers contiguos de memoria en lenguaje C (\texttt{c\_uint8}).
+	\item \textbf{Capa 5 (Núcleo C Core):} Ejecuta el procesamiento sobre retículos algebraicos (multiplicación polinomial en el dominio NTT, convolución negacíclica y expansión pseudoaleatoria Keccak SHAKE-128/256), compilado con optimizaciones nativas para la arquitectura destino.
+	\item \textbf{Capa 6 (Persistencia Relacional):} Almacena de forma transaccional y normalizada en 3FN los registros electorales, manteniendo la disociación estructural entre el padrón y el ánfora de boletas cifradas.
 \end{itemize}
 
 \subsection{Diagrama de Despliegue UML del Entorno de Ejecución}
 
-La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del sistema, modelando los nodos de hardware, los artefactos de software instalados y los canales de comunicación de red con la Autoridad de Conteo aislada fuera de línea.
+La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del sistema, modelando los nodos de hardware, los entornos de ejecución, los artefactos de software instalados y los canales de comunicación con la Autoridad de Conteo aislada físicamente fuera de línea (\textit{air-gapped}).
 
 \begin{figure}[!htbp]
 	\centering
@@ -104,8 +104,8 @@ La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del si
 			\textbf{Terminal Votante / Cabina}\\
 			\vspace{1.8cm}
 		};
-		\node[artbox, below=0.4cm of client.north] {\guillemotleft execution env\guillemotright\\Navegador Web / Interfaz Local};
-		\node[artbox, below=1.3cm of client.north] {\guillemotleft artifact\guillemotright\\PQC Client Engine (Python)};
+		\node[artbox, below=0.4cm of client.north] {\guillemotleft execution env\guillemotright\\Navegador Web / Interfaz UWE};
+		\node[artbox, below=1.3cm of client.north] {\guillemotleft artifact\guillemotright\\PQC Client Engine (Wasm / Python)};
 
 		% Nodo 2: Servidor Web SV
 		\node[nodebox, fill=BoxBgTeal, minimum width=4.6cm] (server) at (1.2, 3.2) {
@@ -167,9 +167,77 @@ La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del si
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
 
-El esquema de despliegue contempla:
+El esquema de despliegue contempla tres garantías operativas fundamentales:
 \begin{enumerate}
-	\item \textbf{Canal de Votación Abierto:} Los clientes se comunican con el Servidor de Votación mediante HTTPS (TLS 1.3). Siguiendo las directrices del modelo Dolev-Yao, la seguridad de la boleta no se confía a la capa de transporte: la confidencialidad e integridad están respaldadas criptográficamente de extremo a extremo por ML-KEM y ML-DSA.
-	\item \textbf{Aislamiento Físico de la Autoridad de Conteo (Air-Gapped):} La estación de escrutinio opera desconectada físicamente de cualquier red. La clave privada de desencapsulamiento $dk_{\text{AC}}$ se genera en su interior y nunca abandona el entorno protegido; únicamente la clave pública $ek_{\text{AC}}$ se exporta para su publicación, y tras el cierre comicial, el lote permutado de boletas anónimas se transfiere fuera de banda para el conteo.
+	\item \textbf{Canal de Votación Abierto bajo Modelo Dolev--Yao:} Los clientes web se comunican con el Servidor de Votación mediante HTTPS (TLS 1.3). Siguiendo las directrices del modelo Dolev--Yao, la seguridad de la boleta no se confía a la capa de transporte: la confidencialidad e integridad están respaldadas criptográficamente de extremo a extremo por ML-KEM-768 y ML-DSA-65.
+	\item \textbf{Aislamiento Físico de la Autoridad de Conteo (\textit{Air-Gapped}):} La estación de escrutinio opera desconectada físicamente de cualquier red. La clave privada de desencapsulamiento $dk_{\text{AC}}$ se genera en su interior y nunca abandona el entorno protegido; únicamente la clave pública $ek_{\text{AC}}$ se exporta para su publicación, y tras el cierre comicial, el lote permutado de boletas anónimas se transfiere fuera de banda para el conteo.
 	\item \textbf{Persistencia Segura:} El motor relacional se aloja en un segmento de red privado no enrutable hacia el exterior, almacenando los datos en volúmenes protegidos mediante cifrado de disco a nivel de bloque.
 \end{enumerate}
+
+\subsection{Diagrama de Componentes de Software UML}
+\label{sec:diagrama_componentes}
+
+La Figura \ref{fig:uml_componentes} expone el Diagrama UML de Componentes de Software, modelando los paquetes, las dependencias de compilación y las interfaces de enlace nativo entre la capa web UWE y el núcleo en C.
+
+\begin{figure}[!htbp]
+	\centering
+	\begin{tikzpicture}[
+		node distance=0.8cm and 1.2cm,
+		comp/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=3pt, minimum width=4.0cm, minimum height=0.9cm, font=\scriptsize\sffamily, align=center},
+		dep/.style={-{Latex[length=2mm]}, thick, dashed, draw=PQCDark}
+	]
+		% Capa 1: C Nativo
+		\node[comp, fill=BoxBgTeal] (c_core) at (0, 0) {
+			\guillemotleft component\guillemotright\\
+			\textbf{PQClean C Core}\\
+			\textit{ML-KEM-768 / ML-DSA-65}
+		};
+		\node[comp, fill=BoxBgTeal] (c_dyn) at (6.5, 0) {
+			\guillemotleft artifact\guillemotright\\
+			\textbf{libpqc\_core.dylib}\\
+			\textit{Binario compilado ARM64/x86}
+		};
+		
+		% Capa 2: FFI Wrapper & Utils
+		\node[comp, fill=BoxBgGreen] (wrapper) at (0, -2.1) {
+			\guillemotleft component\guillemotright\\
+			\textbf{Python FFI Wrapper}\\
+			\textit{pqc\_wrapper.py (ctypes)}
+		};
+		\node[comp, fill=BoxBgGreen] (utils) at (6.5, -2.1) {
+			\guillemotleft component\guillemotright\\
+			\textbf{Crypto Utilities}\\
+			\textit{AES-GCM, SHA3, canonical\_json}
+		};
+		
+		% Capa 3: Actores
+		\node[comp, fill=BoxBgPurple] (actores) at (3.25, -4.2) {
+			\guillemotleft component\guillemotright\\
+			\textbf{Módulos de Entidades Electorales}\\
+			\textit{Votante, AR, Servidor, Conteo (Tally)}
+		};
+		
+		% Capa 4: Orquestador & UI
+		\node[comp, fill=BoxBgAmber] (orch) at (0, -6.3) {
+			\guillemotleft component\guillemotright\\
+			\textbf{Orquestador E2E}\\
+			\textit{protocolo\_pqc.py}
+		};
+		\node[comp, fill=BoxBgAmber] (web) at (6.5, -6.3) {
+			\guillemotleft component\guillemotright\\
+			\textbf{Capa Web UWE \& REST API}\\
+			\textit{Flask app.py + Vistas UWE}
+		};
+		
+		% Conexiones
+		\draw[dep] (c_core) -- (c_dyn) node[midway, above, font=\tiny] {compilación gcc/clang};
+		\draw[dep] (wrapper) -- (c_dyn) node[midway, right, font=\tiny] {dlopen / ctypes};
+		\draw[dep] (actores) -- (wrapper);
+		\draw[dep] (actores) -- (utils);
+		\draw[dep] (orch) -- (actores);
+		\draw[dep] (web) -- (actores);
+	\end{tikzpicture}
+	\caption{Diagrama UML de Componentes de Software de la implementación PQC.}
+	\label{fig:uml_componentes}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}

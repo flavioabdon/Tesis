@@ -1,0 +1,137 @@
+\section{Modelo de Presentación (UWE)}
+\label{sec:modelo_presentacion_uwe}
+% =============================================================================
+
+El \textbf{Modelo de Presentación} de UWE (Koch et al., 2008) especifica la composición estructural y jerárquica de la interfaz gráfica de usuario de forma abstracta e independiente de la tecnología de maquetación visual. Emplea relaciones de composición anidada dentro de un contenedor raíz (\texttt{«view port»}) que aloja páginas de presentación (\texttt{«presentation page»}), grupos modales (\texttt{«presentation group»}), formularios interactivos (\texttt{«input form»}) y controles atómicos (\texttt{«selection»}, \texttt{«button»}, \texttt{«text»} y \texttt{«anchored collection»}).
+
+\subsection{Diagrama de Vistas Abstractas de Presentación UWE}
+\label{subsec:diagrama_presentacion_uwe}
+
+La Figura \ref{fig:uwe_presentacion} modela la composición abstracta de las tres pantallas críticas del proceso electoral dentro del contenedor principal \texttt{«view port» VentanaElectoralPQC}: (1) la Pantalla de Selección en Cabina, (2) el Modal de Confirmación y Cifrado Híbrido KEM-DEM, y (3) la Pantalla de Emisión de Recibo Inmutable con resumen SHA3-256 y firma ML-DSA-65 del Servidor de Votación.
+
+\begin{figure}[!htbp]
+	\centering
+	\resizebox{\textwidth}{!}{%
+	\begin{tikzpicture}[
+		viewport/.style={rectangle, draw=PQCDark, fill=gray!5, very thick, rounded corners=4pt, inner sep=8pt},
+		pagebox/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=3pt, minimum width=4.2cm, minimum height=5.8cm, font=\tiny\sffamily, align=center},
+		groupbox/.style={rectangle, draw=PQCTeal, fill=BoxBgTeal, thick, rounded corners=3pt, minimum width=4.2cm, minimum height=5.8cm, font=\tiny\sffamily, align=center},
+		recbox/.style={rectangle, draw=PQCGreen, fill=BoxBgGreen, thick, rounded corners=3pt, minimum width=4.2cm, minimum height=5.8cm, font=\tiny\sffamily, align=center},
+		elem/.style={rectangle, draw=PQCDark!80, fill=white, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3pt, text width=3.6cm},
+		btn/.style={rectangle, draw=PQCAmber!90!black, fill=BoxBgAmber, thick, rounded corners=2pt, font=\tiny\sffamily\bfseries, align=center, inner sep=3pt, text width=3.6cm},
+		flow/.style={-{Latex[length=2.2mm]}, thick, draw=PQCMainBlue}
+	]
+		% Contenedor 1: Pantalla de Selección en Cabina
+		\node[pagebox] (p1) at (-4.8, 0) {};
+		\node[anchor=north, font=\scriptsize\sffamily\bfseries, text=PQCMainBlue] at ([yshift=-0.15cm]p1.north) {
+			\begin{tabular}{c}
+				\guillemotleft presentation page\guillemotright\\
+				\textbf{1. PaginaCabinaVotacion}
+			\end{tabular}
+		};
+		\node[elem] (p1_e1) at (-4.8, 1.55) {
+			\guillemotleft text\guillemotright\ \textbf{BannerEleccion}\\
+			+ idEleccion, estadoCredencialAR
+		};
+		\node[elem] (p1_e2) at (-4.8, 0.35) {
+			\guillemotleft input form\guillemotright\ \textbf{FormSufragio}\\
+			\rule{3.4cm}{0.2pt}\\
+			\guillemotleft selection\guillemotright\ \texttt{radioCandidato}\\
+			\guillemotleft anchored collection\guillemotright\ \texttt{Opciones}
+		};
+		\node[elem] (p1_e3) at (-4.8, -1.0) {
+			\guillemotleft text\guillemotright\ \textbf{InfoClavePublicaAC}\\
+			+ huellaSHA3($ek_{\text{AC}}$) [1184 B]
+		};
+		\node[btn] (p1_b1) at (-4.8, -2.15) {
+			\guillemotleft button\guillemotright\ \textbf{btnPrevisualizarVoto}\\
+			$\to$ Abrir Confirmación
+		};
+
+		% Contenedor 2: Modal de Confirmación y Cifrado KEM-DEM
+		\node[groupbox] (p2) at (0, 0) {};
+		\node[anchor=north, font=\scriptsize\sffamily\bfseries, text=PQCTeal!80!black] at ([yshift=-0.15cm]p2.north) {
+			\begin{tabular}{c}
+				\guillemotleft presentation group\guillemotright\\
+				\textbf{2. ModalConfirmacionCifrado}
+			\end{tabular}
+		};
+		\node[elem] (p2_e1) at (0, 1.55) {
+			\guillemotleft text\guillemotright\ \textbf{ResumenPreferencia}\\
+			+ opcionElegida, advertenciaIrreversible
+		};
+		\node[elem] (p2_e2) at (0, 0.25) {
+			\guillemotleft text\guillemotright\ \textbf{PanelEstadoCriptografico}\\
+			$\bullet$ Padding fijo: 32 B (CSPRNG)\\
+			$\bullet$ KEM: ML-KEM-768 ($ct_{\text{kem}}$: 1088 B)\\
+			$\bullet$ AEAD: AES-256-GCM + AAD (48 B)\\
+			$\bullet$ Firma: ML-DSA-65 ($\sigma_V$: 3309 B)
+		};
+		\node[elem] (p2_e3) at (0, -1.15) {
+			\guillemotleft button\guillemotright\ \texttt{btnCorregirOpcion}\\
+			(Retorno local previo al envío)
+		};
+		\node[btn] (p2_b1) at (0, -2.15) {
+			\guillemotleft button\guillemotright\ \textbf{btnCifrarYFirmarDefinitivo}\\
+			$\to$ Invocar \texttt{ProcesoEmisionVoto}
+		};
+
+		% Contenedor 3: Pantalla de Emisión de Recibo Inmutable
+		\node[recbox] (p3) at (4.8, 0) {};
+		\node[anchor=north, font=\scriptsize\sffamily\bfseries, text=PQCGreen!80!black] at ([yshift=-0.15cm]p3.north) {
+			\begin{tabular}{c}
+				\guillemotleft presentation page\guillemotright\\
+				\textbf{3. PaginaReciboInmutable}
+			\end{tabular}
+		};
+		\node[elem] (p3_e1) at (4.8, 1.55) {
+			\guillemotleft text\guillemotright\ \textbf{EstadoDepositoAnfora}\\
+			+ mensaje: ``Voto Anónimo Custodiado''\\
+			+ enlaceCabina: \texttt{DISABLED (OCL)}
+		};
+		\node[elem] (p3_e2) at (4.8, 0.25) {
+			\guillemotleft text\guillemotright\ \textbf{ComprobanteCriptografico}\\
+			$\bullet$ \texttt{hashBoletaSHA3}: 64 hex chars\\
+			$\bullet$ \texttt{timestampVentana}: Hora truncada\\
+			$\bullet$ \texttt{firmaSV}: ML-DSA-65 (3309 B)\\
+			$\bullet$ Contexto: \texttt{ELEC\_RECIBO\_SV\_V1}
+		};
+		\node[elem] (p3_e3) at (4.8, -1.15) {
+			\guillemotleft button\guillemotright\ \texttt{btnDescargarJSONRecibo}\\
+			(Exportación local para auditoría)
+		};
+		\node[btn, fill=BoxBgTeal, draw=PQCTeal] (p3_b1) at (4.8, -2.15) {
+			\guillemotleft button\guillemotright\ \textbf{btnIrPortalAuditoria}\\
+			$\to$ Consultar \texttt{BuscadorReciboSHA3}
+		};
+
+		% Transiciones entre vistas
+		\draw[flow] (p1.east) -- (p2.west);
+		\draw[flow] (p2.east) -- (p3.west);
+
+		% Contenedor Raíz View Port
+		\begin{scope}[on background layer]
+			\node[viewport, fit=(p1) (p2) (p3), label={[font=\bfseries\scriptsize\sffamily, text=PQCDark]north:\guillemotleft view port\guillemotright\ VentanaElectoralPQC (Contenedor Raíz de Presentación Abstracta UWE)}] (vp) {};
+		\end{scope}
+	\end{tikzpicture}
+	}%
+	\caption{Modelo de Presentación UWE de las tres vistas clave del flujo de votación y auditoría individual.}
+	\label{fig:uwe_presentacion}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia basada en estereotipos de presentación UWE (Koch et al., 2008).}}
+\end{figure}
+
+\subsection{Especificación de Componentes de Interfaz por Pantalla}
+\label{subsec:especificacion_pantallas_uwe}
+
+Cada una de las tres vistas abstractas cumple una función específica en la traducción de las garantías criptográficas hacia la experiencia del elector:
+
+\begin{enumerate}
+	\item \textbf{Pantalla 1 — Selección en Cabina (\texttt{«presentation page» PaginaCabinaVotacion}):}
+	Se despliega únicamente tras satisfacerse la precondición OCL \texttt{ElegibilidadValida}. Presenta el elemento \texttt{«text» BannerEleccion} (que confirma la validez de la credencial firmada por la AR), el formulario \texttt{«input form» FormSufragio} compuesto por un control de selección exclusiva (\texttt{«selection» radioCandidato}) alimentado por la colección \texttt{«anchored collection» Opciones}, y el bloque informativo \texttt{«text» InfoClavePublicaAC} que muestra la huella SHA3-256 de la clave pública $ek_{\text{AC}}$ (1184 bytes) contra la cual se encapsulará el voto. El botón \texttt{«button» btnPrevisualizarVoto} conduce al modal de confirmación sin transmitir aún datos por la red.
+
+	\item \textbf{Pantalla 2 — Modal de Confirmación y Cifrado KEM-DEM (\texttt{«presentation group» ModalConfirmacionCifrado}):}
+	Actúa como barrera de confirmación consciente antes de ejecutar la transición irreversible. Muestra el componente \texttt{«text» ResumenPreferencia} junto con el \texttt{PanelEstadoCriptografico}, que informa al usuario los parámetros exactos de protección post-cuántica (empaquetado de longitud fija de 32 bytes, encapsulamiento ML-KEM-768 de 1088 bytes, cifrado AES-256-GCM de 48 bytes con AAD y firma ML-DSA-65 de 3309 bytes). Mientras el elector se encuentra en este grupo modal, aún dispone del botón local \texttt{btnCorregirOpcion}; al accionar \texttt{«button» btnCifrarYFirmarDefinitivo}, se dispara el enlace de proceso hacia \texttt{ProcesoEmisionVoto}.
+
+	\item \textbf{Pantalla 3 — Emisión de Recibo Inmutable (\texttt{«presentation page» PaginaReciboInmutable}):}
+	Una vez validada la boleta y ejecutada la transacción atómica de disociación en el servidor, el contenedor \texttt{«view port»} reemplaza la vista de cabina por la página de recibo y activa la restricción OCL \texttt{NoRetornoTrasVotar} (\texttt{enlaceCabina: DISABLED}). El componente \texttt{«text» ComprobanteCriptografico} despliega el resumen determinista \texttt{hashBoletaSHA3} (64 caracteres hexadecimales), la marca temporal truncada a la ventana horaria y la firma digital $\sigma_{\text{SV}}$ (ML-DSA-65, 3309 bytes) bajo el contexto \texttt{ELEC\_RECIBO\_SV\_V1}. El elector dispone de los controles \texttt{«button» btnDescargarJSONRecibo} y \texttt{«button» btnIrPortalAuditoria} para verificar la inclusión de su boleta en el escrutinio público.
+\end{enumerate}

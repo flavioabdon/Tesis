@@ -1,0 +1,188 @@
+\section{Modelo de Navegación (UWE) y Restricciones Formales OCL}
+\label{sec:modelo_navegacion_uwe}
+% =============================================================================
+
+El \textbf{Modelo de Navegación} de UWE (Koch et al., 2008) define la topología de acceso hipertextual de la aplicación web, determinando qué objetos del Modelo de Contenido son alcanzables por cada actor y a través de qué caminos dirigidos. En un sistema de votación electrónica, el espacio navegacional no debe permitir recorridos arbitrarios ni retrocesos una vez consumado el acto electoral; por el contrario, debe imponer un grafo dirigido con transiciones controladas por el estado criptográfico de la sesión.
+
+\subsection{Diagrama de Clases de Navegación UWE}
+\label{subsec:diagrama_navegacion_uwe}
+
+La Figura \ref{fig:uwe_navegacion} ilustra el Diagrama de Clases de Navegación UWE del prototipo, empleando los estereotipos canónicos del perfil: \texttt{«navigation class»} para los nodos de información visitables, \texttt{«menu»} para la bifurcación de roles desde el portal de inicio, \texttt{«index»} para la lista homogénea de candidaturas habilitadas, \texttt{«query»} para el formulario de búsqueda de comprobantes SHA3-256, \texttt{«process class»} para los nodos de procesamiento transaccional, \texttt{«navigation link»} para los enlaces hipertextuales puros y \texttt{«process link»} para las transiciones que invocan o emergen de un proceso criptográfico.
+
+\begin{figure}[!htbp]
+	\centering
+	\resizebox{\textwidth}{!}{%
+	\begin{tikzpicture}[
+		navcls/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3.5pt, minimum width=3.9cm},
+		menucls/.style={rectangle, draw=PQCTeal, fill=BoxBgTeal, thick, rounded corners=2pt, font=\tiny\sffamily, align=center, inner sep=3pt, minimum width=3.4cm},
+		idxcls/.style={rectangle, draw=PQCPurple, fill=BoxBgPurple, thick, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3pt, minimum width=3.7cm},
+		proccls/.style={rectangle, draw=PQCAmber!90!black, fill=BoxBgAmber, thick, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3.5pt, minimum width=4.0cm},
+		endcls/.style={rectangle, draw=PQCGreen, fill=BoxBgGreen, thick, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3.5pt, minimum width=4.1cm},
+		oclbox/.style={rectangle, draw=PQCCrimson, fill=red!4, dashed, rounded corners=2pt, font=\tiny\ttfamily, align=left, inner sep=3pt},
+		navlink/.style={-{Latex[length=2mm]}, thick, draw=PQCMainBlue, font=\tiny\sffamily},
+		proclink/.style={-{Latex[length=2mm]}, thick, dashed, draw=PQCAmber!90!black, font=\tiny\sffamily}
+	]
+		% 1. Nodo Ingreso y Menu Principal
+		\node[navcls] (ingreso) at (-5.8, 3.6) {
+			\guillemotleft navigation class\guillemotright\\
+			\textbf{\textsf{IngresoPortal}} \{isHome\}\\
+			\rule{3.6cm}{0.3pt}\\
+			+ idEleccion: str\\
+			+ estadoFase: FaseComicial
+		};
+
+		\node[menucls] (menu) at (-5.8, 1.3) {
+			\guillemotleft menu\guillemotright\\
+			\textbf{\textsf{MenuPrincipalElectoral}}\\
+			\rule{3.1cm}{0.3pt}\\
+			+ irVerificacionPadron()\\
+			+ irPortalAuditoria()\\
+			+ irPanelRegistroAR()
+		};
+
+		% 2. Verificacion Padron
+		\node[navcls] (verif) at (-0.4, 3.6) {
+			\guillemotleft navigation class\guillemotright\\
+			\textbf{\textsf{VerificacionPadron}}\\
+			\rule{3.6cm}{0.3pt}\\
+			+ idVotante: str\\
+			+ credencialValida: bool\\
+			+ haVotado: bool\\
+			+ linkCabina: EnlaceNavegacion
+		};
+
+		% 3. Cabina de Votacion + Index Candidatos
+		\node[navcls] (cabina) at (5.2, 3.6) {
+			\guillemotleft navigation class\guillemotright\\
+			\textbf{\textsf{CabinaVotacion}}\\
+			\rule{3.6cm}{0.3pt}\\
+			+ idEleccion: str\\
+			+ ekAC: bytes [1184]\\
+			+ opcionSeleccionada: str
+		};
+
+		\node[idxcls] (index_cand) at (5.2, 1.3) {
+			\guillemotleft index\guillemotright\\
+			\textbf{\textsf{IndiceCandidatos}}\\
+			\rule{3.4cm}{0.3pt}\\
+			+ listaOpciones: List[Candidato]\\
+			+ seleccionarOpcion(id: int)
+		};
+
+		% 4. Confirmacion Resumen
+		\node[navcls] (confirm) at (5.2, -1.1) {
+			\guillemotleft navigation class\guillemotright\\
+			\textbf{\textsf{ConfirmacionResumen}}\\
+			\rule{3.6cm}{0.3pt}\\
+			+ resumenOpcion: str\\
+			+ algoritmoKEM: ``ML-KEM-768''\\
+			+ algoritmoDSA: ``ML-DSA-65''
+		};
+
+		% 5. Proceso de Emision y Custodia
+		\node[proccls] (proc_voto) at (-0.4, -1.1) {
+			\guillemotleft process class\guillemotright\\
+			\textbf{\textsf{ProcesoEmisionVoto}}\\
+			\rule{3.7cm}{0.3pt}\\
+			+ empaquetar32Bytes(opcion)\\
+			+ encapsularCifrar(ekAC, AAD)\\
+			+ firmarBoleta(skV, ctx)\\
+			+ depositarDisociadoSV()
+		};
+
+		% 6. Recibo y Cierre
+		\node[endcls] (recibo) at (-0.4, -3.7) {
+			\guillemotleft navigation class\guillemotright\\
+			\textbf{\textsf{ReciboYCierre}}\\
+			\rule{3.8cm}{0.3pt}\\
+			+ hashBoletaSHA3: str [64]\\
+			+ timestampVentana: int\\
+			+ firmaSV: bytes [3309]\\
+			+ sesionCerrada: bool = true
+		};
+
+		% 7. Portal de Auditoria (Query) y Panel AR
+		\node[idxcls, fill=BoxBgTeal, draw=PQCTeal] (query_aud) at (-5.8, -1.5) {
+			\guillemotleft query\guillemotright\\
+			\textbf{\textsf{BuscadorReciboSHA3}}\\
+			\rule{3.4cm}{0.3pt}\\
+			+ hashConsulta: str [64]\\
+			+ verificarInclusionActa(): bool
+		};
+
+		\node[navcls, fill=BoxBgPurple, draw=PQCPurple] (auditoria) at (-5.8, -3.7) {
+			\guillemotleft navigation class\guillemotright\\
+			\textbf{\textsf{PortalAuditoriaCiudadana}}\\
+			\rule{3.6cm}{0.3pt}\\
+			+ totalVotos: int\\
+			+ listaHashesPublicados: List[str]\\
+			+ firmaActaAC: bool
+		};
+
+		% Nota OCL
+		\node[oclbox] (ocl_note) at (5.2, -3.7) {
+			\textbf{Restricción OCL \{NoRetornoTrasVotar\}:}\\
+			context VerificacionPadron inv:\\
+			self.haVotado = true implies\\
+			\quad self.linkCabina.disabled = true
+		};
+
+		% Enlaces de Navegación y Proceso
+		\draw[navlink] (ingreso) -- (menu) node[midway, left] {\guillemotleft navigation link\guillemotright};
+		\draw[navlink] (menu.north east) -- (verif.south west) node[midway, sloped, above] {\guillemotleft navigation link\guillemotright};
+		\draw[navlink] (verif) -- (cabina) node[midway, above] {\guillemotleft navigation link\guillemotright} node[midway, below] {[haVotado = false]};
+		\draw[navlink] (cabina) -- (index_cand) node[midway, right] {\guillemotleft navigation link\guillemotright};
+		\draw[navlink] (index_cand) -- (confirm) node[midway, right] {\guillemotleft navigation link\guillemotright};
+		\draw[proclink] (confirm) -- (proc_voto) node[midway, above] {\guillemotleft process link\guillemotright};
+		\draw[proclink] (proc_voto) -- (recibo) node[midway, right] {\guillemotleft process link\guillemotright};
+		\draw[navlink] (menu) -- (query_aud) node[midway, left] {\guillemotleft navigation link\guillemotright};
+		\draw[navlink] (query_aud) -- (auditoria) node[midway, left] {\guillemotleft navigation link\guillemotright};
+		\draw[navlink] (recibo) -- (auditoria) node[midway, above] {\guillemotleft navigation link\guillemotright} node[midway, below] {auditar $h_b$};
+		\draw[ draw=PQCCrimson, dashed, thick] (ocl_note.north west) -- (verif.south east);
+	\end{tikzpicture}
+	}%
+	\caption{Diagrama de Clases de Navegación UWE para la cabina electoral y el portal ciudadano de auditoría.}
+	\label{fig:uwe_navegacion}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia siguiendo el perfil UWE (Koch et al., 2008).}}
+\end{figure}
+
+El flujo principal de navegación del elector sigue la secuencia estricta:
+\begin{center}
+\footnotesize
+$\texttt{IngresoPortal} \to \texttt{VerificacionPadron} \to \texttt{CabinaVotacion} \to \texttt{ConfirmacionResumen} \to \texttt{ProcesoEmisionVoto} \to \texttt{ReciboYCierre}$
+\end{center}
+Desde el estado final \texttt{ReciboYCierre}, el único camino hipertextual habilitado conduce hacia \texttt{PortalAuditoriaCiudadana}, donde el ciudadano puede verificar mediante el nodo \texttt{«query» BuscadorReciboSHA3} que el resumen criptográfico $h_b = \text{SHA3-256}(\text{Boleta})$ figura en el registro público sin posibilidad de reingresar a la cabina de votación.
+
+\subsection{Especificación Formal de Restricciones de Navegación en OCL}
+\label{subsec:restricciones_ocl_uwe}
+
+Para dotar al Modelo de Navegación de semántica matemática libre de ambigüedades e impedir vulnerabilidades de repetición desde la interfaz de usuario, se especifican tres restricciones formales en el lenguaje \textit{Object Constraint Language} (OCL 2.4, OMG, 2014):
+
+\begin{enumerate}
+	\item \textbf{Invariante de Inhabilitación de Retorno tras Emisión del Sufragio (\texttt{NoRetornoTrasVotar}):} Garantiza que una vez que el elector ha emitido su voto (\texttt{haVotado = true}), el enlace navegacional hacia la cabina (\texttt{linkCabina}) quede permanentemente deshabilitado, haciendo que el subgrafo de votación sea acíclico para una misma identidad electoral:
+\begin{verbatim}
+context VerificacionPadron
+inv NoRetornoTrasVotar:
+    self.haVotado = true implies self.linkCabina.disabled = true
+\end{verbatim}
+
+	\item \textbf{Precondición de Elegibilidad y Autenticidad para Ingreso a Cabina (\texttt{ElegibilidadValida}):} Establece que la transición desde \texttt{VerificacionPadron} hacia \texttt{CabinaVotacion} requiere que la elección se encuentre en fase activa (\texttt{VOTACION}), que la firma ML-DSA-65 de la Autoridad de Registro sobre la credencial del ciudadano sea válida y que el estado en el padrón registre \texttt{haVotado = false}:
+\begin{verbatim}
+context VerificacionPadron::accederCabina() : CabinaVotacion
+pre ElegibilidadValida:
+    self.eleccion.estadoFase = FaseComicial::VOTACION and
+    self.credencialValida = true and
+    self.haVotado = false
+\end{verbatim}
+
+	\item \textbf{Invariante de Completitud Criptográfica del Recibo en Pantalla de Cierre (\texttt{ReciboFirmadoPresente}):} Asegura que el nodo terminal \texttt{ReciboYCierre} únicamente se instancie si el resumen SHA3-256 posee exactamente 64 caracteres hexadecimales (32 bytes) y cuenta con una firma ML-DSA-65 de 3309 bytes emitida por el Servidor de Votación:
+\begin{verbatim}
+context ReciboYCierre
+inv ReciboFirmadoPresente:
+    self.sesionCerrada = true and
+    self.hashBoletaSHA3.size() = 64 and
+    self.firmaSV.size() = 3309
+\end{verbatim}
+\end{enumerate}
+
+Estas reglas OCL constituyen el puente formal entre la capa de navegación web y el invariante de consumo lineal $\text{NoHaVotado}(id_V) \to \text{YaVoto}(id_V)$ demostrado en el lema \texttt{unicidad} de \textit{Tamarin Prover} (Sección \ref{sec:practica_tamarin}).
