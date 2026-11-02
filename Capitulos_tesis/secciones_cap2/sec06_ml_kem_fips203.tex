@@ -11,23 +11,36 @@ A diferencia de los criptosistemas asimétricos convencionales, ML-KEM no cifra 
 
 El protocolo articula tres algoritmos probabilísticos:
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
 	\centering
 	\begin{tikzpicture}[
-		scale=0.92,
-		pbox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, text width=3.8cm, align=center, font=\footnotesize, inner sep=5pt}
+		pbox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, text width=3.7cm, align=center, font=\footnotesize\rmfamily, inner sep=5pt},
+		decbox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, text width=4.2cm, align=center, font=\footnotesize\rmfamily, inner sep=5pt},
+		arr/.style={-{Latex[length=2.2mm, width=1.5mm]}, line width=0.8pt, draw=black}
 	]
-		\node (aut) [pbox] {\textbf{Servidor Electoral}\\[2pt]\scriptsize Genera $(\mathbf{A}, \mathbf{b})$ con vector secreto $\mathbf{s}$};
-		\node (vot) [pbox, right=3.4cm of aut] {\textbf{Terminal del Votante}\\[2pt]\scriptsize Encapsula secreto $K$ en $c = (\mathbf{u}, v)$};
+		% Servidor Electoral y Terminal del Votante con amplia separación horizontal
+		\node (aut) [pbox] at (-4.4, 0) {
+			\textbf{Servidor Electoral}\\[3pt]
+			\scriptsize Genera $(\mathbf{A}, \mathbf{b})$ con\\vector secreto $\mathbf{s}$
+		};
+		\node (vot) [pbox] at (4.4, 0) {
+			\textbf{Terminal del Votante}\\[3pt]
+			\scriptsize Encapsula secreto $K$\\en $c = (\mathbf{u}, v)$
+		};
 		
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] ([yshift=3.5mm]aut.east) -- ([yshift=3.5mm]vot.west) 
-		node[midway, above, font=\footnotesize] {1. Clave pública $PK = (\mathbf{A}, \mathbf{b})$};
+		% Flechas de intercambio con etiquetas centradas sin superposición
+		\draw[arr] ([yshift=4mm]aut.east) -- ([yshift=4mm]vot.west) 
+			node[midway, above=2pt, font=\scriptsize\rmfamily] {1. Clave pública $PK = (\mathbf{A}, \mathbf{b})$};
 		
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] ([yshift=-3.5mm]vot.west) -- ([yshift=-3.5mm]aut.east) 
-		node[midway, below, font=\footnotesize] {2. Boleta cifrada $c = (\mathbf{u}, v)$};
+		\draw[arr] ([yshift=-4mm]vot.west) -- ([yshift=-4mm]aut.east) 
+			node[midway, below=2pt, font=\scriptsize\rmfamily] {2. Boleta cifrada $c = (\mathbf{u}, v)$};
 		
-		\node (dec) [pbox, below=1.0cm of aut, text width=4.3cm] {\textbf{Desencapsulamiento}\\[2pt]\scriptsize Calcula $v - \mathbf{s}^T\mathbf{u}$ y redondea para recuperar $K$};
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (aut) -- (dec);
+		% Desencapsulamiento
+		\node (dec) [decbox] at (-4.4, -2.3) {
+			\textbf{Desencapsulamiento}\\[3pt]
+			\scriptsize Calcula $v - \mathbf{s}^T\mathbf{u}$ y\\redondea para recuperar $K$
+		};
+		\draw[arr] (aut) -- (dec);
 	\end{tikzpicture}
 	\caption{Flujo secuencial de operaciones en el estándar FIPS 203 (ML-KEM).}
 	\label{fig:kem_flow}
