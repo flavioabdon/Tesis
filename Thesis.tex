@@ -19,6 +19,7 @@
   % Escala 12pt → 11.4pt para igualar físicamente Word 12pt
   \usepackage[fontsize=11.4pt]{scrextend}
   % Redefine los tamaños de carátula con el factor de correción 0.9508
+  \makeatletter
   \def\@cv@author@sz{15.2}      \def\@cv@author@bl{18.24}
   \def\@cv@advisor@sz{13.3}     \def\@cv@advisor@bl{15.96}
   \def\@cv@title@sz{15.2}       \def\@cv@title@bl{18.24}
@@ -30,9 +31,10 @@
   \def\@cv@dept@sz{15.2}        \def\@cv@dept@bl{18.24}
   \def\@cv@city@sz{11.4}        \def\@cv@city@bl{13.68}
   \def\@cv@date@sz{11.4}        \def\@cv@date@bl{13.68}
+  \makeatother
 \fi
 
-\usepackage[left=4cm, top=3.9cm, right=2.5cm, bottom=2.5cm, footskip=0.5cm]{geometry}
+\usepackage[left=4cm, top=3.9cm, right=2.5cm, bottom=2.5cm, footskip=0.55cm]{geometry}
 
 \usepackage{enumitem}
 \usepackage{url}
@@ -49,6 +51,7 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{listings}
+\usepackage{pdfrender}
 
 % Colores para diagramas y esquemas didácticos de criptografía post-cuántica
 \definecolor{PQCMainBlue}{RGB}{24, 76, 120}
@@ -84,6 +87,13 @@
 \titlespacing*{\section}{0pt}{3.5ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 \titlespacing*{\subsection}{0pt}{3.25ex plus 1ex minus .2ex}{1ex plus .2ex}
 \titlespacing*{\subsubsection}{0pt}{3.25ex plus 1ex minus .2ex}{1ex plus .2ex}
+
+% Profundidad en el índice general (\tableofcontents):
+% 0 = Solo Capítulos
+% 1 = Capítulos y Secciones (excluye \subsection y niveles inferiores)
+% 2 = Incluye \subsection
+% 3 = Incluye \subsubsection
+\setcounter{tocdepth}{1}
 
 % Texto justificado sin corte de palabras con guiones.
 % \tolerance: cuánto puede estirarse el espacio entre palabras (0-10000).
@@ -138,7 +148,6 @@
 \else
   \usepackage{lmodern}    % Latin Modern
 \fi
-\usepackage{pdfrender}
 
 \begin{document}
 
@@ -216,6 +225,7 @@
      \acknowledgement{Capitulos_tesis/agradecimientos}
      \resumen{Capitulos_tesis/resumen}
 
+    \setcounter{tocdepth}{1} % Índice general solo muestra capítulos y secciones (omite \subsection)
     \tableofcontents
    \listoftables
    \listoffigures
