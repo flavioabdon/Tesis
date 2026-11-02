@@ -8,24 +8,55 @@
 \clearpage
 
 % =============================================================================
-\chapter{Especificación Formal en Tamarin Prover (\texttt{protocolo\_v2.spthy})}
+\chapter{Especificación Formal en Tamarin Prover (\texttt{protocolo\_v3.spthy})}
 \label{anexo:tamarin_spthy}
 % =============================================================================
 
-El presente anexo contiene la especificación completa del modelo de seguridad formal del protocolo de votación electrónica en el lenguaje de reescritura multiconjunto de \textbf{Tamarin Prover}. El modelo incorpora la generación de $dk_{\text{AC}}$ en la Autoridad de Conteo, el control de unicidad sustentado en la transición de estados lineales $\text{NoHaVotado}(id_V) \to \text{YaVoto}(id_V)$, la desvinculación de la identidad del votante en el ánfora digital, la emisión de recibos firmados por el servidor y las reglas de revelación de secretos para análisis de corrupción de claves.
+El presente anexo contiene la especificación completa del modelo de seguridad formal del protocolo de votación electrónica en el lenguaje de reglas de reescritura multiconjunto de hechos de \textbf{Tamarin Prover} (\texttt{protocolo\_v3.spthy}). 
 
-\begin{small}
+\section*{Evolución y Cuadro Comparativo de Diferencias ($v2 \to v2b \to v3$)}
+
+A continuación se resume la evolución estructural del modelo formal a través de las tres etapas desarrolladas en la Sección \ref{sec:practica_tamarin}:
+
+\begin{table}[htbp]
+	\centering
+	\small
+	\begin{tabular}{lp{6.2cm}p{6.0cm}}
+		\toprule
+		\textbf{Transición} & \textbf{Modificación Introducida} & \textbf{Justificación / Impacto en la Verificación} \\
+		\midrule
+		$v2 \to v2b$ & Adición de tres restricciones axiomáticas de unicidad de configuración: \texttt{SetupAC\_Unico}, \texttt{SetupAR\_Unico} y \texttt{SetupSV\_Unico}. & Bloquea el artefacto de modelado de doble instancia de autoridad en la apertura del escrutinio, permitiendo la verificación de \texttt{integridad\_voto} (29 pasos). \\
+		\midrule
+		$v2b \to v3$ & 
+		1. Fase de clausura: nueva regla \texttt{Cierre\_Votacion}, restricciones \texttt{Cierre\_Unico} y \texttt{NoVotoTrasCierre}, y premisa \texttt{!UrnaCerrada()} en la regla de escrutinio.\newline
+		2. Reglas de corrupción: adición de \texttt{Reveal\_Clave\_AR} y \texttt{Reveal\_Clave\_SV}.\newline
+		3. Refinamiento granular de lemas: \texttt{secreto\_voto} concluye tras cierre y escrutinio excluyendo solo \texttt{Rev('AC','AC')}; \texttt{autenticidad\_votante} aísla al votante y la AR; \texttt{integridad\_voto} excluye solo \texttt{Rev('Votante', id)}. &
+		Modela el orden temporal estricto de las fases de la jornada electoral. Demuestra formalmente la resiliencia del secreto del voto y de la integridad del sufragio frente a compromisos parciales o cruzados de entidades en el modelo simbólico. \\
+		\bottomrule
+	\end{tabular}
+	\caption{Resumen de modificaciones entre las versiones v2, v2b y v3 del modelo formal.}
+	\label{tab:resumen_diff_modelos}
+\end{table}
+
+\section*{Código Fuente del Modelo de Referencia (\texttt{protocolo\_v3.spthy})}
+
+\begin{scriptsize}
 \verbatiminput{tamarin_protocolo.spthy}
-\end{small}
+\end{scriptsize}
+
+\par\vspace{6pt}
+\noindent\textbf{Identificador criptográfico SHA-256:}\newline
+\texttt{bdd31ea1a0e4ce511afc598d921e8c052bf04332658d3ff77a9c65e65598da85}\par\vspace{2pt}
+\noindent\textbf{Dimensión del modelo:} 285 líneas de especificación formal en Tamarin Prover.
 
 \clearpage
 
 % =============================================================================
-\chapter{Salida del Motor de Verificación Formal Tamarin Prover}
+\chapter{Salidas del Motor de Verificación Formal Tamarin Prover}
 \label{anexo:tamarin_salida}
 % =============================================================================
 
-A continuación se transcribe la salida cruda generada por el ejecutable \texttt{tamarin-prover} versión 1.12.0 sobre el motor Maude 3.5.1 en modo de lotes con fuentes automáticas (\texttt{--auto-sources}), demostrando formalmente los lemas de ejecutabilidad funcional (\texttt{ejecutabilidad}, 21 pasos), unicidad del sufragio por transición de estado lineal (\texttt{unicidad}, 18 pasos), confidencialidad previa al escrutinio (\texttt{secreto\_voto}, 8 pasos) y autenticidad del votante (\texttt{autenticidad\_votante}, 17 pasos), e incluyendo el reporte de la traza de falsificación simbólica identificada en el lema de correspondencia causal (\texttt{integridad\_voto}, 13 pasos) detallada en la Sección \ref{sec:practica_tamarin}.
+El presente anexo transcribe las salidas textuales literales generadas por el motor \texttt{tamarin-prover} versión 1.12.0 sobre el resolvedor ecuacional \textit{Maude} 3.5.1, extraídas directamente de los registros de ejecución consolidados e individuales almacenados en el directorio \texttt{logs/}. Incluye los bloques \textit{summary of summaries} de los modelos \texttt{v2}, \texttt{v2b} y \texttt{v3}, las mediciones de tiempo lema por lema, el reporte del contraejemplo de exclusión mínima para \texttt{integridad\_voto} y el reporte de límite temporal del análisis de equivalencia observacional (\texttt{--diff}).
 
 \begin{scriptsize}
 \verbatiminput{salida_tamarin.txt}
@@ -38,14 +69,16 @@ A continuación se transcribe la salida cruda generada por el ejecutable \texttt
 \label{anexo:entorno_benchmark}
 % =============================================================================
 
-Para asegurar la reproducibilidad rigurosa de las mediciones de latencia y pruebas de vectores KAT, a continuación se detallan las especificaciones técnicas del entorno de pruebas:
+Para asegurar la reproducibilidad del entorno de pruebas, a continuación se detallan las especificaciones técnicas del sistema de cómputo y las versiones de software empleadas en la verificación formal y evaluación de prototipos:
 
 \begin{itemize}
-    \item \textbf{Arquitectura de Procesamiento:} Apple Silicon M-series (ARM64) / x86-64 con soporte de instrucciones vectoriales NEON / AVX2.
-    \item \textbf{Sistema Operativo:} macOS Sonoma 14.x / Ubuntu Linux 22.04 LTS (Kernel 6.5).
-    \item \textbf{Compilador:} Apple Clang versión 15.0.0 / GCC 12.3.0, con banderas de optimización estricta \texttt{-O3 -fPIC -fvisibility=hidden}.
-    \item \textbf{Motor Formal:} Tamarin Prover 1.12.0 compilado con Glasgow Haskell Compiler (GHC 9.6.4), acoplado al resolvedor Maude versión 3.5.1.
-    \item \textbf{Biblioteca Post-Cuántica:} PQClean (commit \texttt{76e73bb}, conforme a las versiones definitivas NIST FIPS 203 y FIPS 204 publicadas en agosto de 2024), compilada como biblioteca dinámica compartida \texttt{libpqc\_core.dylib}.
-    \item \textbf{Pila Criptográfica Clásica:} OpenSSL 3.2.1 / libcrypto (implementando RSA-OAEP-2048 y ECDSA P-256).
-    \item \textbf{Capa de Aplicación y Pruebas:} Python 3.11.8 con enlace CTypes de bajo nivel y suite de pruebas deterministas.
+    \item \textbf{Equipo y Arquitectura de Procesamiento:} Apple Silicon M-series (ARM64), 8 núcleos de procesamiento, memoria unificada del sistema.
+    \item \textbf{Sistema Operativo:} macOS Darwin (versión 14.x / 15.x Sonoma / Sequoia).
+    \item \textbf{Herramienta de Verificación Formal:} Tamarin Prover versión 1.12.0 compilado con Glasgow Haskell Compiler (GHC 9.6.4).
+    \item \textbf{Motor de Reescritura Ecuacional:} Maude System versión 3.5.1.
+    \item \textbf{Parámetros de Ejecución Formal:} Límite de memoria asignado al runtime de Haskell de 8 GB (\texttt{+RTS -M8G -N4 -RTS}) y límite temporal de 1800 segundos por proceso.
+    \item \textbf{Compilador de C:} Apple Clang versión 15.0.0 / GCC 12.3.0, banderas de optimización \texttt{-O3 -fPIC -fvisibility=hidden}.
+    \item \textbf{Biblioteca Criptográfica Post-Cuántica:} PQClean (commit \texttt{76e73bb}, estándares NIST FIPS 203 ML-KEM y FIPS 204 ML-DSA), compilada como biblioteca dinámica \texttt{libpqc\_core.dylib}.
+    \item \textbf{Pila Criptográfica Clásica:} OpenSSL versión 3.2.1 / libcrypto (implementando RSA-OAEP-2048 y ECDSA P-256 sobre curva secp256r1).
+    \item \textbf{Entorno de Aplicación y Pruebas:} Python 3.11.8 con módulo CTypes para interfaz con librerías nativas en C.
 \end{itemize}

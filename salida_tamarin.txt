@@ -1,1153 +1,18 @@
-maude tool: 'maude'
- checking version: 3.5.1. OK.
- checking installation: OK.
-[Theory ProtocoloVotacionPQC] Theory loaded
-[Theory ProtocoloVotacionPQC] Theory translated
-[Theory ProtocoloVotacionPQC] Derivation checks started
-[Theory ProtocoloVotacionPQC] Derivation checks ended
-[Theory ProtocoloVotacionPQC] Theory closed
-[Saturating Sources] Step 1 (Max 5)
-[Saturating Sources] Done
-[Saturating Sources] Step 1 (Max 5)
-[Saturating Sources] Done
-[Saturating Sources] Step 1 (Max 5)
-[Saturating Sources] Done
-[Saturating Sources] Step 1 (Max 5)
-[Saturating Sources] Done
-theory ProtocoloVotacionPQC
-
-begin
-
-// Function signature and definition of the equational theory E
-
-functions: decaps/2, ek_from_dk/1, encaps/2, fst/1, h/1, pair/2, pk/1,
-           sdec/2, senc/2, sign/2, snd/1, true/0, verify/3[destructor]
-equations:
-    decaps(dk, encaps(ek_from_dk(dk), r)) = r,
-    fst(<x.1, x.2>) = x.1,
-    sdec(senc(x.1, x.2), x.2) = x.1,
-    snd(<x.1, x.2>) = x.2,
-    verify(sign(x.1, x.2), x.1, pk(x.2)) = true
-
-restriction Verificacion_Exitosa:
-  "All  x y #i. (Eq( x, y ) @ #i)  ==>  (x = y)"
-  // safety formula
-
-  /*
-  expanded formula:
-  "All  x y #i. (Eq( x, y ) @ #i)  ==>  (x = y)"
-  */
-
-rule (modulo E) Setup_Autoridad_Registro:
-   [ Fr( ~sk_AR ) ]
-  --[ SetupAR( pk(~sk_AR) ) ]->
-   [
-   !ClavePrivadaAR( 'AR', ~sk_AR ), !ClavePublicaAR( 'AR', pk(~sk_AR) ),
-   Out( pk(~sk_AR) )
-   ]
-
-  /* has exactly the trivial AC variant */
-
-rule (modulo E) Setup_Autoridad_Conteo:
-   [ Fr( ~dk_AC ) ]
-  --[ SetupAC( ek_from_dk(~dk_AC) ) ]->
-   [
-   !ClaveDesencapsulamientoAC( 'AC', ~dk_AC ),
-   !ClavePublicaKEM_AC( 'AC', ek_from_dk(~dk_AC) ),
-   Out( ek_from_dk(~dk_AC) )
-   ]
-
-  /* has exactly the trivial AC variant */
-
-rule (modulo E) Setup_Servidor_Votacion:
-   [ Fr( ~sk_SV ) ]
-  --[ SetupSV( pk(~sk_SV) ) ]->
-   [
-   !ClavePrivadaFirma_SV( 'SV', ~sk_SV ),
-   !ClavePublicaFirma_SV( 'SV', pk(~sk_SV) ), Out( pk(~sk_SV) )
-   ]
-
-  /* has exactly the trivial AC variant */
-
-rule (modulo E) Registro_Ciudadano_Padron:
-   [ Fr( ~sk_V ), Fr( ~ts_reg ), Fr( ~idV ), !ClavePrivadaAR( 'AR', ~sk_AR )
-   ]
-  --[ RegistroVotante( ~idV, pk(~sk_V) ) ]->
-   [
-   !CredencialVotante( ~idV, ~sk_V, <~idV, pk(~sk_V), ~ts_reg>,
-                       sign(<~idV, pk(~sk_V), ~ts_reg>, ~sk_AR)
-   ),
-   !PadronElectoral( ~idV, pk(~sk_V) ), NoHaVotado( ~idV )
-   ]
-
-  /* has exactly the trivial AC variant */
-
-rule (modulo E) Emitir_Voto_Mesa:
-   [
-   Fr( ~k_efimera ), Fr( ~m_voto ), Fr( ~ts_voto ),
-   !CredencialVotante( ~idV, ~sk_V, credencial, firma_AR ),
-   !ClavePublicaKEM_AC( 'AC', ek_AC )
-   ]
-  --[
-  AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(~m_voto,
-                                                                      ~k_efimera)
-  ),
-  VotoEmitido( ~idV, ~m_voto ),
-  VotoEnviado( ~idV,
-               <encaps(ek_AC, ~k_efimera), senc(~m_voto, ~k_efimera), credencial, 
-                ~ts_voto>,
-               sign(<encaps(ek_AC, ~k_efimera), senc(~m_voto, ~k_efimera), credencial, 
-                     ~ts_voto>,
-                    ~sk_V)
-  ),
-  SecretoVoto( ~m_voto )
-  ]->
-   [
-   Out( <
-         <encaps(ek_AC, ~k_efimera), senc(~m_voto, ~k_efimera), credencial, 
-          ~ts_voto>, 
-         sign(<encaps(ek_AC, ~k_efimera), senc(~m_voto, ~k_efimera), credencial, 
-               ~ts_voto>,
-              ~sk_V), 
-         firma_AR>
-   )
-   ]
-
-  /* has exactly the trivial AC variant */
-
-rule (modulo E) Recepcion_Y_Deposito_Anfora:
-   [
-   In( <<ct_kem, voto_cifrado, <idV, pk_V, ts_reg>, ts_voto>, firma_V, 
-        firma_AR>
-   ),
-   NoHaVotado( idV ), !ClavePublicaAR( 'AR', pk_AR ),
-   !PadronElectoral( idV, pk_V ), !ClavePrivadaFirma_SV( 'SV', ~sk_SV ),
-   Fr( ~ts_recibo )
-   ]
-  --[
-  Eq( verify(firma_AR, <idV, pk_V, ts_reg>, pk_AR), true ),
-  Eq( verify(firma_V, <ct_kem, voto_cifrado, <idV, pk_V, ts_reg>, ts_voto>,
-             pk_V),
-      true
-  ),
-  VotoAceptado( idV, <ct_kem, voto_cifrado, <idV, pk_V, ts_reg>, ts_voto>,
-                firma_V
-  ),
-  VotoRegistrado( idV, ct_kem, voto_cifrado )
-  ]->
-   [
-   YaVoto( idV ), AnforaDigital( ct_kem, voto_cifrado, ts_voto ),
-   Out( <
-         h(<<ct_kem, voto_cifrado, <idV, pk_V, ts_reg>, ts_voto>, ~ts_recibo>), 
-         sign(h(<<ct_kem, voto_cifrado, <idV, pk_V, ts_reg>, ts_voto>, ~ts_recibo
-                >),
-              ~sk_SV)
-        >
-   )
-   ]
- variants
-  rule (modulo AC) Recepcion_Y_Deposito_Anfora___VARIANT_1:
-     [
-     In( <<ct_kem.2, voto_cifrado.10, <idV.5, pk_V.7, ts_reg.8>, ts_voto.9>, 
-          firma_V.4, firma_AR.3>
-     ),
-     NoHaVotado( idV.5 ), !ClavePublicaAR( 'AR', pk_AR.6 ),
-     !PadronElectoral( idV.5, pk_V.7 ), !ClavePrivadaFirma_SV( 'SV', ~sk_SV ),
-     Fr( ~ts_recibo )
-     ]
-    --[
-    Eq( verify(firma_AR.3, <idV.5, pk_V.7, ts_reg.8>, pk_AR.6), true ),
-    Eq( verify(firma_V.4,
-               <ct_kem.2, voto_cifrado.10, <idV.5, pk_V.7, ts_reg.8>, ts_voto.9>,
-               pk_V.7),
-        true
-    ),
-    VotoAceptado( idV.5,
-                  <ct_kem.2, voto_cifrado.10, <idV.5, pk_V.7, ts_reg.8>, ts_voto.9>,
-                  firma_V.4
-    ),
-    VotoRegistrado( idV.5, ct_kem.2, voto_cifrado.10 )
-    ]->
-     [
-     YaVoto( idV.5 ), AnforaDigital( ct_kem.2, voto_cifrado.10, ts_voto.9 ),
-     Out( <
-           h(<<ct_kem.2, voto_cifrado.10, <idV.5, pk_V.7, ts_reg.8>, ts_voto.9>, 
-              ~ts_recibo>), 
-           sign(h(<
-                   <ct_kem.2, voto_cifrado.10, <idV.5, pk_V.7, ts_reg.8>, ts_voto.9>, 
-                   ~ts_recibo>),
-                ~sk_SV)
-          >
-     )
-     ]
-  ,
-  rule (modulo AC) Recepcion_Y_Deposito_Anfora___VARIANT_2:
-     [
-     In( <<ct_kem.2, voto_cifrado.8, <idV.4, pk_V.5, ts_reg.6>, ts_voto.7>, 
-          firma_V.3, sign(<idV.4, pk_V.5, ts_reg.6>, x.9)>
-     ),
-     NoHaVotado( idV.4 ), !ClavePublicaAR( 'AR', pk(x.9) ),
-     !PadronElectoral( idV.4, pk_V.5 ), !ClavePrivadaFirma_SV( 'SV', ~sk_SV ),
-     Fr( ~ts_recibo )
-     ]
-    --[
-    Eq( true, true ),
-    Eq( verify(firma_V.3,
-               <ct_kem.2, voto_cifrado.8, <idV.4, pk_V.5, ts_reg.6>, ts_voto.7>,
-               pk_V.5),
-        true
-    ),
-    VotoAceptado( idV.4,
-                  <ct_kem.2, voto_cifrado.8, <idV.4, pk_V.5, ts_reg.6>, ts_voto.7>,
-                  firma_V.3
-    ),
-    VotoRegistrado( idV.4, ct_kem.2, voto_cifrado.8 )
-    ]->
-     [
-     YaVoto( idV.4 ), AnforaDigital( ct_kem.2, voto_cifrado.8, ts_voto.7 ),
-     Out( <
-           h(<<ct_kem.2, voto_cifrado.8, <idV.4, pk_V.5, ts_reg.6>, ts_voto.7>, 
-              ~ts_recibo>), 
-           sign(h(<
-                   <ct_kem.2, voto_cifrado.8, <idV.4, pk_V.5, ts_reg.6>, ts_voto.7>, 
-                   ~ts_recibo>),
-                ~sk_SV)
-          >
-     )
-     ]
-  ,
-  rule (modulo AC) Recepcion_Y_Deposito_Anfora___VARIANT_3:
-     [
-     In( <<ct_kem.2, voto_cifrado.8, <idV.4, pk(x.9), ts_reg.6>, ts_voto.7>, 
-          sign(<ct_kem.2, voto_cifrado.8, <idV.4, pk(x.9), ts_reg.6>, ts_voto.7>,
-               x.9), 
-          firma_AR.3>
-     ),
-     NoHaVotado( idV.4 ), !ClavePublicaAR( 'AR', pk_AR.5 ),
-     !PadronElectoral( idV.4, pk(x.9) ),
-     !ClavePrivadaFirma_SV( 'SV', ~sk_SV ), Fr( ~ts_recibo )
-     ]
-    --[
-    Eq( verify(firma_AR.3, <idV.4, pk(x.9), ts_reg.6>, pk_AR.5), true ),
-    Eq( true, true ),
-    VotoAceptado( idV.4,
-                  <ct_kem.2, voto_cifrado.8, <idV.4, pk(x.9), ts_reg.6>, ts_voto.7>,
-                  sign(<ct_kem.2, voto_cifrado.8, <idV.4, pk(x.9), ts_reg.6>, ts_voto.7>,
-                       x.9)
-    ),
-    VotoRegistrado( idV.4, ct_kem.2, voto_cifrado.8 )
-    ]->
-     [
-     YaVoto( idV.4 ), AnforaDigital( ct_kem.2, voto_cifrado.8, ts_voto.7 ),
-     Out( <
-           h(<<ct_kem.2, voto_cifrado.8, <idV.4, pk(x.9), ts_reg.6>, ts_voto.7>, 
-              ~ts_recibo>), 
-           sign(h(<
-                   <ct_kem.2, voto_cifrado.8, <idV.4, pk(x.9), ts_reg.6>, ts_voto.7>, 
-                   ~ts_recibo>),
-                ~sk_SV)
-          >
-     )
-     ]
-  ,
-  rule (modulo AC) Recepcion_Y_Deposito_Anfora___VARIANT_4:
-     [
-     In( <<ct_kem.2, voto_cifrado.6, <idV.3, pk(x.8), ts_reg.4>, ts_voto.5>, 
-          sign(<ct_kem.2, voto_cifrado.6, <idV.3, pk(x.8), ts_reg.4>, ts_voto.5>,
-               x.8), 
-          sign(<idV.3, pk(x.8), ts_reg.4>, x.7)>
-     ),
-     NoHaVotado( idV.3 ), !ClavePublicaAR( 'AR', pk(x.7) ),
-     !PadronElectoral( idV.3, pk(x.8) ),
-     !ClavePrivadaFirma_SV( 'SV', ~sk_SV ), Fr( ~ts_recibo )
-     ]
-    --[
-    Eq( true, true ), Eq( true, true ),
-    VotoAceptado( idV.3,
-                  <ct_kem.2, voto_cifrado.6, <idV.3, pk(x.8), ts_reg.4>, ts_voto.5>,
-                  sign(<ct_kem.2, voto_cifrado.6, <idV.3, pk(x.8), ts_reg.4>, ts_voto.5>,
-                       x.8)
-    ),
-    VotoRegistrado( idV.3, ct_kem.2, voto_cifrado.6 )
-    ]->
-     [
-     YaVoto( idV.3 ), AnforaDigital( ct_kem.2, voto_cifrado.6, ts_voto.5 ),
-     Out( <
-           h(<<ct_kem.2, voto_cifrado.6, <idV.3, pk(x.8), ts_reg.4>, ts_voto.5>, 
-              ~ts_recibo>), 
-           sign(h(<
-                   <ct_kem.2, voto_cifrado.6, <idV.3, pk(x.8), ts_reg.4>, ts_voto.5>, 
-                   ~ts_recibo>),
-                ~sk_SV)
-          >
-     )
-     ]
-
-rule (modulo E) Apertura_Anfora_Y_Escrutinio:
-   [
-   AnforaDigital( ct_kem, voto_cifrado, ts_voto ),
-   !ClaveDesencapsulamientoAC( 'AC', ~dk_AC )
-   ]
-  --[
-  EscrutinioAbierto( ),
-  VotoContado( sdec(voto_cifrado, decaps(~dk_AC, ct_kem)) )
-  ]->
-   [ Out( sdec(voto_cifrado, decaps(~dk_AC, ct_kem)) ) ]
- variants
-  rule (modulo AC) Apertura_Anfora_Y_Escrutinio___VARIANT_1:
-     [
-     AnforaDigital( ct_kem.2, voto_cifrado.3, ts_voto ),
-     !ClaveDesencapsulamientoAC( 'AC', ~dk_AC.1 )
-     ]
-    --[
-    EscrutinioAbierto( ),
-    VotoContado( sdec(voto_cifrado.3, decaps(~dk_AC.1, ct_kem.2)) )
-    ]->
-     [ Out( sdec(voto_cifrado.3, decaps(~dk_AC.1, ct_kem.2)) ) ]
-  ,
-  rule (modulo AC) Apertura_Anfora_Y_Escrutinio___VARIANT_2:
-     [
-     AnforaDigital( encaps(ek_from_dk(~dk_AC.1), x.3), voto_cifrado.2, ts_voto
-     ),
-     !ClaveDesencapsulamientoAC( 'AC', ~dk_AC.1 )
-     ]
-    --[ EscrutinioAbierto( ), VotoContado( sdec(voto_cifrado.2, x.3) ) ]->
-     [ Out( sdec(voto_cifrado.2, x.3) ) ]
-  ,
-  rule (modulo AC) Apertura_Anfora_Y_Escrutinio___VARIANT_3:
-     [
-     AnforaDigital( ct_kem.2, senc(z.3, decaps(~dk_AC.1, ct_kem.2)), ts_voto
-     ),
-     !ClaveDesencapsulamientoAC( 'AC', ~dk_AC.1 )
-     ]
-    --[
-    AUTO_IN_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_3( senc(z.3,
-                                                                       decaps(~dk_AC.1, ct_kem.2)),
-                                                                  z.3
-    ),
-    EscrutinioAbierto( ), VotoContado( z.3 )
-    ]->
-     [ Out( z.3 ) ]
-  ,
-  rule (modulo AC) Apertura_Anfora_Y_Escrutinio___VARIANT_4:
-     [
-     AnforaDigital( encaps(ek_from_dk(~dk_AC.1), x.3), senc(z.2, x.3), ts_voto
-     ),
-     !ClaveDesencapsulamientoAC( 'AC', ~dk_AC.1 )
-     ]
-    --[
-    AUTO_IN_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(z.2,
-                                                                       x.3),
-                                                                  z.2
-    ),
-    EscrutinioAbierto( ), VotoContado( z.2 )
-    ]->
-     [ Out( z.2 ) ]
-
-rule (modulo E) Reveal_Clave_Votante:
-   [ !CredencialVotante( idV, ~sk_V, credencial, firma_AR ) ]
-  --[ Rev( 'Votante', idV ) ]->
-   [ Out( ~sk_V ) ]
-
-  /* has exactly the trivial AC variant */
-
-rule (modulo E) Reveal_Clave_AC:
-   [ !ClaveDesencapsulamientoAC( 'AC', ~dk_AC ) ]
-  --[ Rev( 'AC', 'AC' ) ]->
-   [ Out( ~dk_AC ) ]
-
-  /* has exactly the trivial AC variant */
-
-lemma ejecutabilidad:
-  exists-trace
-  "Ex  idV m blt sig #t1 #t2 #t3.
-    (((((VotoEmitido( idV, m ) @ #t1)  & 
-        (VotoAceptado( idV, blt, sig ) @ #t2))  & 
-       (VotoContado( m ) @ #t3))  & 
-      (#t1 < #t2))  & 
-     (#t2 < #t3))  & 
-    (not (Ex  ent id #r. Rev( ent, id ) @ #r))"
-/*
-guarded formula characterizing all satisfying traces:
-"Ex  idV m blt sig #t1 #t2 #t3.
-  (VotoEmitido( idV, m ) @ #t1)  & 
-  (VotoAceptado( idV, blt, sig ) @ #t2)  & 
-  (VotoContado( m ) @ #t3)
-  & 
-  (#t1 < #t2)  &  (#t2 < #t3)  &  (All  ent id #r. (Rev( ent, id ) @ #r)  ==>  false)"
-*/
-simplify
-solve( !CredencialVotante( ~idV, ~sk_V, credencial, firma_AR )  > _3 #t1 )
-  case Registro_Ciudadano_Padron
-  solve( !ClavePublicaKEM_AC( 'AC', ek_AC )  > _4 #t1 )
-    case Setup_Autoridad_Conteo
-    solve( VotoAceptado( ~idV, blt, sig ) @ #t2 )
-      case Recepcion_Y_Deposito_Anfora___VARIANT_4
-      solve( NoHaVotado( ~idV )  > _1 #t2 )
-        case Registro_Ciudadano_Padron
-        solve( !ClavePublicaAR( 'AR', pk(x.1) )  > _2 #t2 )
-          case Setup_Autoridad_Registro
-          solve( !PadronElectoral( ~idV, pk(x) )  > _3 #t2 )
-            case Registro_Ciudadano_Padron
-            solve( !ClavePrivadaFirma_SV( 'SV', ~sk_SV )  > _4 #t2 )
-              case Setup_Servidor_Votacion
-              solve( VotoContado( ~m_voto ) @ #t3 )
-                case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-                solve( AnforaDigital( encaps(ek_from_dk(~dk_AC.1), x), senc(~m_voto, x),
-                                      ts_voto.2
-                       )  > _0 #t3 )
-                  case Recepcion_Y_Deposito_Anfora___VARIANT_4
-                  solve( !ClaveDesencapsulamientoAC( 'AC', ~dk_AC.1 )  > _1 #t3 )
-                    case Setup_Autoridad_Conteo
-                    solve( !KU( ~idV.1 ) @ #vk.22 )
-                      case Emitir_Voto_Mesa
-                      solve( !KU( sign(<ct_kem, voto_cifrado, <~idV, pk(~sk_V), ts_reg.1>, 
-                                        ts_voto.1>,
-                                       ~sk_V)
-                             ) @ #vk.14 )
-                        case Emitir_Voto_Mesa
-                        solve( !KU( sign(<~idV, pk(~sk_V), ~ts_reg>, ~sk_AR.1) ) @ #vk.16 )
-                          case Emitir_Voto_Mesa
-                          solve( !KU( sign(<encaps(ek_from_dk(~dk_AC.2), x), senc(~m_voto, x), 
-                                            <~idV.1, pk(~sk_V.1), ts_reg.2>, ts_voto.2>,
-                                           ~sk_V.1)
-                                 ) @ #vk.28 )
-                            case Emitir_Voto_Mesa
-                            solve( !KU( ~ts_reg ) @ #vk.13 )
-                              case Emitir_Voto_Mesa
-                              solve( !KU( ~ts_voto ) @ #vk.14 )
-                                case Emitir_Voto_Mesa
-                                solve( !KU( pk(~sk_V) ) @ #vk.14 )
-                                  case Emitir_Voto_Mesa
-                                  solve( !KU( encaps(ek_from_dk(~dk_AC), ~k_efimera) ) @ #vk.13 )
-                                    case Emitir_Voto_Mesa
-                                    solve( !KU( senc(~m_voto, ~k_efimera) ) @ #vk.14 )
-                                      case Emitir_Voto_Mesa
-                                      SOLVED // trace found
-                                    qed
-                                  qed
-                                qed
-                              qed
-                            qed
-                          qed
-                        qed
-                      qed
-                    qed
-                  qed
-                qed
-              qed
-            qed
-          qed
-        qed
-      qed
-    qed
-  qed
-qed
-
-lemma unicidad:
-  all-traces
-  "All  id b1 sig1 b2 sig2 #i #j.
-    ((VotoAceptado( id, b1, sig1 ) @ #i)  & 
-     (VotoAceptado( id, b2, sig2 ) @ #j))  ==> 
-    (#i = #j)"
-/*
-guarded formula characterizing all counter-examples:
-"Ex  id b1 sig1 b2 sig2 #i #j.
-  (VotoAceptado( id, b1, sig1 ) @ #i)  &  (VotoAceptado( id, b2, sig2 ) @ #j)
-  & 
-  not (#i = #j)"
-*/
-simplify
-solve( (#i < #j)   ||  (#j < #i) )
-  case case_1
-  solve( VotoAceptado( id, b1, sig1 ) @ #i )
-    case Recepcion_Y_Deposito_Anfora___VARIANT_4
-    solve( NoHaVotado( id )  > _1 #i )
-      case Registro_Ciudadano_Padron
-      solve( !ClavePublicaAR( 'AR', pk(x.1) )  > _2 #i )
-        case Setup_Autoridad_Registro
-        solve( !PadronElectoral( ~idV, pk(x) )  > _3 #i )
-          case Registro_Ciudadano_Padron
-          solve( !ClavePrivadaFirma_SV( 'SV', ~sk_SV )  > _4 #i )
-            case Setup_Servidor_Votacion
-            solve( VotoAceptado( ~idV, b2, sig2 ) @ #j )
-              case Recepcion_Y_Deposito_Anfora___VARIANT_4
-              solve( NoHaVotado( ~idV )  > _1 #j )
-                case Registro_Ciudadano_Padron
-                by contradiction /* cyclic */
-              qed
-            qed
-          qed
-        qed
-      qed
-    qed
-  qed
-next
-  case case_2
-  solve( VotoAceptado( id, b1, sig1 ) @ #i )
-    case Recepcion_Y_Deposito_Anfora___VARIANT_4
-    solve( NoHaVotado( id )  > _1 #i )
-      case Registro_Ciudadano_Padron
-      solve( !ClavePublicaAR( 'AR', pk(x.1) )  > _2 #i )
-        case Setup_Autoridad_Registro
-        solve( !PadronElectoral( ~idV, pk(x) )  > _3 #i )
-          case Registro_Ciudadano_Padron
-          solve( !ClavePrivadaFirma_SV( 'SV', ~sk_SV )  > _4 #i )
-            case Setup_Servidor_Votacion
-            solve( VotoAceptado( ~idV, b2, sig2 ) @ #j )
-              case Recepcion_Y_Deposito_Anfora___VARIANT_4
-              solve( NoHaVotado( ~idV )  > _1 #j )
-                case Registro_Ciudadano_Padron
-                by contradiction /* cyclic */
-              qed
-            qed
-          qed
-        qed
-      qed
-    qed
-  qed
-qed
-
-lemma secreto_voto:
-  all-traces
-  "All  m #t1 #t2.
-    (((SecretoVoto( m ) @ #t1)  &  (K( m ) @ #t2))  & 
-     (not (Ex  ent id #r. Rev( ent, id ) @ #r)))  ==> 
-    (Ex  #t3. (EscrutinioAbierto( ) @ #t3)  &  (#t3 < #t2))"
-/*
-guarded formula characterizing all counter-examples:
-"Ex  m #t1 #t2.
-  (SecretoVoto( m ) @ #t1)  &  (K( m ) @ #t2)
-  & 
-  (All  ent id #r. (Rev( ent, id ) @ #r)  ==>  false)  & 
-  (All  #t3. (EscrutinioAbierto( ) @ #t3)  ==>  not (#t3 < #t2))"
-*/
-simplify
-solve( !CredencialVotante( ~idV, ~sk_V, credencial, firma_AR )  > _3 #t1 )
-  case Registro_Ciudadano_Padron
-  solve( !ClavePublicaKEM_AC( 'AC', ek_AC )  > _4 #t1 )
-    case Setup_Autoridad_Conteo
-    solve( !KU( ~m_voto ) @ #vk )
-      case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-      by contradiction /* from formulas */
-    next
-      case Emitir_Voto_Mesa
-      solve( !KU( ~k_efimera ) @ #vk.1 )
-        case Emitir_Voto_Mesa
-        solve( !KU( ~dk_AC ) @ #vk.2 )
-          case Reveal_Clave_AC
-          by contradiction /* from formulas */
-        qed
-      qed
-    qed
-  qed
-qed
-
-lemma integridad_voto:
-  all-traces
-  "All  m #tc.
-    ((VotoContado( m ) @ #tc)  &  (not (Ex  ent id #r. Rev( ent, id ) @ #r)))  ==> 
-    (Ex  idV #te. (VotoEmitido( idV, m ) @ #te)  &  (#te < #tc))"
-/*
-guarded formula characterizing all counter-examples:
-"Ex  m #tc.
-  (VotoContado( m ) @ #tc)
-  & 
-  (All  ent id #r. (Rev( ent, id ) @ #r)  ==>  false)  & 
-  (All  idV #te. (VotoEmitido( idV, m ) @ #te)  ==>  not (#te < #tc))"
-*/
-simplify
-solve( VotoContado( m ) @ #tc )
-  case Apertura_Anfora_Y_Escrutinio___VARIANT_1
-  solve( AnforaDigital( ct_kem, voto_cifrado, ts_voto )  > _0 #tc )
-    case Recepcion_Y_Deposito_Anfora___VARIANT_4
-    solve( !ClaveDesencapsulamientoAC( 'AC', ~dk_AC )  > _1 #tc )
-      case Setup_Autoridad_Conteo
-      solve( !KU( ~idV ) @ #vk.7 )
-        case Emitir_Voto_Mesa
-        solve( !KU( sign(<ct_kem, voto_cifrado, <~idV, pk(~sk_V), ts_reg>, 
-                          ts_voto>,
-                         ~sk_V)
-               ) @ #vk.13 )
-          case Emitir_Voto_Mesa
-          solve( !KU( sign(<~idV, pk(~sk_V), ~ts_reg>, ~sk_AR) ) @ #vk.14 )
-            case Emitir_Voto_Mesa
-            solve( !KU( ~ts_reg ) @ #vk.13 )
-              case Emitir_Voto_Mesa
-              solve( !KU( ~ts_voto ) @ #vk.14 )
-                case Emitir_Voto_Mesa
-                solve( !KU( pk(~sk_V) ) @ #vk.14 )
-                  case Emitir_Voto_Mesa
-                  solve( !KU( encaps(ek_from_dk(~dk_AC), ~k_efimera) ) @ #vk.13 )
-                    case Emitir_Voto_Mesa
-                    solve( !KU( senc(~m_voto, ~k_efimera) ) @ #vk.14 )
-                      case Emitir_Voto_Mesa
-                      SOLVED // trace found
-                    qed
-                  qed
-                qed
-              qed
-            qed
-          qed
-        qed
-      qed
-    qed
-  qed
-qed
-
-lemma autenticidad_votante:
-  all-traces
-  "All  idV blt sig #ta.
-    ((VotoAceptado( idV, blt, sig ) @ #ta)  & 
-     (not (Ex  ent id #r. Rev( ent, id ) @ #r)))  ==> 
-    (Ex  #ts.
-      ((VotoEnviado( idV, blt, sig ) @ #ts)  &  (#ts < #ta))  & 
-      (not (Ex  #ta2. (VotoAceptado( idV, blt, sig ) @ #ta2)  &  (not (#ta = #ta2)))))"
-/*
-guarded formula characterizing all counter-examples:
-"Ex  idV blt sig #ta.
-  (VotoAceptado( idV, blt, sig ) @ #ta)
-  & 
-  (All  ent id #r. (Rev( ent, id ) @ #r)  ==>  false)  & 
-  (All  #ts.
-    (VotoEnviado( idV, blt, sig ) @ #ts)
-    ==> 
-    ((not (#ts < #ta))  | 
-     (Ex  #ta2. (VotoAceptado( idV, blt, sig ) @ #ta2)  &  not (#ta = #ta2))))"
-*/
-simplify
-solve( VotoAceptado( idV, blt, sig ) @ #ta )
-  case Recepcion_Y_Deposito_Anfora___VARIANT_4
-  solve( NoHaVotado( idV )  > _1 #ta )
-    case Registro_Ciudadano_Padron
-    solve( !ClavePublicaAR( 'AR', pk(x.1) )  > _2 #ta )
-      case Setup_Autoridad_Registro
-      solve( !PadronElectoral( ~idV, pk(x) )  > _3 #ta )
-        case Registro_Ciudadano_Padron
-        solve( !ClavePrivadaFirma_SV( 'SV', ~sk_SV )  > _4 #ta )
-          case Setup_Servidor_Votacion
-          solve( !KU( ~idV ) @ #vk.7 )
-            case Emitir_Voto_Mesa
-            solve( !KU( sign(<ct_kem, voto_cifrado, <~idV, pk(~sk_V), ts_reg>, 
-                              ts_voto>,
-                             ~sk_V)
-                   ) @ #vk.13 )
-              case Emitir_Voto_Mesa
-              solve( (#ta < #ta2)   ||  (#ta2 < #ta) )
-                case case_1
-                solve( VotoAceptado( ~idV,
-                                     <encaps(ek_from_dk(~dk_AC), ~k_efimera), senc(~m_voto, ~k_efimera), 
-                                      <~idV, pk(~sk_V), ~ts_reg>, ~ts_voto>,
-                                     sign(<encaps(ek_from_dk(~dk_AC), ~k_efimera), senc(~m_voto, ~k_efimera), 
-                                           <~idV, pk(~sk_V), ~ts_reg>, ~ts_voto>,
-                                          ~sk_V)
-                       ) @ #ta2 )
-                  case Recepcion_Y_Deposito_Anfora___VARIANT_4
-                  solve( NoHaVotado( ~idV )  > _1 #ta2 )
-                    case Registro_Ciudadano_Padron
-                    by contradiction /* cyclic */
-                  qed
-                qed
-              next
-                case case_2
-                solve( VotoAceptado( ~idV,
-                                     <encaps(ek_from_dk(~dk_AC), ~k_efimera), senc(~m_voto, ~k_efimera), 
-                                      <~idV, pk(~sk_V), ~ts_reg>, ~ts_voto>,
-                                     sign(<encaps(ek_from_dk(~dk_AC), ~k_efimera), senc(~m_voto, ~k_efimera), 
-                                           <~idV, pk(~sk_V), ~ts_reg>, ~ts_voto>,
-                                          ~sk_V)
-                       ) @ #ta2 )
-                  case Recepcion_Y_Deposito_Anfora___VARIANT_4
-                  solve( NoHaVotado( ~idV )  > _1 #ta2 )
-                    case Registro_Ciudadano_Padron
-                    by contradiction /* cyclic */
-                  qed
-                qed
-              qed
-            next
-              case c_sign
-              solve( !KU( ~sk_V ) @ #vk.15 )
-                case Reveal_Clave_Votante
-                by contradiction /* from formulas */
-              qed
-            qed
-          qed
-        qed
-      qed
-    qed
-  qed
-qed
-
-lemma AUTO_typing [sources]:
-  all-traces
-  "(()  & 
-    (All  x m #i.
-      (AUTO_IN_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_3( m, x
-       ) @ #i)  ==> 
-      (Ex  #j. (!KU( x ) @ #j)  &  (#j < #i))))  & 
-   (All  x m #i.
-     (AUTO_IN_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( m, x
-      ) @ #i)  ==> 
-     ((Ex  #j. (!KU( x ) @ #j)  &  (#j < #i))  | 
-      (Ex  #j.
-        (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( m
-         ) @ #j)  & 
-        (#j < #i))))"
-/*
-guarded formula characterizing all counter-examples:
-"((Ex  x m #i.
-    (AUTO_IN_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_3( m, x
-     ) @ #i)
-    & 
-    All  #j. (!KU( x ) @ #j)  ==>  not (#j < #i))  | 
-  (Ex  x m #i.
-    (AUTO_IN_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( m, x
-     ) @ #i)
-    & 
-    (All  #j. (!KU( x ) @ #j)  ==>  not (#j < #i))  & 
-    (All  #j.
-      (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( m ) @ #j)
-      ==> 
-      not (#j < #i))))"
-*/
-induction
-  case empty_trace
-  by contradiction /* from formulas */
-next
-  case non_empty_trace
-  solve( (Ex  x m #i.
-           (AUTO_IN_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_3( m, x
-            ) @ #i)
-           & 
-           All  #j. (!KU( x ) @ #j)  ==>  not (#j < #i))   || 
-         (Ex  x m #i.
-           (AUTO_IN_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( m, x
-            ) @ #i)
-           & 
-           (All  #j. (!KU( x ) @ #j)  ==>  not (#j < #i))  & 
-           (All  #j.
-             (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( m ) @ #j)
-             ==> 
-             not (#j < #i))) )
-    case case_1
-    solve( (last(#i))   || 
-           (Ex  #j. (!KU( x ) @ #j)  &  (not (last(#j)))  &  (#j < #i)) )
-      case case_1
-      solve( AnforaDigital( ct_kem, senc(x, decaps(~dk_AC, ct_kem)), ts_voto
-             )  > _0 #i )
-        case Recepcion_Y_Deposito_Anfora___VARIANT_4
-        solve( !ClaveDesencapsulamientoAC( 'AC', ~dk_AC )  > _1 #i )
-          case Setup_Autoridad_Conteo
-          solve( !KU( ~idV ) @ #vk.7 )
-            case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-            by contradiction /* cyclic */
-          next
-            case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-            solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.6))   || 
-                   (Ex  #j.
-                     (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                          x.1)
-                      ) @ #j)
-                     & 
-                     (not (last(#j)))  &  (#j < #vr.6)) )
-              case case_1
-              by contradiction /* cyclic */
-            next
-              case case_2
-              by solve( (#vl, 0) ~~> (#vk, 0) )
-            qed
-          next
-            case Emitir_Voto_Mesa
-            solve( !KU( sign(<ct_kem, senc(x, decaps(~dk_AC, ct_kem)), 
-                              <~idV, pk(~sk_V), ts_reg>, ts_voto>,
-                             ~sk_V)
-                   ) @ #vk.13 )
-              case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-              by contradiction /* cyclic */
-            next
-              case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-              solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.13))   || 
-                     (Ex  #j.
-                       (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                            x.1)
-                        ) @ #j)
-                       & 
-                       (not (last(#j)))  &  (#j < #vr.13)) )
-                case case_1
-                by contradiction /* cyclic */
-              next
-                case case_2
-                by contradiction /* impossible chain */
-              qed
-            next
-              case c_sign
-              solve( !KU( ~sk_V ) @ #vk.15 )
-                case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-                by contradiction /* cyclic */
-              next
-                case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-                solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.13))   || 
-                       (Ex  #j.
-                         (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                              x.1)
-                          ) @ #j)
-                         & 
-                         (not (last(#j)))  &  (#j < #vr.13)) )
-                  case case_1
-                  by contradiction /* cyclic */
-                next
-                  case case_2
-                  by solve( (#vl.1, 0) ~~> (#vk.2, 0) )
-                qed
-              next
-                case Reveal_Clave_Votante
-                solve( !KU( sign(<~idV, pk(~sk_V), ts_reg>, ~sk_AR) ) @ #vk.15 )
-                  case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-                  by contradiction /* cyclic */
-                next
-                  case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-                  solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.14))   || 
-                         (Ex  #j.
-                           (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                                x.1)
-                            ) @ #j)
-                           & 
-                           (not (last(#j)))  &  (#j < #vr.14)) )
-                    case case_1
-                    by contradiction /* cyclic */
-                  next
-                    case case_2
-                    by contradiction /* impossible chain */
-                  qed
-                next
-                  case Emitir_Voto_Mesa
-                  solve( !KU( ~ts_reg ) @ #vk.14 )
-                    case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-                    by contradiction /* cyclic */
-                  next
-                    case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-                    solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.17))   || 
-                           (Ex  #j.
-                             (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                                  x.1)
-                              ) @ #j)
-                             & 
-                             (not (last(#j)))  &  (#j < #vr.17)) )
-                      case case_1
-                      by contradiction /* cyclic */
-                    next
-                      case case_2
-                      by solve( (#vl.3, 0) ~~> (#vk.4, 0) )
-                    qed
-                  next
-                    case Emitir_Voto_Mesa
-                    solve( !KU( senc(x, decaps(~dk_AC, ct_kem)) ) @ #vk.12 )
-                      case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-                      by contradiction /* cyclic */
-                    next
-                      case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-                      solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.19))   || 
-                             (Ex  #j.
-                               (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                                    x.1)
-                                ) @ #j)
-                               & 
-                               (not (last(#j)))  &  (#j < #vr.19)) )
-                        case case_1
-                        by contradiction /* cyclic */
-                      next
-                        case case_2
-                        by contradiction /* impossible chain */
-                      qed
-                    next
-                      case c_senc
-                      by contradiction /* from formulas */
-                    qed
-                  qed
-                next
-                  case c_sign
-                  solve( !KU( ~sk_AR ) @ #vk.16 )
-                    case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-                    by contradiction /* cyclic */
-                  next
-                    case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-                    solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.14))   || 
-                           (Ex  #j.
-                             (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                                  x.1)
-                              ) @ #j)
-                             & 
-                             (not (last(#j)))  &  (#j < #vr.14)) )
-                      case case_1
-                      by contradiction /* cyclic */
-                    next
-                      case case_2
-                      by solve( (#vl.2, 0) ~~> (#vk.4, 0) )
-                    qed
-                  qed
-                qed
-              qed
-            qed
-          qed
-        qed
-      qed
-    next
-      case case_2
-      by contradiction /* from formulas */
-    qed
-  next
-    case case_2
-    solve( (last(#i))   || 
-           (Ex  #j. (!KU( x.1 ) @ #j)  &  (not (last(#j)))  &  (#j < #i))   || 
-           (Ex  #j.
-             (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(x.1,
-                                                                                  x)
-              ) @ #j)
-             & 
-             (not (last(#j)))  &  (#j < #i)) )
-      case case_1
-      solve( AnforaDigital( encaps(ek_from_dk(~dk_AC), x), senc(x.1, x),
-                            ts_voto
-             )  > _0 #i )
-        case Recepcion_Y_Deposito_Anfora___VARIANT_4
-        solve( !ClaveDesencapsulamientoAC( 'AC', ~dk_AC )  > _1 #i )
-          case Setup_Autoridad_Conteo
-          solve( !KU( ~idV ) @ #vk.7 )
-            case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-            by contradiction /* cyclic */
-          next
-            case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-            solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.6))   || 
-                   (Ex  #j.
-                     (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                          x.2)
-                      ) @ #j)
-                     & 
-                     (not (last(#j)))  &  (#j < #vr.6)) )
-              case case_1
-              by contradiction /* cyclic */
-            next
-              case case_2
-              by solve( (#vl, 0) ~~> (#vk, 0) )
-            qed
-          next
-            case Emitir_Voto_Mesa
-            solve( !KU( sign(<encaps(ek_from_dk(~dk_AC), x), senc(x.1, x), 
-                              <~idV, pk(~sk_V), ts_reg>, ts_voto>,
-                             ~sk_V)
-                   ) @ #vk.13 )
-              case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-              by contradiction /* cyclic */
-            next
-              case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-              solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.13))   || 
-                     (Ex  #j.
-                       (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                            x.2)
-                        ) @ #j)
-                       & 
-                       (not (last(#j)))  &  (#j < #vr.13)) )
-                case case_1
-                by contradiction /* cyclic */
-              next
-                case case_2
-                by contradiction /* impossible chain */
-              qed
-            next
-              case Emitir_Voto_Mesa
-              by contradiction /* from formulas */
-            next
-              case c_sign
-              solve( !KU( ~sk_V ) @ #vk.15 )
-                case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-                by contradiction /* cyclic */
-              next
-                case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-                solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.13))   || 
-                       (Ex  #j.
-                         (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                              x.2)
-                          ) @ #j)
-                         & 
-                         (not (last(#j)))  &  (#j < #vr.13)) )
-                  case case_1
-                  by contradiction /* cyclic */
-                next
-                  case case_2
-                  by solve( (#vl.1, 0) ~~> (#vk.2, 0) )
-                qed
-              next
-                case Reveal_Clave_Votante
-                solve( !KU( sign(<~idV, pk(~sk_V), ts_reg>, ~sk_AR) ) @ #vk.15 )
-                  case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-                  by contradiction /* cyclic */
-                next
-                  case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-                  solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.14))   || 
-                         (Ex  #j.
-                           (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                                x.2)
-                            ) @ #j)
-                           & 
-                           (not (last(#j)))  &  (#j < #vr.14)) )
-                    case case_1
-                    by contradiction /* cyclic */
-                  next
-                    case case_2
-                    by contradiction /* impossible chain */
-                  qed
-                next
-                  case Emitir_Voto_Mesa
-                  solve( !KU( ~ts_reg ) @ #vk.14 )
-                    case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-                    by contradiction /* cyclic */
-                  next
-                    case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-                    solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.17))   || 
-                           (Ex  #j.
-                             (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                                  x.2)
-                              ) @ #j)
-                             & 
-                             (not (last(#j)))  &  (#j < #vr.17)) )
-                      case case_1
-                      by contradiction /* cyclic */
-                    next
-                      case case_2
-                      by solve( (#vl.3, 0) ~~> (#vk.4, 0) )
-                    qed
-                  next
-                    case Emitir_Voto_Mesa
-                    solve( !KU( encaps(ek_from_dk(~dk_AC), x) ) @ #vk.11 )
-                      case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-                      by contradiction /* cyclic */
-                    next
-                      case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-                      solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.19))   || 
-                             (Ex  #j.
-                               (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                                    x.2)
-                                ) @ #j)
-                               & 
-                               (not (last(#j)))  &  (#j < #vr.19)) )
-                        case case_1
-                        by contradiction /* cyclic */
-                      next
-                        case case_2
-                        by contradiction /* impossible chain */
-                      qed
-                    next
-                      case Emitir_Voto_Mesa
-                      solve( !KU( senc(x, ~k_efimera) ) @ #vk.13 )
-                        case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-                        by contradiction /* cyclic */
-                      next
-                        case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-                        solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.24))   || 
-                               (Ex  #j.
-                                 (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                                      x.1)
-                                  ) @ #j)
-                                 & 
-                                 (not (last(#j)))  &  (#j < #vr.24)) )
-                          case case_1
-                          by contradiction /* cyclic */
-                        next
-                          case case_2
-                          by contradiction /* impossible chain */
-                        qed
-                      next
-                        case Emitir_Voto_Mesa
-                        by contradiction /* from formulas */
-                      next
-                        case c_senc
-                        by contradiction /* from formulas */
-                      qed
-                    next
-                      case c_encaps
-                      solve( !KU( senc(x.1, x) ) @ #vk.13 )
-                        case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-                        by contradiction /* cyclic */
-                      next
-                        case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-                        solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.19))   || 
-                               (Ex  #j.
-                                 (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                                      x.2)
-                                  ) @ #j)
-                                 & 
-                                 (not (last(#j)))  &  (#j < #vr.19)) )
-                          case case_1
-                          by contradiction /* cyclic */
-                        next
-                          case case_2
-                          by contradiction /* impossible chain */
-                        qed
-                      next
-                        case Emitir_Voto_Mesa
-                        by contradiction /* from formulas */
-                      next
-                        case c_senc
-                        by contradiction /* from formulas */
-                      qed
-                    qed
-                  qed
-                next
-                  case c_sign
-                  solve( !KU( ~sk_AR ) @ #vk.16 )
-                    case Apertura_Anfora_Y_Escrutinio___VARIANT_3
-                    by contradiction /* cyclic */
-                  next
-                    case Apertura_Anfora_Y_Escrutinio___VARIANT_4
-                    solve( (Ex  #j. (!KU( t ) @ #j)  &  (not (last(#j)))  &  (#j < #vr.14))   || 
-                           (Ex  #j.
-                             (AUTO_OUT_TERM_0_1_0__Apertura_Anfora_Y_Escrutinio___VARIANT_4( senc(t,
-                                                                                                  x.2)
-                              ) @ #j)
-                             & 
-                             (not (last(#j)))  &  (#j < #vr.14)) )
-                      case case_1
-                      by contradiction /* cyclic */
-                    next
-                      case case_2
-                      by solve( (#vl.2, 0) ~~> (#vk.4, 0) )
-                    qed
-                  qed
-                qed
-              qed
-            qed
-          qed
-        qed
-      qed
-    next
-      case case_2
-      by contradiction /* from formulas */
-    next
-      case case_3
-      by contradiction /* from formulas */
-    qed
-  qed
-qed
-
-/* All wellformedness checks were successful. */
-
-/*
-Generated from:
-Tamarin version 1.12.0
-Maude version 3.5.1
-Git revision: UNKNOWN, branch: UNKNOWN
-Compiled at: 2026-03-08 09:49:47.765662 UTC
-*/
-
-end
-
 ==============================================================================
+1. SALIDA LITERAL: MODELO BASE v2 (protocolo_v2.spthy)
+==============================================================================
+# SHA-256: 80e6b10bf1bb27e2105cdb784d16e79be71a8d58af779d8e221d1290557a6e89
+# Archivo: protocolo_v2.spthy
+# Comando: tamarin-prover --auto-sources --prove protocolo_v2.spthy +RTS -N4 -RTS
+# Tamarin version: 1.12.0 | Maude version: 3.5.1
+# Fecha de ejecucion: 2026-11-01T18:39:18-04:00
+
 summary of summaries:
 
 analyzed: protocolo_v2.spthy
 
-  processing time: 6.60s
-  
+  processing time: 4.60s
+
   ejecutabilidad (exists-trace): verified (21 steps)
   unicidad (all-traces): verified (18 steps)
   secreto_voto (all-traces): verified (8 steps)
@@ -1155,4 +20,139 @@ analyzed: protocolo_v2.spthy
   autenticidad_votante (all-traces): verified (17 steps)
   AUTO_typing (all-traces): verified (98 steps)
 
+==============================================================================
+2. SALIDA LITERAL: MODELO INTERMEDIO v2b (protocolo_v2b.spthy)
+==============================================================================
+# SHA-256: f52366622f7614d1d2ffe5c229735425ecc26dd428c21d3b1898db8be9f7c1c4
+# Archivo: protocolo_v2b.spthy
+# SHA-256 base (v2):
+#   80e6b10bf1bb27e2105cdb784d16e79be71a8d58af779d8e221d1290557a6e89
+# Comando: tamarin-prover --auto-sources --prove protocolo_v2b.spthy +RTS -N4 -RTS
+# Tamarin version: 1.12.0 | Maude version: 3.5.1
+# Fecha de ejecucion: 2026-11-01T18:39:59-04:00
+# Supuestos incorporados: SetupAC_Unico, SetupAR_Unico, SetupSV_Unico
+
+summary of summaries:
+
+analyzed: protocolo_v2b.spthy
+
+  processing time: 4.46s
+
+  ejecutabilidad (exists-trace): verified (21 steps)
+  unicidad (all-traces): verified (18 steps)
+  secreto_voto (all-traces): verified (8 steps)
+  integridad_voto (all-traces): verified (29 steps)
+  autenticidad_votante (all-traces): verified (17 steps)
+  AUTO_typing (all-traces): verified (98 steps)
+
+==============================================================================
+3. SALIDA LITERAL: MODELO DE REFERENCIA v3 (protocolo_v3.spthy)
+==============================================================================
+# SHA-256: bdd31ea1a0e4ce511afc598d921e8c052bf04332658d3ff77a9c65e65598da85
+# Archivo: protocolo_v3.spthy
+# SHA-256 base (v2b):
+#   f52366622f7614d1d2ffe5c229735425ecc26dd428c21d3b1898db8be9f7c1c4
+# Comando lote: tamarin-prover --auto-sources --prove protocolo_v3.spthy +RTS -N4 -M8G -RTS
+# Tamarin version: 1.12.0 | Maude version: 3.5.1
+# Fecha de ejecucion: 2026-11-01T19:38:58-04:00
+
+summary of summaries:
+
+analyzed: protocolo_v3.spthy
+
+  processing time: 4.58s
+  
+  ejecutabilidad (exists-trace): verified (22 steps)
+  unicidad (all-traces): verified (18 steps)
+  secreto_voto (all-traces): verified (8 steps)
+  autenticidad_votante (all-traces): verified (17 steps)
+  integridad_voto (all-traces): verified (33 steps)
+  AUTO_typing (all-traces): verified (85 steps)
+
+==============================================================================
+4. TIEMPOS INDIVIDUALES POR LEMA (AISLAMIENTO INDUCTIVO)
+==============================================================================
+Nota metodologica: En el analisis lema por lema, cada ejecucion individual 
+invoca de manera independiente el resolvedor y recalcula el lema de fuentes 
+e invariante de tipos AUTO_typing, por lo que la suma de tiempos individuales 
+excede el tiempo optimizado de la ejecucion consolidada por lotes.
+
+Mediciones individuales para protocolo_v3.spthy (logs/v3_<lema>.log):
+  - ejecutabilidad:       verified (22 steps) | processing time: 3.43s
+  - unicidad:             verified (18 steps) | processing time: 2.31s
+  - secreto_voto:         verified (8 steps)  | processing time: 2.43s
+  - autenticidad_votante: verified (17 steps) | processing time: 2.63s
+  - integridad_voto:      verified (33 steps) | processing time: 2.92s
+
+Mediciones individuales para protocolo_v2b.spthy (logs/v2b_<lema>.log):
+  - ejecutabilidad:       verified (21 steps) | processing time: 3.08s
+  - unicidad:             verified (18 steps) | processing time: 2.15s
+  - secreto_voto:         verified (8 steps)  | processing time: 2.24s
+  - integridad_voto:      verified (29 steps) | processing time: 2.88s
+  - autenticidad_votante: verified (17 steps) | processing time: 2.30s
+
+Mediciones individuales para protocolo_v2.spthy (logs/<lema>.log):
+  - ejecutabilidad:       verified (21 steps)  | processing time: 3.70s
+  - unicidad:             verified (18 steps)  | processing time: 2.16s
+  - secreto_voto:         verified (8 steps)   | processing time: 2.28s
+  - integridad_voto:      falsified (13 steps) | processing time: 3.12s
+  - autenticidad_votante: verified (17 steps)  | processing time: 2.31s
+
+==============================================================================
+5. SALIDA LITERAL: EXPERIMENTO DE EXCLUSION MINIMA (integridad_voto)
+==============================================================================
+# Log: logs/v3_integridad_sin_excl_votante.log
+# Condicion evaluada: not(Ex #r. Rev('AC', 'AC') @#r) SIN excluir Rev('Votante', id)
+# Resultado: El atacante firma boleta arbitraria con ~sk_V revelada de un votante
+#            sin pasar por Emitir_Voto_Mesa.
+
+summary of summaries:
+
+analyzed: protocolo_v3.spthy
+
+  processing time: 3.27s
+  
+  ejecutabilidad (exists-trace): analysis incomplete (1 steps)
+  unicidad (all-traces): analysis incomplete (1 steps)
+  secreto_voto (all-traces): analysis incomplete (1 steps)
+  autenticidad_votante (all-traces): analysis incomplete (1 steps)
+  integridad_voto (all-traces): falsified - found trace (12 steps)
+  AUTO_typing (all-traces): analysis incomplete (1 steps)
+
+==============================================================================
+6. SALIDA LITERAL: INTENTO DE EQUIVALENCIA OBSERVACIONAL (--diff)
+==============================================================================
+# Log: logs/v3_diff.log
+# SHA-256: c82ddffe667218cb03ad7cb15146915d8557b538420da15bc6694c3340ff71e4
+# Archivo: protocolo_v3_diff.spthy
+# Comando: tamarin-prover --diff --prove protocolo_v3_diff.spthy +RTS -N4 -M8G -RTS
+# Limite temporal: 45 s / 1800 s timeout
+# Resultado: No concluyo en el tiempo limite (interrupcion por temporizador, EXIT=142)
+
+maude tool: 'maude'
+ checking version: 3.5.1. OK.
+ checking installation: OK.
+diffLemma
+[Theory ProtocoloVotacionPQC_v3_diff] Theory loaded
+[Theory ProtocoloVotacionPQC_v3_diff] Theory translated
+[Theory ProtocoloVotacionPQC_v3_diff] Derivation checks started
+[Saturating Sources] Step 1 (Max 5)
+[Saturating Sources] Done
+[Saturating Sources] Step 1 (Max 5)
+[Saturating Sources] Done
+[Saturating Sources] Step 1 (Max 5)
+[Saturating Sources] Done
+[Saturating Sources] Step 1 (Max 5)
+[Saturating Sources] Done
+[Saturating Sources] Step 1 (Max 5)
+[Saturating Sources] Done
+[Saturating Sources] Step 1 (Max 5)
+[Saturating Sources] Done
+[Theory ProtocoloVotacionPQC_v3_diff] Derivation checks ended
+[Theory ProtocoloVotacionPQC_v3_diff] Theory closed
+[Saturating Sources] Step 1 (Max 5)
+[Saturating Sources] Done
+[Saturating Sources] Step 1 (Max 5)
+[Saturating Sources] Done
+[Proceso interrumpido por limite temporal: EXIT=142]
 ==============================================================================
