@@ -10,64 +10,59 @@ Para garantizar una alta cohesión, bajo acoplamiento y facilidad de mantenimien
 	\centering
 	\resizebox{\textwidth}{!}{%
 	\begin{tikzpicture}[
-		layer/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, minimum width=13.2cm, minimum height=1.1cm, font=\scriptsize, align=center},
-		subcomp/.style={rectangle, draw=black, fill=white, line width=0.5pt, rounded corners=1pt, font=\tiny, align=center, inner sep=3pt},
+		layer/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, minimum width=13.6cm, minimum height=1.35cm, inner sep=0pt},
+		subcomp/.style={rectangle, draw=black, fill=white, line width=0.5pt, rounded corners=1pt, font=\tiny\rmfamily, align=center, inner sep=3.5pt, minimum height=0.48cm},
 		dep/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black}
 	]
 		% Capa 1: Presentación
-		\node[layer] (capa1) at (0, 0) {
-			\textbf{Capa 1: Presentación y Navegación Web UWE (Cliente de Votación)}\\
-		};
-		\node[subcomp] at (-4.3, -0.18) {Cabina Web UWE (\texttt{«presentation page»})};
-		\node[subcomp] at (0.0, -0.18) {Panel Registro AR (\texttt{«input form»})};
-		\node[subcomp] at (4.3, -0.18) {Portal Ciudadano Auditoría (\texttt{«query»})};
+		\node[layer] (capa1) at (0, 0) {};
+		\node[anchor=north, font=\scriptsize\rmfamily\bfseries] at ([yshift=-2.5pt]capa1.north) {Capa 1: Presentación y Navegación Web UWE (Cliente de Votación)};
+		\node[subcomp] at (-4.3, -0.25) {Cabina Web UWE (\texttt{«presentation page»})};
+		\node[subcomp] at (0.0, -0.25) {Panel Registro AR (\texttt{«input form»})};
+		\node[subcomp] at (4.3, -0.25) {Portal Ciudadano Auditoría (\texttt{«query»})};
 
 		% Capa 2: Servicios Web y API REST
-		\node[layer, below=0.55cm of capa1] (capa2) {
-			\textbf{Capa 2: Servicios Web, Controlador de Procesos UWE y API REST (Flask WSGI)}\\
-		};
-		\node[subcomp] at (-4.5, -1.83) {Endpoints: \texttt{/api/votar}, \texttt{/api/escrutinio}};
-		\node[subcomp] at (0.2, -1.83) {Serializador Canónico (\texttt{canonical\_json})};
-		\node[subcomp] at (4.6, -1.83) {Guarda de Estado OCL y Sesión};
+		\node[layer, below=0.55cm of capa1] (capa2) {};
+		\node[anchor=north, font=\scriptsize\rmfamily\bfseries] at ([yshift=-2.5pt]capa2.north) {Capa 2: Servicios Web, Controlador de Procesos UWE y API REST (Flask WSGI)};
+		\node[subcomp] at (-4.5, -2.15) {Endpoints: \texttt{/api/votar}, \texttt{/api/escrutinio}};
+		\node[subcomp] at (0.1, -2.15) {Serializador Canónico (\texttt{canonical\_json})};
+		\node[subcomp] at (4.6, -2.15) {Guarda de Estado OCL y Sesión};
 
 		% Capa 3: Lógica del Dominio Electoral
-		\node[layer, below=0.55cm of capa2] (capa3) {
-			\textbf{Capa 3: Lógica del Dominio y Modelo de Contenido UWE (Python)}\\
-		};
-		\node[subcomp] at (-4.5, -3.48) {\texttt{VotantePQC}: Formulación y Cifrado};
-		\node[subcomp] at (-1.2, -3.48) {\texttt{AutoridadRegistro}: Padrón};
-		\node[subcomp] at (2.0, -3.48) {\texttt{ServidorVotacion}: Urna};
-		\node[subcomp] at (4.8, -3.48) {\texttt{AutoridadConteo}: Tally};
+		\node[layer, below=0.55cm of capa2] (capa3) {};
+		\node[anchor=north, font=\scriptsize\rmfamily\bfseries] at ([yshift=-2.5pt]capa3.north) {Capa 3: Lógica del Dominio y Modelo de Contenido UWE (Python)};
+		\node[subcomp] at (-4.5, -4.05) {\texttt{VotantePQC}: Formulación y Cifrado};
+		\node[subcomp] at (-1.3, -4.05) {\texttt{AutoridadRegistro}: Padrón};
+		\node[subcomp] at (1.7, -4.05) {\texttt{ServidorVotacion}: Urna};
+		\node[subcomp] at (4.7, -4.05) {\texttt{AutoridadConteo}: Tally};
 
 		% Capa 4: Abstracción Criptográfica FFI
-		\node[layer, below=0.55cm of capa3] (capa4) {
-			\textbf{Capa 4: Abstracción Criptográfica y Enlace FFI (ctypes)}\\
-		};
-		\node[subcomp] at (-4.2, -5.13) {\texttt{pqc\_wrapper.py}: Wrappers ML-KEM/DSA};
-		\node[subcomp] at (0.2, -5.13) {\texttt{crypto\_utils.py}: AES-256-GCM / SHA3-256};
-		\node[subcomp] at (4.4, -5.13) {Manejador de Punteros \texttt{c\_uint8}};
+		\node[layer, below=0.55cm of capa3] (capa4) {};
+		\node[anchor=north, font=\scriptsize\rmfamily\bfseries] at ([yshift=-2.5pt]capa4.north) {Capa 4: Abstracción Criptográfica y Enlace FFI (ctypes)};
+		\node[subcomp] at (-4.3, -5.95) {\texttt{pqc\_wrapper.py}: Wrappers ML-KEM/DSA};
+		\node[subcomp] at (0.2, -5.95) {\texttt{crypto\_utils.py}: AES-256-GCM / SHA3-256};
+		\node[subcomp] at (4.5, -5.95) {Manejador de Punteros \texttt{c\_uint8}};
 
 		% Capa 5: Núcleo Nativo C Core
-		\node[layer, below=0.55cm of capa4] (capa5) {
-			\textbf{Capa 5: Núcleo Criptográfico Nativo en Lenguaje C (PQClean / libpqc\_core.dylib)}\\
-		};
-		\node[subcomp] at (-3.8, -6.78) {ML-KEM-768 (FIPS 203): KeyGen, Encaps, Decaps};
-		\node[subcomp] at (3.5, -6.78) {ML-DSA-65 (FIPS 204): KeyGen, Sign, Verify};
+		\node[layer, below=0.55cm of capa4] (capa5) {};
+		\node[anchor=north, font=\scriptsize\rmfamily\bfseries] at ([yshift=-2.5pt]capa5.north) {Capa 5: Núcleo Criptográfico Nativo en Lenguaje C (PQClean / libpqc\_core.dylib)};
+		\node[subcomp] at (-3.8, -7.85) {ML-KEM-768 (FIPS 203): KeyGen, Encaps, Decaps};
+		\node[subcomp] at (3.6, -7.85) {ML-DSA-65 (FIPS 204): KeyGen, Sign, Verify};
 
 		% Capa 6: Persistencia
-		\node[layer, below=0.55cm of capa5] (capa6) {
-			\textbf{Capa 6: Persistencia y Almacenamiento Relacional Disociado (PostgreSQL / SQLite)}\\
-		};
-		\node[subcomp] at (-4.2, -8.43) {Padrón Electoral (\texttt{tbl\_padron})};
-		\node[subcomp] at (0.0, -8.43) {Ánfora Digital Cifrada (\texttt{tbl\_anfora})};
-		\node[subcomp] at (4.2, -8.43) {Bitácora y Recibos (\texttt{tbl\_recibos})};
+		\node[layer, below=0.55cm of capa5] (capa6) {};
+		\node[anchor=north, font=\scriptsize\rmfamily\bfseries] at ([yshift=-2.5pt]capa6.north) {Capa 6: Persistencia y Almacenamiento Relacional Disociado (PostgreSQL / SQLite)};
+		\node[subcomp] at (-4.3, -9.75) {Padrón Electoral (\texttt{tbl\_padron})};
+		\node[subcomp] at (0.0, -9.75) {Ánfora Digital Cifrada (\texttt{tbl\_anfora})};
+		\node[subcomp] at (4.3, -9.75) {Bitácora y Recibos (\texttt{tbl\_recibos})};
 
 		% Conectores limpios entre capas consecutivas
 		\draw[dep] (capa1) -- (capa2);
 		\draw[dep] (capa2) -- (capa3);
 		\draw[dep] (capa3) -- (capa4);
 		\draw[dep] (capa4) -- (capa5);
-		\draw[dep] (capa3.east) to[bend left=45] (capa6.east);
+		\draw[dep] (capa5) -- (capa6);
+		\draw[dep] (capa3.east) to[bend left=42] (capa6.east);
 	\end{tikzpicture}
 	}%
 	\caption{Diagrama de Arquitectura en Capas del sistema de votación post-cuántica articulado con UWE.}
@@ -94,72 +89,71 @@ La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del si
 	\resizebox{\textwidth}{!}{%
 	\begin{tikzpicture}[
 		node distance=1.0cm and 1.2cm,
-		nodebox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, minimum width=3.8cm, minimum height=3.0cm, font=\scriptsize, align=center},
-		artbox/.style={rectangle, draw=black, fill=white, line width=0.5pt, rounded corners=1pt, font=\tiny, align=center, inner sep=3.5pt},
-		netlink/.style={line width=0.8pt, draw=black, font=\tiny}
+		nodebox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, minimum width=4.0cm, minimum height=3.3cm, align=center},
+		artbox/.style={rectangle, draw=black, fill=white, line width=0.5pt, rounded corners=1pt, font=\tiny\rmfamily, align=center, inner sep=3pt},
+		netlink/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black, font=\tiny\rmfamily}
 	]
 		% Nodo 1: Terminal Cliente
-		\node[nodebox] (client) at (-5.2, 3.2) {
-			\guillemotleft device\guillemotright\\
-			\textbf{Terminal Votante / Cabina}\\
-			\vspace{1.8cm}
+		\node[nodebox] (client) at (-5.2, 3.2) {};
+		\node[anchor=north, font=\tiny\rmfamily, align=center] at ([yshift=-2.5pt]client.north) {
+			«device»\\
+			\textbf{Terminal Votante / Cabina}
 		};
-		\node[artbox, below=0.4cm of client.north] {\guillemotleft execution env\guillemotright\\Navegador Web / Interfaz UWE};
-		\node[artbox, below=1.3cm of client.north] {\guillemotleft artifact\guillemotright\\PQC Client Engine (Wasm / Python)};
+		\node[artbox, below=0.95cm of client.north] {«execution env»\\Navegador Web / Interfaz UWE};
+		\node[artbox, below=2.0cm of client.north] {«artifact»\\PQC Client Engine (Wasm / Python)};
 
 		% Nodo 2: Servidor Web SV
-		\node[nodebox, minimum width=4.6cm] (server) at (1.2, 3.2) {
-			\guillemotleft device\guillemotright\\
-			\textbf{Servidor Electoral Central (SV)}\\
-			\vspace{1.8cm}
+		\node[nodebox, minimum width=4.8cm] (server) at (1.1, 3.2) {};
+		\node[anchor=north, font=\tiny\rmfamily, align=center] at ([yshift=-2.5pt]server.north) {
+			«device»\\
+			\textbf{Servidor Electoral Central ($SV$)}
 		};
-		\node[artbox, below=0.4cm of server.north] {\guillemotleft execution env\guillemotright\\Reverse Proxy Nginx + Gunicorn};
-		\node[artbox, below=1.3cm of server.north] {\guillemotleft artifact\guillemotright\\Flask Web API + \texttt{libpqc\_core.dylib}\\(Clave pública $ek_{\text{AC}}$ publicada)};
+		\node[artbox, below=0.95cm of server.north] {«execution env»\\Reverse Proxy Nginx + Gunicorn};
+		\node[artbox, below=2.0cm of server.north] {«artifact»\\Flask Web API + \texttt{libpqc\_core.dylib}\\(Clave pública $ek_{\text{AC}}$ publicada)};
 
 		% Nodo 3: Servidor de Base de Datos
-		\node[nodebox] (db) at (6.8, 3.2) {
-			\guillemotleft device\guillemotright\\
-			\textbf{Servidor Base Datos}\\
-			\vspace{1.8cm}
+		\node[nodebox] (db) at (7.0, 3.2) {};
+		\node[anchor=north, font=\tiny\rmfamily, align=center] at ([yshift=-2.5pt]db.north) {
+			«device»\\
+			\textbf{Servidor Base Datos}
 		};
-		\node[artbox, below=0.4cm of db.north] {\guillemotleft DBMS\guillemotright\\PostgreSQL / SQLite3};
-		\node[artbox, below=1.3cm of db.north] {\guillemotleft artifact\guillemotright\\Esquema Relacional 3FN\\(Volumen Cifrado LUKS)};
+		\node[artbox, below=0.95cm of db.north] {«DBMS»\\PostgreSQL / SQLite3};
+		\node[artbox, below=2.0cm of db.north] {«artifact»\\Esquema Relacional 3FN\\(Volumen Cifrado LUKS)};
 
 		% Nodo 4: Estación AR
-		\node[nodebox] (ar_node) at (-5.2, -2.0) {
-			\guillemotleft device\guillemotright\\
-			\textbf{Estación de Registro (AR)}\\
-			\vspace{1.8cm}
+		\node[nodebox] (ar_node) at (-5.2, -2.4) {};
+		\node[anchor=north, font=\tiny\rmfamily, align=center] at ([yshift=-2.5pt]ar_node.north) {
+			«device»\\
+			\textbf{Estación de Registro ($AR$)}
 		};
-		\node[artbox, below=0.4cm of ar_node.north] {\guillemotleft execution env\guillemotright\\Terminal de Empadronamiento};
-		\node[artbox, below=1.3cm of ar_node.north] {\guillemotleft artifact\guillemotright\\Módulo AR + Clave $sk_{\text{AR}}$};
+		\node[artbox, below=0.95cm of ar_node.north] {«execution env»\\Terminal de Empadronamiento};
+		\node[artbox, below=2.0cm of ar_node.north] {«artifact»\\Módulo AR + Clave $sk_{\text{AR}}$};
 
 		% Nodo 5: Estación AC (Air Gapped)
-		\node[nodebox, minimum width=4.6cm] (ac_node) at (1.2, -2.0) {
-			\guillemotleft device\guillemotright\\
-			\textbf{Estación Conteo (AC - Air-Gapped)}\\
-			\vspace{1.8cm}
+		\node[nodebox, minimum width=4.8cm] (ac_node) at (1.1, -2.4) {};
+		\node[anchor=north, font=\tiny\rmfamily, align=center] at ([yshift=-2.5pt]ac_node.north) {
+			«device / air-gapped»\\
+			\textbf{Estación Conteo ($AC$ - Air-Gapped)}
 		};
-		\node[artbox, below=0.4cm of ac_node.north] {\guillemotleft secure element\guillemotright\\Token Criptográfico / HSM Seguro};
-		\node[artbox, below=1.3cm of ac_node.north] {\guillemotleft artifact\guillemotright\\Módulo Escrutinio + Clave $dk_{\text{AC}}$\\(Genera $dk_{\text{AC}}$, exporta $ek_{\text{AC}}$)};
+		\node[artbox, below=0.95cm of ac_node.north] {«secure element»\\Token Criptográfico / HSM Seguro};
+		\node[artbox, below=2.0cm of ac_node.north] {«artifact»\\Módulo Escrutinio + Clave $dk_{\text{AC}}$\\(Genera $dk_{\text{AC}}$, exporta $ek_{\text{AC}}$)};
 
 		% Conexiones de red
-		\draw[netlink] (client) -- (server) 
-		node[midway, above] {HTTPS / TLS 1.3}
-		node[midway, below] {(Puerto 443 / 5000)};
+		\draw[netlink] ([yshift=0.3cm]client.east) -- ([yshift=0.3cm]server.west) 
+			node[midway, above=1pt] {HTTPS / TLS 1.3}
+			node[midway, below=1pt] {(Puerto 443 / 5000)};
 		
-		\draw[netlink] (server) -- (db) 
-		node[midway, above] {TCP/IP 5432}
-		node[midway, below] {(Red Interna Aislada)};
+		\draw[netlink] ([yshift=0.3cm]server.east) -- ([yshift=0.3cm]db.west) 
+			node[midway, above=1pt] {TCP/IP 5432}
+			node[midway, below=1pt] {(Red Interna Aislada)};
 		
-		\draw[netlink, dashed] (ar_node) -- (client)
-		node[midway, left] {Canal Seguro / Presencial}
-		node[midway, right] {(Emisión Credencial)};
+		\draw[netlink, dashed] (ar_node.north) -- (client.south)
+			node[midway, left=2pt, align=right] {Canal Seguro / Presencial\\(Emisión Credencial)};
 		
-		\draw[netlink, dashed] (ac_node) -- (server)
-		node[midway, left] {1. Exportación de $ek_{\text{AC}}$};
-		\draw[netlink, dashed] (server) -- (ac_node)
-		node[midway, right] {2. Entrega de Lote Permutado (Post-Cierre)};
+		\draw[netlink, dashed] ([xshift=-0.7cm]ac_node.north) -- ([xshift=-0.7cm]server.south)
+			node[midway, left=2pt, align=right] {1. Exportación\\de $ek_{\text{AC}}$};
+		\draw[netlink, dashed] ([xshift=0.7cm]server.south) -- ([xshift=0.7cm]ac_node.north)
+			node[midway, right=2pt, align=left] {2. Entrega Lote Permutado\\(Post-Clausura)};
 	\end{tikzpicture}
 	}%
 	\caption{Diagrama de Despliegue UML del entorno de hardware, comunicaciones y custodia física de $dk_{\text{AC}}$.}

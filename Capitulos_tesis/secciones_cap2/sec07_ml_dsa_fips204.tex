@@ -28,28 +28,38 @@ donde $\mathbf{y}$ es un vector máscara efímero, $c$ es un desafío escalar de
 
 Para mitigar esta fuga de información, Vadim Lyubashevsky (2009, 2012) concibió la técnica de \textbf{muestreo con rechazo} (\textit{Fiat-Shamir with aborts}):
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
 	\centering
 	\begin{tikzpicture}[
-		scale=0.88,
-		pbox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, text width=3.4cm, align=center, font=\footnotesize, inner sep=4pt},
-		dec/.style={diamond, draw=black, fill=white, line width=0.8pt, aspect=2.1, align=center, font=\footnotesize, inner sep=2pt},
-		errbox/.style={rectangle, draw=black, fill=white, double, double distance=1.2pt, line width=0.7pt, rounded corners=1.5pt, text width=3.0cm, align=center, font=\footnotesize, inner sep=4pt}
+		pbox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, text width=3.4cm, align=center, font=\footnotesize\rmfamily, inner sep=4pt},
+		dec/.style={diamond, draw=black, fill=white, line width=0.8pt, aspect=2.1, align=center, font=\footnotesize\rmfamily, inner sep=2pt},
+		errbox/.style={rectangle, draw=black, fill=white, double, double distance=1.2pt, line width=0.7pt, rounded corners=1.5pt, text width=3.0cm, align=center, font=\footnotesize\rmfamily, inner sep=4pt},
+		arr/.style={-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt, draw=black},
+		darr/.style={-{Latex[length=2mm, width=1.5mm]}, line width=0.7pt, dashed, draw=black}
 	]
-		\node (init) [pbox] {1. Vector máscara $\mathbf{y}$\\aleatorio uniforme};
-		\node (hash) [pbox, right=1.2cm of init] {2. Desafío polinomial\\$c = H(\mathbf{A}\mathbf{y}, \mu)$};
-		\node (cand) [pbox, right=1.2cm of hash] {3. Firma candidata\\$\mathbf{z} = \mathbf{y} + c\mathbf{s}$};
+		% Fila 1: Generación y cómputo de firma candidata
+		\node (init) [pbox] at (-4.4, 1.4) {1. Vector máscara $\mathbf{y}$\\aleatorio uniforme};
+		\node (hash) [pbox] at (0, 1.4) {2. Desafío polinomial\\$c = H(\mathbf{A}\mathbf{y}, \mu)$};
+		\node (cand) [pbox] at (4.4, 1.4) {3. Firma candidata\\$\mathbf{z} = \mathbf{y} + c\mathbf{s}$};
 		
-		\node (dec) [dec, below=1.2cm of hash] {¿$\|\mathbf{z}\|_\infty < \gamma_1 - \beta$?};
-		\node (pub) [pbox, right=1.8cm of dec, text width=3.2cm] {\textbf{Firma Aceptada}\\$\sigma = (\mathbf{z}, c)$};
-		\node (abort) [errbox, left=1.8cm of dec] {\textbf{Abortar}\\Reintentar nuevo $\mathbf{y}$};
+		% Fila 2: Decisión y ramas de aceptación / rechazo
+		\node (abort) [errbox] at (-4.4, -1.4) {\textbf{Abortar}\\Reintentar nuevo $\mathbf{y}$};
+		\node (dec) [dec] at (0, -1.4) {¿$\|\mathbf{z}\|_\infty < \gamma_1 - \beta$?};
+		\node (pub) [pbox] at (4.4, -1.4) {\textbf{Firma Aceptada}\\$\sigma = (\mathbf{z}, c)$};
 		
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (init) -- (hash);
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (hash) -- (cand);
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (cand) |- (dec);
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (dec) -- node[above, font=\scriptsize\itshape] {Sí} (pub);
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (dec) -- node[above, font=\scriptsize\itshape] {No} (abort);
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.7pt, dashed] (abort) |- (init);
+		% Conexiones fila superior
+		\draw[arr] (init.east) -- (hash.west);
+		\draw[arr] (hash.east) -- (cand.west);
+		
+		% Transición de firma candidata hacia decisión (por el canal central, sin tocar ningún cuadro)
+		\draw[arr] (cand.south) -- ++(0, -0.65) -| (dec.north);
+		
+		% Ramas de decisión
+		\draw[arr] (dec.east) -- node[above=1pt, font=\scriptsize\rmfamily\itshape] {Sí} (pub.west);
+		\draw[arr] (dec.west) -- node[above=1pt, font=\scriptsize\rmfamily\itshape] {No} (abort.east);
+		
+		% Bucle de reintento: retorno vertical limpio sin solapamiento
+		\draw[darr] (abort.north) -- (init.south);
 	\end{tikzpicture}
 	\caption{Algoritmo de firma ML-DSA con muestreo por rechazo (\textit{Fiat-Shamir with aborts}).}
 	\label{fig:mldsa_abort}

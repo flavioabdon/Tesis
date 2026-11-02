@@ -12,62 +12,83 @@ La Figura \ref{fig:uml_casos_uso} expone el Diagrama de Casos de Uso Web UWE del
 
 \begin{figure}[!htbp]
 	\centering
-	\resizebox{0.86\textwidth}{!}{%
+	\resizebox{0.88\textwidth}{!}{%
 	\begin{tikzpicture}[
-		actor/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, minimum width=2.5cm, minimum height=0.75cm, font=\scriptsize, align=center},
-		uc/.style={ellipse, draw=black, fill=white, line width=0.8pt, minimum width=4.8cm, minimum height=0.72cm, font=\scriptsize, align=center, inner sep=1.2pt},
-		uc_err/.style={ellipse, draw=black, fill=white, double, double distance=1.2pt, line width=0.7pt, minimum width=4.8cm, minimum height=0.72cm, font=\scriptsize, align=center, inner sep=1.2pt},
+		uc/.style={ellipse, draw=black, fill=white, line width=0.8pt, minimum width=4.8cm, minimum height=0.72cm, font=\scriptsize\rmfamily, align=center, inner sep=1.2pt},
 		systembox/.style={rectangle, draw=black, dashed, line width=0.6pt, fill=none, rounded corners=3pt, inner sep=8pt},
 		assoc/.style={line width=0.7pt, draw=black},
-		include/.style={-{Latex[length=2mm, width=1.4mm]}, dashed, line width=0.7pt, draw=black, font=\tiny\itshape},
-		extend/.style={-{Latex[length=2mm, width=1.4mm]}, dashed, line width=0.7pt, draw=black, font=\tiny\itshape}
+		include/.style={-{Latex[length=2.2mm, width=1.5mm]}, dashed, line width=0.8pt, draw=black},
+		extend/.style={-{Latex[length=2.2mm, width=1.5mm]}, dashed, line width=0.8pt, draw=black},
+		monigote/.pic={
+			% Cabeza
+			\draw[line width=0.8pt, fill=white] (0, 0.48) circle (0.16cm);
+			% Tronco
+			\draw[line width=0.8pt] (0, 0.32) -- (0, -0.05);
+			% Brazos
+			\draw[line width=0.8pt] (-0.32, 0.18) -- (0.32, 0.18);
+			% Piernas
+			\draw[line width=0.8pt] (0, -0.05) -- (-0.22, -0.42);
+			\draw[line width=0.8pt] (0, -0.05) -- (0.22, -0.42);
+		}
 	]
-		% Actores Izquierda
-		\node[actor] (votante) at (-5.8, 0.5) {Votante ($V$)\\(Ciudadano / Auditor)};
-		\node[actor] (ar) at (-5.8, -3.8) {Autoridad de\\Registro ($AR$)};
+		% Actores Izquierda (Monigotes)
+		\coordinate (vot_pic) at (-6.4, 1.5);
+		\pic at (vot_pic) {monigote};
+		\node (votante) at (-6.4, 0.6) [font=\scriptsize\rmfamily, align=center] {\textbf{Votante ($V$)}\\(Ciudadano / Auditor)};
 		
-		% Actores Derecha
-		\node[actor] (sv) at (5.8, 0.5) {Servidor de\\Votación ($SV$)};
-		\node[actor] (ac) at (5.8, -3.8) {Autoridad de\\Conteo ($AC$)};
+		\coordinate (ar_pic) at (-6.4, -2.4);
+		\pic at (ar_pic) {monigote};
+		\node (ar) at (-6.4, -3.3) [font=\scriptsize\rmfamily, align=center] {\textbf{Autoridad de}\\\textbf{Registro ($AR$)}};
 		
-		% Casos de Uso con Estereotipos UWE
-		\node[uc] (uc1) at (0, 3.2) {\guillemotleft navigation\guillemotright\\CU1: Consultar Padrón y Acceder a Cabina};
-		\node[uc] (uc2) at (0, 2.0) {\guillemotleft process\guillemotright\\CU2: Emitir Credencial ML-DSA-65 ($AR$)};
-		\node[uc] (uc3) at (0, 0.8) {\guillemotleft process\guillemotright\\CU3: Seleccionar y Cifrar Voto (KEM-DEM)};
-		\node[uc] (uc4) at (0, -0.4) {\guillemotleft process\guillemotright\\CU4: Firmar Boleta Digitalmente (ML-DSA-65)};
-		\node[uc] (uc5) at (0, -1.6) {\guillemotleft process\guillemotright\\CU5: Validar Boleta y Control de Voto Único};
-		\node[uc] (uc6) at (0, -2.8) {\guillemotleft process\guillemotright\\CU6: Custodiar en Ánfora y Emitir Recibo};
-		\node[uc] (uc7) at (0, -4.0) {\guillemotleft process\guillemotright\\CU7: Desencapsular Lote Permutado ($dk_{\text{AC}}$)};
-		\node[uc] (uc8) at (0, -5.2) {\guillemotleft navigation\guillemotright\\CU8: Auditar Recibo SHA3-256 y Acta Oficial};
-		\node[uc_err] (uc9) at (0, -6.4) {\guillemotleft process\guillemotright\\CU9: Bloquear y Alertar Intento de Doble Voto};
+		% Actores Derecha (Monigotes)
+		\coordinate (sv_pic) at (6.4, -1.7);
+		\pic at (sv_pic) {monigote};
+		\node (sv) at (6.4, -2.6) [font=\scriptsize\rmfamily, align=center] {\textbf{Servidor de}\\\textbf{Votación ($SV$)}};
+		
+		\coordinate (ac_pic) at (6.4, -4.8);
+		\pic at (ac_pic) {monigote};
+		\node (ac) at (6.4, -5.7) [font=\scriptsize\rmfamily, align=center] {\textbf{Autoridad de}\\\textbf{Conteo ($AC$)}};
+		
+		% Casos de Uso con Estereotipos UWE (distribución vertical con espacio suficiente)
+		\node[uc] (uc1) at (0, 3.5) {«navigation»\\CU1: Consultar Padrón y Acceder a Cabina};
+		\node[uc] (uc2) at (0, 2.2) {«process»\\CU2: Emitir Credencial ML-DSA-65 ($AR$)};
+		\node[uc] (uc3) at (0, 0.9) {«process»\\CU3: Seleccionar y Cifrar Voto (KEM-DEM)};
+		\node[uc] (uc4) at (0, -0.4) {«process»\\CU4: Firmar Boleta Digitalmente (ML-DSA-65)};
+		\node[uc] (uc5) at (0, -1.7) {«process»\\CU5: Validar Boleta y Control de Voto Único};
+		\node[uc] (uc6) at (0, -3.0) {«process»\\CU6: Custodiar en Ánfora y Emitir Recibo};
+		\node[uc] (uc7) at (0, -4.3) {«process»\\CU7: Desencapsular Lote Permutado ($dk_{\text{AC}}$)};
+		\node[uc] (uc8) at (0, -5.6) {«navigation»\\CU8: Auditar Recibo SHA3-256 y Acta Oficial};
+		\node[uc] (uc9) at (0, -6.9) {«process»\\CU9: Bloquear y Alertar Intento de Doble Voto};
 		
 		% Límite del Sistema
 		\begin{scope}[on background layer]
-			\node[systembox, fit=(uc1) (uc9), label={[font=\small, text=black]north:Límite de la Aplicación Web Electoral Post-Cuántica (Perfil UWE — FIPS 203 / 204)}] (sys) {};
+			\node[systembox, fit=(uc1) (uc9), label={[font=\small\rmfamily\bfseries, text=black]north:Límite de la Aplicación Web Electoral Post-Cuántica (Perfil UWE — FIPS 203 / 204)}] (sys) {};
 		\end{scope}
 		
-		% Relaciones Votante
-		\draw[assoc] (votante) -- (uc1);
-		\draw[assoc] (votante) -- (uc3);
-		\draw[assoc] (votante) -- (uc8);
+		% Relaciones Votante (desde el monigote)
+		\draw[assoc] ([xshift=0.32cm, yshift=0.18cm]vot_pic) -- (uc1);
+		\draw[assoc] ([xshift=0.32cm, yshift=0.18cm]vot_pic) -- (uc3);
+		\draw[assoc] ([xshift=0.32cm, yshift=0.18cm]vot_pic) -- (uc8);
 		
-		% Relaciones AR
-		\draw[assoc] (ar) -- (uc1);
-		\draw[assoc] (ar) -- (uc2);
+		% Relaciones AR (desde el monigote)
+		\draw[assoc] ([xshift=0.32cm, yshift=0.18cm]ar_pic) -- (uc1);
+		\draw[assoc] ([xshift=0.32cm, yshift=0.18cm]ar_pic) -- (uc2);
 		
-		% Relaciones SV
-		\draw[assoc] (sv) -- (uc5);
-		\draw[assoc] (sv) -- (uc6);
+		% Relaciones SV (desde el monigote)
+		\draw[assoc] ([xshift=-0.32cm, yshift=0.18cm]sv_pic) -- (uc5);
+		\draw[assoc] ([xshift=-0.32cm, yshift=0.18cm]sv_pic) -- (uc6);
 		
-		% Relaciones AC
-		\draw[assoc] (ac) -- (uc7);
-		\draw[assoc] (ac) -- (uc8);
+		% Relaciones AC (desde el monigote)
+		\draw[assoc] ([xshift=-0.32cm, yshift=0.18cm]ac_pic) -- (uc7);
+		\draw[assoc] ([xshift=-0.32cm, yshift=0.18cm]ac_pic) -- (uc8);
 		
-		% Inclusiones y extensiones
-		\draw[include] (uc3) -- (uc4) node[midway, right] {\guillemotleft include\guillemotright};
-		\draw[include] (uc5) -- (uc6) node[midway, right] {\guillemotleft include\guillemotright};
-		\draw[include] (uc7) -- (uc8) node[midway, right] {\guillemotleft include\guillemotright};
-		\draw[extend] (uc9) -- (uc5) node[midway, right] {\guillemotleft extend\guillemotright};
+		% Inclusiones (arcos laterales externos a la derecha, con etiqueta clara y visible)
+		\draw[include] (uc3.east) to[out=-35, in=35] node[midway, right=2pt, font=\scriptsize\rmfamily\itshape] {«include»} (uc4.east);
+		\draw[include] (uc5.east) to[out=-35, in=35] node[midway, right=2pt, font=\scriptsize\rmfamily\itshape] {«include»} (uc6.east);
+		\draw[include] (uc7.east) to[out=-35, in=35] node[midway, right=2pt, font=\scriptsize\rmfamily\itshape] {«include»} (uc8.east);
+		
+		% Extensión (arco lateral externo a la izquierda desde CU9 hacia CU5, sin cruzar los nodos intermedios)
+		\draw[extend] (uc9.west) to[out=145, in=215, looseness=1.2] node[midway, left=2pt, font=\scriptsize\rmfamily\itshape] {«extend»} (uc5.west);
 	\end{tikzpicture}
 	}%
 	\caption{Diagrama de Casos de Uso Web UWE con estereotipos \texttt{«navigation»} y \texttt{«process»}.}
