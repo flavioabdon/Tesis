@@ -3,9 +3,9 @@
 \label{sec:tabla_propiedades_limites}
 % =============================================================================
 
-Con el propósito de delimitar de manera rigurosa y transparente el alcance del protocolo de votación electrónica diseñado, el Cuadro \ref{tab:propiedades_limites_protocolo} sistematiza cada una de las propiedades de seguridad fundamentales, indicando su nivel de cobertura en el sistema, los mecanismos criptográficos u operativos implementados y la evidencia formal o experimental que las sustenta.
+Con el propósito de delimitar de manera rigurosa y transparente el alcance del protocolo de votación electrónica diseñado, la Tabla \ref{tab:propiedades_limites_protocolo} sistematiza cada una de las propiedades de seguridad fundamentales, indicando su nivel de cobertura en el sistema, los mecanismos criptográficos u operativos implementados y la evidencia formal o experimental que las sustenta.
 
-\begin{table}[H]
+\begin{table}[!htbp]
 \centering
 \renewcommand{\arraystretch}{1.3}
 \small
@@ -15,11 +15,13 @@ Con el propósito de delimitar de manera rigurosa y transparente el alcance del 
 \hline
 \textbf{Propiedad} & \textbf{¿Cubierta?} & \textbf{Mecanismo Tecnológico} & \textbf{Tipo de Evidencia / Soporte} \\
 \hline
-Confidencialidad del Voto & Sí (parcial) & KEM-DEM híbrido: ML-KEM-768 + AES-256-GCM (AAD) & Lema formal \texttt{secreto\_voto} en Tamarin y reducción IND-CCA2 \\
+Ejecutabilidad del Protocolo & Sí & Intercambio de mensajes conforme a las especificaciones & Lema formal de alcanzabilidad \texttt{ejecutabilidad} en Tamarin Prover \\
 \hline
-Integridad del Sufragio & Sí & Firma post-cuántica ML-DSA-65 (FIPS 204) & Lema \texttt{integridad\_voto} y reducción EUF-CMA de Module-SIS \\
+Confidencialidad del Voto & Sí (parcial) & KEM-DEM híbrido: ML-KEM-768 + AES-256-GCM (AAD) & Lema formal \texttt{secreto\_voto} en Tamarin Prover y reducción IND-CCA2 \\
 \hline
-Autenticidad y Anti-Replay & Sí & Credencial institucional AR y acuerdo inyectivo & Lema \texttt{autenticidad\_votante} en Tamarin Prover \\
+Integridad del Sufragio & Sí & Firma post-cuántica ML-DSA-65 (FIPS 204) & Lema formal \texttt{integridad\_voto} y reducción EUF-CMA de Module-SIS \\
+\hline
+Autenticidad y Anti-Replay & Sí & Credencial institucional AR y acuerdo inyectivo & Lema formal \texttt{autenticidad\_votante} en Tamarin Prover \\
 \hline
 Unicidad y Elegibilidad & Sí & Control de estado lineal en base de datos (transacción atómica) & Lema formal \texttt{unicidad} (modelo de estado no mutable) \\
 \hline

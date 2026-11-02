@@ -35,7 +35,7 @@ La Figura \ref{fig:uml_casos_uso} expone los Casos de Uso del sistema, detalland
 		\node[uc] (uc8) at (0, -5.4) {CU8: Escrutinio y Auditoría SHA3};
 		\node[uc, draw=PQCCrimson] (uc9) at (0, -6.6) {CU9: Alerta Intento Doble Voto};
 		
-		% Cuadro del Sistema
+		% Límite del Sistema
 		\begin{scope}[on background layer]
 			\node[systembox, fit=(uc1) (uc9), label={[font=\bfseries\small, text=PQCDark]north:Límite del Sistema de Votación Post-Cuántica (FIPS 203 / 204)}] (sys) {};
 		\end{scope}
@@ -94,7 +94,7 @@ La Figura \ref{fig:uml_actividades} detalla el Diagrama de Actividades UML, ilus
 		
 		% Actividades Cliente
 		\node[act, below=0.6cm of start] (a1) {1. Presentar credencial y seleccionar candidato};
-		\node[act, below=0.6cm of a1] (a2) {2. Encapsular clave simétrica\\$(K, ct_{kem}) \leftarrow \text{ML-KEM.Encaps}(ek_{SV})$};
+		\node[act, below=0.6cm of a1] (a2) {2. Encapsular clave simétrica\\$(K, ct_{kem}) \leftarrow \text{ML-KEM.Encaps}(ek_{AC})$};
 		\node[act, below=0.6cm of a2] (a3) {3. Cifrar voto con AES-256-GCM\\$c_{voto} \leftarrow \text{Enc}(K, m)$ y firmar con $sk_V$};
 		\node[act, below=0.6cm of a3] (a4) {4. Transmitir PaqueteVoto\\al Servidor por HTTPS};
 		

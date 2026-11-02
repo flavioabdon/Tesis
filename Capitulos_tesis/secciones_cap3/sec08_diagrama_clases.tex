@@ -4,126 +4,182 @@
 
 \subsection{Diagrama de Clases Detallado del Sistema}
 
-La Figura \ref{fig:uml_clases_detallado} especifica de manera exhaustiva el Diagrama de Clases UML del prototipo, detallando la visibilidad de atributos, tipos concretos de datos de longitud fija, signaturas completas de métodos con parámetros y tipos de retorno, y relaciones de composición y asociación.
+La Figura \ref{fig:uml_clases_detallado} especifica de manera detallada el Diagrama de Clases UML del prototipo, detallando la visibilidad de atributos, tipos concretos de datos de longitud fija, signaturas completas de métodos con parámetros y tipos de retorno, y relaciones de composición y asociación conforme al diseño vigente.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
 	\centering
+	\resizebox{\textwidth}{!}{%
 	\begin{tikzpicture}[
-		cls/.style={rectangle, draw=PQCMainBlue, thick, fill=white, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=4pt},
+		cls/.style={rectangle, draw=PQCMainBlue, thick, fill=white, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3.5pt},
 		assoc/.style={-{Latex[length=2mm]}, thick, draw=black!75},
-		comp/.style={-{Diamond[length=3mm, fill=black]}, thick, draw=black!75}
+		comp/.style={{Diamond[length=2.5mm, fill=black]}-, thick, draw=black!75},
+		dep/.style={-{Latex[length=2mm]}, thick, dashed, draw=black!75}
 	]
-		% Clase Votante
-		\node[cls] (V) at (-4.2, 3.2) {
+		% Fila Superior: Actores Principales
+		% Votante
+		\node[cls] (V) at (-6.2, 4.0) {
 			\textbf{\textsf{VotantePQC}}\\
-			\rule{5.0cm}{0.3pt}\\
+			\rule{4.6cm}{0.3pt}\\
 			- id\_v: str\\
 			- sk\_v: bytes [4032]\\
 			- pk\_v: bytes [1952]\\
 			- credencial: CredencialVotante\\
-			\rule{5.0cm}{0.3pt}\\
-			+ formular\_voto(candidato: str): PaqueteVoto\\
-			+ encapsular\_clave(ek\_sv: bytes): Tuple[bytes, bytes]\\
-			+ firmar\_boleta(boleta: BoletaSufragio): bytes\\
-			+ to\_dict(): dict
+			\rule{4.6cm}{0.3pt}\\
+			+ formular\_voto(candidato: str, id\_elec: str): PaqueteVoto\\
+			+ encapsular\_clave(ek\_ac: bytes): Tuple[bytes, bytes]\\
+			+ firmar\_boleta(boleta: BoletaSufragio): bytes
 		};
-		
-		% Clase AR
-		\node[cls] (AR) at (-4.2, -1.8) {
+
+		% Autoridad de Registro
+		\node[cls] (AR) at (-6.2, -0.6) {
 			\textbf{\textsf{AutoridadRegistroPQC}}\\
-			\rule{5.0cm}{0.3pt}\\
+			\rule{4.6cm}{0.3pt}\\
 			- nombre: str\\
 			- sk\_ar: bytes [4032]\\
 			- pk\_ar: bytes [1952]\\
-			- padron\_electoral: Dict[str, dict]\\
-			\rule{5.0cm}{0.3pt}\\
+			\rule{4.6cm}{0.3pt}\\
 			+ registrar\_ciudadano(id\_v: str, pk\_v: bytes): CredencialVotante\\
 			+ verificar\_identidad(id\_v: str): bool\\
 			+ exportar\_clave\_publica(): bytes
 		};
-		
-		% Clase Servidor
-		\node[cls] (SV) at (4.2, 3.2) {
+
+		% Servidor de Votacion (Sin clave privada KEM ni acceso a desencapsulamiento)
+		\node[cls] (SV) at (5.5, 4.0) {
 			\textbf{\textsf{ServidorVotacionPQC}}\\
 			\rule{5.2cm}{0.3pt}\\
-			- ek\_sv: bytes [1184]\\
-			- \_dk\_sv: bytes [2400]\\
+			- ek\_ac: bytes [1184]\\
 			- sk\_sv: bytes [4032]\\
 			- pk\_sv: bytes [1952]\\
 			- pk\_ar: bytes [1952]\\
 			- anfora\_digital: List[BoletaSufragio]\\
-			- registro\_sufragio: Set[str]\\
 			\rule{5.2cm}{0.3pt}\\
 			+ recepcionar\_voto(paquete: PaqueteVoto): ReciboVotacion\\
 			+ verificar\_credencial(cred: CredencialVotante): bool\\
 			+ verificar\_firma\_boleta(blt: BoletaSufragio, sig: bytes): bool\\
-			+ emitir\_recibo(blt: BoletaSufragio): ReciboVotacion\\
-			+ obtener\_dk\_para\_conteo(): bytes
+			+ clausurar\_urna(): List[BoletaSufragio]\\
+			+ emitir\_recibo(blt: BoletaSufragio): ReciboVotacion
 		};
-		
-		% Clase Conteo
-		\node[cls] (AC) at (4.2, -1.8) {
+
+		% Autoridad de Conteo (Custodia exclusiva de dk_ac)
+		\node[cls] (AC) at (5.5, -0.6) {
 			\textbf{\textsf{AutoridadConteoPQC}}\\
 			\rule{5.2cm}{0.3pt}\\
-			- \_dk\_servidor: bytes [2400]\\
+			- dk\_ac: bytes [2400]\\
+			- ek\_ac: bytes [1184]\\
 			- pk\_ar: bytes [1952]\\
-			- resultados\_conteo: Dict[str, int]\\
 			\rule{5.2cm}{0.3pt}\\
-			+ desencapsular\_urna(anfora: List[BoletaSufragio]): ResultadoEscrutinio\\
-			+ descifrar\_boleta(blt: BoletaSufragio): str\\
-			+ emitir\_acta\_escrutinio(): ResultadoEscrutinio
+			+ generar\_par\_kem(): Tuple[bytes, bytes]\\
+			+ exportar\_ek(): bytes\\
+			+ escrutinio(anfora: List[BoletaSufragio]): ResultadoEscrutinio
 		};
-		
-		% Clases de Datos
-		\node[cls, fill=BoxBgBlue] (Blt) at (0, 0.6) {
+
+		% Clases de Datos / Estructuras Intermedias (Centro)
+		% PaqueteVoto (El "todo" que compone Boleta y Credencial)
+		\node[cls, fill=BoxBgTeal] (Pkt) at (-0.5, 4.0) {
+			\textbf{\textsf{PaqueteVoto}}\\
+			\rule{4.4cm}{0.3pt}\\
+			+ boleta: BoletaSufragio\\
+			+ credencial: CredencialVotante\\
+			+ firma\_votante: bytes [3309]\\
+			\rule{4.4cm}{0.3pt}\\
+			+ to\_dict(): dict
+		};
+
+		% Credencial
+		\node[cls, fill=BoxBgPurple] (Cred) at (-0.5, 1.4) {
+			\textbf{\textsf{CredencialVotante}}\\
+			\rule{4.4cm}{0.3pt}\\
+			+ id\_votante: str\\
+			+ pk\_votante: bytes [1952]\\
+			+ timestamp\_emision: int\\
+			+ firma\_ar: bytes [3309]\\
+			\rule{4.4cm}{0.3pt}\\
+			+ payload\_bytes(): bytes
+		};
+
+		% Boleta de Sufragio (Anonima, sin credencial ni identidad)
+		\node[cls, fill=BoxBgBlue] (Blt) at (-0.5, -1.6) {
 			\textbf{\textsf{BoletaSufragio}}\\
 			\rule{4.4cm}{0.3pt}\\
+			+ id\_eleccion: str\\
 			+ ciphertext\_kem: bytes [1088]\\
-			+ voto\_cifrado: bytes\\
+			+ voto\_cifrado: bytes [48]\\
 			+ nonce\_aead: bytes [12]\\
-			+ credencial: CredencialVotante\\
-			+ timestamp\_emision: float\\
 			\rule{4.4cm}{0.3pt}\\
-			+ payload\_bytes(): bytes\\
-			+ to\_dict(): dict
+			+ payload\_bytes(): bytes
 		};
-		
-		\node[cls, fill=BoxBgGreen] (Rec) at (0, -4.2) {
+
+		% Recibo Votacion
+		\node[cls, fill=BoxBgGreen] (Rec) at (5.5, -4.5) {
 			\textbf{\textsf{ReciboVotacion}}\\
-			\rule{4.4cm}{0.3pt}\\
+			\rule{4.6cm}{0.3pt}\\
 			+ hash\_boleta: bytes [32]\\
-			+ timestamp\_recibo: float\\
+			+ timestamp\_recibo: int\\
 			+ firma\_servidor: bytes [3309]\\
+			\rule{4.6cm}{0.3pt}\\
+			+ payload\_bytes(): bytes
+		};
+
+		% Resultado Escrutinio
+		\node[cls, fill=BoxBgAmber] (Res) at (-0.5, -4.5) {
+			\textbf{\textsf{ResultadoEscrutinio}}\\
 			\rule{4.4cm}{0.3pt}\\
-			+ payload\_bytes(): bytes\\
+			+ totales\_opciones: Dict[str, int]\\
+			+ total\_votos: int\\
+			+ hashes\_auditoria: List[str]\\
+			\rule{4.4cm}{0.3pt}\\
 			+ to\_dict(): dict
 		};
-		
-		% Relaciones
-		\draw[assoc] (V) -- (SV) node[midway, above, font=\tiny\sffamily] {envía PaqueteVoto};
-		\draw[assoc] (AR) -- (V) node[midway, left, font=\tiny\sffamily] {emite Credencial};
-		\draw[assoc] (SV) -- (AC) node[midway, right, font=\tiny\sffamily] {entrega Ánfora};
-		\draw[comp] (Blt) -- (V);
-		\draw[assoc] (SV) -- (Rec) node[midway, right, font=\tiny\sffamily] {genera};
+
+		% Relaciones y Conectores
+		% Votante crea/envía PaqueteVoto
+		\draw[assoc] (V) -- (Pkt) node[midway, above, font=\tiny\sffamily] {formula};
+		% PaqueteVoto contiene Boleta y Credencial (Composición: rombo en el "todo" Pkt)
+		\draw[comp] (Pkt) -- (Cred);
+		\draw[comp] (Pkt.south) to[bend right=20] (Blt.north);
+		% Votante recibe credencial de AR
+		\draw[assoc] (AR) -- (V) node[midway, left, font=\tiny\sffamily] {emite credencial};
+		% SV recepciona PaqueteVoto
+		\draw[assoc] (Pkt) -- (SV) node[midway, above, font=\tiny\sffamily] {envía a SV};
+		% SV custodia Boletas (desasociadas)
+		\draw[assoc] (SV.west) to[bend left=15] (Blt.east);
+		% SV emite Recibo
+		\draw[assoc] (SV) -- (Rec) node[midway, right, font=\tiny\sffamily] {emite};
+		% SV transfiere boletas permutadas a AC
+		\draw[assoc] (SV) -- (AC) node[midway, right, font=\tiny\sffamily] {lote permutado};
+		% AC procesa boletas y genera ResultadoEscrutinio
+		\draw[assoc] (AC) -- (Res) node[midway, below, font=\tiny\sffamily] {genera acta};
 	\end{tikzpicture}
-	\caption{Diagrama UML de Clases detallado y estructuras de datos.}
+	}%
+	\caption{Diagrama UML de Clases detallado y estructuras de datos con segregación estricta de $dk_{\text{AC}}$.}
 	\label{fig:uml_clases_detallado}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
 
-\subsection{Estructuras de Datos y Serialización Canónica RFC 8785}
+\subsection{Estructuras de Datos y Serialización Determinista}
 
-Para evitar vulnerabilidades de maleabilidad en las que dos representaciones de un mismo diccionario JSON generen firmas distintas debido a espacios en blanco o el orden de las claves, el módulo \texttt{crypto\_utils.py} implementa la serialización determinista canónica según el estándar RFC 8785:
+Para evitar vulnerabilidades de maleabilidad en las que dos representaciones sintácticas de un mismo objeto JSON generen firmas digitales divergentes debido al espaciado o al orden arbitrario de las claves, el protocolo exige un mecanismo de serialización determinista y reproducible:
+
+\begin{enumerate}
+	\item \textbf{Implementación Actual en el Prototipo:} El módulo \texttt{crypto\_utils.py} implementa una serialización canónica basada en la biblioteca estándar de Python:
 \begin{verbatim}
-def canonical_json(data: dict) -> bytes:
-    """Serializa un diccionario JSON de forma canonica y determinista (RFC 8785)."""
+def canonical_json(obj: Any) -> bytes:
+    """Serializa un objeto a JSON canonico determinista."""
     return json.dumps(
-        data,
+        obj,
         sort_keys=True,
-        separators=(',', ':'),
+        separators=(",", ":"),
         ensure_ascii=False
-    ).encode('utf-8')
+    ).encode("utf-8")
 \end{verbatim}
-Esta función garantiza que en cualquier entorno de ejecución, los datos firmados por el votante y recibidos por el servidor coincidan bit a bit sin discrepancias sintácticas.
+	Esta función asegura la ordenación lexicográfica de claves y la eliminación de espacios en blanco. No obstante, no satisface la totalidad de los requisitos del estándar RFC 8785 (\textit{JSON Canonicalization Scheme}, JCS), particularmente en lo relativo a la normalización estricta de números en punto flotante según IEEE 754 y el escape canónico de caracteres Unicode.
+	
+	\item \textbf{Diseño Objetivo y Especificación Formal:} Con el fin de garantizar interoperabilidad multiplataforma formal, la arquitectura de diseño define como especificación objetivo la adopción de una biblioteca conforme a JCS (RFC 8785) utilizando exclusivamente representaciones enteras y cadenas de caracteres (evitando campos numéricos de punto flotante en marcas temporales), o alternativamente el estándar CBOR determinista (RFC 8949, \textit{Concise Binary Object Representation}). Esta discrepancia de implementación queda formalmente registrada en el inventario de pendientes del prototipo.
 
-% =============================================================================
+	\item \textbf{Separación Criptográfica de Dominio en Firmas ML-DSA:} Para prevenir ataques de confusión de tipo y reuso cruzado de firmas entre diferentes contextos del protocolo, la especificación incorpora separación de dominio mediante la cadena de contexto (\textit{context string}) estipulada en el estándar FIPS 204 (sección 5.3):
+	\begin{itemize}
+		\item Credenciales expedidas por la AR: \texttt{ctx = "ELEC\_CRED\_AR\_V1"}.
+		\item Boletas de sufragio firmadas por el votante: \texttt{ctx = "ELEC\_BOLETA\_V1"}.
+		\item Recibos de votación emitidos por el Servidor: \texttt{ctx = "ELEC\_RECIBO\_SV\_V1"}.
+	\end{itemize}
+\end{enumerate}

@@ -24,13 +24,14 @@ Para transformar la noción abstracta de confidencialidad en una garantía técn
 	\item \textbf{Redondeo Temporal de Marcas de Tiempo:} Los campos temporales en el padrón electoral y en el ánfora se redondean por lote o por hora de sufragio, imposibilitando ataques de enlace estadístico basados en correlación de marcas de tiempo al milisegundo.
 	\item \textbf{Codificación de Voto de Longitud Fija:} El voto del ciudadano se codifica con longitud constante de 32 bytes (1 byte para el índice de la opción y 31 bytes de relleno criptográficamente seguro CSPRNG). Esto garantiza que el texto cifrado $c_{\text{voto}}$ posea exactamente 48 bytes (32 bytes de carga útil + 16 bytes de etiqueta GMAC) para todos los candidatos, neutralizando fugas por análisis de tamaño de tráfico.
 	\item \textbf{Uso de $id_{\text{eleccion}}$ como Datos Autenticados Adicionales (AAD):} Tanto el identificador de la elección $id_{\text{eleccion}}$ como el texto cifrado $ct_{\text{kem}}$ se incorporan como AAD en el cifrado AES-256-GCM, vinculando criptográficamente la boleta a su elección específica e impidiendo ataques de trasplante entre distintas mesas.
+	\item \textbf{Emisión y Verificabilidad del Recibo de Sufragio:} Tras custodiar la boleta, el SV emite el recibo firmado $\text{sign}(h(\text{boleta}), sk_{\text{SV}})$. Conforme a los límites del análisis formal detallados en la Sección \ref{sec:practica_tamarin}, en el modelo simbólico de \texttt{protocolo\_v3.spthy} la regla del servidor introduce el término fresco $\sim\!ts\_recibo$ que permanece en el estado lineal interno del SV; por ende, la verificabilidad de correspondencia del recibo individual en manos del votante constituye una propiedad de auditoría funcional de aplicación no respaldada directamente por un lema formal en Tamarin Prover.
 \end{itemize}
 
 \subsection{Modelo de Adversarios y Matriz de Visibilidad}
 
-El Cuadro \ref{tab:modelo_adversarios} define formalmente el modelo de amenazas considerado, detallando qué información puede observar cada tipo de adversario y las garantías ofrecidas.
+La Tabla \ref{tab:modelo_adversarios} define formalmente el modelo de amenazas considerado, detallando qué información puede observar cada tipo de adversario y las garantías ofrecidas.
 
-\begin{table}[H]
+\begin{table}[!htbp]
 \centering
 \renewcommand{\arraystretch}{1.3}
 \small

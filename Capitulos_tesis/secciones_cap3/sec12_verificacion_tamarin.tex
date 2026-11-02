@@ -24,10 +24,10 @@ El protocolo se formaliza en el archivo \texttt{protocolo\_v3.spthy} mediante un
 
 El comportamiento y alcance de las demostraciones descansan en seis supuestos formales declarados explícitamente, sintetizados en la Tabla \ref{tab:supuestos_modelo_tamarin}.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 	\centering
 	\small
-	\begin{tabular}{llp{5.5cm}p{4.5cm}}
+	\begin{tabularx}{\textwidth}{p{0.6cm}p{2.8cm}X>{\raggedright\arraybackslash}p{4.2cm}}
 		\toprule
 		\textbf{Id.} & \textbf{Supuesto Declarado} & \textbf{Definición en el Sistema Electoral} & \textbf{Tipo en el Modelo Formal} \\
 		\midrule
@@ -38,7 +38,7 @@ El comportamiento y alcance de las demostraciones descansan en seis supuestos fo
 		\textbf{S5} & Criptografía perfecta (Dolev--Yao) & Las primitivas se modelan como funciones algebraicas libres; no prueba seguridad cuántica. & Supuesto fundamental del modelo simbólico. \\
 		\textbf{S6} & Honestidad de la AC en el conteo & La AC publica fielmente los votos descifrados; no incluye prueba de descifrado verificable. & Supuesto de confianza operacional. \\
 		\bottomrule
-	\end{tabular}
+	\end{tabularx}
 	\caption{Supuestos declarados y restricciones del modelo formal en Tamarin Prover.}
 	\label{tab:supuestos_modelo_tamarin}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Especificación formal protocolo\_v3.spthy.}}
@@ -66,7 +66,8 @@ Los identificadores criptográficos SHA-256 de las especificaciones analizadas s
 
 El comando de ejecución por lotes incorpora un límite de memoria de 8 GB para el recolector de basura de Haskell (\texttt{-M8G}) y un límite temporal de 1800 segundos por proceso:
 \begin{verbatim}
-tamarin-prover --auto-sources --prove protocolo_v3.spthy +RTS -N4 -M8G -RTS
+tamarin-prover --auto-sources --prove \
+  protocolo_v3.spthy +RTS -N4 -M8G -RTS
 \end{verbatim}
 
 Cabe señalar que al ejecutar la especificación sin la opción de derivación automática de fuentes (\texttt{--auto-sources}), el análisis hacia atrás no terminó debido a la exploración no acotada de preimágenes para términos estructurados en el canal público. La opción \texttt{--auto-sources} deriva automáticamente el lema auxiliar de tipado \texttt{AUTO\_typing}, resolviendo las restricciones de fuentes.
@@ -77,10 +78,10 @@ Cabe señalar que al ejecutar la especificación sin la opción de derivación a
 
 La Tabla \ref{tab:resultados_tamarin} resume los resultados obtenidos en la verificación formal por lotes para los cinco lemas del protocolo, junto con el lema auxiliar derivado y el tiempo total de procesamiento.
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 	\centering
 	\small
-	\begin{tabular}{llccr}
+	\begin{tabularx}{\textwidth}{lXccr}
 		\toprule
 		\textbf{Lema Formal} & \textbf{Propiedad Evaluada} & \textbf{Cuantificación} & \textbf{Estado} & \textbf{Pasos} \\
 		\midrule
@@ -94,7 +95,7 @@ La Tabla \ref{tab:resultados_tamarin} resume los resultados obtenidos en la veri
 		\midrule
 		\multicolumn{3}{l}{\textbf{Tiempo total de ejecución por lotes:}} & & \textbf{4,58 s} \\
 		\bottomrule
-	\end{tabular}
+	\end{tabularx}
 	\caption{Resultados de la verificación formal en Tamarin Prover 1.12.0 para protocolo\_v3.spthy.}
 	\label{tab:resultados_tamarin}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Salida del motor Tamarin Prover 1.12.0 y Maude 3.5.1 (archivo logs/resumen\_v3.txt).}}

@@ -22,15 +22,37 @@ Mientras que la verificación simbólica en Tamarin Prover demuestra que la lóg
 	\end{itemize}
 
 	\item \textbf{Paso 3: Unicidad del Sufragio por Control de Estado en el Servidor:}
-	La prevención del doble voto no descansa en supuestos criptográficos computacionales, sino en el control de estado transaccional atómico en el servidor de base de datos.
+	La prevención del doble voto no descansa en supuestos criptográficos computacionales, sino en el control de estado transaccional atómico en el motor de base de datos relacional.
 	\begin{itemize}
-		\item La verificación formal en Tamarin modela este control mediante la transición lineal estricta $\text{NoHaVotado}(id_V) \to \text{YaVoto}(id_V)$.
-		\item En el prototipo físico, esto se materializa mediante una transacción atómica con nivel de aislamiento serializable:
-		\begin{verbatim}
-UPDATE padron_electoral 
-SET ha_votado = TRUE, fecha_sufragio = NOW() 
-WHERE id_votante = ? AND id_eleccion = ? AND ha_votado = FALSE;
-		\end{verbatim}
-		Si la sentencia afecta cero filas (porque el votante ya sufragó en una solicitud previa concurrente o idéntica), el servidor rechaza inmediatamente la boleta sin invocar operaciones de ánfora, garantizando unicidad estricta y absoluta independencia de la capacidad de cómputo del adversario.
+		\item En el modelo formal de Tamarin Prover, este control se abstrae mediante la transición estricta de consumo del hecho lineal de un solo uso $\text{NoHaVotado}(id_V) \to \text{YaVoto}(id_V)$.
+		\item En la arquitectura de persistencia del prototipo, esta propiedad se materializa mediante una transacción atómica bajo nivel de aislamiento serializable que agrupa la actualización del padrón y el registro en el ánfora:
+\begin{verbatim}
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+-- 1. Actualizacion atomica condicional del padron
+UPDATE tbl_padron_votantes 
+SET ha_votado = TRUE, 
+    timestamp_voto = date_trunc('hour', CURRENT_TIMESTAMP)
+WHERE id_votante = ? 
+  AND id_eleccion = ? 
+  AND ha_votado = FALSE;
+
+-- Si UPDATE afecta 0 filas (ya voto), se ejecuta
+-- ROLLBACK inmediato y se rechaza la boleta.
+
+-- 2. Insercion de la boleta disociada en el anfora
+INSERT INTO tbl_anfora_boletas (
+    id_boleta, id_eleccion, ciphertext_kem, 
+    voto_cifrado, nonce_aead, hash_boleta_sha3, 
+    timestamp_recepcion
+) VALUES (
+    ?, ?, ?, 
+    ?, ?, ?, 
+    date_trunc('hour', CURRENT_TIMESTAMP)
+);
+
+COMMIT;
+\end{verbatim}
+		Esta secuencia transaccional vincula directamente la operación de base de datos con el invariante formal del modelo: si la cláusula condicional detecta que \texttt{ha\_votado = TRUE}, el motor rechaza el sufragio antes de alterar el ánfora digital, logrando que la garantía de unicidad se mantenga con independencia de la capacidad computacional del adversario.
 	\end{itemize}
 \end{enumerate}

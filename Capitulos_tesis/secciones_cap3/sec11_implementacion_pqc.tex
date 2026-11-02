@@ -25,8 +25,10 @@ El archivo de cabecera \texttt{src/pqc/pqc\_core.h} define la interfaz exportada
 #define MLKEM768_SSBYTES          32
 
 int pqc_mlkem768_keypair(uint8_t *pk, uint8_t *sk);
-int pqc_mlkem768_encaps(uint8_t *ct, uint8_t *ss, const uint8_t *pk);
-int pqc_mlkem768_decaps(uint8_t *ss, const uint8_t *ct, const uint8_t *sk);
+int pqc_mlkem768_encaps(uint8_t *ct, uint8_t *ss, 
+                        const uint8_t *pk);
+int pqc_mlkem768_decaps(uint8_t *ss, const uint8_t *ct, 
+                        const uint8_t *sk);
 
 // ML-DSA-65 (FIPS 204)
 #define MLDSA65_PUBLICKEYBYTES    1952
@@ -34,69 +36,151 @@ int pqc_mlkem768_decaps(uint8_t *ss, const uint8_t *ct, const uint8_t *sk);
 #define MLDSA65_SIGNATUREBYTES    3309
 
 int pqc_mldsa65_keypair(uint8_t *pk, uint8_t *sk);
-int pqc_mldsa65_sign(uint8_t *sig, size_t *siglen, const uint8_t *m, 
-                     size_t mlen, const uint8_t *sk);
-int pqc_mldsa65_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, 
-                       size_t mlen, const uint8_t *pk);
+int pqc_mldsa65_sign(uint8_t *sig, size_t *siglen, 
+                     const uint8_t *m, size_t mlen, 
+                     const uint8_t *sk);
+int pqc_mldsa65_verify(const uint8_t *sig, size_t siglen, 
+                       const uint8_t *m, size_t mlen, 
+                       const uint8_t *pk);
 
 #endif
 \end{verbatim}
 
-La compilación genera la biblioteca compartida \texttt{libpqc\_core.dylib} (en entorno macOS ARM64) o \texttt{libpqc\_core.so} (en servidores Linux x86\_64) empleando el compilador Clang/GCC con banderas de máxima optimización (\texttt{-O3 -fPIC -shared}).
+La compilación genera la biblioteca compartida \texttt{libpqc\_core.dylib} (en entorno macOS ARM64) o \texttt{libpqc\_core.so} (en servidores Linux x86\_64) empleando el compilador Clang/GCC con banderas de optimización (\texttt{-O3 -fPIC -shared}).
 
 \subsection{Gestión Segura de Memoria y Enlace FFI en Python}
 
 La integración con Python a través de \texttt{pqc\_wrapper.py} aplica un control estricto sobre el manejo de memoria:
 \begin{enumerate}
 	\item \textbf{Preasignación Contigua:} Antes de invocar a C, Python asigna buffers contiguos de bytes con longitud exacta mediante \texttt{ctypes.create\_string\_buffer}.
-	\item \textbf{Purga Segura de Secretos:} Los datos sensibles de claves privadas se limpian en memoria antes de que intervenga el recolector de basura de Python, sobrescribiendo los arreglos volátiles mediante llamadas de bajo nivel para prevenir ataques de volcado de memoria.
+	\item \textbf{Purga de Secretos en Memoria:} Los datos sensibles de claves privadas se limpian en memoria antes de que intervenga el recolector de basura de Python, sobrescribiendo los arreglos volátiles mediante llamadas de bajo nivel para mitigar riesgos de volcado de memoria.
 \end{enumerate}
 
 \subsection{Métricas Estructurales de Memoria del Protocolo PQC}
 
-El Cuadro \ref{tab:tamanos_estructuras_didactico} consolida los tamaños exactos en bytes de cada elemento criptográfico generado por el prototipo.
+La Tabla \ref{tab:tamanos_estructuras_didactico} consolida los tamaños exactos en bytes de cada elemento criptográfico generado por el prototipo, detallando la codificación y el desglose de estructuras.
 
 \begingroup
 \renewcommand{\arraystretch}{1.2}
 \setlength{\tabcolsep}{4pt}
-\begin{table}[htbp]
+\begin{table}[!htbp]
 	\centering
 	\small
-	\begin{tabular}{|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{3.2cm}|r|>{\raggedright\arraybackslash}p{5.5cm}|}
+	\begin{tabular}{|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.8cm}|r|>{\raggedright\arraybackslash}p{5.0cm}|}
 		\hline
-		\textbf{Elemento Criptográfico} & \textbf{Primitiva / Estándar} & \textbf{Tamaño (Bytes)} & \textbf{Observaciones Técnicas} \\
+		\textbf{Elemento Criptográfico} & \textbf{Primitiva / Estándar} & \textbf{Tamaño (Bytes)} & \textbf{Codificación y Observaciones Técnicas} \\
 		\hline
-		Clave Pública ($pk$) & ML-KEM-768 (FIPS 203) & 1184 & Polinomios $\mathbf{t} \in R_q^k$ comprimidos + semilla $\rho$. \\
+		Clave Pública ($pk$) & ML-KEM-768 (FIPS 203) & 1184 & Binario nativo: $\mathbf{t} \in R_q^k$ comprimido + semilla $\rho$. \\
 		\hline
-		Clave Privada ($sk$) & ML-KEM-768 (FIPS 203) & 2400 & Vector secreto $\mathbf{s} \in R_q^k$ + datos de clave pública + $z$. \\
+		Clave Privada ($sk$) & ML-KEM-768 (FIPS 203) & 2400 & Binario nativo: $\mathbf{s} \in R_q^k$ + datos de clave pública + $z$. \\
 		\hline
-		Texto Cifrado ($ct$) & ML-KEM-768 (FIPS 203) & 1088 & Vector $\mathbf{u}$ comprimido (960 B) + $v$ comprimido (128 B). \\
+		Texto Cifrado ($ct$) & ML-KEM-768 (FIPS 203) & 1088 & Binario nativo: $\mathbf{u}$ (960 B) + $v$ comprimido (128 B). \\
 		\hline
-		Secreto Compartido ($K$) & ML-KEM-768 (FIPS 203) & 32 & Clave simétrica efímera de 256 bits. \\
+		Secreto Compartido ($K$) & ML-KEM-768 (FIPS 203) & 32 & Binario nativo: clave simétrica efímera de 256 bits. \\
 		\hline
-		Clave Pública ($pk$) & ML-DSA-65 (FIPS 204) & 1952 & Semilla $\rho$ (32 B) + vector $\mathbf{t}_1$ empaquetado (1920 B). \\
+		Clave Pública ($pk$) & ML-DSA-65 (FIPS 204) & 1952 & Binario nativo: semilla $\rho$ (32 B) + $\mathbf{t}_1$ (1920 B). \\
 		\hline
-		Clave Privada ($sk$) & ML-DSA-65 (FIPS 204) & 4032 & Semillas $\rho, K, \text{tr}$ + vectores secretos $\mathbf{s}_1, \mathbf{s}_2, \mathbf{t}_0$. \\
+		Clave Privada ($sk$) & ML-DSA-65 (FIPS 204) & 4032 & Binario nativo: semillas $\rho, K, \text{tr}$ + $\mathbf{s}_1, \mathbf{s}_2, \mathbf{t}_0$. \\
 		\hline
-		Firma Digital ($\sigma$) & ML-DSA-65 (FIPS 204) & 3309 & Desafío $\tilde{c}$ (48 B) + vector $\mathbf{z}$ (3200 B) + pistas $\mathbf{h}$ (61 B) = 3309 B. \\
+		Firma Digital ($\sigma$) & ML-DSA-65 (FIPS 204) & 3309 & Binario nativo: desafío $\tilde{c}$ (48 B) + $\mathbf{z}$ (3200 B) + $\mathbf{h}$ (61 B). \\
 		\hline
-		Hash de Boleta ($h_b$) & SHA3-256 (FIPS 202) & 32 & Digest inmutable de 256 bits (64 hex). \\
+		Hash de Boleta ($h_b$) & SHA3-256 (FIPS 202) & 32 & Binario nativo (32 B) / Hexadecimal (64 chars). \\
 		\hline
-		\textbf{Paquete de Voto Total} & PQC Híbrido & \textbf{16293} & Boleta completa + firmas + credenciales codificadas. \\
+		\textbf{Paquete de Voto Total} & PQC Híbrido (Prototipo) & \textbf{16293}* & *Medición experimental preliminar en JSON con campos en hex y credencial anidada. \textbf{Pendiente de recálculo tras el rediseño formal}. \\
 		\hline
 	\end{tabular}
 	\caption{Dimensiones exactas en bytes de las estructuras de datos post-cuánticas.}
 	\label{tab:tamanos_estructuras_didactico}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Mediciones experimentales directas del prototipo.}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Mediciones experimentales directas del prototipo preliminar.}}
 \end{table}
 \endgroup
 
+\noindent\textbf{Nota sobre el Dimensionamiento del Paquete y Rediseño:} La cifra de 16\,293 bytes reportada en la Tabla \ref{tab:tamanos_estructuras_didactico} corresponde a la medición del prototipo en su fase preliminar, donde el paquete de sufragio se serializaba mediante un esquema JSON que codificaba en cadenas hexadecimales la boleta (\texttt{ciphertext\_kem}, \texttt{nonce}, \texttt{voto\_cifrado}) y anidaba íntegramente la credencial del elector (\texttt{pk\_votante\_hex} de 3904 hex chars y \texttt{firma\_ar\_hex} de 6618 hex chars), alcanzando 12\,984 bytes en la boleta serializada más 3309 bytes de la firma del votante. Conforme al rediseño formal adoptado en la Sección \ref{sec:ceremonia_identidad_adversarios}, el Servidor de Votación disocia la credencial y transfiere hacia el ánfora y la AC únicamente la tupla anónima $\langle ct_{\text{kem}}, c_{\text{voto}}, \text{nonce}, id_{\text{eleccion}} \rangle$ con voto de longitud fija (48 bytes), reduciendo sustancialmente el volumen persistido. Por consiguiente, esta métrica queda explícitamente registrada como \textbf{pendiente de recálculo} para cuando la actualización del código del prototipo sea consolidada.
+
 \subsection{Backend Web y Dashboard Interactivo en Flask}
 
-En el subdirectorio \texttt{src/web/app.py} se implementó el servidor de demostración que permite emular la experiencia comicial en tiempo real:
+En el subdirectorio \texttt{src/web/app.py} se implementó el servidor de demostración que permite emular la experiencia comicial:
 \begin{itemize}
-	\item \textbf{Votación Interactiva:} Los electores acceden a la cabina web, visualizan las opciones electorales habilitadas, formulan su voto y presencian el cifrado y la firma en tiempo real.
-	\item \textbf{Dashboard de Escrutinio y Auditoría:} Tras el cierre, el sistema ejecuta el desencapsulamiento seguro y renderiza mediante gráficos dinámicos (Chart.js) la distribución de votos y la tabla de comprobantes con sus códigos QR correspondientes.
+	\item \textbf{Votación Interactiva:} Los electores acceden a la interfaz web, seleccionan la opción electoral habilitada, formulan su voto y constatan el proceso de cifrado y firma.
+	\item \textbf{Dashboard de Escrutinio y Auditoría:} Tras el cierre, el sistema ejecuta el desencapsulamiento seguro en la Autoridad de Conteo y renderiza mediante gráficos (Chart.js) la distribución de votos y la tabla de comprobantes con sus códigos correspondientes.
 \end{itemize}
 
-% =============================================================================
+\subsection{Conformidad Prototipo--Diseño}
+\label{sec:conformidad_prototipo_diseno}
+
+Con el propósito de mantener una estricta rigurosidad metodológica y delimitar con precisión la frontera entre la especificación teórica del sistema y el estado de desarrollo del software experimental, la Tabla \ref{tab:conformidad_prototipo_diseno} consolida el análisis de conformidad entre las propiedades arquitectónicas y formales formalizadas en las secciones precedentes y la implementación concreta observada en el código fuente del prototipo (\texttt{src/pqc/} y \texttt{src/web/}). Las discrepancias detectadas se encuentran registradas formalmente en el inventario de pendientes del proyecto (\texttt{PENDIENTES\_PROTOTIPO.md}) para guiar su resolución antes de un despliegue operativo en producción.
+
+\begingroup
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{6.8cm}|>{\raggedright\arraybackslash}p{4.2cm}|>{\raggedright\arraybackslash}p{3.2cm}|}
+	\hline
+	\textbf{Propiedad del Diseño Arquitectónico / Formal} & \textbf{¿Cumple el Prototipo?} & \textbf{Ítem Registrado} \\
+	\hline
+	\endfirsthead
+	
+	\hline
+	\textbf{Propiedad del Diseño Arquitectónico / Formal} & \textbf{¿Cumple el Prototipo?} & \textbf{Ítem Registrado} \\
+	\hline
+	\endhead
+	
+	\hline
+	\multicolumn{3}{|r|}{{\footnotesize Continúa en la página siguiente\dots}} \\
+	\hline
+	\endfoot
+	
+	\hline
+	\endlastfoot
+	
+	Custodia de clave $dk_{\text{AC}}$ exclusiva en la AC (el SV no posee clave privada KEM) & No (el SV genera y retiene \texttt{\_dk\_sv} en memoria) & PEND-01 \\
+	\hline
+	Ceremonia de claves KEM autónoma en la AC en entorno aislado (\textit{air-gapped}) & No (la AC recibe pasivamente la clave del SV en el constructor) & PEND-02 \\
+	\hline
+	Disociación de credenciales hacia la AC y vinculación de contexto mediante $\text{AAD} = \langle id_{\text{elec}}, ct_{\text{kem}} \rangle$ & No (la AC recibe boleta con credencial e \texttt{id\_votante}; AES-GCM sin AAD) & PEND-03, PEND-06 \\
+	\hline
+	Anonimato de red y resolución temporal de urna truncada a ventana horaria & No (boletas y recibos registran microsegundos con \texttt{time.time()}) & PEND-04 \\
+	\hline
+	Codificación de voto con longitud fija (inmunidad a fugas de opción por tamaño) & No (se cifra texto plano UTF-8 de longitud variable) & PEND-05 \\
+	\hline
+	Serialización canónica determinista (JCS RFC 8785 / CBOR RFC 8949) y separación de dominio en ML-DSA & No (utiliza \texttt{json.dumps(sort\_keys=True)} estándar de Python) & PEND-07 \\
+	\hline
+	Control transaccional atómico de voto único en motor relacional (\texttt{UPDATE \dots\ WHERE ha\_votado = FALSE}) & No (verificación de duplicados en conjunto volátil en memoria) & PEND-08 \\
+	\hline
+	Modelo relacional en 3FN con clave primaria compuesta $(id_{\text{eleccion}}, id_{\text{votante}})$ e integridad FK & No (colecciones volátiles en memoria sin restricciones relacionales) & PEND-09 \\
+	\hline
+	Zeroización y purga explícita de memoria volátil para secretos criptográficos & No (claves almacenadas en objetos \texttt{bytes} inmutables sin \texttt{memset}) & PEND-10 \\
+	\hline
+	Diferenciación en pruebas de inyección de fallos (rechazo implícito KEM vs.\ explícito DSA) & No (la suite no evalúa corrupción de $ct_{\text{kem}}$ acoplada a GMAC) & PEND-11 \\
+	\hline
+	Validación contra vectores de respuesta conocida oficiales del NIST (ACVP / \texttt{.rsp}) & No (únicamente pruebas de ida y vuelta aleatorias locales) & PEND-12 \\
+	\hline
+	Homología metodológica en arnés de benchmarking (mismo nivel de enlace y optimización) & No (compara Ctypes de referencia limpia frente a OpenSSL CPython) & PEND-13 \\
+	\hline
+	Caracterización unívoca de plataforma de evaluación en macOS ARM64 Apple Silicon & Parcial (el código registra ARM64 en \texttt{hardware\_info.json}) & PEND-14 \\
+	\hline
+	Ejecución de operaciones criptográficas de firma y cifrado estrictamente en el cliente & No (el servidor web Flask firma boletas con \texttt{\_sk\_votante}) & PEND-15 \\
+	\hline
+	Distribución autenticada de clave pública comicial $ek_{\text{AC}}$ mediante certificado o canal seguro & No (inyección directa de bytes en memoria sin certificado) & PEND-16 \\
+	\hline
+	Verificación matemática de la firma del recibo por parte del elector & No (clase \texttt{Votante} carece de método \texttt{verificar\_recibo}) & PEND-17 \\
+	\hline
+	Desglose actualizado de dimensiones del paquete de sufragio tras el rediseño comicial & No (reporta 16\,293 B con redundancias JSON; pendiente de recálculo) & PEND-18 \\
+	\hline
+	Esquema híbrido transicional de encapsulación (ML-KEM-768 combinado con X25519) & No aplica (decisión deliberada de evaluar retículos puros en la tesis) & PEND-19 \\
+	\hline
+	Mecanismos compensatorios contra inyección de votos ficticios por SV malicioso & No aplica (declarado formalmente como límite / Supuesto S3) & PEND-20 \\
+	\hline
+	Supresión de modos de degradación o funciones de respaldo inseguras (\texttt{XOR}) & No (conserva \texttt{xor\_encrypt\_fallback} en utilitarios) & PEND-21 \\
+	\hline
+	Persistencia concurrente en SGBD relacional en entorno de producción & No (el servidor opera con estructuras volátiles en memoria) & PEND-22 \\
+	\hline
+	Interoperabilidad binaria C nativa para ML-KEM-768 (FIPS 203) y ML-DSA-65 (FIPS 204) & Sí (enlace dinámico FFI funcional vía Ctypes a biblioteca compartida) & Conforme (\texttt{pqc\_core.c}) \\
+	\hline
+	Verificación comicial de credenciales de votantes por el Servidor de Votación & Sí (comprueba firmas digitales de la AR y del votante) & Conforme (\texttt{servidor\_votacion.py}) \\
+	\hline
+	Emisión de recibo digital firmado criptográficamente tras el depósito del voto & Sí (emite recibo firmado con ML-DSA-65 al elector) & Conforme (\texttt{servidor\_votacion.py}) \\
+	\hline
+	\caption{Matriz de conformidad técnica entre la especificación de diseño y la implementación del prototipo experimental.}
+	\label{tab:conformidad_prototipo_diseno}
+\end{longtable}
+\endgroup

@@ -4,21 +4,22 @@
 
 \subsection{El Principio de Disociación Criptográfica para el Secreto del Voto}
 
-En los sistemas de bases de datos convencionales, las transacciones se vinculan comúnmente mediante claves foráneas directas entre la tabla de usuarios y la tabla de registros. Sin embargo, en un sistema electoral digital, replicar este esquema violaría de forma flagrante el \textbf{secreto del sufragio}: cualquier administrador de base de datos con acceso a la sentencia SQL \texttt{SELECT * FROM votantes JOIN votos} podría asociar de forma inmediata el nombre o matrícula de un estudiante con el partido político que apoyó.
+En los sistemas de bases de datos convencionales, las transacciones se vinculan comúnmente mediante claves foráneas directas entre la tabla de usuarios y la tabla de registros. Sin embargo, en un sistema electoral digital, replicar este esquema violaría el secreto del sufragio: cualquier administrador de base de datos con acceso a la sentencia SQL \texttt{SELECT * FROM votantes JOIN votos} podría asociar de forma inmediata la identidad de un elector con la opción política que apoyó.
 
 Para resolver este desafío, la base de datos implementa un esquema de \textbf{disociación estricta y asimétrica}:
 \begin{enumerate}
-	\item La tabla del padrón (\texttt{tbl\_padron\_votantes}) mantiene la trazabilidad del ciudadano, registrando el campo booleano \texttt{ha\_votado = TRUE} y la marca temporal de recepción para impedir el voto doble.
-	\item La tabla de la urna electrónica (\texttt{tbl\_anfora\_boletas}) almacena exclusivamente los criptogramas (\texttt{ciphertext\_kem}, \texttt{voto\_cifrado}) indexados por un identificador de boleta UUID generado al azar y el hash inmutable SHA3-256.
-	\item \textbf{Ausencia total de relación foránea directa:} No existe ninguna columna en \texttt{tbl\_anfora\_boletas} que apunte al identificador del votante. La correlación entre elector y voto queda completamente destruida en el plano de la base de datos.
+	\item La tabla del padrón (\texttt{tbl\_padron\_votantes}) mantiene la trazabilidad del ciudadano mediante la clave primaria compuesta \texttt{(id\_eleccion, id\_votante)}, registrando el campo booleano \texttt{ha\_votado = TRUE} y la marca temporal redondeada a la ventana horaria definida en la Sección \ref{sec:ceremonia_identidad_adversarios} para impedir el doble voto sin revelar el instante exacto.
+	\item La tabla de la urna electrónica (\texttt{tbl\_anfora\_boletas}) almacena exclusivamente los criptogramas (\texttt{ciphertext\_kem}, \texttt{voto\_cifrado}, \texttt{nonce\_aead}) indexados por un identificador de boleta UUID generado al azar y el hash inmutable SHA3-256. No contiene identificador de votante, credencial ni firma digital $\sigma_V$.
+	\item \textbf{Ausencia de relación foránea directa:} No existe ninguna columna ni clave foránea en \texttt{tbl\_anfora\_boletas} que apunte a la identidad del votante. La correlación entre elector y voto queda destruida en el plano de la base de datos.
 \end{enumerate}
 
 \subsection{Modelo Entidad-Relación (E-R) de la Base de Datos}
 
-La Figura \ref{fig:bbdd_er} expone el Modelo Entidad-Relación formal de la base de datos del prototipo.
+La Figura \ref{fig:bbdd_er} expone el Modelo Entidad-Relación formal de la base de datos del prototipo con las entidades, relaciones, claves y cardinalidades alineadas al diseño de disociación.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
 	\centering
+	\resizebox{\textwidth}{!}{%
 	\begin{tikzpicture}[
 		entity/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, font=\scriptsize\bfseries, minimum width=2.8cm, minimum height=0.8cm, align=center},
 		rel/.style={diamond, draw=PQCTeal, fill=BoxBgTeal, thick, aspect=1.8, font=\tiny\bfseries, align=center, inner sep=2pt},
@@ -28,17 +29,17 @@ La Figura \ref{fig:bbdd_er} expone el Modelo Entidad-Relación formal de la base
 	]
 		% Entidades Principales
 		\node[entity] (elec) at (0, 3.5) {ELECCIÓN};
-		\node[entity] (padron) at (-5.0, 0.8) {PADRÓN\_VOTANTE};
-		\node[entity] (cred) at (-5.0, -2.6) {CREDENCIAL\_AR};
-		\node[entity] (anfora) at (5.0, 0.8) {BOLETA\_CIFRADA};
-		\node[entity] (recibo) at (5.0, -2.6) {RECIBO\_VOTACIÓN};
+		\node[entity] (padron) at (-5.5, 0.8) {PADRÓN\_VOTANTE};
+		\node[entity] (cred) at (-5.5, -2.6) {CREDENCIAL\_AR};
+		\node[entity] (anfora) at (5.5, 0.8) {BOLETA\_CIFRADA};
+		\node[entity] (recibo) at (5.5, -2.6) {RECIBO\_VOTACIÓN};
 		\node[entity] (audit) at (0, -4.5) {BITÁCORA\_AUDITORÍA};
 		
 		% Relaciones
-		\node[rel] (r1) at (-2.5, 2.2) {Habilita};
-		\node[rel] (r2) at (-5.0, -0.9) {Posee};
-		\node[rel] (r3) at (2.5, 2.2) {Custodia};
-		\node[rel] (r4) at (5.0, -0.9) {Genera};
+		\node[rel] (r1) at (-2.8, 2.2) {Habilita};
+		\node[rel] (r2) at (-5.5, -0.9) {Posee};
+		\node[rel] (r3) at (2.8, 2.2) {Custodia};
+		\node[rel] (r4) at (5.5, -0.9) {Genera};
 		\node[rel] (r5) at (0, -0.6) {Registra};
 		
 		% Enlaces Relaciones con Cardinalidades
@@ -61,97 +62,139 @@ La Figura \ref{fig:bbdd_er} expone el Modelo Entidad-Relación formal de la base
 		\node[keyattr] (k_el) at (0, 4.8) {\underline{id\_eleccion}};
 		\draw[link] (elec) -- (k_el);
 		
-		\node[keyattr] (k_pa) at (-5.0, 2.0) {\underline{id\_votante}};
+		\node[keyattr] (k_pa) at (-5.5, 2.1) {\underline{id\_eleccion, id\_votante}};
 		\draw[link] (padron) -- (k_pa);
 		
-		\node[keyattr] (k_an) at (5.0, 2.0) {\underline{id\_boleta}};
+		\node[keyattr] (k_cr) at (-7.5, -3.5) {\underline{id\_credencial}};
+		\draw[link] (cred) -- (k_cr);
+		
+		\node[keyattr] (k_an) at (5.5, 2.1) {\underline{id\_boleta}};
 		\draw[link] (anfora) -- (k_an);
 		
-		\node[keyattr] (k_re) at (5.0, -3.8) {\underline{id\_recibo}};
+		\node[keyattr] (k_re) at (7.5, -3.5) {\underline{id\_recibo}};
 		\draw[link] (recibo) -- (k_re);
+		
+		\node[keyattr] (k_au) at (0, -5.7) {\underline{id\_evento}};
+		\draw[link] (audit) -- (k_au);
 	\end{tikzpicture}
-	\caption{Modelo Entidad-Relación de la base de datos electoral.}
+	}%
+	\caption{Modelo Entidad-Relación de la base de datos electoral con disociación de identidad.}
 	\label{fig:bbdd_er}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
 
 \subsection{Modelo Relacional en Tercera Forma Normal (3FN)}
 
-El esquema de persistencia se encuentra estrictamente normalizado en Tercera Forma Normal (3FN), eliminando dependencias transitivas y parciales. Se formaliza a través de seis tablas relacionales:
+El esquema de persistencia se normaliza en Tercera Forma Normal (3FN), eliminando dependencias parciales y transitivas. Se formaliza a través de seis relaciones:
 
 \begin{enumerate}
-	\item $\texttt{tbl\_elecciones}(\underline{\text{id\_eleccion}}, \text{nombre}, \text{fecha\_inicio}, \text{fecha\_fin}, \text{estado\_fase}, \text{pk\_ar}, \text{ek\_sv})$
-	\item $\texttt{tbl\_padron\_votantes}(\underline{\text{id\_votante}}, \text{id\_eleccion}^*, \text{nombres}, \text{apellidos}, \text{carrera}, \text{ha\_votado}, \text{timestamp\_voto})$
-	\item $\texttt{tbl\_credenciales\_ar}(\underline{\text{id\_credencial}}, \text{id\_votante}^*, \text{pk\_votante\_hex}, \text{timestamp\_emision}, \text{firma\_ar\_hex})$
-	\item $\texttt{tbl\_anfora\_boletas}(\underline{\text{id\_boleta}}, \text{id\_eleccion}^*, \text{ciphertext\_kem}, \text{voto\_cifrado}, \text{nonce\_aead}, \text{hash\_boleta\_sha3}, \text{firma\_v\_hex}, \text{ts\_recepcion})$
-	\item $\texttt{tbl\_recibos\_votacion}(\underline{\text{id\_recibo}}, \text{id\_boleta}^*, \text{hash\_boleta\_sha3}, \text{timestamp\_recibo}, \text{firma\_sv\_hex})$
-	\item $\texttt{tbl\_auditoria\_eventos}(\underline{\text{id\_evento}}, \text{id\_eleccion}^*, \text{tipo\_evento}, \text{descripcion}, \text{ip\_origen}, \text{timestamp\_evento})$
+	\item \textbf{\texttt{tbl\_elecciones}}: (\underline{\texttt{id\_eleccion}}, \texttt{nombre}, \texttt{fecha\_inicio}, \texttt{fecha\_fin}, \texttt{estado\_fase}, \texttt{pk\_ar}, \texttt{ek\_ac})
+	\item \textbf{\texttt{tbl\_padron\_votantes}}: (\underline{\texttt{id\_eleccion}}$^*$, \underline{\texttt{id\_votante}}, \texttt{nombres}, \texttt{apellidos}, \texttt{carrera}, \texttt{ha\_votado}, \texttt{timestamp\_voto})
+	\item \textbf{\texttt{tbl\_credenciales\_ar}}: (\underline{\texttt{id\_credencial}}, \texttt{id\_votante}$^*$, \texttt{pk\_votante\_hex}, \texttt{timestamp\_emision}, \texttt{firma\_ar\_hex})
+	\item \textbf{\texttt{tbl\_anfora\_boletas}}: (\underline{\texttt{id\_boleta}}, \texttt{id\_eleccion}$^*$, \texttt{ciphertext\_kem}, \texttt{voto\_cifrado}, \texttt{nonce\_aead}, \texttt{hash\_boleta\_sha3}, \texttt{timestamp\_recepcion})
+	\item \textbf{\texttt{tbl\_recibos\_votacion}}: (\underline{\texttt{id\_recibo}}, \texttt{id\_boleta}$^*$, \texttt{timestamp\_recibo}, \texttt{firma\_sv\_hex})
+	\item \textbf{\texttt{tbl\_auditoria\_eventos}}: (\underline{\texttt{id\_evento}}, \texttt{id\_eleccion}$^*$, \texttt{tipo\_evento}, \texttt{descripcion}, \texttt{timestamp\_evento})
 \end{enumerate}
+
+\noindent\textbf{Análisis de Formas Normales y Desnormalización Controlada:}
+\begin{itemize}
+	\item \textbf{Cumplimiento de 3FN:} En \texttt{tbl\_padron\_votantes}, la clave primaria compuesta $(\text{id\_eleccion}, \text{id\_votante})$ asegura que cada atributo dependa funcionalmente de toda la clave, permitiendo que un ciudadano participe en múltiples procesos electorales independientes sin colisión. En \texttt{tbl\_recibos\_votacion}, se eliminó la columna redundante \texttt{hash\_boleta\_sha3}, garantizando que el resumen se consulte estrictamente a través de la clave foránea unívoca hacia \texttt{tbl\_anfora\_boletas}, evitando dependencias transitivas.
+	\item \textbf{Desnormalización Justificada:} La presencia de \texttt{hash\_boleta\_sha3} como atributo persistente indexado con restricción \texttt{UNIQUE} en \texttt{tbl\_anfora\_boletas} constituye una desnormalización técnica consciente. Evita la recomputación dinámica de SHA3-256 sobre los campos binarios en cada consulta de auditoría ciudadana, proporcionando verificación en tiempo $\mathcal{O}(\log n)$ mediante índice B-Tree sin comprometer la normalización.
+	\item \textbf{Eliminación de Metadatos de Red en Auditoría:} La columna \texttt{ip\_origen} fue excluida del esquema relacional de auditoría electoral (\texttt{tbl\_auditoria\_eventos}). Conforme a lo definido en la Sección \ref{sec:ceremonia_identidad_adversarios}, las direcciones IP y cabeceras de red se derivan a bitácoras efímeras de infraestructura con una retención acotada estrictamente a la mitigación de ataques DoS, eliminando el riesgo de correlación de red con las boletas emitidas.
+\end{itemize}
 
 \subsection{Diccionario de Datos del Esquema Relacional}
 
-El Cuadro \ref{tab:diccionario_datos} describe en detalle los campos, tipos de datos SQL nativos, claves y restricciones de integridad del modelo relacional.
+La Tabla \ref{tab:diccionario_datos} describe los campos, tipos de datos SQL nativos, claves y restricciones de integridad de las seis tablas del modelo relacional.
 
 \begingroup
-\renewcommand{\arraystretch}{1.2}
-\setlength{\tabcolsep}{4pt}
-\begin{table}[htbp]
-	\centering
-	\small
-	\begin{tabular}{|l|l|l|p{6.0cm}|}
-		\hline
-		\textbf{Tabla / Campo} & \textbf{Tipo de Dato} & \textbf{Restricción} & \textbf{Descripción y Justificación Criptográfica} \\
-		\hline
-		\multicolumn{4}{|l|}{\textbf{1. \texttt{tbl\_elecciones} (Configuración Institucional)}} \\
-		\hline
-		\texttt{id\_eleccion} & \texttt{VARCHAR(36)} & \textbf{PK}, NOT NULL & Identificador UUIDv4 único de la elección. \\
-		\texttt{nombre} & \texttt{VARCHAR(128)} & NOT NULL & Denominación del proceso (ej. Elecciones FCPN). \\
-		\texttt{estado\_fase} & \texttt{VARCHAR(32)} & NOT NULL & Fase actual: \texttt{REGISTRO}, \texttt{VOTACION}, \texttt{CONTEO}. \\
-		\texttt{pk\_ar} & \texttt{BYTEA} & NOT NULL & Clave pública ML-DSA-65 de la AR (1952 bytes). \\
-		\texttt{ek\_sv} & \texttt{BYTEA} & NOT NULL & Clave pública ML-KEM-768 del Servidor (1184 bytes). \\
-		\hline
-		\multicolumn{4}{|l|}{\textbf{2. \texttt{tbl\_padron\_votantes} (Control de Elector y Unicidad)}} \\
-		\hline
-		\texttt{id\_votante} & \texttt{VARCHAR(20)} & \textbf{PK}, NOT NULL & Cédula de identidad o matrícula universitaria. \\
-		\texttt{id\_eleccion} & \texttt{VARCHAR(36)} & \textbf{FK}, NOT NULL & Vinculación a la elección correspondiente. \\
-		\texttt{ha\_votado} & \texttt{BOOLEAN} & DEFAULT FALSE & Bandera de control anti-duplicado en memoria $\mathcal{O}(1)$. \\
-		\texttt{timestamp\_voto} & \texttt{TIMESTAMP} & NULL & Marca temporal de recepción del sufragio. \\
-		\hline
-		\multicolumn{4}{|l|}{\textbf{3. \texttt{tbl\_credenciales\_ar} (Certificación de Habilitación)}} \\
-		\hline
-		\texttt{id\_credencial} & \texttt{VARCHAR(36)} & \textbf{PK}, NOT NULL & Identificador UUID de la credencial expedida. \\
-		\texttt{id\_votante} & \texttt{VARCHAR(20)} & \textbf{FK}, UNIQUE & Relación 1:1 estricta con el elector registrado. \\
-		\texttt{pk\_votante\_hex} & \texttt{TEXT} & NOT NULL & Clave pública de firma del votante (ML-DSA-65). \\
-		\texttt{firma\_ar\_hex} & \texttt{TEXT} & NOT NULL & Firma institucional estampada por la AR (3309 B). \\
-		\hline
-		\multicolumn{4}{|l|}{\textbf{4. \texttt{tbl\_anfora\_boletas} (Urna Digital Cifrada)}} \\
-		\hline
-		\texttt{id\_boleta} & \texttt{VARCHAR(36)} & \textbf{PK}, NOT NULL & UUID de la boleta (disociado de identidad). \\
-		\texttt{ciphertext\_kem} & \texttt{BYTEA} & NOT NULL & Texto cifrado asimétrico ML-KEM-768 (1088 bytes). \\
-		\texttt{voto\_cifrado} & \texttt{BYTEA} & NOT NULL & Contenido electoral cifrado con AES-256-GCM. \\
-		\texttt{nonce\_aead} & \texttt{BYTEA} & NOT NULL & Vector de inicialización de 12 bytes (96 bits). \\
-		\texttt{hash\_boleta\_sha3} & \texttt{CHAR(64)} & \textbf{UNIQUE}, NOT NULL & Resumen inmutable SHA3-256 (32 bytes / 64 hex). \\
-		\texttt{firma\_v\_hex} & \texttt{TEXT} & NOT NULL & Firma digital del elector sobre la boleta (3309 B). \\
-		\hline
-		\multicolumn{4}{|l|}{\textbf{5. \texttt{tbl\_recibos\_votacion} (Auditabilidad Ciudadana)}} \\
-		\hline
-		\texttt{id\_recibo} & \texttt{VARCHAR(36)} & \textbf{PK}, NOT NULL & Identificador del recibo entregado al ciudadano. \\
-		\texttt{id\_boleta} & \texttt{VARCHAR(36)} & \textbf{FK}, UNIQUE & Vinculación unívoca a la boleta custodiada. \\
-		\texttt{firma\_sv\_hex} & \texttt{TEXT} & NOT NULL & Firma digital ML-DSA-65 del Servidor de Votación. \\
-		\hline
-	\end{tabular}
-	\caption{Diccionario de datos del modelo relacional normalizado.}
-	\label{tab:diccionario_datos}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
-\end{table}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{>{\ttfamily\raggedright\arraybackslash}p{3.9cm} >{\ttfamily\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}p{5.5cm}}
+	\caption{Diccionario de datos del modelo relacional electoral normalizado.} \label{tab:diccionario_datos} \\
+	\toprule
+	\textbf{Campo} & \textbf{Tipo SQL} & \textbf{Restricción} & \textbf{Descripción y Justificación Criptográfica} \\
+	\midrule
+	\endfirsthead
+
+	\multicolumn{4}{c}{{\bfseries \tablename\ \thetable{} -- Continuación de la página anterior}} \\
+	\toprule
+	\textbf{Campo} & \textbf{Tipo SQL} & \textbf{Restricción} & \textbf{Descripción y Justificación Criptográfica} \\
+	\midrule
+	\endhead
+
+	\midrule
+	\multicolumn{4}{r}{{Continúa en la siguiente página \dots}} \\
+	\bottomrule
+	\endfoot
+
+	\bottomrule
+	\endlastfoot
+
+	\multicolumn{4}{l}{\textbf{1. \texttt{tbl\_elecciones} (Configuración Institucional del Proceso)}} \\
+	\midrule
+	id\_eleccion & VARCHAR(36) & \textbf{PK}, NOT NULL & Identificador UUIDv4 único de la elección. \\
+	nombre & VARCHAR(128) & NOT NULL & Denominación oficial del proceso electoral. \\
+	fecha\_inicio & TIMESTAMP & NOT NULL & Apertura programada de mesas. \\
+	fecha\_fin & TIMESTAMP & NOT NULL & Cierre programado de mesas. \\
+	estado\_fase & VARCHAR(32) & NOT NULL & Fase: \texttt{REGISTRO}, \texttt{VOTACION}, \texttt{CONTEO}, \texttt{CERRADA}. \\
+	pk\_ar & BYTEA & NOT NULL & Clave pública ML-DSA-65 de la AR (1952 bytes). \\
+	ek\_ac & BYTEA & NOT NULL & Clave pública ML-KEM-768 de la AC (1184 bytes). \\
+	\midrule
+
+	\multicolumn{4}{l}{\textbf{2. \texttt{tbl\_padron\_votantes} (Control de Elector y Unicidad de Sufragio)}} \\
+	\midrule
+	id\_eleccion & VARCHAR(36) & \textbf{PK, FK}, NOT NULL & Referencia unívoca al proceso electoral. \\
+	id\_votante & VARCHAR(20) & \textbf{PK}, NOT NULL & Cédula de identidad o matrícula universitaria. \\
+	nombres & VARCHAR(64) & NOT NULL & Nombres del ciudadano empadronado. \\
+	apellidos & VARCHAR(64) & NOT NULL & Apellidos del ciudadano empadronado. \\
+	carrera & VARCHAR(64) & NOT NULL & Unidad académica o carrera habilitada. \\
+	ha\_votado & BOOLEAN & DEFAULT FALSE & Bandera de control transaccional de un solo uso. \\
+	timestamp\_voto & TIMESTAMP & NULL & Marca temporal redondeada a la ventana comicial. \\
+	\midrule
+
+	\multicolumn{4}{l}{\textbf{3. \texttt{tbl\_credenciales\_ar} (Certificados de Habilitación Electoral)}} \\
+	\midrule
+	id\_credencial & VARCHAR(36) & \textbf{PK}, NOT NULL & UUID único del certificado expedido por la AR. \\
+	id\_votante & VARCHAR(20) & \textbf{FK}, UNIQUE & Relación 1:1 estricta con el elector registrado. \\
+	pk\_votante\_hex & TEXT & NOT NULL & Clave pública de firma del votante (ML-DSA-65). \\
+	timestamp\_emision & TIMESTAMP & NOT NULL & Instante formal de expedición de credencial. \\
+	firma\_ar\_hex & TEXT & NOT NULL & Firma digital de la AR sobre la credencial (3309 B). \\
+	\midrule
+
+	\multicolumn{4}{l}{\textbf{4. \texttt{tbl\_anfora\_boletas} (Urna Digital de Boletas Cifradas Disociadas)}} \\
+	\midrule
+	id\_boleta & VARCHAR(36) & \textbf{PK}, NOT NULL & UUID aleatorio de la boleta (anónima). \\
+	id\_eleccion & VARCHAR(36) & \textbf{FK}, NOT NULL & Vinculación a la elección correspondiente. \\
+	ciphertext\_kem & BYTEA & NOT NULL & Criptograma KEM ML-KEM-768 (1088 bytes). \\
+	voto\_cifrado & BYTEA & NOT NULL & Sufragio cifrado AES-256-GCM longitud fija (48 B). \\
+	nonce\_aead & BYTEA & NOT NULL & Vector de inicialización de 12 bytes (96 bits). \\
+	hash\_boleta\_sha3 & CHAR(64) & \textbf{UNIQUE}, NOT NULL & Resumen SHA3-256 inmutable de la boleta. \\
+	timestamp\_recepcion & TIMESTAMP & NOT NULL & Marca de recepción redondeada a la ventana. \\
+	\midrule
+
+	\multicolumn{4}{l}{\textbf{5. \texttt{tbl\_recibos\_votacion} (Auditoría Ciudadana Individual)}} \\
+	\midrule
+	id\_recibo & VARCHAR(36) & \textbf{PK}, NOT NULL & Identificador UUID del recibo de votación. \\
+	id\_boleta & VARCHAR(36) & \textbf{FK}, UNIQUE & Enlace 1:1 unívoco hacia la boleta custodiada. \\
+	timestamp\_recibo & TIMESTAMP & NOT NULL & Marca temporal redondeada de emisión del recibo. \\
+	firma\_sv\_hex & TEXT & NOT NULL & Firma digital ML-DSA-65 del Servidor de Votación. \\
+	\midrule
+
+	\multicolumn{4}{l}{\textbf{6. \texttt{tbl\_auditoria\_eventos} (Trazabilidad Institucional del Sistema)}} \\
+	\midrule
+	id\_evento & BIGSERIAL & \textbf{PK}, NOT NULL & Identificador secuencial del evento auditado. \\
+	id\_eleccion & VARCHAR(36) & \textbf{FK}, NOT NULL & Vinculación a la elección correspondiente. \\
+	tipo\_evento & VARCHAR(48) & NOT NULL & Categoría: \texttt{APERTURA}, \texttt{CIERRE}, \texttt{ESCRUTINIO}. \\
+	descripcion & TEXT & NOT NULL & Detalle técnico de la operación ejecutada. \\
+	timestamp\_evento & TIMESTAMP & NOT NULL & Marca temporal precisa del evento de auditoría. \\
+\end{longtable}
 \endgroup
 
 \subsection{Estrategia de Indexación y Desempeño Transaccional}
 
-Para sostener una tasa de votación concurrente sin cuellos de botella durante las horas pico comiciales, se diseñaron índices B-Tree específicos:
+Para sostener una tasa de votación concurrente sin cuellos de botella durante las horas de alta demanda comicial, se diseñaron índices B-Tree específicos:
 \begin{itemize}
-	\item \textbf{Índice B-Tree en \texttt{tbl\_padron\_votantes(id\_votante, ha\_votado)}:} Permite al Servidor resolver la comprobación de unicidad en tiempo constante $\mathcal{O}(1)$, garantizando que la consulta no degrade con padrones masivos.
-	\item \textbf{Índice B-Tree Único en \texttt{tbl\_anfora\_boletas(hash\_boleta\_sha3)}:} Impide a nivel de motor relacional cualquier colisión o reinserción accidental de un paquete de sufragio idéntico.
+	\item \textbf{Búsqueda Transaccional en \texttt{tbl\_padron\_votantes}:} La clave primaria compuesta \texttt{(id\_eleccion, id\_votante)} genera automáticamente un índice B-Tree que resuelve la verificación de identidad y elegibilidad en tiempo logarítmico $\mathcal{O}(\log n)$. Esto evita la creación de índices redundantes sobre \texttt{id\_votante} y garantiza un costo acotado incluso con padrones de escala nacional.
+	\item \textbf{Índice B-Tree Único en \texttt{tbl\_anfora\_boletas(hash\_boleta\_sha3)}:} Impide a nivel de motor relacional cualquier colisión o reinserción accidental de un paquete de sufragio idéntico en tiempo $\mathcal{O}(\log n)$, además de acelerar la verificación ciudadana del recibo.
 \end{itemize}
-
-% =============================================================================

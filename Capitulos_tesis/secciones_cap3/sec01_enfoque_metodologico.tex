@@ -20,7 +20,7 @@ El desarrollo del artefacto se estructuró a lo largo de las fases metodológica
 El diseño del artefacto atiende a requerimientos funcionales y no funcionales claramente definidos:
 \begin{itemize}
 	\item \textbf{RF1 - Acreditación y Sufragio Único:} Todo votante debe contar con una credencial digital firmada por la Autoridad de Registro (AR) antes de poder emitir su voto, garantizando que ninguna identidad vote más de una vez.
-	\item \textbf{RF2 - Secreto Absoluto del Voto:} El contenido de la boleta debe permanecer cifrado en todo momento durante el transporte y custodia en el ánfora; la clave privada de desencapsulamiento ($dk_{AC}$) reside de forma exclusiva en la Autoridad de Conteo (AC) fuera de línea.
+	\item \textbf{RF2 - Secreto del Voto:} El contenido de la boleta debe permanecer cifrado en todo momento durante el transporte y custodia en el ánfora; la clave privada de desencapsulamiento ($dk_{AC}$) reside de forma exclusiva en la Autoridad de Conteo (AC) fuera de línea.
 	\item \textbf{RF3 - Integridad y No Repudio:} Toda boleta transmitida debe estar firmada digitalmente por la clave privada del elector ($sk_V$) vinculada a su credencial, impidiendo la alteración del voto por terceros.
 	\item \textbf{RF4 - Auditabilidad Universal y Recibo Compacto:} El votante debe recibir un comprobante firmado por el servidor que contenga el hash SHA3-256 determinista de su boleta, verificable públicamente sin vulnerar el secreto electoral.
 	\item \textbf{RNF1 - Eficiencia y Rendimiento:} El tiempo de cifrado y empaquetado en la cabina de votación no debe exceder los 100 ms para terminales convencionales, garantizando una experiencia de usuario ágil.

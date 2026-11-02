@@ -4,7 +4,7 @@
 
 \subsection{Objetivo Metodológico de la Línea Base}
 
-Para evaluar empíricamente el impacto del salto a la criptografía post-cuántica en el Capítulo 4, se programó en \texttt{src/clasico/} una implementación paralela y funcionalmente homóloga que sustituye las primitivas de retículos por los algoritmos asimétricos clásicos dominantes en la industria:
+Para evaluar experimentalmente el impacto del salto a la criptografía post-cuántica en el Capítulo 4, se programó en \texttt{src/clasico/} una implementación paralela y funcionalmente homóloga que sustituye las primitivas de retículos por los algoritmos asimétricos clásicos dominantes en la industria:
 \begin{itemize}
 	\item \textbf{Cifrado Asimétrico:} RSA-OAEP-2048 con exponente público $e=65537$ y función hash SHA-256 (112 bits de seguridad clásica).
 	\item \textbf{Firma Digital:} ECDSA sobre la curva estandarizada NIST P-256 con SHA-256 (128 bits de seguridad clásica).
@@ -13,19 +13,19 @@ Para evaluar empíricamente el impacto del salto a la criptografía post-cuánti
 
 \subsection{Correspondencia Funcional 1 a 1 entre Esquemas}
 
-El Cuadro \ref{tab:correspondencia_modulos_didactico} presenta la correspondencia estructural entre ambos esquemas.
+La Tabla \ref{tab:correspondencia_modulos_didactico} presenta la correspondencia estructural entre ambos esquemas.
 
 \begingroup
 \renewcommand{\arraystretch}{1.25}
 \setlength{\tabcolsep}{4pt}
-\begin{table}[htbp]
+\begin{table}[!htbp]
 	\centering
 	\small
 	\begin{tabular}{|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{5.0cm}|>{\raggedright\arraybackslash}p{5.4cm}|}
 		\hline
 		\textbf{Componente Lógico} & \textbf{Implementación Post-Cuántica (\texttt{src/pqc/})} & \textbf{Implementación Clásica (\texttt{src/clasico/})} \\
 		\hline
-		Primitiva Cifrado Asimétrico & ML-KEM-768 (FIPS 203) & RSA-OAEP-2048 (PKCS\#1 v2.2) \\
+		Primitiva Cifrado Asimétrico & ML-KEM-768 (FIPS 203) & RSA-OAEP-2048 (RFC 8017 / PKCS\#1 versión 2.2) \\
 		\hline
 		Primitiva Firma Digital & ML-DSA-65 (FIPS 204) & ECDSA P-256 / SHA-256 (FIPS 186-4) \\
 		\hline
@@ -41,13 +41,13 @@ El Cuadro \ref{tab:correspondencia_modulos_didactico} presenta la correspondenci
 		\hline
 		Orquestador de Simulación & \texttt{protocolo\_pqc.py} & \texttt{protocolo\_clasico.py} \\
 		\hline
-		Tamaño Paquete de Voto & \textbf{16293 bytes} & \textbf{1196 bytes} \\
+		Tamaño Paquete de Voto & \textbf{16293 bytes}* & \textbf{1196 bytes} \\
 		\hline
 	\end{tabular}
-	\caption{Correspondencia funcional 1 a 1 entre los módulos del protocolo PQC y clásico.}
+	\caption{Correspondencia funcional 1 a 1 entre los módulos del protocolo PQC y clásico (*medición preliminar pendiente de recálculo tras rediseño).}
 	\label{tab:correspondencia_modulos_didactico}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{table}
 \endgroup
 
-Esta estricta homología asegura que las variaciones de rendimiento computacional, consumo de memoria y ancho de banda registradas en las simulaciones experimentales se deban exclusivamente a las características algebraicas de la criptografía de retículos, sentando las bases empíricas para la prueba de hipótesis del Capítulo 4.
+Esta estricta homología asegura que las variaciones de rendimiento computacional, consumo de memoria y ancho de banda registradas en las simulaciones experimentales se deban a las características algebraicas de la criptografía de retículos frente a las curvas elípticas y factorización entera, sentando las bases cuantitativas para la prueba de hipótesis del Capítulo 4.

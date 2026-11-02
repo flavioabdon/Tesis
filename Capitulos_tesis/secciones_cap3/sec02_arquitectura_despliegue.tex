@@ -6,8 +6,9 @@
 
 Para garantizar una alta cohesión, bajo acoplamiento y facilidad de mantenimiento, el prototipo se estructura según un modelo de arquitectura multicapa, como se ilustra en la Figura \ref{fig:uml_arquitectura}.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
 	\centering
+	\resizebox{\textwidth}{!}{%
 	\begin{tikzpicture}[
 		layer/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=3pt, minimum width=13.0cm, minimum height=1.0cm, font=\scriptsize\sffamily, align=center},
 		subcomp/.style={rectangle, draw=PQCDark!70, fill=white, rounded corners=2pt, font=\tiny\sffamily, align=center, inner sep=3pt},
@@ -26,7 +27,7 @@ Para garantizar una alta cohesión, bajo acoplamiento y facilidad de mantenimien
 			\textbf{Capa 2: Servicios Web y API REST (Flask WSGI)}\\
 		};
 		\node[subcomp] at (-4.5, -1.75) {Endpoints: \texttt{/api/votar}, \texttt{/api/escrutinio}};
-		\node[subcomp] at (0.2, -1.75) {Serializador Canónico RFC 8785 (\texttt{canonical\_json})};
+		\node[subcomp] at (0.2, -1.75) {Serializador Canónico (\texttt{canonical\_json})};
 		\node[subcomp] at (4.6, -1.75) {Controlador de Sesión y CORS};
 
 		% Capa 3: Lógica del Dominio Electoral
@@ -61,14 +62,14 @@ Para garantizar una alta cohesión, bajo acoplamiento y facilidad de mantenimien
 		\node[subcomp] at (0.0, -8.15) {Ánfora Digital Cifrada (\texttt{tbl\_anfora})};
 		\node[subcomp] at (4.2, -8.15) {Bitácora y Recibos (\texttt{tbl\_recibos})};
 
-		% Conectores entre capas
+		% Conectores limpios entre capas consecutivas
 		\draw[dep] (capa1) -- (capa2);
 		\draw[dep] (capa2) -- (capa3);
 		\draw[dep] (capa3) -- (capa4);
 		\draw[dep] (capa4) -- (capa5);
-		\draw[dep] (capa3.south -| capa6.north) ++(2.5, -1.8) -- ++(0, -1.6);
-		\draw[dep] (capa3) to[bend left=30] (capa6);
+		\draw[dep] (capa3.east) to[bend left=45] (capa6.east);
 	\end{tikzpicture}
+	}%
 	\caption{Diagrama de Arquitectura en Capas del sistema de votación post-cuántica.}
 	\label{fig:uml_arquitectura}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
@@ -77,19 +78,20 @@ Para garantizar una alta cohesión, bajo acoplamiento y facilidad de mantenimien
 Cada capa mantiene responsabilidades rigurosamente delimitadas:
 \begin{itemize}
 	\item \textbf{Capa de Presentación:} Provee las interfaces visuales responsivas para los votantes, jurados de mesa y auditores, construida con HTML5, hojas de estilo CSS modernas y Chart.js para visualización de cómputos.
-	\item \textbf{Capa de Servicios Web:} Expone los puntos de entrada REST. Implementa la serialización determinista canónica según el estándar RFC 8785 para garantizar que los diccionarios JSON tengan representaciones binarias idénticas en cualquier plataforma antes de ser firmados o hasheados.
-	\item \textbf{Capa de Lógica del Dominio:} Orquesta la lógica de negocio y coordina a los cuatro actores: validación de identidad ciudadana, verificación de firmas digitales, detección de intentos de doble votación y escrutinio final.
-	\item \textbf{Capa FFI Ctypes:} Realiza la conversión de tipos entre las estructuras de alto nivel de Python y los punteros de memoria contigua en lenguaje C.
-	\item \textbf{Capa C Core:} Ejecuta el procesamiento intensivo sobre retículos (multiplicación polinomial NTT, convolución negacíclica, expansión pseudoaleatoria Keccak SHAKE-128/256), compilado con optimizaciones nativas ARM64 y AVX2.
+	\item \textbf{Capa de Servicios Web:} Expone los puntos de entrada REST. Implementa la serialización determinista canónica para asegurar que los diccionarios de datos posean representaciones binarias predecibles antes de ser firmados o procesados criptográficamente.
+	\item \textbf{Capa de Lógica del Dominio:} Orquesta la lógica del protocolo y coordina a los cuatro actores: validación de identidad ciudadana, verificación de firmas digitales, detección de intentos de doble votación y escrutinio final.
+	\item \textbf{Capa FFI Ctypes:} Realiza la conversión de tipos entre las estructuras de Python y los punteros de memoria contigua en lenguaje C.
+	\item \textbf{Capa C Core:} Ejecuta el procesamiento sobre retículos (multiplicación polinomial NTT, convolución negacíclica, expansión pseudoaleatoria Keccak SHAKE-128/256), compilado con optimizaciones nativas para la arquitectura destino.
 	\item \textbf{Capa de Persistencia:} Almacena de forma transaccional y normalizada los registros electorales, manteniendo una separación estricta entre el padrón y el ánfora de votos.
 \end{itemize}
 
 \subsection{Diagrama de Despliegue UML del Entorno de Ejecución}
 
-La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del sistema, modelando los nodos de hardware, los artefactos de software instalados y los canales de comunicación de red.
+La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del sistema, modelando los nodos de hardware, los artefactos de software instalados y los canales de comunicación de red con la Autoridad de Conteo aislada fuera de línea.
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
 	\centering
+	\resizebox{\textwidth}{!}{%
 	\begin{tikzpicture}[
 		node distance=1.0cm and 1.2cm,
 		nodebox/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=4pt, minimum width=3.8cm, minimum height=3.0cm, font=\scriptsize\sffamily, align=center},
@@ -97,49 +99,49 @@ La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del si
 		netlink/.style={thick, draw=PQCDark, font=\tiny\bfseries}
 	]
 		% Nodo 1: Terminal Cliente
-		\node[nodebox] (client) at (-5.0, 3.2) {
+		\node[nodebox] (client) at (-5.2, 3.2) {
 			\guillemotleft device\guillemotright\\
 			\textbf{Terminal Votante / Cabina}\\
 			\vspace{1.8cm}
 		};
 		\node[artbox, below=0.4cm of client.north] {\guillemotleft execution env\guillemotright\\Navegador Web / Interfaz Local};
-		\node[artbox, below=1.3cm of client.north] {\guillemotleft artifact\guillemotright\\PQC Client Engine (Python/JS)};
+		\node[artbox, below=1.3cm of client.north] {\guillemotleft artifact\guillemotright\\PQC Client Engine (Python)};
 
 		% Nodo 2: Servidor Web SV
-		\node[nodebox, fill=BoxBgTeal, minimum width=4.6cm] (server) at (1.5, 3.2) {
+		\node[nodebox, fill=BoxBgTeal, minimum width=4.6cm] (server) at (1.2, 3.2) {
 			\guillemotleft device\guillemotright\\
 			\textbf{Servidor Electoral Central (SV)}\\
 			\vspace{1.8cm}
 		};
 		\node[artbox, below=0.4cm of server.north] {\guillemotleft execution env\guillemotright\\Reverse Proxy Nginx + Gunicorn};
-		\node[artbox, below=1.3cm of server.north] {\guillemotleft artifact\guillemotright\\Flask Web API + \texttt{libpqc\_core.dylib}};
+		\node[artbox, below=1.3cm of server.north] {\guillemotleft artifact\guillemotright\\Flask Web API + \texttt{libpqc\_core.dylib}\\(Clave pública $ek_{\text{AC}}$ publicada)};
 
 		% Nodo 3: Servidor de Base de Datos
-		\node[nodebox, fill=gray!10] (db) at (6.5, 3.2) {
+		\node[nodebox, fill=gray!10] (db) at (6.8, 3.2) {
 			\guillemotleft device\guillemotright\\
 			\textbf{Servidor Base Datos}\\
 			\vspace{1.8cm}
 		};
-		\node[artbox, below=0.4cm of db.north] {\guillemotleft DBMS\guillemotright\\PostgreSQL 16 / SQLite3};
+		\node[artbox, below=0.4cm of db.north] {\guillemotleft DBMS\guillemotright\\PostgreSQL / SQLite3};
 		\node[artbox, below=1.3cm of db.north] {\guillemotleft artifact\guillemotright\\Esquema Relacional 3FN\\(Volumen Cifrado LUKS)};
 
 		% Nodo 4: Estación AR
-		\node[nodebox, fill=BoxBgPurple] (ar_node) at (-5.0, -2.0) {
+		\node[nodebox, fill=BoxBgPurple] (ar_node) at (-5.2, -2.0) {
 			\guillemotleft device\guillemotright\\
 			\textbf{Estación de Registro (AR)}\\
 			\vspace{1.8cm}
 		};
 		\node[artbox, below=0.4cm of ar_node.north] {\guillemotleft execution env\guillemotright\\Terminal de Empadronamiento};
-		\node[artbox, below=1.3cm of ar_node.north] {\guillemotleft artifact\guillemotright\\Módulo AR + Clave $sk_{AR}$};
+		\node[artbox, below=1.3cm of ar_node.north] {\guillemotleft artifact\guillemotright\\Módulo AR + Clave $sk_{\text{AR}}$};
 
 		% Nodo 5: Estación AC (Air Gapped)
-		\node[nodebox, fill=BoxBgAmber, minimum width=4.6cm] (ac_node) at (1.5, -2.0) {
+		\node[nodebox, fill=BoxBgAmber, minimum width=4.6cm] (ac_node) at (1.2, -2.0) {
 			\guillemotleft device\guillemotright\\
 			\textbf{Estación Conteo (AC - Air-Gapped)}\\
 			\vspace{1.8cm}
 		};
 		\node[artbox, below=0.4cm of ac_node.north] {\guillemotleft secure element\guillemotright\\Token Criptográfico / HSM Seguro};
-		\node[artbox, below=1.3cm of ac_node.north] {\guillemotleft artifact\guillemotright\\Módulo Escrutinio + Clave $dk_{AC}$};
+		\node[artbox, below=1.3cm of ac_node.north] {\guillemotleft artifact\guillemotright\\Módulo Escrutinio + Clave $dk_{\text{AC}}$\\(Genera $dk_{\text{AC}}$, exporta $ek_{\text{AC}}$)};
 
 		% Conexiones de red
 		\draw[netlink] (client) -- (server) 
@@ -154,20 +156,20 @@ La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del si
 		node[midway, left] {Canal Seguro / Presencial}
 		node[midway, right] {(Emisión Credencial)};
 		
+		\draw[netlink, dashed, color=PQCCrimson] (ac_node) -- (server)
+		node[midway, left] {1. Exportación de $ek_{\text{AC}}$};
 		\draw[netlink, dashed, color=PQCCrimson] (server) -- (ac_node)
-		node[midway, right] {Transferencia Fuera de Banda}
-		node[midway, left] {(Token USB Físico de $dk_{AC}$)};
+		node[midway, right] {2. Entrega de Lote Permutado (Post-Cierre)};
 	\end{tikzpicture}
-	\caption{Diagrama de Despliegue UML del entorno de hardware y comunicaciones.}
+	}%
+	\caption{Diagrama de Despliegue UML del entorno de hardware, comunicaciones y custodia física de $dk_{\text{AC}}$.}
 	\label{fig:uml_despliegue}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
 
 El esquema de despliegue contempla:
 \begin{enumerate}
-	\item \textbf{Canal de Votación Abierto:} Los clientes se comunican con el Servidor de Votación mediante HTTPS (TLS 1.3). Siguiendo las directrices del modelo Dolev-Yao, la seguridad de la boleta no se confía a la capa de transporte: la confidencialidad e integridad están blindadas matemáticamente de extremo a extremo por ML-KEM y ML-DSA.
-	\item \textbf{Aislamiento de la Autoridad de Conteo:} La estación de escrutinio opera en modalidad desconectada (\textit{air-gapped}). La clave privada de desencapsulamiento $dk_{AC}$ nunca toca la red; se traslada en un token físico seguro con control de acceso criptográfico.
+	\item \textbf{Canal de Votación Abierto:} Los clientes se comunican con el Servidor de Votación mediante HTTPS (TLS 1.3). Siguiendo las directrices del modelo Dolev-Yao, la seguridad de la boleta no se confía a la capa de transporte: la confidencialidad e integridad están respaldadas criptográficamente de extremo a extremo por ML-KEM y ML-DSA.
+	\item \textbf{Aislamiento Físico de la Autoridad de Conteo (Air-Gapped):} La estación de escrutinio opera desconectada físicamente de cualquier red. La clave privada de desencapsulamiento $dk_{\text{AC}}$ se genera en su interior y nunca abandona el entorno protegido; únicamente la clave pública $ek_{\text{AC}}$ se exporta para su publicación, y tras el cierre comicial, el lote permutado de boletas anónimas se transfiere fuera de banda para el conteo.
 	\item \textbf{Persistencia Segura:} El motor relacional se aloja en un segmento de red privado no enrutable hacia el exterior, almacenando los datos en volúmenes protegidos mediante cifrado de disco a nivel de bloque.
 \end{enumerate}
-
-% =============================================================================

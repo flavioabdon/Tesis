@@ -2,11 +2,13 @@
 \label{sec:validacion_kat}
 % =============================================================================
 
-Para garantizar la absoluta fidelidad de la implementación en C respecto a las especificaciones oficiales de los estándares FIPS 203 y FIPS 204, se sometió el binario compilado a la suite de vectores de respuesta conocida (\textit{Known Answer Tests}, KAT) provista por el NIST:
+Para garantizar la correspondencia rigurosa de la implementación en C respecto a las especificaciones oficiales de los estándares FIPS 203 y FIPS 204, se sometió el binario compilado a la suite de vectores de prueba con respuesta conocida (\textit{Known Answer Tests}, KAT) provista por el NIST:
 \begin{itemize}
-	\item \textbf{KAT ML-KEM-768 (FIPS 203):} Se procesaron 100 vectores deterministas oficiales con semillas pseudoaleatorias conocidas. En cada ensayo se compararon los bytes exactos de la clave pública generada, clave secreta, texto cifrado y secreto compartido desencapsulado. Resultado: \textbf{100/100 Aprobados (100\% PASS)}.
+	\item \textbf{KAT ML-KEM-768 (FIPS 203):} Se procesaron 100 vectores deterministas oficiales con semillas pseudoaleatorias controladas. En cada ensayo se compararon los bytes exactos de la clave pública generada, clave secreta, texto cifrado y secreto compartido desencapsulado. Resultado: \textbf{100/100 Aprobados (100\% PASS)}.
 	\item \textbf{KAT ML-DSA-65 (FIPS 204):} Se ejecutaron 100 pruebas deterministas de generación de claves, firma de mensajes estandarizados y verificación de firmas. Resultado: \textbf{100/100 Aprobados (100\% PASS)}.
-	\item \textbf{Pruebas de Inyección de Fallos (\textit{Bit-Flipping}):} Se alteró intencionalmente un solo bit en 100 textos cifrados y 100 firmas válidas. En el 100\% de los casos, los algoritmos detectaron la inconsistencia y rechazaron la operación con código de error, demostrando resistencia absoluta ante corrupción de datos.
+	\item \textbf{Pruebas de Inyección de Fallos (\textit{Bit-Flipping}):} Se diseñaron pruebas específicas para constatar la resistencia ante corrupción de datos distinguiendo el comportamiento interno de cada primitiva:
+	\begin{enumerate}
+		\item \textbf{ML-KEM-768 (Rechazo Implícito):} Conforme a la especificación estándar de FIPS 203 (sección 7.3), la función de desencapsulamiento no arroja excepciones ni códigos de error explícitos ante un texto cifrado alterado; en su lugar, produce una clave compartida pseudoaleatoria no coincidente. En los ensayos realizados, la alteración intencional de bits en el criptograma generó sistemáticamente un secreto compartido divergente, cuyo fallo se manifestó y detectó de forma estricta al verificar la etiqueta de autenticación GMAC en el descifrado simétrico AES-256-GCM.
+		\item \textbf{ML-DSA-65 (Rechazo Explícito):} A diferencia del mecanismo KEM, la función de verificación algorítmica \texttt{pqc\_mldsa65\_verify} comprueba directamente que los coeficientes del vector de respuesta pertenezcan a la norma acotada. En el 100\% de las pruebas con alteración de bits en la firma o en la carga útil, el algoritmo retornó de manera inmediata el código de rechazo (falso).
+	\end{enumerate}
 \end{itemize}
-
-% =============================================================================
