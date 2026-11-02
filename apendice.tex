@@ -12,33 +12,9 @@
 \label{anexo:tamarin_spthy}
 % =============================================================================
 
-El presente anexo contiene la especificación completa del modelo de seguridad formal del protocolo de votación electrónica en el lenguaje de reglas de reescritura multiconjunto de hechos de \textbf{Tamarin Prover} (\texttt{protocolo\_v3.spthy}). 
+El presente anexo contiene la especificación completa del modelo formal del protocolo de votación electrónica en el lenguaje de reescritura multiconjunto de hechos de \textbf{Tamarin Prover} (\texttt{protocolo\_v3.spthy}). 
 
-\section*{Evolución y Cuadro Comparativo de Diferencias ($v2 \to v2b \to v3$)}
-
-A continuación se resume la evolución estructural del modelo formal a través de las tres etapas desarrolladas en la Sección \ref{sec:practica_tamarin}:
-
-\begin{table}[htbp]
-	\centering
-	\small
-	\begin{tabular}{lp{6.2cm}p{6.0cm}}
-		\toprule
-		\textbf{Transición} & \textbf{Modificación Introducida} & \textbf{Justificación / Impacto en la Verificación} \\
-		\midrule
-		$v2 \to v2b$ & Adición de tres restricciones axiomáticas de unicidad de configuración: \texttt{SetupAC\_Unico}, \texttt{SetupAR\_Unico} y \texttt{SetupSV\_Unico}. & Bloquea el artefacto de modelado de doble instancia de autoridad en la apertura del escrutinio, permitiendo la verificación de \texttt{integridad\_voto} (29 pasos). \\
-		\midrule
-		$v2b \to v3$ & 
-		1. Fase de clausura: nueva regla \texttt{Cierre\_Votacion}, restricciones \texttt{Cierre\_Unico} y \texttt{NoVotoTrasCierre}, y premisa \texttt{!UrnaCerrada()} en la regla de escrutinio.\newline
-		2. Reglas de corrupción: adición de \texttt{Reveal\_Clave\_AR} y \texttt{Reveal\_Clave\_SV}.\newline
-		3. Refinamiento granular de lemas: \texttt{secreto\_voto} concluye tras cierre y escrutinio excluyendo solo \texttt{Rev('AC','AC')}; \texttt{autenticidad\_votante} aísla al votante y la AR; \texttt{integridad\_voto} excluye solo \texttt{Rev('Votante', id)}. &
-		Modela el orden temporal estricto de las fases de la jornada electoral. Demuestra formalmente la resiliencia del secreto del voto y de la integridad del sufragio frente a compromisos parciales o cruzados de entidades en el modelo simbólico. \\
-		\bottomrule
-	\end{tabular}
-	\caption{Resumen de modificaciones entre las versiones v2, v2b y v3 del modelo formal.}
-	\label{tab:resumen_diff_modelos}
-\end{table}
-
-\section*{Código Fuente del Modelo de Referencia (\texttt{protocolo\_v3.spthy})}
+El modelo especifica la teoría ecuacional KEM-DEM, las autoridades electorales independientes (AR, AC y SV), la transición del recurso lineal de sufragio único ($\text{NoHaVotado} \to \text{YaVoto}$), la desvinculación formal de la identidad del votante en el ánfora digital, la fase de clausura con precedencia temporal estricta y las reglas de revelación de secretos para el análisis de resiliencia frente a compromisos de claves.
 
 \begin{scriptsize}
 \verbatiminput{tamarin_protocolo.spthy}
@@ -56,7 +32,7 @@ A continuación se resume la evolución estructural del modelo formal a través 
 \label{anexo:tamarin_salida}
 % =============================================================================
 
-El presente anexo transcribe las salidas textuales literales generadas por el motor \texttt{tamarin-prover} versión 1.12.0 sobre el resolvedor ecuacional \textit{Maude} 3.5.1, extraídas directamente de los registros de ejecución consolidados e individuales almacenados en el directorio \texttt{logs/}. Incluye los bloques \textit{summary of summaries} de los modelos \texttt{v2}, \texttt{v2b} y \texttt{v3}, las mediciones de tiempo lema por lema, el reporte del contraejemplo de exclusión mínima para \texttt{integridad\_voto} y el reporte de límite temporal del análisis de equivalencia observacional (\texttt{--diff}).
+El presente anexo transcribe las salidas textuales literales generadas por el motor \texttt{tamarin-prover} versión 1.12.0 acoplado al resolvedor ecuacional \textit{Maude} 3.5.1 sobre la especificación formal \texttt{protocolo\_v3.spthy}, extraídas directamente de los registros de ejecución almacenados en el directorio \texttt{logs/}. Incluye el bloque \textit{summary of summaries} de la verificación por lotes, las mediciones individuales lema por lema, el reporte del experimento de exclusión mínima para \texttt{integridad\_voto} y el reporte de límite temporal del análisis de equivalencia observacional (\texttt{--diff}).
 
 \begin{scriptsize}
 \verbatiminput{salida_tamarin.txt}
