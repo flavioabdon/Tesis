@@ -10,57 +10,57 @@ Para garantizar una alta cohesión, bajo acoplamiento y facilidad de mantenimien
 	\centering
 	\resizebox{\textwidth}{!}{%
 	\begin{tikzpicture}[
-		layer/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=3pt, minimum width=13.0cm, minimum height=1.0cm, font=\scriptsize\sffamily, align=center},
-		subcomp/.style={rectangle, draw=PQCDark!70, fill=white, rounded corners=2pt, font=\tiny\sffamily, align=center, inner sep=3pt},
-		dep/.style={-{Latex[length=2mm]}, thick, draw=black!70}
+		layer/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, minimum width=13.2cm, minimum height=1.1cm, font=\scriptsize, align=center},
+		subcomp/.style={rectangle, draw=black, fill=white, line width=0.5pt, rounded corners=1pt, font=\tiny, align=center, inner sep=3pt},
+		dep/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black}
 	]
 		% Capa 1: Presentación
-		\node[layer, fill=BoxBgBlue] (capa1) at (0, 0) {
+		\node[layer] (capa1) at (0, 0) {
 			\textbf{Capa 1: Presentación y Navegación Web UWE (Cliente de Votación)}\\
 		};
-		\node[subcomp] at (-4.3, -0.15) {Cabina Web UWE (\texttt{«presentation page»})};
-		\node[subcomp] at (0.0, -0.15) {Panel Registro AR (\texttt{«input form»})};
-		\node[subcomp] at (4.3, -0.15) {Portal Ciudadano Auditoría (\texttt{«query»})};
+		\node[subcomp] at (-4.3, -0.18) {Cabina Web UWE (\texttt{«presentation page»})};
+		\node[subcomp] at (0.0, -0.18) {Panel Registro AR (\texttt{«input form»})};
+		\node[subcomp] at (4.3, -0.18) {Portal Ciudadano Auditoría (\texttt{«query»})};
 
 		% Capa 2: Servicios Web y API REST
-		\node[layer, fill=BoxBgTeal, below=0.6cm of capa1] (capa2) {
+		\node[layer, below=0.55cm of capa1] (capa2) {
 			\textbf{Capa 2: Servicios Web, Controlador de Procesos UWE y API REST (Flask WSGI)}\\
 		};
-		\node[subcomp] at (-4.5, -1.75) {Endpoints: \texttt{/api/votar}, \texttt{/api/escrutinio}};
-		\node[subcomp] at (0.2, -1.75) {Serializador Canónico (\texttt{canonical\_json})};
-		\node[subcomp] at (4.6, -1.75) {Guarda de Estado OCL y Sesión};
+		\node[subcomp] at (-4.5, -1.83) {Endpoints: \texttt{/api/votar}, \texttt{/api/escrutinio}};
+		\node[subcomp] at (0.2, -1.83) {Serializador Canónico (\texttt{canonical\_json})};
+		\node[subcomp] at (4.6, -1.83) {Guarda de Estado OCL y Sesión};
 
 		% Capa 3: Lógica del Dominio Electoral
-		\node[layer, fill=BoxBgPurple, below=0.6cm of capa2] (capa3) {
+		\node[layer, below=0.55cm of capa2] (capa3) {
 			\textbf{Capa 3: Lógica del Dominio y Modelo de Contenido UWE (Python)}\\
 		};
-		\node[subcomp] at (-4.5, -3.35) {\texttt{VotantePQC}: Formulación y Cifrado};
-		\node[subcomp] at (-1.2, -3.35) {\texttt{AutoridadRegistro}: Padrón};
-		\node[subcomp] at (2.0, -3.35) {\texttt{ServidorVotacion}: Urna};
-		\node[subcomp] at (4.8, -3.35) {\texttt{AutoridadConteo}: Tally};
+		\node[subcomp] at (-4.5, -3.48) {\texttt{VotantePQC}: Formulación y Cifrado};
+		\node[subcomp] at (-1.2, -3.48) {\texttt{AutoridadRegistro}: Padrón};
+		\node[subcomp] at (2.0, -3.48) {\texttt{ServidorVotacion}: Urna};
+		\node[subcomp] at (4.8, -3.48) {\texttt{AutoridadConteo}: Tally};
 
 		% Capa 4: Abstracción Criptográfica FFI
-		\node[layer, fill=BoxBgGreen, below=0.6cm of capa3] (capa4) {
+		\node[layer, below=0.55cm of capa3] (capa4) {
 			\textbf{Capa 4: Abstracción Criptográfica y Enlace FFI (ctypes)}\\
 		};
-		\node[subcomp] at (-4.2, -4.95) {\texttt{pqc\_wrapper.py}: Wrappers ML-KEM/DSA};
-		\node[subcomp] at (0.2, -4.95) {\texttt{crypto\_utils.py}: AES-256-GCM / SHA3-256};
-		\node[subcomp] at (4.4, -4.95) {Manejador de Punteros \texttt{c\_uint8}};
+		\node[subcomp] at (-4.2, -5.13) {\texttt{pqc\_wrapper.py}: Wrappers ML-KEM/DSA};
+		\node[subcomp] at (0.2, -5.13) {\texttt{crypto\_utils.py}: AES-256-GCM / SHA3-256};
+		\node[subcomp] at (4.4, -5.13) {Manejador de Punteros \texttt{c\_uint8}};
 
 		% Capa 5: Núcleo Nativo C Core
-		\node[layer, fill=BoxBgAmber, below=0.6cm of capa4] (capa5) {
+		\node[layer, below=0.55cm of capa4] (capa5) {
 			\textbf{Capa 5: Núcleo Criptográfico Nativo en Lenguaje C (PQClean / libpqc\_core.dylib)}\\
 		};
-		\node[subcomp] at (-3.8, -6.55) {ML-KEM-768 (FIPS 203): KeyGen, Encaps, Decaps};
-		\node[subcomp] at (3.5, -6.55) {ML-DSA-65 (FIPS 204): KeyGen, Sign, Verify};
+		\node[subcomp] at (-3.8, -6.78) {ML-KEM-768 (FIPS 203): KeyGen, Encaps, Decaps};
+		\node[subcomp] at (3.5, -6.78) {ML-DSA-65 (FIPS 204): KeyGen, Sign, Verify};
 
 		% Capa 6: Persistencia
-		\node[layer, fill=gray!12, below=0.6cm of capa5] (capa6) {
+		\node[layer, below=0.55cm of capa5] (capa6) {
 			\textbf{Capa 6: Persistencia y Almacenamiento Relacional Disociado (PostgreSQL / SQLite)}\\
 		};
-		\node[subcomp] at (-4.2, -8.15) {Padrón Electoral (\texttt{tbl\_padron})};
-		\node[subcomp] at (0.0, -8.15) {Ánfora Digital Cifrada (\texttt{tbl\_anfora})};
-		\node[subcomp] at (4.2, -8.15) {Bitácora y Recibos (\texttt{tbl\_recibos})};
+		\node[subcomp] at (-4.2, -8.43) {Padrón Electoral (\texttt{tbl\_padron})};
+		\node[subcomp] at (0.0, -8.43) {Ánfora Digital Cifrada (\texttt{tbl\_anfora})};
+		\node[subcomp] at (4.2, -8.43) {Bitácora y Recibos (\texttt{tbl\_recibos})};
 
 		% Conectores limpios entre capas consecutivas
 		\draw[dep] (capa1) -- (capa2);
@@ -94,9 +94,9 @@ La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del si
 	\resizebox{\textwidth}{!}{%
 	\begin{tikzpicture}[
 		node distance=1.0cm and 1.2cm,
-		nodebox/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=4pt, minimum width=3.8cm, minimum height=3.0cm, font=\scriptsize\sffamily, align=center},
-		artbox/.style={rectangle, draw=PQCDark!80, fill=white, rounded corners=2pt, font=\tiny\sffamily, align=center, inner sep=4pt},
-		netlink/.style={thick, draw=PQCDark, font=\tiny\bfseries}
+		nodebox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, minimum width=3.8cm, minimum height=3.0cm, font=\scriptsize, align=center},
+		artbox/.style={rectangle, draw=black, fill=white, line width=0.5pt, rounded corners=1pt, font=\tiny, align=center, inner sep=3.5pt},
+		netlink/.style={line width=0.8pt, draw=black, font=\tiny}
 	]
 		% Nodo 1: Terminal Cliente
 		\node[nodebox] (client) at (-5.2, 3.2) {
@@ -108,7 +108,7 @@ La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del si
 		\node[artbox, below=1.3cm of client.north] {\guillemotleft artifact\guillemotright\\PQC Client Engine (Wasm / Python)};
 
 		% Nodo 2: Servidor Web SV
-		\node[nodebox, fill=BoxBgTeal, minimum width=4.6cm] (server) at (1.2, 3.2) {
+		\node[nodebox, minimum width=4.6cm] (server) at (1.2, 3.2) {
 			\guillemotleft device\guillemotright\\
 			\textbf{Servidor Electoral Central (SV)}\\
 			\vspace{1.8cm}
@@ -117,7 +117,7 @@ La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del si
 		\node[artbox, below=1.3cm of server.north] {\guillemotleft artifact\guillemotright\\Flask Web API + \texttt{libpqc\_core.dylib}\\(Clave pública $ek_{\text{AC}}$ publicada)};
 
 		% Nodo 3: Servidor de Base de Datos
-		\node[nodebox, fill=gray!10] (db) at (6.8, 3.2) {
+		\node[nodebox] (db) at (6.8, 3.2) {
 			\guillemotleft device\guillemotright\\
 			\textbf{Servidor Base Datos}\\
 			\vspace{1.8cm}
@@ -126,7 +126,7 @@ La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del si
 		\node[artbox, below=1.3cm of db.north] {\guillemotleft artifact\guillemotright\\Esquema Relacional 3FN\\(Volumen Cifrado LUKS)};
 
 		% Nodo 4: Estación AR
-		\node[nodebox, fill=BoxBgPurple] (ar_node) at (-5.2, -2.0) {
+		\node[nodebox] (ar_node) at (-5.2, -2.0) {
 			\guillemotleft device\guillemotright\\
 			\textbf{Estación de Registro (AR)}\\
 			\vspace{1.8cm}
@@ -135,7 +135,7 @@ La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del si
 		\node[artbox, below=1.3cm of ar_node.north] {\guillemotleft artifact\guillemotright\\Módulo AR + Clave $sk_{\text{AR}}$};
 
 		% Nodo 5: Estación AC (Air Gapped)
-		\node[nodebox, fill=BoxBgAmber, minimum width=4.6cm] (ac_node) at (1.2, -2.0) {
+		\node[nodebox, minimum width=4.6cm] (ac_node) at (1.2, -2.0) {
 			\guillemotleft device\guillemotright\\
 			\textbf{Estación Conteo (AC - Air-Gapped)}\\
 			\vspace{1.8cm}
@@ -152,13 +152,13 @@ La Figura \ref{fig:uml_despliegue} presenta el Diagrama de Despliegue UML del si
 		node[midway, above] {TCP/IP 5432}
 		node[midway, below] {(Red Interna Aislada)};
 		
-		\draw[netlink, dashed, color=PQCPurple] (ar_node) -- (client)
+		\draw[netlink, dashed] (ar_node) -- (client)
 		node[midway, left] {Canal Seguro / Presencial}
 		node[midway, right] {(Emisión Credencial)};
 		
-		\draw[netlink, dashed, color=PQCCrimson] (ac_node) -- (server)
+		\draw[netlink, dashed] (ac_node) -- (server)
 		node[midway, left] {1. Exportación de $ek_{\text{AC}}$};
-		\draw[netlink, dashed, color=PQCCrimson] (server) -- (ac_node)
+		\draw[netlink, dashed] (server) -- (ac_node)
 		node[midway, right] {2. Entrega de Lote Permutado (Post-Cierre)};
 	\end{tikzpicture}
 	}%
@@ -183,55 +183,55 @@ La Figura \ref{fig:uml_componentes} expone el Diagrama UML de Componentes de Sof
 	\centering
 	\begin{tikzpicture}[
 		node distance=0.8cm and 1.2cm,
-		comp/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=3pt, minimum width=4.0cm, minimum height=0.9cm, font=\scriptsize\sffamily, align=center},
-		dep/.style={-{Latex[length=2mm]}, thick, dashed, draw=PQCDark}
+		comp/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, minimum width=4.0cm, minimum height=0.9cm, font=\scriptsize, align=center},
+		dep/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.7pt, dashed, draw=black}
 	]
 		% Capa 1: C Nativo
-		\node[comp, fill=BoxBgTeal] (c_core) at (0, 0) {
+		\node[comp] (c_core) at (0, 0) {
 			\guillemotleft component\guillemotright\\
 			\textbf{PQClean C Core}\\
 			\textit{ML-KEM-768 / ML-DSA-65}
 		};
-		\node[comp, fill=BoxBgTeal] (c_dyn) at (6.5, 0) {
+		\node[comp] (c_dyn) at (6.5, 0) {
 			\guillemotleft artifact\guillemotright\\
 			\textbf{libpqc\_core.dylib}\\
 			\textit{Binario compilado ARM64/x86}
 		};
 		
 		% Capa 2: FFI Wrapper & Utils
-		\node[comp, fill=BoxBgGreen] (wrapper) at (0, -2.1) {
+		\node[comp] (wrapper) at (0, -2.1) {
 			\guillemotleft component\guillemotright\\
 			\textbf{Python FFI Wrapper}\\
 			\textit{pqc\_wrapper.py (ctypes)}
 		};
-		\node[comp, fill=BoxBgGreen] (utils) at (6.5, -2.1) {
+		\node[comp] (utils) at (6.5, -2.1) {
 			\guillemotleft component\guillemotright\\
 			\textbf{Crypto Utilities}\\
 			\textit{AES-GCM, SHA3, canonical\_json}
 		};
 		
 		% Capa 3: Actores
-		\node[comp, fill=BoxBgPurple] (actores) at (3.25, -4.2) {
+		\node[comp] (actores) at (3.25, -4.2) {
 			\guillemotleft component\guillemotright\\
 			\textbf{Módulos de Entidades Electorales}\\
 			\textit{Votante, AR, Servidor, Conteo (Tally)}
 		};
 		
 		% Capa 4: Orquestador & UI
-		\node[comp, fill=BoxBgAmber] (orch) at (0, -6.3) {
+		\node[comp] (orch) at (0, -6.3) {
 			\guillemotleft component\guillemotright\\
 			\textbf{Orquestador E2E}\\
 			\textit{protocolo\_pqc.py}
 		};
-		\node[comp, fill=BoxBgAmber] (web) at (6.5, -6.3) {
+		\node[comp] (web) at (6.5, -6.3) {
 			\guillemotleft component\guillemotright\\
 			\textbf{Capa Web UWE \& REST API}\\
 			\textit{Flask app.py + Vistas UWE}
 		};
 		
 		% Conexiones
-		\draw[dep] (c_core) -- (c_dyn) node[midway, above, font=\tiny] {compilación gcc/clang};
-		\draw[dep] (wrapper) -- (c_dyn) node[midway, right, font=\tiny] {dlopen / ctypes};
+		\draw[dep] (c_core) -- (c_dyn) node[midway, above, font=\tiny\itshape] {compilación gcc/clang};
+		\draw[dep] (wrapper) -- (c_dyn) node[midway, right, font=\tiny\itshape] {dlopen / ctypes};
 		\draw[dep] (actores) -- (wrapper);
 		\draw[dep] (actores) -- (utils);
 		\draw[dep] (orch) -- (actores);

@@ -13,29 +13,31 @@ El entero $k$ se denomina el \textit{rango} del retículo y $m$ su \textit{dimen
 
 \begin{figure}[htbp]
 	\centering
-	\begin{tikzpicture}[scale=0.85]
-		% Puntos del retículo
+	\begin{tikzpicture}[scale=0.88]
+		% Puntos del retículo como puntos analógicos nítidos
 		\foreach \x in {-2,...,3} {
 			\foreach \y in {-2,...,2} {
 				\coordinate (P) at ({\x*1.5 + \y*0.7}, {\x*0.4 + \y*1.8});
-				\fill[PQCMainBlue!80!black] (P) circle (2.2pt);
+				\fill[black] (P) circle (1.3pt);
 			}
 		}
 		\coordinate (O) at (0,0);
-		\node[below left, font=\scriptsize\bfseries] at (O) {$\mathbf{0}$};
+		\node[below left, font=\scriptsize] at (O) {$\mathbf{0}$};
 		
-		% Base buena
-		\draw[-{Latex[length=2.5mm]}, line width=1.5pt, PQCTeal] (O) -- (1.5, 0.4) 
-		node[midway, below right, font=\footnotesize\bfseries] {$\mathbf{b}_1$};
-		\draw[-{Latex[length=2.5mm]}, line width=1.5pt, PQCGreen] (O) -- (0.7, 1.8) 
-		node[midway, above left, font=\footnotesize\bfseries] {$\mathbf{b}_2$};
+		% Vectores de la base
+		\draw[-{Latex[length=2.2mm, width=1.5mm]}, line width=0.9pt] (O) -- (1.5, 0.4) 
+		node[midway, below right, font=\footnotesize] {$\mathbf{b}_1$};
+		\draw[-{Latex[length=2.2mm, width=1.5mm]}, line width=0.9pt] (O) -- (0.7, 1.8) 
+		node[midway, above left, font=\footnotesize] {$\mathbf{b}_2$};
 		
-		% Punto CVP con ruido
+		% Punto CVP perturbado por ruido
 		\coordinate (Closest) at ({1*1.5 + 1*0.7}, {1*0.4 + 1*1.8});
 		\coordinate (T) at ({1*1.5 + 1*0.7 + 0.35}, {1*0.4 + 1*1.8 + 0.45});
-		\fill[PQCCrimson] (T) circle (2.6pt) node[above right, font=\scriptsize\bfseries, text=PQCCrimson] {$\mathbf{t} = \mathbf{v} + \mathbf{e}$};
-		\draw[-{Latex[length=2mm]}, line width=1.1pt, PQCAmber] (Closest) -- (T) node[midway, right, font=\tiny\bfseries] {ruido $\mathbf{e}$};
-		\draw[PQCGreen, line width=1.2pt, dashed] (Closest) circle (6pt);
+		
+		\fill[black] (T) circle (1.8pt) node[above right, font=\scriptsize] {$\mathbf{t} = \mathbf{v} + \mathbf{e}$};
+		\draw[-{Latex[length=1.8mm, width=1.2mm]}, line width=0.7pt] (Closest) -- (T) 
+		node[midway, right, font=\tiny\itshape] {$\mathbf{e}$};
+		\draw[line width=0.6pt, dotted] (Closest) circle (7pt);
 	\end{tikzpicture}
 	\caption{Retículo bidimensional con vectores base y punto objetivo perturbado por ruido en el problema CVP.}
 	\label{fig:reticulo_2d}

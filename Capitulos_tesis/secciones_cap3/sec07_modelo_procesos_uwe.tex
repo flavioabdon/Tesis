@@ -16,11 +16,12 @@ La Figura \ref{fig:uml_actividades} especifica el Diagrama de Actividades del pr
 	\resizebox{!}{0.68\textheight}{%
 	\begin{tikzpicture}[
 		scale=0.9,
-		act/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=5pt, font=\scriptsize\sffamily, align=center, minimum height=0.72cm, text width=5.0cm},
-		dec/.style={diamond, draw=PQCAmber, fill=BoxBgAmber, aspect=2.1, font=\tiny\bfseries, align=center, inner sep=1.5pt},
-		flow/.style={-{Latex[length=2.5mm]}, thick, draw=black!85},
-		init/.style={circle, fill=black, inner sep=4.5pt},
-		stop/.style={circle, draw=black, thick, fill=white, inner sep=4.5pt}
+		act/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, font=\scriptsize, align=center, minimum height=0.72cm, text width=5.0cm},
+		dec/.style={diamond, draw=black, fill=white, line width=0.8pt, aspect=2.1, font=\tiny, align=center, inner sep=1.5pt},
+		errbox/.style={rectangle, draw=black, fill=white, double, double distance=1.2pt, line width=0.7pt, rounded corners=1.5pt, font=\scriptsize, align=center, text width=3.1cm},
+		flow/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black},
+		init/.style={circle, fill=black, inner sep=3.5pt},
+		stop/.style={circle, draw=black, line width=0.8pt, fill=white, inner sep=3.5pt}
 	]
 		% Nodo Inicial
 		\node[init] (start) at (0, 0) {};
@@ -29,7 +30,7 @@ La Figura \ref{fig:uml_actividades} especifica el Diagrama de Actividades del pr
 		\node[act, below=0.45cm of start] (a1) {1. Confirmar opción en cabina y empaquetar voto fijo\\$m_{\text{fijo}} \leftarrow \text{Pad}_{32\text{B}}(\text{opción} \;\|\; \text{CSPRNG}_{31\text{B}})$};
 		\node[act, below=0.45cm of a1] (a2) {2. Encapsular clave efímera contra clave pública de AC\\$(K, ct_{\text{kem}}) \leftarrow \text{ML-KEM-768.Encaps}(ek_{\text{AC}})$};
 		\node[act, below=0.45cm of a2] (a3) {3. Cifrar con AES-256-GCM ($\text{AAD}=\langle id_{\text{elec}}, ct_{\text{kem}} \rangle$) y firmar\\$c_{\text{voto}} \leftarrow \text{AEAD.Enc}(K, m_{\text{fijo}}, \text{AAD})$; \; $\sigma_V \leftarrow \text{ML-DSA-65.Sign}(sk_V)$};
-		\node[act, fill=BoxBgTeal, draw=PQCTeal, below=0.45cm of a3] (a4) {4. Transmitir \texttt{PaqueteVoto} por API REST (\texttt{POST /api/votar})};
+		\node[act, below=0.45cm of a3] (a4) {4. Transmitir \texttt{PaqueteVoto} por API REST (\texttt{POST /api/votar})};
 		
 		% Decisiones Servidor
 		\node[dec, below=0.55cm of a4] (d1) {¿Credencial AR válida\\(\texttt{ELEC\_CRED\_AR\_V1})?};
@@ -37,18 +38,18 @@ La Figura \ref{fig:uml_actividades} especifica el Diagrama de Actividades del pr
 		\node[dec, below=0.75cm of d2] (d3) {¿Registro en padrón\\indica \texttt{ha\_votado = true}?};
 		
 		% Rechazos
-		\node[act, fill=red!10, draw=PQCCrimson, right=2.1cm of d1, text width=3.1cm] (err1) {Abortar proceso UWE:\\Credencial no autorizada};
-		\node[act, fill=red!10, draw=PQCCrimson, right=2.1cm of d2, text width=3.1cm] (err2) {Abortar proceso UWE:\\Firma digital corrupta};
-		\node[act, fill=red!10, draw=PQCCrimson, right=2.1cm of d3, text width=3.1cm] (err3) {Disparar CU9: Rechazar\\intento de doble voto};
+		\node[errbox, right=2.1cm of d1] (err1) {Abortar proceso UWE:\\Credencial no autorizada};
+		\node[errbox, right=2.1cm of d2] (err2) {Abortar proceso UWE:\\Firma digital corrupta};
+		\node[errbox, right=2.1cm of d3] (err3) {Disparar CU9: Rechazar\\intento de doble voto};
 		
 		% Actividades Éxito
-		\node[act, fill=BoxBgGreen, draw=PQCGreen, below=0.75cm of d3] (a5) {5. Transacción atómica SQL: \texttt{ha\_votado = TRUE} y desacoplar\\identidad depositando tupla anónima en \texttt{tbl\_anfora\_boletas}};
-		\node[act, fill=BoxBgGreen, draw=PQCGreen, below=0.45cm of a5] (a6) {6. Calcular $h_b = \text{SHA3-256}(\text{Boleta})$ y firmar recibo con $sk_{\text{SV}}$\\(\texttt{ctx = "ELEC\_RECIBO\_SV\_V1"})};
+		\node[act, below=0.75cm of d3] (a5) {5. Transacción atómica SQL: \texttt{ha\_votado = TRUE} y desacoplar\\identidad depositando tupla anónima en \texttt{tbl\_anfora\_boletas}};
+		\node[act, below=0.45cm of a5] (a6) {6. Calcular $h_b = \text{SHA3-256}(\text{Boleta})$ y firmar recibo con $sk_{\text{SV}}$\\(\texttt{ctx = "ELEC\_RECIBO\_SV\_V1"})};
 		\node[act, below=0.45cm of a6] (a7) {7. Activar restricción OCL \texttt{NoRetornoTrasVotar} y renderizar\\vista \texttt{PaginaReciboInmutable}};
 		
 		% Nodo Final
 		\node[stop, below=0.45cm of a7] (final) {};
-		\node[circle, fill=black, inner sep=2.5pt] at (final.center) {};
+		\node[circle, fill=black, inner sep=2pt] at (final.center) {};
 		
 		% Conectores
 		\draw[flow] (start) -- (a1);
@@ -57,14 +58,14 @@ La Figura \ref{fig:uml_actividades} especifica el Diagrama de Actividades del pr
 		\draw[flow] (a3) -- (a4);
 		\draw[flow] (a4) -- (d1);
 		
-		\draw[flow] (d1) -- node[left, font=\tiny\bfseries] {Sí} (d2);
-		\draw[flow] (d1) -- node[above, font=\tiny\bfseries] {No} (err1);
+		\draw[flow] (d1) -- node[left, font=\tiny\itshape] {Sí} (d2);
+		\draw[flow] (d1) -- node[above, font=\tiny\itshape] {No} (err1);
 		
-		\draw[flow] (d2) -- node[left, font=\tiny\bfseries] {Sí} (d3);
-		\draw[flow] (d2) -- node[above, font=\tiny\bfseries] {No} (err2);
+		\draw[flow] (d2) -- node[left, font=\tiny\itshape] {Sí} (d3);
+		\draw[flow] (d2) -- node[above, font=\tiny\itshape] {No} (err2);
 		
-		\draw[flow] (d3) -- node[left, font=\tiny\bfseries] {No} (a5);
-		\draw[flow] (d3) -- node[above, font=\tiny\bfseries] {Sí} (err3);
+		\draw[flow] (d3) -- node[left, font=\tiny\itshape] {No} (a5);
+		\draw[flow] (d3) -- node[above, font=\tiny\itshape] {Sí} (err3);
 		
 		\draw[flow] (a5) -- (a6);
 		\draw[flow] (a6) -- (a7);
@@ -72,10 +73,10 @@ La Figura \ref{fig:uml_actividades} especifica el Diagrama de Actividades del pr
 		
 		% Retornos de error al final
 		\node[stop, right=6.0cm of d2] (err_final) {};
-		\node[circle, fill=black, inner sep=2.5pt] at (err_final.center) {};
-		\draw[flow, draw=PQCCrimson] (err1) -| (err_final);
-		\draw[flow, draw=PQCCrimson] (err2) -- (err_final);
-		\draw[flow, draw=PQCCrimson] (err3) -| (err_final);
+		\node[circle, fill=black, inner sep=2pt] at (err_final.center) {};
+		\draw[flow] (err1) -| (err_final);
+		\draw[flow] (err2) -- (err_final);
+		\draw[flow] (err3) -| (err_final);
 	\end{tikzpicture}
 	}%
 	\caption{Diagrama de Actividades del Proceso UWE (\texttt{ProcesoEmisionVoto}) para la emisión, validación y custodia disociada del voto.}
@@ -99,10 +100,10 @@ El Modelo de Procesos UWE se proyecta directamente sobre la línea temporal de m
 	\resizebox{\textwidth}{!}{%
 	\begin{tikzpicture}[
 		node distance=1.1cm and 3.2cm,
-		lifeline/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, minimum width=2.8cm, minimum height=0.7cm, font=\bfseries\scriptsize, align=center},
-		msg/.style={-{Latex[length=2mm]}, thick, draw=black!85},
-		retmsg/.style={-{Latex[length=2mm]}, thick, dashed, draw=black!85},
-		note/.style={rectangle, draw=gray!50, fill=BoxBgAmber, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3pt}
+		lifeline/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, minimum width=2.8cm, minimum height=0.7cm, font=\scriptsize, align=center},
+		msg/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black},
+		retmsg/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.7pt, dashed, draw=black},
+		note/.style={rectangle, draw=black, fill=white, line width=0.6pt, rounded corners=1pt, font=\tiny, align=left, inner sep=3.5pt}
 	]
 		% Cabeceras
 		\node[lifeline] (V)  at (0, 0) {Votante ($V$)};
@@ -110,15 +111,15 @@ El Modelo de Procesos UWE se proyecta directamente sobre la línea temporal de m
 		\node[lifeline] (SV) at (10.2, 0) {Servidor Votación ($SV$)};
 		
 		% Ejes verticales
-		\draw[draw=gray!50, dashed] (V) -- ++(0,-9.6);
-		\draw[draw=gray!50, dashed] (AR) -- ++(0,-9.6);
-		\draw[draw=gray!50, dashed] (SV) -- ++(0,-9.6);
+		\draw[draw=black, dashed, line width=0.5pt] (V) -- ++(0,-9.6);
+		\draw[draw=black, dashed, line width=0.5pt] (AR) -- ++(0,-9.6);
+		\draw[draw=black, dashed, line width=0.5pt] (SV) -- ++(0,-9.6);
 		
 		% Bloques de activación
-		\draw[fill=white, draw=gray!70] ([xshift=-1.5mm, yshift=-0.8cm]V.center) rectangle ++(3mm, -1.8cm);
-		\draw[fill=white, draw=gray!70] ([xshift=-1.5mm, yshift=-1.2cm]AR.center) rectangle ++(3mm, -1.2cm);
-		\draw[fill=white, draw=gray!70] ([xshift=-1.5mm, yshift=-3.4cm]V.center) rectangle ++(3mm, -3.2cm);
-		\draw[fill=white, draw=gray!70] ([xshift=-1.5mm, yshift=-4.8cm]SV.center) rectangle ++(3mm, -3.8cm);
+		\draw[fill=white, draw=black, line width=0.6pt] ([xshift=-1.5mm, yshift=-0.8cm]V.center) rectangle ++(3mm, -1.8cm);
+		\draw[fill=white, draw=black, line width=0.6pt] ([xshift=-1.5mm, yshift=-1.2cm]AR.center) rectangle ++(3mm, -1.2cm);
+		\draw[fill=white, draw=black, line width=0.6pt] ([xshift=-1.5mm, yshift=-3.4cm]V.center) rectangle ++(3mm, -3.2cm);
+		\draw[fill=white, draw=black, line width=0.6pt] ([xshift=-1.5mm, yshift=-4.8cm]SV.center) rectangle ++(3mm, -3.8cm);
 		
 		% Mensajes Registro
 		\draw[msg] ([yshift=-1.2cm]V.center) -- ([yshift=-1.2cm]AR.center)
@@ -139,8 +140,8 @@ El Modelo de Procesos UWE se proyecta directamente sobre la línea temporal de m
 		};
 		
 		% Envío de voto
-		\draw[msg, color=PQCMainBlue] ([yshift=-5.2cm]V.center) -- ([yshift=-5.2cm]SV.center)
-		node[midway, above, font=\scriptsize\bfseries] {3: \texttt{POST /api/votar} $(\text{PaqueteVoto})$};
+		\draw[msg] ([yshift=-5.2cm]V.center) -- ([yshift=-5.2cm]SV.center)
+		node[midway, above, font=\scriptsize] {3: \texttt{POST /api/votar} $(\text{PaqueteVoto})$};
 		
 		% Validación en Servidor
 		\node[note, left=0.2cm of SV, yshift=-6.2cm] {
@@ -154,8 +155,8 @@ El Modelo de Procesos UWE se proyecta directamente sobre la línea temporal de m
 		};
 		
 		% Retorno de Recibo
-		\draw[retmsg, color=PQCGreen] ([yshift=-8.2cm]SV.center) -- ([yshift=-8.2cm]V.center)
-		node[midway, above, font=\scriptsize\bfseries] {4: \texttt{ReciboVotacion(h\_boleta, ts\_ventana, firma\_sv)}};
+		\draw[retmsg] ([yshift=-8.2cm]SV.center) -- ([yshift=-8.2cm]V.center)
+		node[midway, above, font=\scriptsize] {4: \texttt{ReciboVotacion(h\_boleta, ts\_ventana, firma\_sv)}};
 	\end{tikzpicture}
 	}%
 	\caption{Diagrama de Secuencia UML: Emisión desde el proceso UWE, verificación multinivel y retorno de recibo firmado.}
@@ -168,10 +169,10 @@ El Modelo de Procesos UWE se proyecta directamente sobre la línea temporal de m
 	\resizebox{\textwidth}{!}{%
 	\begin{tikzpicture}[
 		node distance=1.1cm and 3.5cm,
-		lifeline/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, minimum width=2.8cm, minimum height=0.7cm, font=\bfseries\scriptsize, align=center},
-		msg/.style={-{Latex[length=2mm]}, thick, draw=black!85},
-		retmsg/.style={-{Latex[length=2mm]}, thick, dashed, draw=black!85},
-		note/.style={rectangle, draw=gray!50, fill=BoxBgAmber, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3pt}
+		lifeline/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, minimum width=2.8cm, minimum height=0.7cm, font=\scriptsize, align=center},
+		msg/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black},
+		retmsg/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.7pt, dashed, draw=black},
+		note/.style={rectangle, draw=black, fill=white, line width=0.6pt, rounded corners=1pt, font=\tiny, align=left, inner sep=3.5pt}
 	]
 		% Cabeceras
 		\node[lifeline] (SV) at (0, 0) {Servidor Votación ($SV$)};
@@ -179,18 +180,18 @@ El Modelo de Procesos UWE se proyecta directamente sobre la línea temporal de m
 		\node[lifeline] (PUB) at (11.0, 0) {Portal Auditoría UWE};
 		
 		% Ejes verticales
-		\draw[draw=gray!50, dashed] (SV) -- ++(0,-8.2);
-		\draw[draw=gray!50, dashed] (AC) -- ++(0,-8.2);
-		\draw[draw=gray!50, dashed] (PUB) -- ++(0,-8.2);
+		\draw[draw=black, dashed, line width=0.5pt] (SV) -- ++(0,-8.2);
+		\draw[draw=black, dashed, line width=0.5pt] (AC) -- ++(0,-8.2);
+		\draw[draw=black, dashed, line width=0.5pt] (PUB) -- ++(0,-8.2);
 		
 		% Activaciones
-		\draw[fill=white, draw=gray!70] ([xshift=-1.5mm, yshift=-0.8cm]SV.center) rectangle ++(3mm, -1.8cm);
-		\draw[fill=white, draw=gray!70] ([xshift=-1.5mm, yshift=-1.8cm]AC.center) rectangle ++(3mm, -5.2cm);
-		\draw[fill=white, draw=gray!70] ([xshift=-1.5mm, yshift=-6.4cm]PUB.center) rectangle ++(3mm, -1.2cm);
+		\draw[fill=white, draw=black, line width=0.6pt] ([xshift=-1.5mm, yshift=-0.8cm]SV.center) rectangle ++(3mm, -1.8cm);
+		\draw[fill=white, draw=black, line width=0.6pt] ([xshift=-1.5mm, yshift=-1.8cm]AC.center) rectangle ++(3mm, -5.2cm);
+		\draw[fill=white, draw=black, line width=0.6pt] ([xshift=-1.5mm, yshift=-6.4cm]PUB.center) rectangle ++(3mm, -1.2cm);
 		
 		% Mensajes
-		\draw[msg, color=PQCPurple] ([yshift=-1.4cm]SV.center) -- ([yshift=-1.4cm]AC.center)
-		node[midway, above, font=\scriptsize\bfseries] {1: Clausura de mesa $\to$ Entrega de Lote Permutado (Shuffle)};
+		\draw[msg] ([yshift=-1.4cm]SV.center) -- ([yshift=-1.4cm]AC.center)
+		node[midway, above, font=\scriptsize] {1: Clausura de mesa $\to$ Entrega de Lote Permutado (Shuffle)};
 		\node[note, below=0.1cm of SV, xshift=1.2cm, yshift=-1.6cm] {
 			\textbf{Permutación en SV:}\\
 			Aplica ordenación pseudoaleatoria al lote anónimo\\
@@ -210,8 +211,8 @@ El Modelo de Procesos UWE se proyecta directamente sobre la línea temporal de m
 		};
 		
 		% Publicación
-		\draw[msg, color=PQCGreen] ([yshift=-6.6cm]AC.center) -- ([yshift=-6.6cm]PUB.center)
-		node[midway, above, font=\scriptsize\bfseries] {2: Publicar Acta Oficial de Cómputo + Lista de Hashes $\{h_j\}$};
+		\draw[msg] ([yshift=-6.6cm]AC.center) -- ([yshift=-6.6cm]PUB.center)
+		node[midway, above, font=\scriptsize] {2: Publicar Acta Oficial de Cómputo + Lista de Hashes $\{h_j\}$};
 		
 		\node[note, left=0.2cm of PUB, yshift=-7.4cm] {
 			\textbf{Auditoría Ciudadana en Portal UWE (\texttt{«query»}):}\\
@@ -232,23 +233,23 @@ Las transiciones entre los nodos de navegación y procesos UWE guardan correspon
 	\centering
 	\begin{tikzpicture}[
 		scale=0.88,
-		state/.style={rectangle, draw=PQCDark, fill=BoxBgBlue, thick, rounded corners=5pt, minimum height=0.8cm, font=\scriptsize\bfseries, align=center, inner sep=5pt},
-		errstate/.style={rectangle, draw=PQCCrimson, fill=red!10, thick, rounded corners=5pt, minimum height=0.8cm, font=\scriptsize\bfseries, align=center, inner sep=5pt},
-		trans/.style={-{Latex[length=2mm]}, thick, draw=black!80, font=\tiny\sffamily},
-		init/.style={circle, fill=black, inner sep=4pt},
-		final/.style={circle, draw=black, thick, fill=white, inner sep=4pt}
+		state/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, minimum height=0.75cm, font=\scriptsize, align=center, inner sep=4pt},
+		errstate/.style={rectangle, draw=black, fill=white, double, double distance=1.2pt, line width=0.7pt, rounded corners=1.5pt, minimum height=0.75cm, font=\scriptsize, align=center, inner sep=4pt},
+		trans/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.7pt, draw=black, font=\tiny\itshape},
+		init/.style={circle, fill=black, inner sep=3.5pt},
+		final/.style={circle, draw=black, line width=0.8pt, fill=white, inner sep=3.5pt}
 	]
 		\node[init] (s0) at (0, 0) {};
 		\node[state] (s1) at (2.4, 0) {1. En Edición\\(Cabina UWE)};
 		\node[state] (s2) at (6.6, 0) {2. Cifrada Híbrida\\(KEM-DEM)};
 		\node[state] (s3) at (10.8, 0) {3. Firmada Digitalmente\\(ML-DSA-65)};
 		
-		\node[state] (s4) at (10.8, -2.5) {4. En Transmisión\\(Canal Red Dolev-Yao)};
-		\node[state, fill=BoxBgTeal] (s5) at (6.6, -2.5) {5. Custodiada en Urna\\(Ánfora Disociada)};
-		\node[state, fill=BoxBgGreen] (s6) at (2.4, -2.5) {6. Desencapsulada\\(Apertura con $dk_{AC}$)};
+		\node[state] (s4) at (10.8, -2.5) {4. En Transmisión\\(Canal Red Dolev--Yao)};
+		\node[state] (s5) at (6.6, -2.5) {5. Custodiada en Urna\\(Ánfora Disociada)};
+		\node[state] (s6) at (2.4, -2.5) {6. Desencapsulada\\(Apertura con $dk_{\text{AC}}$)};
 		
 		\node[final] (sf) at (0, -2.5) {};
-		\node[circle, fill=black, inner sep=2.5pt] at (sf.center) {};
+		\node[circle, fill=black, inner sep=2pt] at (sf.center) {};
 		
 		% Estados de Error
 		\node[errstate] (err_rej) at (8.7, -4.6) {Rechazada\\(Firma Inválida / No Empadronado)};
@@ -256,7 +257,7 @@ Las transiciones entre los nodos de navegación y procesos UWE guardan correspon
 		
 		% Transiciones de Éxito
 		\draw[trans] (s0) -- (s1) node[midway, above] {Emitir};
-		\draw[trans] (s1) -- (s2) node[midway, above] {$\text{Encaps}(ek_{AC})$};
+		\draw[trans] (s1) -- (s2) node[midway, above] {$\text{Encaps}(ek_{\text{AC}})$};
 		\draw[trans] (s2) -- (s3) node[midway, above] {$\text{Sign}(sk_V)$};
 		\draw[trans] (s3) -- (s4) node[midway, right] {Enviar};
 		\draw[trans] (s4) -- (s5) node[midway, above] {Validación OK};
@@ -264,8 +265,8 @@ Las transiciones entre los nodos de navegación y procesos UWE guardan correspon
 		\draw[trans] (s6) -- (sf) node[midway, above] {Totalizar};
 		
 		% Transiciones de Falla
-		\draw[trans, draw=PQCCrimson] (s4) |- (err_rej) node[near start, right] {Firma corrupta};
-		\draw[trans, draw=PQCCrimson] (s4) |- (err_dup) node[near start, left] {Ya votó};
+		\draw[trans, dashed] (s4) |- (err_rej) node[near start, right] {Firma corrupta};
+		\draw[trans, dashed] (s4) |- (err_dup) node[near start, left] {Ya votó};
 	\end{tikzpicture}
 	\caption{Diagrama de Estados UML del ciclo de vida de la boleta de sufragio acoplado al proceso UWE.}
 	\label{fig:uml_estados_boleta}
@@ -276,21 +277,21 @@ Las transiciones entre los nodos de navegación y procesos UWE guardan correspon
 	\centering
 	\begin{tikzpicture}[
 		scale=0.9,
-		st/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=4pt, font=\scriptsize\bfseries, align=center, inner sep=6pt, minimum height=0.75cm},
-		arr/.style={-{Latex[length=2.5mm]}, thick, draw=black!85, font=\tiny\sffamily},
-		i/.style={circle, fill=black, inner sep=4pt},
-		f/.style={circle, draw=black, thick, fill=white, inner sep=4pt}
+		st/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, font=\scriptsize, align=center, inner sep=5pt, minimum height=0.72cm},
+		arr/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.7pt, draw=black, font=\tiny\itshape},
+		i/.style={circle, fill=black, inner sep=3.5pt},
+		f/.style={circle, draw=black, line width=0.8pt, fill=white, inner sep=3.5pt}
 	]
 		\node[i] (start) at (0, 0) {};
 		\node[st] (st1) at (2.4, 0) {1. Configuración\\y Ceremonia Claves};
 		\node[st] (st2) at (6.8, 0) {2. Empadronamiento\\y Registro AR};
-		\node[st, fill=BoxBgGreen] (st3) at (11.2, 0) {3. Jornada Electoral\\(Votación Abierta)};
+		\node[st] (st3) at (11.2, 0) {3. Jornada Electoral\\(Votación Abierta)};
 		
-		\node[st, fill=BoxBgAmber] (st4) at (11.2, -2.3) {4. Clausura Comicial\\(Recepción Cerrada)};
-		\node[st, fill=BoxBgPurple] (st5) at (6.8, -2.3) {5. Desencapsulamiento\\y Escrutinio AC};
-		\node[st, fill=BoxBgTeal] (st6) at (2.4, -2.3) {6. Auditoría UWE y\\Proclamación Oficial};
+		\node[st] (st4) at (11.2, -2.3) {4. Clausura Comicial\\(Recepción Cerrada)};
+		\node[st] (st5) at (6.8, -2.3) {5. Desencapsulamiento\\y Escrutinio AC};
+		\node[st] (st6) at (2.4, -2.3) {6. Auditoría UWE y\\Proclamación Oficial};
 		\node[f] (end) at (0, -2.3) {};
-		\node[circle, fill=black, inner sep=2.5pt] at (end.center) {};
+		\node[circle, fill=black, inner sep=2pt] at (end.center) {};
 		
 		\draw[arr] (start) -- (st1);
 		\draw[arr] (st1) -- node[midway, above] {Claves listas} (st2);

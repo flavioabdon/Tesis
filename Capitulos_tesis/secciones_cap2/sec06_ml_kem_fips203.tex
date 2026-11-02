@@ -13,18 +13,21 @@ El protocolo articula tres algoritmos probabilísticos:
 
 \begin{figure}[htbp]
 	\centering
-	\begin{tikzpicture}[scale=0.9]
-		\node (aut) [box, fill=BoxBgBlue, draw=PQCMainBlue, text width=3.8cm] {\textbf{Servidor Electoral}\\\small Genera $(\mathbf{A}, \mathbf{b})$ con secreto $\mathbf{s}$};
-		\node (vot) [box, right=3.5cm of aut, fill=BoxBgPurple, draw=PQCPurple, text width=3.8cm] {\textbf{Terminal del Votante}\\\small Encapsula secreto $K$ en $c = (\mathbf{u}, v)$};
+	\begin{tikzpicture}[
+		scale=0.92,
+		pbox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, text width=3.8cm, align=center, font=\footnotesize, inner sep=5pt}
+	]
+		\node (aut) [pbox] {\textbf{Servidor Electoral}\\[2pt]\scriptsize Genera $(\mathbf{A}, \mathbf{b})$ con vector secreto $\mathbf{s}$};
+		\node (vot) [pbox, right=3.4cm of aut] {\textbf{Terminal del Votante}\\[2pt]\scriptsize Encapsula secreto $K$ en $c = (\mathbf{u}, v)$};
 		
-		\draw[-{Latex[length=2.5mm]}, thick, PQCMainBlue] ([yshift=3mm]aut.east) -- ([yshift=3mm]vot.west) 
+		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] ([yshift=3.5mm]aut.east) -- ([yshift=3.5mm]vot.west) 
 		node[midway, above, font=\footnotesize] {1. Clave pública $PK = (\mathbf{A}, \mathbf{b})$};
 		
-		\draw[-{Latex[length=2.5mm]}, thick, PQCPurple] ([yshift=-3mm]vot.west) -- ([yshift=-3mm]aut.east) 
+		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] ([yshift=-3.5mm]vot.west) -- ([yshift=-3.5mm]aut.east) 
 		node[midway, below, font=\footnotesize] {2. Boleta cifrada $c = (\mathbf{u}, v)$};
 		
-		\node (dec) [box, below=1.0cm of aut, fill=BoxBgGreen, draw=PQCGreen, text width=4.2cm] {\textbf{Desencapsulamiento}\\\small Calcula $v - \mathbf{s}^T\mathbf{u}$ y redondea para recuperar $K$};
-		\draw[-{Latex[length=2mm]}, thick, PQCGreen] (aut) -- (dec);
+		\node (dec) [pbox, below=1.0cm of aut, text width=4.3cm] {\textbf{Desencapsulamiento}\\[2pt]\scriptsize Calcula $v - \mathbf{s}^T\mathbf{u}$ y redondea para recuperar $K$};
+		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (aut) -- (dec);
 	\end{tikzpicture}
 	\caption{Flujo secuencial de operaciones en el estándar FIPS 203 (ML-KEM).}
 	\label{fig:kem_flow}

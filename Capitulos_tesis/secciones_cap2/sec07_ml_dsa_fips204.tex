@@ -30,21 +30,26 @@ Para mitigar esta fuga de información, Vadim Lyubashevsky (2009, 2012) concibi�
 
 \begin{figure}[htbp]
 	\centering
-	\begin{tikzpicture}[scale=0.88]
-		\node (init) [box, fill=BoxBgPurple, draw=PQCPurple, text width=3.4cm] {1. Vector máscara $\mathbf{y}$\\aleatorio uniforme};
-		\node (hash) [box, right=1.2cm of init, fill=BoxBgBlue, draw=PQCMainBlue, text width=3.4cm] {2. Desafío polinomial\\$c = H(\mathbf{A}\mathbf{y}, \mu)$};
-		\node (cand) [box, right=1.2cm of hash, fill=BoxBgTeal, draw=PQCTeal, text width=3.4cm] {3. Firma candidata\\$\mathbf{z} = \mathbf{y} + c\mathbf{s}$};
+	\begin{tikzpicture}[
+		scale=0.88,
+		pbox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, text width=3.4cm, align=center, font=\footnotesize, inner sep=4pt},
+		dec/.style={diamond, draw=black, fill=white, line width=0.8pt, aspect=2.1, align=center, font=\footnotesize, inner sep=2pt},
+		errbox/.style={rectangle, draw=black, fill=white, double, double distance=1.2pt, line width=0.7pt, rounded corners=1.5pt, text width=3.0cm, align=center, font=\footnotesize, inner sep=4pt}
+	]
+		\node (init) [pbox] {1. Vector máscara $\mathbf{y}$\\aleatorio uniforme};
+		\node (hash) [pbox, right=1.2cm of init] {2. Desafío polinomial\\$c = H(\mathbf{A}\mathbf{y}, \mu)$};
+		\node (cand) [pbox, right=1.2cm of hash] {3. Firma candidata\\$\mathbf{z} = \mathbf{y} + c\mathbf{s}$};
 		
-		\node (dec) [diamond, draw=PQCAmber, fill=BoxBgAmber, aspect=2, below=1.2cm of hash, font=\footnotesize\bfseries] {¿$\|\mathbf{z}\|_\infty < \gamma - \beta$?};
-		\node (pub) [box, right=1.8cm of dec, fill=BoxBgGreen, draw=PQCGreen, text width=3.2cm] {\textbf{Firma Aceptada}\\$\sigma = (\mathbf{z}, c)$};
-		\node (abort) [box, left=1.8cm of dec, fill=red!10, draw=PQCCrimson, text width=3.0cm] {\textbf{Abortar}\\Reintentar nuevo $\mathbf{y}$};
+		\node (dec) [dec, below=1.2cm of hash] {¿$\|\mathbf{z}\|_\infty < \gamma_1 - \beta$?};
+		\node (pub) [pbox, right=1.8cm of dec, text width=3.2cm] {\textbf{Firma Aceptada}\\$\sigma = (\mathbf{z}, c)$};
+		\node (abort) [errbox, left=1.8cm of dec] {\textbf{Abortar}\\Reintentar nuevo $\mathbf{y}$};
 		
-		\draw[-{Latex[length=2mm]}, thick] (init) -- (hash);
-		\draw[-{Latex[length=2mm]}, thick] (hash) -- (cand);
-		\draw[-{Latex[length=2mm]}, thick] (cand) |- (dec);
-		\draw[-{Latex[length=2mm]}, thick, PQCGreen] (dec) -- node[above, font=\scriptsize] {Sí} (pub);
-		\draw[-{Latex[length=2mm]}, thick, PQCCrimson] (dec) -- node[above, font=\scriptsize] {No} (abort);
-		\draw[-{Latex[length=2mm]}, thick, dashed, PQCCrimson] (abort) |- (init);
+		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (init) -- (hash);
+		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (hash) -- (cand);
+		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (cand) |- (dec);
+		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (dec) -- node[above, font=\scriptsize\itshape] {Sí} (pub);
+		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (dec) -- node[above, font=\scriptsize\itshape] {No} (abort);
+		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.7pt, dashed] (abort) |- (init);
 	\end{tikzpicture}
 	\caption{Algoritmo de firma ML-DSA con muestreo por rechazo (\textit{Fiat-Shamir with aborts}).}
 	\label{fig:mldsa_abort}

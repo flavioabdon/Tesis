@@ -35,18 +35,18 @@ Para un profesional o docente del área de ciencias de la computación, la estru
 	\centering
 	\begin{tikzpicture}[scale=0.95]
 		\coordinate (O) at (0,0);
-		\draw[line width=1.2pt, PQCTeal, dashed] (O) circle (1.8cm);
+		\draw[line width=0.6pt, dashed, draw=black] (O) circle (1.8cm);
 		
-		\node[draw=PQCMainBlue, fill=BoxBgBlue, circle, font=\scriptsize\bfseries, inner sep=2pt] (x0) at (0,1.8) {$x^0=1$};
-		\node[draw=PQCMainBlue, fill=BoxBgBlue, circle, font=\scriptsize\bfseries, inner sep=2pt] (x1) at (1.8,0) {$x^1$};
-		\node[draw=PQCMainBlue, fill=BoxBgBlue, circle, font=\scriptsize\bfseries, inner sep=2pt] (x2) at (0,-1.8) {$x^2$};
-		\node[draw=PQCMainBlue, fill=BoxBgBlue, circle, font=\scriptsize\bfseries, inner sep=2pt] (x3) at (-1.8,0) {$x^{n-1}$};
+		\node[draw=black, fill=white, line width=0.8pt, circle, font=\scriptsize, inner sep=2.5pt] (x0) at (0,1.8) {$x^0=1$};
+		\node[draw=black, fill=white, line width=0.8pt, circle, font=\scriptsize, inner sep=2.5pt] (x1) at (1.8,0) {$x^1$};
+		\node[draw=black, fill=white, line width=0.8pt, circle, font=\scriptsize, inner sep=2.5pt] (x2) at (0,-1.8) {$x^2$};
+		\node[draw=black, fill=white, line width=0.8pt, circle, font=\scriptsize, inner sep=2.5pt] (x3) at (-1.8,0) {$x^{n-1}$};
 		
-		\draw[-{Latex[length=2mm]}, line width=1.2pt, PQCMainBlue] (x0) to[bend left=20] (x1);
-		\draw[-{Latex[length=2mm]}, line width=1.2pt, PQCMainBlue] (x1) to[bend left=20] (x2);
-		\draw[line width=1.2pt, PQCMainBlue, dotted] (x2) to[bend left=20] (x3);
-		\draw[-{Latex[length=2.5mm]}, line width=1.5pt, PQCCrimson] (x3) to[bend left=25] 
-		node[midway, above left, font=\tiny\bfseries, text=PQCCrimson] {$x^n \equiv -1$} (x0);
+		\draw[-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black] (x0) to[bend left=20] (x1);
+		\draw[-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black] (x1) to[bend left=20] (x2);
+		\draw[line width=0.8pt, draw=black, dotted] (x2) to[bend left=20] (x3);
+		\draw[-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black, dashed] (x3) to[bend left=25] 
+		node[midway, above left, font=\scriptsize\itshape] {$x^n \equiv -1$} (x0);
 	\end{tikzpicture}
 	\caption{Reducción ciclotómica en el anillo $R_q$: estabilidad dimensional de los polinomios mediante $x^n \equiv -1$.}
 	\label{fig:anillo_reduccion}

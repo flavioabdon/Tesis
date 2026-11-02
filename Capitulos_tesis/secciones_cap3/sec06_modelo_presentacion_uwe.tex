@@ -13,95 +13,95 @@ La Figura \ref{fig:uwe_presentacion} modela la composición abstracta de las tre
 	\centering
 	\resizebox{\textwidth}{!}{%
 	\begin{tikzpicture}[
-		viewport/.style={rectangle, draw=PQCDark, fill=gray!5, very thick, rounded corners=4pt, inner sep=8pt},
-		pagebox/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=3pt, minimum width=4.2cm, minimum height=5.8cm, font=\tiny\sffamily, align=center},
-		groupbox/.style={rectangle, draw=PQCTeal, fill=BoxBgTeal, thick, rounded corners=3pt, minimum width=4.2cm, minimum height=5.8cm, font=\tiny\sffamily, align=center},
-		recbox/.style={rectangle, draw=PQCGreen, fill=BoxBgGreen, thick, rounded corners=3pt, minimum width=4.2cm, minimum height=5.8cm, font=\tiny\sffamily, align=center},
-		elem/.style={rectangle, draw=PQCDark!80, fill=white, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3pt, text width=3.6cm},
-		btn/.style={rectangle, draw=PQCAmber!90!black, fill=BoxBgAmber, thick, rounded corners=2pt, font=\tiny\sffamily\bfseries, align=center, inner sep=3pt, text width=3.6cm},
-		flow/.style={-{Latex[length=2.2mm]}, thick, draw=PQCMainBlue}
+		viewport/.style={rectangle, draw=black, dashed, line width=0.8pt, rounded corners=2pt, inner sep=8pt},
+		pagebox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, minimum width=4.2cm, minimum height=5.8cm, font=\tiny\rmfamily, align=center},
+		groupbox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, minimum width=4.2cm, minimum height=5.8cm, font=\tiny\rmfamily, align=center},
+		recbox/.style={rectangle, draw=black, fill=white, double, double distance=1.2pt, line width=0.7pt, rounded corners=1.5pt, minimum width=4.2cm, minimum height=5.8cm, font=\tiny\rmfamily, align=center},
+		elem/.style={rectangle, draw=black, fill=white, line width=0.6pt, rounded corners=1.5pt, font=\tiny\rmfamily, align=left, inner sep=3pt, text width=3.6cm},
+		btn/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, font=\tiny\rmfamily\bfseries, align=center, inner sep=3pt, text width=3.6cm},
+		flow/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black}
 	]
 		% Contenedor 1: Pantalla de Selección en Cabina
 		\node[pagebox] (p1) at (-4.8, 0) {};
-		\node[anchor=north, font=\scriptsize\sffamily\bfseries, text=PQCMainBlue] at ([yshift=-0.15cm]p1.north) {
+		\node[anchor=north, font=\scriptsize\rmfamily\bfseries, text=black] at ([yshift=-0.15cm]p1.north) {
 			\begin{tabular}{c}
-				\guillemotleft presentation page\guillemotright\\
+				«presentation page»\\
 				\textbf{1. PaginaCabinaVotacion}
 			\end{tabular}
 		};
 		\node[elem] (p1_e1) at (-4.8, 1.55) {
-			\guillemotleft text\guillemotright\ \textbf{BannerEleccion}\\
+			«text» \textbf{BannerEleccion}\\
 			+ idEleccion, estadoCredencialAR
 		};
 		\node[elem] (p1_e2) at (-4.8, 0.35) {
-			\guillemotleft input form\guillemotright\ \textbf{FormSufragio}\\
+			«input form» \textbf{FormSufragio}\\
 			\rule{3.4cm}{0.2pt}\\
-			\guillemotleft selection\guillemotright\ \texttt{radioCandidato}\\
-			\guillemotleft anchored collection\guillemotright\ \texttt{Opciones}
+			«selection» \texttt{radioCandidato}\\
+			«anchored collection» \texttt{Opciones}
 		};
 		\node[elem] (p1_e3) at (-4.8, -1.0) {
-			\guillemotleft text\guillemotright\ \textbf{InfoClavePublicaAC}\\
+			«text» \textbf{InfoClavePublicaAC}\\
 			+ huellaSHA3($ek_{\text{AC}}$) [1184 B]
 		};
 		\node[btn] (p1_b1) at (-4.8, -2.15) {
-			\guillemotleft button\guillemotright\ \textbf{btnPrevisualizarVoto}\\
+			«button» \textbf{btnPrevisualizarVoto}\\
 			$\to$ Abrir Confirmación
 		};
 
 		% Contenedor 2: Modal de Confirmación y Cifrado KEM-DEM
 		\node[groupbox] (p2) at (0, 0) {};
-		\node[anchor=north, font=\scriptsize\sffamily\bfseries, text=PQCTeal!80!black] at ([yshift=-0.15cm]p2.north) {
+		\node[anchor=north, font=\scriptsize\rmfamily\bfseries, text=black] at ([yshift=-0.15cm]p2.north) {
 			\begin{tabular}{c}
-				\guillemotleft presentation group\guillemotright\\
+				«presentation group»\\
 				\textbf{2. ModalConfirmacionCifrado}
 			\end{tabular}
 		};
 		\node[elem] (p2_e1) at (0, 1.55) {
-			\guillemotleft text\guillemotright\ \textbf{ResumenPreferencia}\\
+			«text» \textbf{ResumenPreferencia}\\
 			+ opcionElegida, advertenciaIrreversible
 		};
 		\node[elem] (p2_e2) at (0, 0.25) {
-			\guillemotleft text\guillemotright\ \textbf{PanelEstadoCriptografico}\\
+			«text» \textbf{PanelEstadoCriptografico}\\
 			$\bullet$ Padding fijo: 32 B (CSPRNG)\\
 			$\bullet$ KEM: ML-KEM-768 ($ct_{\text{kem}}$: 1088 B)\\
 			$\bullet$ AEAD: AES-256-GCM + AAD (48 B)\\
 			$\bullet$ Firma: ML-DSA-65 ($\sigma_V$: 3309 B)
 		};
 		\node[elem] (p2_e3) at (0, -1.15) {
-			\guillemotleft button\guillemotright\ \texttt{btnCorregirOpcion}\\
+			«button» \texttt{btnCorregirOpcion}\\
 			(Retorno local previo al envío)
 		};
 		\node[btn] (p2_b1) at (0, -2.15) {
-			\guillemotleft button\guillemotright\ \textbf{btnCifrarYFirmarDefinitivo}\\
+			«button» \textbf{btnCifrarYFirmarDefinitivo}\\
 			$\to$ Invocar \texttt{ProcesoEmisionVoto}
 		};
 
 		% Contenedor 3: Pantalla de Emisión de Recibo Inmutable
 		\node[recbox] (p3) at (4.8, 0) {};
-		\node[anchor=north, font=\scriptsize\sffamily\bfseries, text=PQCGreen!80!black] at ([yshift=-0.15cm]p3.north) {
+		\node[anchor=north, font=\scriptsize\rmfamily\bfseries, text=black] at ([yshift=-0.15cm]p3.north) {
 			\begin{tabular}{c}
-				\guillemotleft presentation page\guillemotright\\
+				«presentation page»\\
 				\textbf{3. PaginaReciboInmutable}
 			\end{tabular}
 		};
 		\node[elem] (p3_e1) at (4.8, 1.55) {
-			\guillemotleft text\guillemotright\ \textbf{EstadoDepositoAnfora}\\
+			«text» \textbf{EstadoDepositoAnfora}\\
 			+ mensaje: ``Voto Anónimo Custodiado''\\
 			+ enlaceCabina: \texttt{DISABLED (OCL)}
 		};
 		\node[elem] (p3_e2) at (4.8, 0.25) {
-			\guillemotleft text\guillemotright\ \textbf{ComprobanteCriptografico}\\
+			«text» \textbf{ComprobanteCriptografico}\\
 			$\bullet$ \texttt{hashBoletaSHA3}: 64 hex chars\\
 			$\bullet$ \texttt{timestampVentana}: Hora truncada\\
 			$\bullet$ \texttt{firmaSV}: ML-DSA-65 (3309 B)\\
 			$\bullet$ Contexto: \texttt{ELEC\_RECIBO\_SV\_V1}
 		};
 		\node[elem] (p3_e3) at (4.8, -1.15) {
-			\guillemotleft button\guillemotright\ \texttt{btnDescargarJSONRecibo}\\
+			«button» \texttt{btnDescargarJSONRecibo}\\
 			(Exportación local para auditoría)
 		};
-		\node[btn, fill=BoxBgTeal, draw=PQCTeal] (p3_b1) at (4.8, -2.15) {
-			\guillemotleft button\guillemotright\ \textbf{btnIrPortalAuditoria}\\
+		\node[btn] (p3_b1) at (4.8, -2.15) {
+			«button» \textbf{btnIrPortalAuditoria}\\
 			$\to$ Consultar \texttt{BuscadorReciboSHA3}
 		};
 
@@ -111,7 +111,7 @@ La Figura \ref{fig:uwe_presentacion} modela la composición abstracta de las tre
 
 		% Contenedor Raíz View Port
 		\begin{scope}[on background layer]
-			\node[viewport, fit=(p1) (p2) (p3), label={[font=\bfseries\scriptsize\sffamily, text=PQCDark]north:\guillemotleft view port\guillemotright\ VentanaElectoralPQC (Contenedor Raíz de Presentación Abstracta UWE)}] (vp) {};
+			\node[viewport, fit=(p1) (p2) (p3), label={[font=\bfseries\scriptsize\rmfamily, text=black]north:«view port» VentanaElectoralPQC (Contenedor Raíz de Presentación Abstracta UWE)}] (vp) {};
 		\end{scope}
 	\end{tikzpicture}
 	}%
@@ -135,3 +135,4 @@ Cada una de las tres vistas abstractas cumple una función específica en la tra
 	\item \textbf{Pantalla 3 — Emisión de Recibo Inmutable (\texttt{«presentation page» PaginaReciboInmutable}):}
 	Una vez validada la boleta y ejecutada la transacción atómica de disociación en el servidor, el contenedor \texttt{«view port»} reemplaza la vista de cabina por la página de recibo y activa la restricción OCL \texttt{NoRetornoTrasVotar} (\texttt{enlaceCabina: DISABLED}). El componente \texttt{«text» ComprobanteCriptografico} despliega el resumen determinista \texttt{hashBoletaSHA3} (64 caracteres hexadecimales), la marca temporal truncada a la ventana horaria y la firma digital $\sigma_{\text{SV}}$ (ML-DSA-65, 3309 bytes) bajo el contexto \texttt{ELEC\_RECIBO\_SV\_V1}. El elector dispone de los controles \texttt{«button» btnDescargarJSONRecibo} y \texttt{«button» btnIrPortalAuditoria} para verificar la inclusión de su boleta en el escrutinio público.
 \end{enumerate}
+

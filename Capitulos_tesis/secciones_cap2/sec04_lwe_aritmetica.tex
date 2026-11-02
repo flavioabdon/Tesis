@@ -36,26 +36,40 @@ Cuando un atacante intenta aplicar combinaciones lineales tipo Gauss sobre el si
 
 \begin{figure}[htbp]
 	\centering
-	\begin{tikzpicture}[scale=0.9]
-		% Señal periódica clásica
-		\begin{scope}[shift={(0,2.2)}]
-			\node[font=\footnotesize\bfseries, text=PQCCrimson, align=left] at (4.5, 1.2) 
-			{\textbf{Esquemas Clásicos (RSA/ECC):} Estructura periódica $f(x)=a^x \pmod N$ $\to$ Shor la detecta};
-			\draw[line width=1.4pt, PQCCrimson, domain=0:9, samples=150] plot (\x, {0.5*sin(\x*180/3.14*1.2)});
-			\draw[dashed, PQCAmber, line width=1pt] (0,-0.6) -- (9,-0.6);
-			\draw[{Latex[length=2mm]}-{Latex[length=2mm]}, PQCAmber, thick] (0,-0.6) -- (2.62,-0.6) 
-			node[midway, below, font=\scriptsize] {Período $r$};
+	\begin{tikzpicture}[scale=0.92]
+		% Señal periódica clásica (estilo osciloscopio analógico)
+		\begin{scope}[shift={(0,2.4)}]
+			\node[font=\footnotesize, align=left, anchor=west] at (0, 1.25) 
+			{\textbf{Esquemas Clásicos (RSA/ECC):} Estructura periódica $f(x)=a^x \pmod N$ (detectable por Shor)};
+			\draw[line width=0.6pt, -{Latex[length=2mm, width=1.3mm]}] (0,0) -- (9.4,0) node[right, font=\scriptsize] {$x$};
+			\draw[line width=0.6pt, -{Latex[length=2mm, width=1.3mm]}] (0,-0.7) -- (0,0.8) node[above, font=\scriptsize] {$f(x)$};
+			\draw[line width=0.8pt, draw=black, domain=0:9, samples=180] plot (\x, {0.5*sin(\x*180/3.14159*1.2)});
+			
+			% Cota de período r estilo dibujo técnico
+			\draw[line width=0.5pt, dashed] (0,-0.55) -- (0,-0.9);
+			\draw[line width=0.5pt, dashed] (2.618,-0.55) -- (2.618,-0.9);
+			\draw[{Latex[length=1.8mm, width=1.2mm]}-{Latex[length=1.8mm, width=1.2mm]}, line width=0.6pt] (0,-0.8) -- (2.618,-0.8) 
+			node[midway, fill=white, inner sep=1pt, font=\scriptsize\itshape] {Período $r$};
 		\end{scope}
 		
-		% LWE Ruidoso
+		% LWE Ruidoso (diagrama de agujas aperiódico / muestreo estocástico)
 		\begin{scope}[shift={(0,0)}]
-			\node[font=\footnotesize\bfseries, text=PQCGreen, align=left] at (4.5, 1.1) 
-			{\textbf{Criptografía de Retículos (LWE):} Datos con ruido aleatorio $\mathbf{e}$ $\to$ Ausencia de período (Inmune a Shor)};
-			\foreach \x in {0.2,0.5,...,8.8} {
-				\pgfmathsetmacro\yr{(rand)*0.55}
-				\draw[line width=1.3pt, PQCGreen!80!black] (\x, 0) -- (\x, \yr);
+			\node[font=\footnotesize, align=left, anchor=west] at (0, 1.25) 
+			{\textbf{Criptografía de Retículos (LWE):} Dispersión estocástica con ruido $\mathbf{e}$ (ausencia de período)};
+			\draw[line width=0.6pt, -{Latex[length=2mm, width=1.3mm]}] (0,0) -- (9.4,0) node[right, font=\scriptsize] {$i$};
+			\draw[line width=0.6pt, -{Latex[length=2mm, width=1.3mm]}] (0,-0.7) -- (0,0.8) node[above, font=\scriptsize] {$b_i$};
+			
+			% Muestras discretas con agujas y puntos
+			\foreach \x/\y in {
+				0.3/0.38, 0.6/-0.25, 0.9/0.52, 1.2/-0.41, 1.5/0.18, 1.8/-0.33, 
+				2.1/0.46, 2.4/0.12, 2.7/-0.55, 3.0/0.29, 3.3/-0.22, 3.6/0.49, 
+				3.9/-0.44, 4.2/0.31, 4.5/-0.15, 4.8/0.58, 5.1/-0.37, 5.4/0.21, 
+				5.7/-0.50, 6.0/0.40, 6.3/-0.28, 6.6/0.15, 6.9/-0.48, 7.2/0.36, 
+				7.5/-0.19, 7.8/0.54, 8.1/-0.42, 8.4/0.26, 8.7/-0.31, 9.0/0.45
+			} {
+				\draw[line width=0.6pt, draw=black] (\x, 0) -- (\x, \y);
+				\fill[black] (\x, \y) circle (1.2pt);
 			}
-			\draw[line width=0.8pt, gray!60] (0,0) -- (9,0);
 		\end{scope}
 	\end{tikzpicture}
 	\caption{Comparación estructural: la periodicidad explotada por la Transformada Cuántica de Fourier frente a la dispersión aperiódica del ruido en LWE.}

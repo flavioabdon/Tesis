@@ -13,27 +13,27 @@ La Figura \ref{fig:uwe_navegacion} ilustra el Diagrama de Clases de Navegación 
 	\centering
 	\resizebox{\textwidth}{!}{%
 	\begin{tikzpicture}[
-		navcls/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3.5pt, minimum width=3.9cm},
-		menucls/.style={rectangle, draw=PQCTeal, fill=BoxBgTeal, thick, rounded corners=2pt, font=\tiny\sffamily, align=center, inner sep=3pt, minimum width=3.4cm},
-		idxcls/.style={rectangle, draw=PQCPurple, fill=BoxBgPurple, thick, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3pt, minimum width=3.7cm},
-		proccls/.style={rectangle, draw=PQCAmber!90!black, fill=BoxBgAmber, thick, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3.5pt, minimum width=4.0cm},
-		endcls/.style={rectangle, draw=PQCGreen, fill=BoxBgGreen, thick, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3.5pt, minimum width=4.1cm},
-		oclbox/.style={rectangle, draw=PQCCrimson, fill=red!4, dashed, rounded corners=2pt, font=\tiny\ttfamily, align=left, inner sep=3pt},
-		navlink/.style={-{Latex[length=2mm]}, thick, draw=PQCMainBlue, font=\tiny\sffamily},
-		proclink/.style={-{Latex[length=2mm]}, thick, dashed, draw=PQCAmber!90!black, font=\tiny\sffamily}
+		navcls/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, font=\tiny\rmfamily, align=left, inner sep=3.5pt, minimum width=3.9cm},
+		menucls/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, font=\tiny\rmfamily, align=center, inner sep=3pt, minimum width=3.4cm},
+		idxcls/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, font=\tiny\rmfamily, align=left, inner sep=3pt, minimum width=3.7cm},
+		proccls/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, font=\tiny\rmfamily, align=left, inner sep=3.5pt, minimum width=4.0cm},
+		endcls/.style={rectangle, draw=black, fill=white, double, double distance=1.2pt, line width=0.7pt, rounded corners=1.5pt, font=\tiny\rmfamily, align=left, inner sep=3.5pt, minimum width=4.1cm},
+		oclbox/.style={rectangle, draw=black, fill=white, dashed, line width=0.7pt, rounded corners=1.5pt, font=\tiny\ttfamily, align=left, inner sep=3pt},
+		navlink/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black, font=\tiny\rmfamily},
+		proclink/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, dashed, draw=black, font=\tiny\rmfamily}
 	]
 		% 1. Nodo Ingreso y Menu Principal
 		\node[navcls] (ingreso) at (-5.8, 3.6) {
-			\guillemotleft navigation class\guillemotright\\
-			\textbf{\textsf{IngresoPortal}} \{isHome\}\\
+			«navigation class»\\
+			\textbf{IngresoPortal} \{isHome\}\\
 			\rule{3.6cm}{0.3pt}\\
 			+ idEleccion: str\\
 			+ estadoFase: FaseComicial
 		};
 
 		\node[menucls] (menu) at (-5.8, 1.3) {
-			\guillemotleft menu\guillemotright\\
-			\textbf{\textsf{MenuPrincipalElectoral}}\\
+			«menu»\\
+			\textbf{MenuPrincipalElectoral}\\
 			\rule{3.1cm}{0.3pt}\\
 			+ irVerificacionPadron()\\
 			+ irPortalAuditoria()\\
@@ -42,8 +42,8 @@ La Figura \ref{fig:uwe_navegacion} ilustra el Diagrama de Clases de Navegación 
 
 		% 2. Verificacion Padron
 		\node[navcls] (verif) at (-0.4, 3.6) {
-			\guillemotleft navigation class\guillemotright\\
-			\textbf{\textsf{VerificacionPadron}}\\
+			«navigation class»\\
+			\textbf{VerificacionPadron}\\
 			\rule{3.6cm}{0.3pt}\\
 			+ idVotante: str\\
 			+ credencialValida: bool\\
@@ -53,8 +53,8 @@ La Figura \ref{fig:uwe_navegacion} ilustra el Diagrama de Clases de Navegación 
 
 		% 3. Cabina de Votacion + Index Candidatos
 		\node[navcls] (cabina) at (5.2, 3.6) {
-			\guillemotleft navigation class\guillemotright\\
-			\textbf{\textsf{CabinaVotacion}}\\
+			«navigation class»\\
+			\textbf{CabinaVotacion}\\
 			\rule{3.6cm}{0.3pt}\\
 			+ idEleccion: str\\
 			+ ekAC: bytes [1184]\\
@@ -62,8 +62,8 @@ La Figura \ref{fig:uwe_navegacion} ilustra el Diagrama de Clases de Navegación 
 		};
 
 		\node[idxcls] (index_cand) at (5.2, 1.3) {
-			\guillemotleft index\guillemotright\\
-			\textbf{\textsf{IndiceCandidatos}}\\
+			«index»\\
+			\textbf{IndiceCandidatos}\\
 			\rule{3.4cm}{0.3pt}\\
 			+ listaOpciones: List[Candidato]\\
 			+ seleccionarOpcion(id: int)
@@ -71,8 +71,8 @@ La Figura \ref{fig:uwe_navegacion} ilustra el Diagrama de Clases de Navegación 
 
 		% 4. Confirmacion Resumen
 		\node[navcls] (confirm) at (5.2, -1.1) {
-			\guillemotleft navigation class\guillemotright\\
-			\textbf{\textsf{ConfirmacionResumen}}\\
+			«navigation class»\\
+			\textbf{ConfirmacionResumen}\\
 			\rule{3.6cm}{0.3pt}\\
 			+ resumenOpcion: str\\
 			+ algoritmoKEM: ``ML-KEM-768''\\
@@ -81,8 +81,8 @@ La Figura \ref{fig:uwe_navegacion} ilustra el Diagrama de Clases de Navegación 
 
 		% 5. Proceso de Emision y Custodia
 		\node[proccls] (proc_voto) at (-0.4, -1.1) {
-			\guillemotleft process class\guillemotright\\
-			\textbf{\textsf{ProcesoEmisionVoto}}\\
+			«process class»\\
+			\textbf{ProcesoEmisionVoto}\\
 			\rule{3.7cm}{0.3pt}\\
 			+ empaquetar32Bytes(opcion)\\
 			+ encapsularCifrar(ekAC, AAD)\\
@@ -92,8 +92,8 @@ La Figura \ref{fig:uwe_navegacion} ilustra el Diagrama de Clases de Navegación 
 
 		% 6. Recibo y Cierre
 		\node[endcls] (recibo) at (-0.4, -3.7) {
-			\guillemotleft navigation class\guillemotright\\
-			\textbf{\textsf{ReciboYCierre}}\\
+			«navigation class»\\
+			\textbf{ReciboYCierre}\\
 			\rule{3.8cm}{0.3pt}\\
 			+ hashBoletaSHA3: str [64]\\
 			+ timestampVentana: int\\
@@ -102,17 +102,17 @@ La Figura \ref{fig:uwe_navegacion} ilustra el Diagrama de Clases de Navegación 
 		};
 
 		% 7. Portal de Auditoria (Query) y Panel AR
-		\node[idxcls, fill=BoxBgTeal, draw=PQCTeal] (query_aud) at (-5.8, -1.5) {
-			\guillemotleft query\guillemotright\\
-			\textbf{\textsf{BuscadorReciboSHA3}}\\
+		\node[idxcls] (query_aud) at (-5.8, -1.5) {
+			«query»\\
+			\textbf{BuscadorReciboSHA3}\\
 			\rule{3.4cm}{0.3pt}\\
 			+ hashConsulta: str [64]\\
 			+ verificarInclusionActa(): bool
 		};
 
-		\node[navcls, fill=BoxBgPurple, draw=PQCPurple] (auditoria) at (-5.8, -3.7) {
-			\guillemotleft navigation class\guillemotright\\
-			\textbf{\textsf{PortalAuditoriaCiudadana}}\\
+		\node[navcls] (auditoria) at (-5.8, -3.7) {
+			«navigation class»\\
+			\textbf{PortalAuditoriaCiudadana}\\
 			\rule{3.6cm}{0.3pt}\\
 			+ totalVotos: int\\
 			+ listaHashesPublicados: List[str]\\
@@ -128,17 +128,17 @@ La Figura \ref{fig:uwe_navegacion} ilustra el Diagrama de Clases de Navegación 
 		};
 
 		% Enlaces de Navegación y Proceso
-		\draw[navlink] (ingreso) -- (menu) node[midway, left] {\guillemotleft navigation link\guillemotright};
-		\draw[navlink] (menu.north east) -- (verif.south west) node[midway, sloped, above] {\guillemotleft navigation link\guillemotright};
-		\draw[navlink] (verif) -- (cabina) node[midway, above] {\guillemotleft navigation link\guillemotright} node[midway, below] {[haVotado = false]};
-		\draw[navlink] (cabina) -- (index_cand) node[midway, right] {\guillemotleft navigation link\guillemotright};
-		\draw[navlink] (index_cand) -- (confirm) node[midway, right] {\guillemotleft navigation link\guillemotright};
-		\draw[proclink] (confirm) -- (proc_voto) node[midway, above] {\guillemotleft process link\guillemotright};
-		\draw[proclink] (proc_voto) -- (recibo) node[midway, right] {\guillemotleft process link\guillemotright};
-		\draw[navlink] (menu) -- (query_aud) node[midway, left] {\guillemotleft navigation link\guillemotright};
-		\draw[navlink] (query_aud) -- (auditoria) node[midway, left] {\guillemotleft navigation link\guillemotright};
-		\draw[navlink] (recibo) -- (auditoria) node[midway, above] {\guillemotleft navigation link\guillemotright} node[midway, below] {auditar $h_b$};
-		\draw[ draw=PQCCrimson, dashed, thick] (ocl_note.north west) -- (verif.south east);
+		\draw[navlink] (ingreso) -- (menu) node[midway, left] {«navigation link»};
+		\draw[navlink] (menu.north east) -- (verif.south west) node[midway, sloped, above] {«navigation link»};
+		\draw[navlink] (verif) -- (cabina) node[midway, above] {«navigation link»} node[midway, below] {[haVotado = false]};
+		\draw[navlink] (cabina) -- (index_cand) node[midway, right] {«navigation link»};
+		\draw[navlink] (index_cand) -- (confirm) node[midway, right] {«navigation link»};
+		\draw[proclink] (confirm) -- (proc_voto) node[midway, above] {«process link»};
+		\draw[proclink] (proc_voto) -- (recibo) node[midway, right] {«process link»};
+		\draw[navlink] (menu) -- (query_aud) node[midway, left] {«navigation link»};
+		\draw[navlink] (query_aud) -- (auditoria) node[midway, left] {«navigation link»};
+		\draw[navlink] (recibo) -- (auditoria) node[midway, above] {«navigation link»} node[midway, below] {auditar $h_b$};
+		\draw[draw=black, dashed, line width=0.6pt] (ocl_note.north west) -- (verif.south east);
 	\end{tikzpicture}
 	}%
 	\caption{Diagrama de Clases de Navegación UWE para la cabina electoral y el portal ciudadano de auditoría.}

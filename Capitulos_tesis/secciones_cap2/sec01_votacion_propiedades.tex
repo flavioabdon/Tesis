@@ -76,19 +76,23 @@ Desde la perspectiva criptográfica, la seguridad de cualquier esquema de votaci
 
 \begin{figure}[htbp]
 	\centering
-	\begin{tikzpicture}[scale=0.9, node distance=1.2cm]
-		\node (in) [box, fill=BoxBgBlue, draw=PQCMainBlue, text width=2.8cm] {\textbf{Mensaje / Voto}\\$x \in X$};
-		\node (proc) [box, right=of in, fill=BoxBgTeal, draw=PQCTeal, text width=3.4cm] {\textbf{Cálculo Criptográfico}\\$y = f(x)$ (Polinomial)};
-		\node (out) [box, right=of proc, fill=BoxBgPurple, draw=PQCPurple, text width=2.8cm] {\textbf{Criptograma / Boleta}\\$y \in Y$};
+	\begin{tikzpicture}[
+		scale=0.9,
+		node distance=1.1cm,
+		cbox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, align=center, font=\footnotesize, inner sep=5pt}
+	]
+		\node (in) [cbox, text width=2.8cm] {\textbf{Mensaje / Voto}\\$x \in X$};
+		\node (proc) [cbox, right=of in, text width=3.4cm] {\textbf{Cálculo Criptográfico}\\$y = f(x)$ \ (Polinomial)};
+		\node (out) [cbox, right=of proc, text width=2.8cm] {\textbf{Criptograma / Boleta}\\$y \in Y$};
 		
-		\draw[-{Latex[length=2.5mm]}, thick, PQCMainBlue] (in) -- (proc);
-		\draw[-{Latex[length=2.5mm]}, thick, PQCTeal] (proc) -- (out);
+		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (in) -- (proc);
+		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (proc) -- (out);
 		
-		\draw[-{Latex[length=2.5mm]}, thick, dashed, PQCCrimson] (out.north) to[bend right=40] 
-		node[midway, above, font=\scriptsize\bfseries, text=PQCCrimson] {Inversión intratable sin trampa} (in.north);
+		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.7pt, dashed] (out.north) to[bend right=40] 
+		node[midway, above, font=\scriptsize\itshape] {Inversión intratable sin trampa} (in.north);
 		
-		\node (trap) [box, below=0.8cm of proc, fill=BoxBgGreen, draw=PQCGreen, text width=3.8cm] {\textbf{Trampa Secreta (Clave Privada)}\\Permite invertir $f^{-1}(y)$ en tiempo eficiente};
-		\draw[-{Latex[length=2.5mm]}, thick, PQCGreen] (trap) -- (proc);
+		\node (trap) [cbox, below=0.85cm of proc, text width=4.0cm] {\textbf{Trampa Secreta (Clave Privada)}\\Permite calcular $x = f^{-1}(y)$ en tiempo eficiente};
+		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (trap) -- (proc);
 	\end{tikzpicture}
 	\caption{Principio estructural de una función unidireccional con trampa.}
 	\label{fig:trapdoor_func}

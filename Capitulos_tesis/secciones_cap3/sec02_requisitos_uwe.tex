@@ -14,14 +14,13 @@ La Figura \ref{fig:uml_casos_uso} expone el Diagrama de Casos de Uso Web UWE del
 	\centering
 	\resizebox{0.86\textwidth}{!}{%
 	\begin{tikzpicture}[
-		actor/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, thick, rounded corners=3pt, minimum width=2.5cm, minimum height=0.8cm, font=\bfseries\scriptsize, align=center},
-		uc_nav/.style={ellipse, draw=PQCTeal, fill=BoxBgTeal, thick, minimum width=4.8cm, minimum height=0.72cm, font=\scriptsize, align=center, inner sep=1.2pt},
-		uc_proc/.style={ellipse, draw=PQCDark, fill=white, thick, minimum width=4.8cm, minimum height=0.72cm, font=\scriptsize, align=center, inner sep=1.2pt},
-		uc_err/.style={ellipse, draw=PQCCrimson, fill=red!6, thick, minimum width=4.8cm, minimum height=0.72cm, font=\scriptsize, align=center, inner sep=1.2pt},
-		systembox/.style={rectangle, draw=gray!60, dashed, fill=gray!3, rounded corners=6pt, inner sep=8pt},
-		assoc/.style={thick, draw=black!75},
-		include/.style={-{Latex[length=2mm]}, dashed, draw=PQCTeal, font=\tiny\bfseries},
-		extend/.style={-{Latex[length=2mm]}, dashed, draw=PQCCrimson, font=\tiny\bfseries}
+		actor/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, minimum width=2.5cm, minimum height=0.75cm, font=\scriptsize, align=center},
+		uc/.style={ellipse, draw=black, fill=white, line width=0.8pt, minimum width=4.8cm, minimum height=0.72cm, font=\scriptsize, align=center, inner sep=1.2pt},
+		uc_err/.style={ellipse, draw=black, fill=white, double, double distance=1.2pt, line width=0.7pt, minimum width=4.8cm, minimum height=0.72cm, font=\scriptsize, align=center, inner sep=1.2pt},
+		systembox/.style={rectangle, draw=black, dashed, line width=0.6pt, fill=none, rounded corners=3pt, inner sep=8pt},
+		assoc/.style={line width=0.7pt, draw=black},
+		include/.style={-{Latex[length=2mm, width=1.4mm]}, dashed, line width=0.7pt, draw=black, font=\tiny\itshape},
+		extend/.style={-{Latex[length=2mm, width=1.4mm]}, dashed, line width=0.7pt, draw=black, font=\tiny\itshape}
 	]
 		% Actores Izquierda
 		\node[actor] (votante) at (-5.8, 0.5) {Votante ($V$)\\(Ciudadano / Auditor)};
@@ -32,19 +31,19 @@ La Figura \ref{fig:uml_casos_uso} expone el Diagrama de Casos de Uso Web UWE del
 		\node[actor] (ac) at (5.8, -3.8) {Autoridad de\\Conteo ($AC$)};
 		
 		% Casos de Uso con Estereotipos UWE
-		\node[uc_nav] (uc1) at (0, 3.2) {\guillemotleft navigation\guillemotright\\CU1: Consultar Padrón y Acceder a Cabina};
-		\node[uc_proc] (uc2) at (0, 2.0) {\guillemotleft process\guillemotright\\CU2: Emitir Credencial ML-DSA-65 ($AR$)};
-		\node[uc_proc] (uc3) at (0, 0.8) {\guillemotleft process\guillemotright\\CU3: Seleccionar y Cifrar Voto (KEM-DEM)};
-		\node[uc_proc] (uc4) at (0, -0.4) {\guillemotleft process\guillemotright\\CU4: Firmar Boleta Digitalmente (ML-DSA-65)};
-		\node[uc_proc] (uc5) at (0, -1.6) {\guillemotleft process\guillemotright\\CU5: Validar Boleta y Control de Voto Único};
-		\node[uc_proc] (uc6) at (0, -2.8) {\guillemotleft process\guillemotright\\CU6: Custodiar en Ánfora y Emitir Recibo};
-		\node[uc_proc] (uc7) at (0, -4.0) {\guillemotleft process\guillemotright\\CU7: Desencapsular Lote Permutado ($dk_{\text{AC}}$)};
-		\node[uc_nav] (uc8) at (0, -5.2) {\guillemotleft navigation\guillemotright\\CU8: Auditar Recibo SHA3-256 y Acta Oficial};
+		\node[uc] (uc1) at (0, 3.2) {\guillemotleft navigation\guillemotright\\CU1: Consultar Padrón y Acceder a Cabina};
+		\node[uc] (uc2) at (0, 2.0) {\guillemotleft process\guillemotright\\CU2: Emitir Credencial ML-DSA-65 ($AR$)};
+		\node[uc] (uc3) at (0, 0.8) {\guillemotleft process\guillemotright\\CU3: Seleccionar y Cifrar Voto (KEM-DEM)};
+		\node[uc] (uc4) at (0, -0.4) {\guillemotleft process\guillemotright\\CU4: Firmar Boleta Digitalmente (ML-DSA-65)};
+		\node[uc] (uc5) at (0, -1.6) {\guillemotleft process\guillemotright\\CU5: Validar Boleta y Control de Voto Único};
+		\node[uc] (uc6) at (0, -2.8) {\guillemotleft process\guillemotright\\CU6: Custodiar en Ánfora y Emitir Recibo};
+		\node[uc] (uc7) at (0, -4.0) {\guillemotleft process\guillemotright\\CU7: Desencapsular Lote Permutado ($dk_{\text{AC}}$)};
+		\node[uc] (uc8) at (0, -5.2) {\guillemotleft navigation\guillemotright\\CU8: Auditar Recibo SHA3-256 y Acta Oficial};
 		\node[uc_err] (uc9) at (0, -6.4) {\guillemotleft process\guillemotright\\CU9: Bloquear y Alertar Intento de Doble Voto};
 		
 		% Límite del Sistema
 		\begin{scope}[on background layer]
-			\node[systembox, fit=(uc1) (uc9), label={[font=\bfseries\small, text=PQCDark]north:Límite de la Aplicación Web Electoral Post-Cuántica (Perfil UWE — FIPS 203 / 204)}] (sys) {};
+			\node[systembox, fit=(uc1) (uc9), label={[font=\small, text=black]north:Límite de la Aplicación Web Electoral Post-Cuántica (Perfil UWE — FIPS 203 / 204)}] (sys) {};
 		\end{scope}
 		
 		% Relaciones Votante
