@@ -151,26 +151,38 @@ Si la tabla de boletas almacenara una clave foránea hacia la cédula del ciudad
 
 \begin{figure}[!htbp]
 	\centering
-	\resizebox{0.92\textwidth}{!}{%
+	\resizebox{\textwidth}{!}{%
 	\begin{tikzpicture}[
-		entity/.style={rectangle, draw=black, fill=white, line width=0.8pt, font=\scriptsize\rmfamily\bfseries, minimum width=2.8cm, minimum height=0.75cm, align=center},
-		rel/.style={diamond, draw=black, fill=white, line width=0.7pt, aspect=1.8, font=\tiny\rmfamily, align=center, inner sep=2pt},
-		keyattr/.style={ellipse, draw=black, fill=white, line width=0.8pt, font=\tiny\rmfamily\bfseries, align=center, inner sep=2pt},
-		link/.style={line width=0.7pt, draw=black}
+		entity/.style={rectangle, draw=PQCMainBlue, fill=BoxBgBlue, line width=1.0pt, font=\scriptsize\bfseries, minimum width=2.9cm, minimum height=0.75cm, align=center},
+		rel/.style={diamond, draw=PQCTeal, fill=BoxBgTeal, line width=0.8pt, aspect=1.8, font=\tiny\bfseries, align=center, inner sep=2pt},
+		link/.style={line width=0.6pt, draw=black!75},
+		attr/.style={ellipse, draw=black!60, fill=white, line width=0.5pt, font=\tiny, align=center, inner sep=1.8pt},
+		keyattr/.style={ellipse, draw=PQCMainBlue, fill=BoxBgBlue, line width=1.2pt, font=\tiny\bfseries, align=center, inner sep=2.4pt}
 	]
-		\node[entity] (elec) at (0, 3.1) {ELECCIÓN};
-		\node[entity] (padron) at (-5.3, 0.7) {PADRÓN\_VOTANTE};
-		\node[entity] (cred) at (-5.3, -2.3) {CREDENCIAL\_AR};
-		\node[entity] (anfora) at (5.3, 0.7) {BOLETA\_CIFRADA};
-		\node[entity] (recibo) at (5.3, -2.3) {RECIBO\_VOTACIÓN};
-		\node[entity] (audit) at (0, -3.9) {BITÁCORA\_AUDITORÍA};
+		% --- Cuadro de Simbología / Leyenda ---
+		\draw[draw=gray!50, fill=gray!4, rounded corners=3pt, line width=0.5pt] (-10.4, 3.6) rectangle (-6.2, 5.3);
+		\node[font=\scriptsize\bfseries\color{PQCDark}] at (-8.3, 5.05) {Simbología};
+		\node[keyattr, scale=0.85] (leg_pk) at (-9.4, 4.45) {\underline{id\_pk}};
+		\node[right=2pt of leg_pk, font=\tiny\bfseries] {Clave Primaria (PK)};
+		\node[attr, scale=0.85] (leg_at) at (-9.4, 3.95) {atributo};
+		\node[right=2pt of leg_at, font=\tiny] {Atributo común};
+
+		% --- Entidades Principales ---
+		\node[entity] (elec) at (0, 3.8) {ELECCIÓN};
+		\node[entity] (padron) at (-6.2, 0.8) {PADRÓN\_VOTANTE};
+		\node[entity] (cred) at (-6.2, -3.2) {CREDENCIAL\_AR};
+		\node[entity] (anfora) at (6.2, 0.8) {BOLETA\_CIFRADA};
+		\node[entity] (recibo) at (6.2, -3.2) {RECIBO\_VOTACIÓN};
+		\node[entity] (audit) at (0, -4.6) {BITÁCORA\_AUDITORÍA};
 		
-		\node[rel] (r1) at (-2.7, 1.9) {Habilita};
-		\node[rel] (r2) at (-5.3, -0.8) {Posee};
-		\node[rel] (r3) at (2.7, 1.9) {Custodia};
-		\node[rel] (r4) at (5.3, -0.8) {Genera};
-		\node[rel] (r5) at (0, -0.5) {Registra};
+		% --- Relaciones ---
+		\node[rel] (r1) at (-3.1, 2.3) {Habilita};
+		\node[rel] (r2) at (-6.2, -1.2) {Posee};
+		\node[rel] (r3) at (3.1, 2.3) {Custodia};
+		\node[rel] (r4) at (6.2, -1.2) {Genera};
+		\node[rel] (r5) at (0, -0.4) {Registra};
 		
+		% --- Conexiones y Cardinalidades ---
 		\draw[link] (elec) -- (r1) node[midway, above, font=\tiny] {1};
 		\draw[link] (r1) -- (padron) node[midway, above, font=\tiny] {N};
 		\draw[link] (padron) -- (r2) node[midway, left, font=\tiny] {1};
@@ -182,12 +194,51 @@ Si la tabla de boletas almacenara una clave foránea hacia la cédula del ciudad
 		\draw[link] (elec) -- (r5) node[midway, left, font=\tiny] {1};
 		\draw[link] (r5) -- (audit) node[midway, left, font=\tiny] {N};
 		
-		\node[keyattr] (k_el) at (0, 4.25) {\underline{id\_eleccion}}; \draw[link] (elec) -- (k_el);
-		\node[keyattr] (k_pa) at (-5.3, 1.85) {\underline{id\_eleccion, id\_votante}}; \draw[link] (padron) -- (k_pa);
-		\node[keyattr] (k_cr) at (-7.3, -3.2) {\underline{id\_credencial}}; \draw[link] (cred) -- (k_cr);
-		\node[keyattr] (k_an) at (5.3, 1.85) {\underline{id\_boleta}}; \draw[link] (anfora) -- (k_an);
-		\node[keyattr] (k_re) at (7.3, -3.2) {\underline{id\_recibo}}; \draw[link] (recibo) -- (k_re);
-		\node[keyattr] (k_au) at (0, -4.95) {\underline{id\_evento}}; \draw[link] (audit) -- (k_au);
+		% --- Atributos de ELECCIÓN ---
+		\node[keyattr] (k_el) at (0, 5.3) {\underline{id\_eleccion}}; \draw[link] (elec) -- (k_el);
+		\node[attr] (a_el_nom) at (-2.3, 5.0) {nombre}; \draw[link] (elec) -- (a_el_nom);
+		\node[attr] (a_el_fas) at (2.3, 5.0) {estado\_fase}; \draw[link] (elec) -- (a_el_fas);
+		\node[attr] (a_el_ini) at (-4.3, 4.4) {fecha\_inicio}; \draw[link] (elec) -- (a_el_ini);
+		\node[attr] (a_el_fin) at (4.3, 4.4) {fecha\_fin}; \draw[link] (elec) -- (a_el_fin);
+		\node[attr] (a_el_pkar) at (-3.9, 3.4) {pk\_ar}; \draw[link] (elec) -- (a_el_pkar);
+		\node[attr] (a_el_ekac) at (3.9, 3.4) {ek\_ac}; \draw[link] (elec) -- (a_el_ekac);
+		
+		% --- Atributos de PADRÓN_VOTANTE ---
+		\node[keyattr] (k_pa) at (-6.2, 2.3) {\underline{id\_eleccion, id\_votante}}; \draw[link] (padron) -- (k_pa);
+		\node[attr] (a_pa_hav) at (-4.0, 1.6) {ha\_votado}; \draw[link] (padron) -- (a_pa_hav);
+		\node[attr] (a_pa_tsv) at (-4.0, 0.0) {timestamp\_voto}; \draw[link] (padron) -- (a_pa_tsv);
+		\node[attr] (a_pa_nom) at (-8.8, 1.8) {nombres}; \draw[link] (padron) -- (a_pa_nom);
+		\node[attr] (a_pa_ape) at (-9.2, 0.8) {apellidos}; \draw[link] (padron) -- (a_pa_ape);
+		\node[attr] (a_pa_car) at (-8.8, -0.2) {carrera}; \draw[link] (padron) -- (a_pa_car);
+		
+		% --- Atributos de CREDENCIAL_AR ---
+		\node[keyattr] (k_cr) at (-8.8, -2.4) {\underline{id\_credencial}}; \draw[link] (cred) -- (k_cr);
+		\node[attr] (a_cr_idv) at (-9.3, -3.3) {id\_votante (FK)}; \draw[link] (cred) -- (a_cr_idv);
+		\node[attr] (a_cr_pkv) at (-8.4, -4.4) {pk\_votante\_hex}; \draw[link] (cred) -- (a_cr_pkv);
+		\node[attr] (a_cr_far) at (-6.2, -4.6) {firma\_ar\_hex}; \draw[link] (cred) -- (a_cr_far);
+		\node[attr] (a_cr_tse) at (-4.3, -4.2) {timestamp\_emision}; \draw[link] (cred) -- (a_cr_tse);
+		
+		% --- Atributos de BOLETA_CIFRADA ---
+		\node[keyattr] (k_an) at (6.2, 2.3) {\underline{id\_boleta}}; \draw[link] (anfora) -- (k_an);
+		\node[attr] (a_an_ide) at (4.0, 1.6) {id\_eleccion (FK)}; \draw[link] (anfora) -- (a_an_ide);
+		\node[attr] (a_an_hsh) at (4.0, 0.0) {hash\_sha3}; \draw[link] (anfora) -- (a_an_hsh);
+		\node[attr] (a_an_kem) at (9.4, 1.8) {ciphertext\_kem}; \draw[link] (anfora) -- (a_an_kem);
+		\node[attr] (a_an_vot) at (9.6, 0.9) {voto\_cifrado}; \draw[link] (anfora) -- (a_an_vot);
+		\node[attr] (a_an_non) at (9.4, 0.0) {nonce\_aead}; \draw[link] (anfora) -- (a_an_non);
+		\node[attr] (a_an_tsr) at (8.6, -0.9) {timestamp\_recepcion}; \draw[link] (anfora) -- (a_an_tsr);
+		
+		% --- Atributos de RECIBO_VOTACIÓN ---
+		\node[keyattr] (k_re) at (8.8, -2.4) {\underline{id\_recibo}}; \draw[link] (recibo) -- (k_re);
+		\node[attr] (a_re_idb) at (9.3, -3.3) {id\_boleta (FK)}; \draw[link] (recibo) -- (a_re_idb);
+		\node[attr] (a_re_tsr) at (8.4, -4.4) {timestamp\_recibo}; \draw[link] (recibo) -- (a_re_tsr);
+		\node[attr] (a_re_fsv) at (6.2, -4.6) {firma\_sv\_hex}; \draw[link] (recibo) -- (a_re_fsv);
+		
+		% --- Atributos de BITÁCORA_AUDITORÍA ---
+		\node[keyattr] (k_au) at (0, -6.0) {\underline{id\_evento}}; \draw[link] (audit) -- (k_au);
+		\node[attr] (a_au_ide) at (-2.7, -5.6) {id\_eleccion (FK)}; \draw[link] (audit) -- (a_au_ide);
+		\node[attr] (a_au_tip) at (-2.8, -3.7) {tipo\_evento}; \draw[link] (audit) -- (a_au_tip);
+		\node[attr] (a_au_des) at (2.8, -3.7) {descripcion}; \draw[link] (audit) -- (a_au_des);
+		\node[attr] (a_au_tse) at (2.7, -5.6) {timestamp\_evento}; \draw[link] (audit) -- (a_au_tse);
 	\end{tikzpicture}
 	}%
 	\caption{Modelo Entidad-Relación de la base de datos electoral.}
