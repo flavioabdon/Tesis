@@ -54,16 +54,16 @@ En la Figura \ref{fig:uml_casos_uso} se presenta el Diagrama de Casos de Uso Web
 		\pic at (ac_pic) {monigote};
 		\node (ac) at (6.4, -5.7) [font=\scriptsize\rmfamily, align=center] {\textbf{Autoridad de}\\\textbf{Conteo ($AC$)}\\(Rol: Tribunal Electoral)};
 		
-		% Casos de Uso con Estereotipos UWE
-		\node[uc] (uc1) at (0, 3.5) {«navigation»\\CU1: Consultar Padrón y Acceder a Cabina};
-		\node[uc] (uc2) at (0, 2.2) {«process»\\CU2: Emitir Credencial ML-DSA-65 ($AR$)};
-		\node[uc] (uc3) at (0, 0.9) {«process»\\CU3: Seleccionar y Cifrar Voto (KEM-DEM)};
-		\node[uc] (uc4) at (0, -0.4) {«process»\\CU4: Firmar Boleta Digitalmente (ML-DSA-65)};
-		\node[uc] (uc5) at (0, -1.7) {«process»\\CU5: Validar Boleta y Control de Voto Único};
-		\node[uc] (uc6) at (0, -3.0) {«process»\\CU6: Custodiar en Ánfora y Emitir Recibo};
-		\node[uc] (uc7) at (0, -4.3) {«process»\\CU7: Desencapsular Lote Permutado ($dk_{\text{AC}}$)};
-		\node[uc] (uc8) at (0, -5.6) {«navigation»\\CU8: Auditar Recibo SHA3-256 y Acta Oficial};
-		\node[uc] (uc9) at (0, -6.9) {«process»\\CU9: Bloquear y Alertar Intento de Doble Voto};
+		% Casos de Uso
+		\node[uc] (uc1) at (0, 3.5) {CU1: Consultar Padrón y Acceder a Cabina};
+		\node[uc] (uc2) at (0, 2.2) {CU2: Emitir Credencial ML-DSA-65 ($AR$)};
+		\node[uc] (uc3) at (0, 0.9) {CU3: Seleccionar y Cifrar Voto (KEM-DEM)};
+		\node[uc] (uc4) at (0, -0.4) {CU4: Firmar Boleta Digitalmente (ML-DSA-65)};
+		\node[uc] (uc5) at (0, -1.7) {CU5: Validar Boleta y Control de Voto Único};
+		\node[uc] (uc6) at (0, -3.0) {CU6: Custodiar en Ánfora y Emitir Recibo};
+		\node[uc] (uc7) at (0, -4.3) {CU7: Desencapsular Lote Permutado ($dk_{\text{AC}}$)};
+		\node[uc] (uc8) at (0, -5.6) {CU8: Auditar Recibo SHA3-256 y Acta Oficial};
+		\node[uc] (uc9) at (0, -6.9) {CU9: Bloquear y Alertar Intento de Doble Voto};
 		
 		% Límite del Sistema UML
 		\begin{scope}[on background layer]
