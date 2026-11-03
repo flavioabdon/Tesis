@@ -1,15 +1,23 @@
 \section{Fundamentos Geométricos de la Criptografía Basada en Retículos}
 % =============================================================================
 
-Frente a la debilidad de las estructuras cíclicas multiplicativas, la criptografía post-cuántica recurre a problemas de álgebra lineal geométrica sobre espacios euclídeos discretos: los \textbf{retículos} (\textit{lattices}).
+Ante la vulnerabilidad de los sistemas clásicos frente al algoritmo de Shor, la comunidad científica desarrolló la \textbf{criptografía post-cuántica} (PQC). Es importante aclarar que la criptografía post-cuántica no requiere una computadora cuántica para funcionar; por el contrario, se trata de algoritmos que se ejecutan en computadoras, servidores y teléfonos convencionales (en lenguajes como C o Python), pero cuyos problemas matemáticos son resistentes tanto a ataques clásicos como a ataques cuánticos.
+
+La familia más importante y eficiente dentro de la criptografía post-cuántica es la basada en \textbf{retículos geométricos}. A diferencia de RSA, que trabaja con la multiplicación de números primos, la criptografía de retículos utiliza vectores y matrices en espacios de muchas dimensiones, introduciendo pequeños errores o ruidos intencionales que impiden que el algoritmo de Shor encuentre patrones periódicos.
 
 \subsection{Definición Formal de Retículo}
 
-Dado un conjunto de $k$ vectores linealmente independientes $\mathbf{B} = \{\mathbf{b}_1, \mathbf{b}_2, \dots, \mathbf{b}_k\} \subset \mathbb{R}^m$, el retículo $\Lambda$ generado por la base $\mathbf{B}$ se define como el conjunto de todas las combinaciones lineales con coeficientes enteros (Micciancio y Goldwasser, 2002):
+Para entender qué es un retículo de forma sencilla, basta con imaginar una hoja de papel cuadriculado infinito. Si se coloca un punto en cada esquina donde se cruzan las líneas de la cuadrícula, el conjunto de todos esos puntos ordenados regularmente en el plano forma un retículo de dos dimensiones.
+
+En términos de álgebra lineal, para construir esta red de puntos se necesitan vectores de partida llamados \textbf{vectores base}. Por ejemplo, en el plano de dos dimensiones se pueden tomar dos vectores independientes $\mathbf{b}_1$ y $\mathbf{b}_2$. A partir de origen $\mathbf{0}$, cualquier punto de la red se alcanza dando un número entero de pasos en la dirección de $\mathbf{b}_1$ y un número entero de pasos en la dirección de $\mathbf{b}_2$ (sin permitir fracciones ni decimales).
+
+De manera formal, en el marco del álgebra lineal clásica (Anton, 2003; Grossman y Flores, 2012), un conjunto de vectores linealmente independientes permite generar combinaciones lineales en el espacio $\mathbb{R}^m$. En la teoría de retículos, dado un conjunto de $k$ vectores linealmente independientes $\mathbf{B} = \{\mathbf{b}_1, \mathbf{b}_2, \dots, \mathbf{b}_k\}$, el retículo $\Lambda$ generado por la base $\mathbf{B}$ se define como el conjunto de todas las combinaciones lineales cuyos escalares se restringen exclusivamente a números enteros $z_i \in \mathbb{Z}$:
 \begin{equation}
 	\Lambda = \mathcal{L}(\mathbf{B}) = \left\{ \sum_{i=1}^{k} z_i \mathbf{b}_i \;\middle|\; z_i \in \mathbb{Z} \right\}
 \end{equation}
-El entero $k$ se denomina el \textit{rango} del retículo y $m$ su \textit{dimensión}. Cuando $k = m$, el retículo se considera de rango completo.
+En esta definición, el número $k$ representa la cantidad de vectores de la base (llamado \textit{rango}) y $m$ representa la cantidad de coordenadas de cada vector (llamada \textit{dimensión}). Cuando $k = m$, se dice que el retículo es de rango completo.
+
+En la Figura \ref{fig:reticulo_2d} se presenta gráficamente un retículo de dos dimensiones, mostrando los puntos de la red como círculos negros, los dos vectores base $\mathbf{b}_1$ y $\mathbf{b}_2$ que parten desde el origen $\mathbf{0}$, y un punto externo $\mathbf{t}$ que ha sido desplazado ligeramente de la cuadrícula mediante un pequeño vector de ruido $\mathbf{e}$.
 
 \begin{figure}[htbp]
 	\centering
@@ -39,33 +47,194 @@ El entero $k$ se denomina el \textit{rango} del retículo y $m$ su \textit{dimen
 		node[midway, right, font=\tiny\itshape] {$\mathbf{e}$};
 		\draw[line width=0.6pt, dotted] (Closest) circle (7pt);
 	\end{tikzpicture}
-	\caption{Retículo bidimensional con vectores base y punto objetivo perturbado por ruido en el problema CVP.}
+	\caption{Retículo bidimensional, vectores base y problema CVP.}
 	\label{fig:reticulo_2d}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
 
+Como se aprecia en la Figura \ref{fig:reticulo_2d}, cuando el retículo tiene solamente dos dimensiones, el ojo humano puede identificar de inmediato cuál es el punto de la cuadrícula $\mathbf{v}$ que se encuentra más cerca del punto desplazado $\mathbf{t}$. Sin embargo, en los algoritmos criptográficos reales no se utilizan $2$ dimensiones, sino entre $512$ y $1024$ dimensiones simultáneas, donde localizar el punto más cercano se vuelve imposible sin conocer información secreta adicional.
+
 \subsection{Bases Cortas (Buenas) versus Bases Distorsionadas (Malas)}
 
-Una propiedad geométrica central es que un mismo retículo puede ser generado por infinitas matrices base distintas vinculadas mediante matrices unimodulares $\mathbf{U} \in \mathbb{Z}^{k \times k}$ tales que $\det(\mathbf{U}) = \pm 1$:
+Una propiedad fundamental de los retículos es que un mismo conjunto de puntos $\Lambda$ puede ser generado por muchas bases diferentes. Si se multiplica la matriz base original $\mathbf{B}$ por una matriz entera $\mathbf{U}$ cuyo determinante sea exactamente $+1$ o $-1$ (llamada matriz unimodular), se obtiene una nueva base $\mathbf{B}'$:
 \begin{equation}
 	\mathbf{B}' = \mathbf{B} \cdot \mathbf{U}
 \end{equation}
+Aunque la nueva base $\mathbf{B}'$ genera exactamente los mismos puntos en el espacio que la base $\mathbf{B}$, su comportamiento geométrico para los cálculos puede ser completamente distinto:
+
 \begin{itemize}
-	\item \textbf{Base ``Buena'' (ortogonal y corta):} Sus vectores poseen normas euclídeas reducidas y ángulos cercanos a $90^\circ$. Permite delimitar celdas fundamentales convexas y resolver problemas de cercanía mediante redondeo simple de coordenadas.
-	\item \textbf{Base ``Mala'' (larga y altamente sesgada):} Formada por vectores de gran magnitud y direcciones casi colineales. Sus celdas fundamentales son hiperparalelepípedos elongados que oscurecen la geometría del retículo.
+	\item \textbf{Base ``Buena'' (corta y casi perpendicular):} Está formada por vectores cortos que forman ángulos cercanos a $90^\circ$ entre sí (similares a los ejes coordenados tradicionales $X$ e $Y$). Con esta base es muy sencillo redondear coordenadas y encontrar qué punto del retículo está más cerca de cualquier posición en el espacio.
+
+	\item \textbf{Base ``Mala'' (larga y muy inclinada):} Está formada por vectores extremadamente largos que apuntan casi en la misma dirección, con ángulos muy cerrados entre sí. Si se intenta usar esta base para localizar el punto más cercano mediante redondeo simple, los errores se desvían a gran distancia y el cálculo falla por completo.
 \end{itemize}
 
-Esta disparidad constituye la base de la puerta trampa en retículos: la clave privada corresponde a una base reducida y corta, mientras que la clave pública consiste en una base algebraicamente equivalente pero distorsionada.
+En la Figura \ref{fig:bases_buenas_malas} se ilustra esta diferencia fundamental entre una base buena y una base mala sobre el mismo conjunto de puntos.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[scale=0.88]
+		% Puntos del retículo
+		\foreach \x in {-2,...,3} {
+			\foreach \y in {-1,...,2} {
+				\coordinate (P) at ({\x*1.6 + \y*0.5}, {\x*0.2 + \y*1.7});
+				\fill[black] (P) circle (1.3pt);
+			}
+		}
+		\coordinate (O) at (0,0);
+		\node[below left, font=\scriptsize] at (O) {$\mathbf{0}$};
+		
+		% Base Buena (vectores cortos, casi ortogonales)
+		\draw[-{Latex[length=2.2mm, width=1.5mm]}, line width=1.0pt, draw=black] (O) -- (1.6, 0.2) 
+		node[midway, below, font=\footnotesize] {$\mathbf{b}_1$};
+		\draw[-{Latex[length=2.2mm, width=1.5mm]}, line width=1.0pt, draw=black] (O) -- (0.5, 1.7) 
+		node[midway, left, font=\footnotesize] {$\mathbf{b}_2$};
+		
+		% Celda fundamental base buena
+		\draw[line width=0.6pt, dashed, draw=black] (1.6, 0.2) -- ({1.6+0.5}, {0.2+1.7}) -- (0.5, 1.7);
+		
+		% Base Mala (vectores largos, altamente sesgados)
+		% b1' = b1 + 2*b2 = (1.6 + 1.0, 0.2 + 3.4) = (2.6, 3.6)
+		% b2' = 2*b1 + 3*b2 = (3.2 + 1.5, 0.4 + 5.1) = (4.7, 5.5) -> o hacia la izquierda
+		% Usamos b1' = 2*b1 + b2 = (3.2+0.5, 0.4+1.7) = (3.7, 2.1)
+		% y b2' = -b1 + b2 = (-1.6+0.5, -0.2+1.7) = (-1.1, 1.5)
+		\draw[-{Latex[length=2.2mm, width=1.5mm]}, line width=0.8pt, dotted, draw=black] (O) -- (3.7, 2.1) 
+		node[midway, below right, font=\footnotesize] {$\mathbf{b}_1'$};
+		\draw[-{Latex[length=2.2mm, width=1.5mm]}, line width=0.8pt, dotted, draw=black] (O) -- (-1.1, 1.5) 
+		node[midway, above left, font=\footnotesize] {$\mathbf{b}_2'$};
+		
+		% Etiquetas descriptivas estilo manual técnico
+		\node[draw=black, fill=white, line width=0.5pt, font=\scriptsize, align=center] at (1.1, 0.95) 
+		{Celda compacta\\(Base corta / privada)};
+		\node[draw=black, fill=white, line width=0.5pt, font=\scriptsize, align=center] at (3.2, 3.2) 
+		{Vectores sesgados\\(Base larga / pública)};
+	\end{tikzpicture}
+	\caption{Comparación entre bases ortogonales y bases distorsionadas.}
+	\label{fig:bases_buenas_malas}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+Tal como se observa en la Figura \ref{fig:bases_buenas_malas}, la base buena formada por los vectores sólidos $\mathbf{b}_1$ y $\mathbf{b}_2$ delimita una celda pequeña y casi cuadrada, lo que permite resolver problemas geométricos mediante un redondeo sencillo. Por el contrario, la base mala formada por los vectores punteados $\mathbf{b}_1'$ y $\mathbf{b}_2'$ genera paralelogramos estrechos y muy alargados, de modo que cualquier intento de estimación rápida produce un error de gran magnitud.
+
+Esta diferencia entre ambos tipos de bases permite construir la función con trampa en criptografía de retículos: la \textbf{clave privada} consiste en vectores cortos (una base buena que permite eliminar el ruido fácilmente), mientras que la \textbf{clave pública} se publica como una estructura distorsionada o con ruido que impide a los atacantes despejar la información secreta.
 
 \subsection{Problemas Computacionales Intratables: SVP y CVP}
 
-La seguridad de las construcciones post-cuánticas se fundamenta en la intratabilidad demostrada de dos problemas geométricos en dimensiones elevadas ($n \ge 500$):
+La seguridad de los estándares post-cuánticos se apoya en la dificultad demostrada de resolver dos problemas geométricos cuando el retículo tiene cientos de dimensiones ($n \ge 500$):
 
 \begin{enumerate}
-	\item \textbf{Problema del Vector Más Corto (Shortest Vector Problem, SVP):} Dado un retículo $\Lambda$, hallar un vector no nulo $\mathbf{v} \in \Lambda \setminus \{\mathbf{0}\}$ tal que su norma euclídea sea mínima: $\|\mathbf{v}\| = \lambda_1(\Lambda) = \min_{\mathbf{x} \in \Lambda \setminus \{\mathbf{0}\}} \|\mathbf{x}\|$.
-	\item \textbf{Problema del Vector Más Cercano (Closest Vector Problem, CVP):} Dado un retículo $\Lambda$ y un vector arbitrario $\mathbf{t} \in \mathbb{R}^m$ que no pertenece al retículo, hallar el punto $\mathbf{v} \in \Lambda$ que minimice la distancia euclídea $\|\mathbf{t} - \mathbf{v}\|$.
+	\item \textbf{Problema del Vector Más Corto (SVP):} Consiste en que, dada una base cualquiera de un retículo $\Lambda$, se debe encontrar el punto del retículo más próximo al origen $\mathbf{0}$ (sin contar el propio origen), es decir, el vector no nulo $\mathbf{v} \in \Lambda \setminus \{\mathbf{0}\}$ que tenga la menor longitud posible $\|\mathbf{v}\|$.
+
+	\item \textbf{Problema del Vector Más Cercano (CVP):} Consiste en que, dada una base de un retículo $\Lambda$ y un punto externo $\mathbf{t}$ que no cae exactamente sobre la cuadrícula (porque se le sumó un pequeño ruido $\mathbf{e}$), se debe encontrar cuál es el punto $\mathbf{v} \in \Lambda$ que está a menor distancia de $\mathbf{t}$.
 \end{enumerate}
 
-Ajtai (1996) estableció una propiedad fundamental para la criptografía: las reducciones \textit{worst-case to average-case}. Esto significa que resolver una instancia típica o aleatoria generada por un esquema criptográfico es tan difícil como resolver la peor instancia posible del problema geométrico sobre retículos. Los algoritmos cuánticos conocidos no ofrecen una ventaja más allá de mejoras polinomiales en el exponente de los algoritmos de reducción de base (como BKZ cuántico), requiriendo tiempo asintótico $\mathcal{O}(2^{c \cdot n})$.
+Para facilitar la comprensión visual de ambos problemas computacionales, en la Figura \ref{fig:svp_cvp_comparacion} se representan de forma comparativa sus definiciones geométricas en el plano.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[scale=0.86]
+		% Subfigura izquierda: SVP
+		\begin{scope}[shift={(0,0)}]
+			\foreach \x in {-2,...,2} {
+				\foreach \y in {-2,...,2} {
+					\coordinate (P) at ({\x*1.5 + \y*0.5}, {\x*0.3 + \y*1.5});
+					\fill[black] (P) circle (1.3pt);
+				}
+			}
+			\coordinate (O) at (0,0);
+			\node[below left, font=\scriptsize] at (O) {$\mathbf{0}$};
+			
+			% Radio mínimo lambda_1
+			\draw[line width=0.6pt, dashed, draw=black] (O) circle (1.53cm);
+			
+			% Vector más corto v_min
+			\coordinate (Vmin) at (1.5, 0.3);
+			\draw[-{Latex[length=2.2mm, width=1.5mm]}, line width=1.1pt, draw=black] (O) -- (Vmin)
+			node[midway, below right, font=\footnotesize] {$\mathbf{v}_{\min}$};
+			
+			\node[draw=black, fill=white, line width=0.6pt, font=\scriptsize, align=center] at (0, -2.4) 
+			{\textbf{Problema SVP}\\Hallar $\mathbf{v} \ne \mathbf{0}$ con $\|\mathbf{v}\| = \lambda_1$};
+		\end{scope}
+		
+		% Línea divisoria vertical técnica
+		\draw[line width=0.5pt, dash pattern=on 3pt off 2pt] (3.8, -2.6) -- (3.8, 2.6);
+		
+		% Subfigura derecha: CVP
+		\begin{scope}[shift={(7.6,0)}]
+			\foreach \x in {-2,...,2} {
+				\foreach \y in {-2,...,2} {
+					\coordinate (P) at ({\x*1.5 + \y*0.5}, {\x*0.3 + \y*1.5});
+					\fill[black] (P) circle (1.3pt);
+				}
+			}
+			\coordinate (O) at (0,0);
+			\node[below left, font=\scriptsize] at (O) {$\mathbf{0}$};
+			
+			% Punto objetivo t fuera de la grilla
+			\coordinate (Target) at (1.9, 1.4);
+			\coordinate (Closest) at (1.5, 0.3);
+			\fill[black] (Target) circle (1.8pt) node[above right, font=\scriptsize] {$\mathbf{t}$};
+			
+			% Vector de error e
+			\draw[-{Latex[length=1.8mm, width=1.2mm]}, line width=0.8pt, draw=black] (Closest) -- (Target)
+			node[midway, right, font=\tiny\itshape] {$\mathbf{e}$};
+			
+			% Círculo de perturbación alrededor del punto más cercano
+			\draw[line width=0.6pt, dotted, draw=black] (Closest) circle (0.75cm);
+			
+			\node[draw=black, fill=white, line width=0.6pt, font=\scriptsize, align=center] at (0, -2.4) 
+			{\textbf{Problema CVP}\\Hallar $\mathbf{v} \in \Lambda$ más cercano a $\mathbf{t}$};
+		\end{scope}
+	\end{tikzpicture}
+	\caption{Definición geométrica de los problemas SVP y CVP.}
+	\label{fig:svp_cvp_comparacion}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+Tal como se compara en la Figura \ref{fig:svp_cvp_comparacion}, en el problema SVP (a la izquierda) el objetivo es encontrar el vector no nulo de menor longitud que conecta el origen con un punto del retículo. En cambio, en el problema CVP (a la derecha) se recibe un punto arbitrario $\mathbf{t}$ en el espacio y el objetivo es encontrar cuál es el punto del retículo más cercano. Ambos problemas constituyen la base de la seguridad post-cuántica porque carecen de algoritmos eficientes en dimensiones elevadas.
+
+El investigador Miklós Ajtai (1996) demostró un resultado de gran importancia para la Informática: en los retículos existe una reducción matemática rigurosa del peor caso al caso promedio. Esto significa que romper una clave generada al azar por el sistema de votación es igual de difícil que resolver el caso más complejo posible de la geometría de retículos. Hasta la fecha, no se conoce ningún algoritmo clásico ni cuántico capaz de resolver estos problemas de manera eficiente en dimensiones altas, pues el tiempo de cómputo requerido crece de forma exponencial bajo la cota asintótica $\mathcal{O}(2^{c \cdot n})$.
+
+Para comprender la trascendencia de esta cota, en la teoría de análisis de algoritmos la notación Big-O ($\mathcal{O}$) describe cómo aumenta el tiempo de ejecución a medida que crece el tamaño de entrada $n$ (en este caso, la dimensión del retículo). Mientras que los algoritmos eficientes (tiempo polinomial como $\mathcal{O}(n)$, $\mathcal{O}(n^2)$ o $\mathcal{O}(n^3)$) aumentan su tiempo de forma suave y controlada, un algoritmo de complejidad exponencial $\mathcal{O}(2^{c \cdot n})$ duplica o multiplica su tiempo con cada dimensión adicional que se agrega al sistema.
+
+En la Figura \ref{fig:complejidad_exponencial} se ilustra esta diferencia fundamental entre el crecimiento de funciones polinomiales y el crecimiento exponencial del tiempo de ataque frente a retículos.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[scale=0.92]
+		% Ejes de coordenadas estilo técnico analógico
+		\draw[line width=0.7pt, -{Latex[length=2.2mm, width=1.5mm]}] (0,0) -- (9.0, 0) 
+		node[right, font=\scriptsize\rmfamily] {Dimensión del retículo ($n$)};
+		\draw[line width=0.7pt, -{Latex[length=2.2mm, width=1.5mm]}] (0,0) -- (0, 5.2) 
+		node[above, font=\scriptsize\rmfamily] {Tiempo de ejecución $T(n)$};
+		
+		% Curva Polinomial O(n) lineal
+		\draw[line width=0.7pt, draw=black, dotted, domain=0:8.0, samples=60] 
+			plot (\x, {0.35*\x});
+		\node[font=\tiny\rmfamily, right] at (8.0, 2.8) {Lineal $\mathcal{O}(n)$};
+		
+		% Curva Polinomial O(n^2) o cúbica
+		\draw[line width=0.8pt, draw=black, dashed, domain=0:6.5, samples=70] 
+			plot (\x, {0.08*\x*\x});
+		\node[font=\tiny\rmfamily, right] at (6.5, 3.4) {Polinomial $\mathcal{O}(n^2)$};
+		
+		% Curva Exponencial O(2^{c*n})
+		\draw[line width=1.1pt, draw=black, domain=0:4.6, samples=100] 
+			plot (\x, {0.18*exp(0.72*\x)});
+		\node[font=\scriptsize\rmfamily\bfseries, above left] at (4.6, 4.9) {Exponencial $\mathcal{O}(2^{c \cdot n})$};
+		
+		% Región intratable
+		\draw[line width=0.5pt, dash pattern=on 2pt off 2pt] (4.2, 0) -- (4.2, 5.0);
+		\node[draw=black, fill=white, line width=0.5pt, font=\tiny\rmfamily, align=center] at (6.6, 1.2) 
+		{Zona criptográfica\\intratable ($n \ge 500$)\\Milenios de cómputo};
+		
+		% Marcas en eje X
+		\draw[line width=0.6pt] (4.2, 0.08) -- (4.2, -0.08) node[below, font=\tiny\rmfamily] {$n_{\text{seguro}}$};
+	\end{tikzpicture}
+	\caption{Crecimiento del tiempo de ejecución en retículos.}
+	\label{fig:complejidad_exponencial}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+Tal como se desprende de la Figura \ref{fig:complejidad_exponencial}, para valores pequeños de la dimensión $n$ el tiempo de cálculo se mantiene en niveles accesibles. Sin embargo, al cruzar el umbral de seguridad ($n \ge 500$, como en ML-KEM-768 donde la dimensión efectiva es $768$), la curva exponencial $\mathcal{O}(2^{c \cdot n})$ asciende de forma casi vertical. Esto significa que mientras una computadora honesta cifra y firma en pocos milisegundos porque conoce la clave corta, un atacante que deba explorar el retículo sin la trampa requeriría millones de años de cómputo en las supercomputadoras más potentes del planeta, garantizando la inviolabilidad del protocolo electoral.
 
 % =============================================================================

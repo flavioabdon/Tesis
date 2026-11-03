@@ -1,38 +1,158 @@
 \section{Aritmética Modular y el Problema Learning With Errors (LWE)}
 % =============================================================================
 
+Aunque la definición geométrica de los retículos es clara, programar directamente operaciones con números reales en cientos de dimensiones sería lento e impreciso en una computadora. Por ello, para llevar los retículos a la práctica informática, se utiliza la aritmética modular y un problema algebraico equivalente denominado \textbf{Aprendizaje con Errores} (LWE).
+
 \subsection{De Ecuaciones Lineales Exactas a Sistemas Ruidosos}
 
-En el anillo de enteros módulo $q$, denotado por $\mathbb{Z}_q = \{0, 1, \dots, q-1\}$, un sistema lineal exacto de la forma:
+Antes de definir el problema LWE, conviene recordar dos conceptos básicos: la aritmética modular y los sistemas de ecuaciones lineales.
+
+La \textbf{aritmética modular} con módulo $q$, representada por el conjunto $\mathbb{Z}_q = \{0, 1, \dots, q-1\}$, funciona igual que un reloj de pared de $12$ horas: cuando una suma supera el valor límite $q$, el conteo vuelve a empezar desde cero tomando únicamente el residuo de la división entera. Esta propiedad es ideal para la programación, ya que garantiza que ningún número crezca desmesuradamente ni desborde la memoria de la computadora.
+
+En la Figura \ref{fig:aritmetica_modular_reloj} se representa de manera didáctica esta analogía cíclica de la aritmética modular para un conjunto $\mathbb{Z}_{12}$, mostrando cómo una operación de avance secuencial vuelve al punto de origen al completar una vuelta entera.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[scale=0.92]
+		\coordinate (O) at (0,0);
+		% Círculo principal del reloj modular
+		\draw[line width=0.8pt, draw=black] (O) circle (2.0cm);
+		
+		% Marcas y etiquetas de 0 a 11
+		\foreach \angle/\val in {
+			90/0, 60/1, 30/2, 0/3, 330/4, 300/5, 
+			270/6, 240/7, 210/8, 180/9, 150/10, 120/11
+		} {
+			\coordinate (P) at (\angle:2.0cm);
+			\coordinate (Pinner) at (\angle:1.75cm);
+			\draw[line width=0.7pt, draw=black] (P) -- (Pinner);
+			\node[font=\footnotesize\rmfamily\bfseries] at (\angle:2.42cm) {\val};
+		}
+		
+		% Flecha de avance cíclico (ejemplo 9 + 5 = 14 = 2 mod 12)
+		\draw[-{Latex[length=2.2mm, width=1.5mm]}, line width=1.0pt, draw=black] 
+			(180:1.35cm) arc[start angle=180, end angle=30, radius=1.35cm];
+			
+		\node[draw=black, fill=white, line width=0.6pt, font=\scriptsize\rmfamily, align=center] at (0, 0) 
+		{Espacio $\mathbb{Z}_{12}$\\$9 + 5 \equiv 2 \pmod{12}$};
+	\end{tikzpicture}
+	\caption{Funcionamiento cíclico de la aritmética modular.}
+	\label{fig:aritmetica_modular_reloj}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+Por su parte, un sistema de ecuaciones lineales exacto en $\mathbb{Z}_q$ se expresa en forma matricial como:
 \begin{equation}
 	\mathbf{A} \cdot \mathbf{s} \equiv \mathbf{b} \pmod q
 \end{equation}
-con $\mathbf{A} \in \mathbb{Z}_q^{m \times n}$, $\mathbf{s} \in \mathbb{Z}_q^n$ y $\mathbf{b} \in \mathbb{Z}_q^m$, puede resolverse de manera determinista mediante eliminación gaussiana en tiempo polinomial $\mathcal{O}(m n^2)$. La linealidad perfecta permite a un observador eliminar incógnitas sistemáticamente mediante combinaciones lineales de filas.
+donde $\mathbf{A}$ es una matriz pública conocida de $m$ filas por $n$ columnas, $\mathbf{b}$ es el vector de resultados conocidos y $\mathbf{s}$ es el vector de incógnitas secretas.
 
 \subsubsection{La Intuición de la Perturbación: Por qué Falla Gauss}
-Consideremos la analogía básica del álgebra lineal: despejar un sistema lineal de ecuaciones es equivalente a encontrar la intersección exacta de varios hiperplanos. Si las ecuaciones son exactas, la eliminación gaussiana va pivoteando y restando múltiplos de filas hasta triangular la matriz y despejar cada incógnita limpiamente.
 
-Sin embargo, si a cada ecuación se le inyecta un pequeño vector de perturbación estocástica $\mathbf{e}$:
+Cuando se resuelve un sistema de ecuaciones lineales exacto como el anterior (por ejemplo, $2s_1 + 3s_2 = 11$ y $s_1 - s_2 = 3$), aplica el método de \textbf{eliminación de Gauss}: multiplica una ecuación por un número y la resta de otra ecuación para ir eliminando incógnitas una por una hasta despejar todo el vector $\mathbf{s}$. En una computadora, este procedimiento es sumamente rápido y toma un tiempo polinomial $\mathcal{O}(m n^2)$, por lo que un sistema lineal exacto no sirve para ocultar una clave secreta.
+
+Sin embargo, la situación cambia radicalmente si antes de entregar el resultado $\mathbf{b}$, se le suma a cada ecuación un pequeño valor de error o ruido aleatorio $\mathbf{e}$ (por ejemplo, sumar $+1$, $0$ o $-1$ al azar en cada fila):
 \begin{equation}
 	\mathbf{A} \cdot \mathbf{s} + \mathbf{e} \equiv \mathbf{b} \pmod q
 \end{equation}
-el método de eliminación gaussiana colapsa de forma estrepitosa: al multiplicar una fila por un escalar para anular un coeficiente de otra fila, el término de error $\mathbf{e}$ también se multiplica y se acumula; a medida que se avanza en las etapas de eliminación, el ruido residual crece de manera exponencial, destruyendo cualquier correlación lineal con la incógnita original. Resolver este sistema ruidoso equivale a encontrar el vector del retículo más cercano al punto perturbado (CVP), problema que carece de algoritmos eficientes tanto clásicos como cuánticos.
+Al existir esta pequeña perturbación $\mathbf{e}$, el método de eliminación de Gauss deja de funcionar por completo. La razón es sencilla: cuando un atacante intenta multiplicar la primera ecuación por un número grande (por ejemplo, por $500$) y restarla de la segunda fila para eliminar la primera incógnita, el pequeño error desconocido de esa fila también se multiplica por $500$ y se suma al error de la otra fila.
 
-\subsection{Formulación de LWE (Regev, 2005)}
+Al repetir este paso a lo largo de cientos de ecuaciones, los errores acumulados crecen hasta cubrir todo el rango del módulo $q$. Al final del proceso de Gauss, en lugar de obtener el valor de la incógnita $\mathbf{s}$, el atacante obtiene una ecuación completamente contaminada por el ruido que no aporta ninguna información útil.
 
-Oded Regev (2005) demostró que si cada ecuación lineal es perturbada por un término de error discreto e independiente $\mathbf{e}$, la estructura lineal colapsa:
+\subsection{Formulación de LWE}
+
+Con base en este principio, Oded Regev (2005) formuló el problema matemático denominado \textbf{Aprendizaje con Errores} o LWE. En este problema, una entidad genera una clave secreta $\mathbf{s}$ y publica muestras ruidosas calculadas mediante la expresión:
 \begin{equation}
 	\mathbf{b} = \mathbf{A} \cdot \mathbf{s} + \mathbf{e} \pmod q
 \end{equation}
-donde las entradas de $\mathbf{A}$ se eligen uniformemente al azar en $\mathbb{Z}_q$, el vector secreto $\mathbf{s}$ proviene de una distribución pequeña, y el vector de error $\mathbf{e} \in \mathbb{Z}_q^m$ se muestrea a partir de una distribución gaussiana discreta centrada en cero con desviación estándar $\sigma \ll q$.
-
-Existen dos formulaciones de este problema:
+donde:
 \begin{itemize}
-	\item \textbf{LWE de Búsqueda (\textit{Search-LWE}):} Recuperar el vector secreto exacto $\mathbf{s} \in \mathbb{Z}_q^n$ a partir de la observación pública $(\mathbf{A}, \mathbf{b})$.
-	\item \textbf{LWE de Decisión (\textit{Decision-LWE}):} Distinguir computacionalmente entre muestras genuinas $(\mathbf{A}, \mathbf{A}\mathbf{s} + \mathbf{e})$ y pares uniformemente aleatorios $(\mathbf{A}, \mathbf{u}) \in \mathbb{Z}_q^{m \times n} \times \mathbb{Z}_q^m$.
+	\item $\mathbf{A} \in \mathbb{Z}_q^{m \times n}$ es una matriz pública cuyos números se eligen al azar de manera uniforme entre $0$ y $q-1$.
+	\item $\mathbf{s} \in \mathbb{Z}_q^n$ es el vector secreto (la clave privada), formado por números pequeños.
+	\item $\mathbf{e} \in \mathbb{Z}_q^m$ es el vector de error o ruido secreto, cuyos elementos se eligen al azar tomando valores muy pequeños alrededor de cero (por ejemplo, entre $-2$ y $+2$).
 \end{itemize}
 
-Cuando un atacante intenta aplicar combinaciones lineales tipo Gauss sobre el sistema ruidoso, los términos de error se propagan y multiplican, transformando la señal útil en ruido estocástico incoherente. Regev (2005) probó formalmente que resolver Decision-LWE es tan difícil como resolver aproximaciones cuánticas de problemas clásicos de retículos (GapSVP) en dimensión $n$.
+Para ilustrar de forma concreta y didáctica cómo se construye un sistema de ecuaciones ruidosas bajo este principio, consideremos un ejemplo representativo en aritmética modular con módulo primo $q = 89$, ampliamente utilizado en la divulgación pedagógica de la criptografía de retículos (ver Figura \ref{fig:lwe_ejemplo_concreto}).
+
+\begin{figure}[htbp]
+	\centering
+	\begin{tikzpicture}[
+		scale=0.92,
+		box/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, font=\small\rmfamily, inner sep=6pt},
+		lbl/.style={font=\footnotesize\rmfamily\bfseries, align=center}
+	]
+		% Columna izquierda: Clave Privada
+		\node (sk_title) [lbl] at (-4.2, 3.6) {CLAVE PRIVADA\\(Vector Secreto $\mathbf{s}$)};
+		\node (sk_box) [box, text width=3.2cm, align=center] at (-4.2, 0.4) {
+			\begin{align*}
+				x &= 10 \\
+				y &= 82 \\
+				z &= 50 \\
+				w &= 5
+			\end{align*}
+			\vspace{-0.3cm}
+			{\scriptsize\itshape Cuatro incógnitas\\secretas en $\mathbb{Z}_{89}$}
+		};
+
+		% Columna derecha: Clave Pública
+		\node (pk_title) [lbl] at (2.5, 3.6) {CLAVE PÚBLICA\\(Sistema Ruidoso en $\mathbb{Z}_{89}$ con error $e \in [-3, 4]$)};
+		\node (pk_box) [box, text width=7.2cm, align=left] at (2.5, 0.4) {
+			\scriptsize
+			\begin{alignat*}{6}
+				77x &+ 7y &+ 28z &+ 23w &\equiv 8 &\pmod{89} &\quad (e = -3) \\
+				21x &+ 19y &+ 30z &+ 48w &\equiv 39 &\pmod{89} &\quad (e = +2) \\
+				4x &+ 24y &+ 33z &+ 38w &\equiv 20 &\pmod{89} &\quad (e = -1) \\
+				8x &+ 20y &+ 84z &+ 61w &\equiv 84 &\pmod{89} &\quad (e = 0) \\
+				6x &+ 53y &+ 1z &+ 86w &\equiv 84 &\pmod{89} &\quad (e = +4) \\
+				42x &+ 86y &+ 31z &+ 8w &\equiv 72 &\pmod{89} &\quad (e = -1) \\
+				5x &+ 24y &+ 79z &+ 27w &\equiv 49 &\pmod{89} &\quad (e = -2) \\
+				16x &+ 7y &+ 35z &+ 21w &\equiv 10 &\pmod{89} &\quad (e = +2) \\
+				56x &+ 18y &+ 25z &+ 58w &\equiv 16 &\pmod{89} &\quad (e = 0) \\
+				4x &+ 55y &+ 73z &+ 13w &\equiv 76 &\pmod{89} &\quad (e = -1)
+			\end{alignat*}
+		};
+
+		% Marco divisor vertical analógico
+		\draw[line width=0.6pt, dash pattern=on 3pt off 2pt] (-1.8, -2.5) -- (-1.8, 4.2);
+	\end{tikzpicture}
+	\caption{Ejemplo de ecuaciones ruidosas LWE.}
+	\label{fig:lwe_ejemplo_concreto}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+En el ejemplo presentado en la Figura \ref{fig:lwe_ejemplo_concreto}, la clave privada está conformada por cuatro valores secretos: $\mathbf{s} = (x, y, z, w) = (10, 82, 50, 5)$. Para generar la clave pública, la entidad emisora elige aleatoriamente coeficientes en el espacio modular $\mathbb{Z}_{89}$ (con $q = 89$) y evalúa las combinaciones lineales añadiendo un pequeño término de perturbación estocástica. 
+
+Para constatar cómo opera la aritmética modular en este caso, obsérvese el cálculo de la primera ecuación:
+\begin{align*}
+	77(10) + 7(82) + 28(50) + 23(5) &= 770 + 574 + 1400 + 115 = 2859
+\end{align*}
+Al reducir el número $2859$ módulo $89$ (calculando el residuo de la división entera $2859 \div 89 = 32$ con residuo $11$):
+\begin{equation*}
+	2859 \equiv 11 \pmod{89}
+\end{equation*}
+Si la ecuación fuera exacta, el resultado publicado sería $11$. Sin embargo, en el problema LWE se le inyecta un pequeño error intencional $e = -3$:
+\begin{equation*}
+	b_1 = 11 + (-3) = 8 \pmod{89}
+\end{equation*}
+De este modo, se publica el valor público $8$. De forma análoga, en la segunda ecuación el producto exacto es:
+\begin{align*}
+	21(10) + 19(82) + 30(50) + 48(5) &= 210 + 1558 + 1500 + 240 = 3508 \equiv 37 \pmod{89}
+\end{align*}
+Al sumarle un pequeño error  $e = +2$, se obtiene el valor publicado $b_2 = 37 + 2 = 39$.
+
+Si las diez ecuaciones publicadas fueran exactas ($e = 0$), con herramientas de algebra lineal se podría despejar las cuatro incógnitas $(x, y, z, w)$ en microsegundos resolviendo un sistema de cuatro ecuaciones con cuatro incógnitas. No obstante, al contener cada fila un error desconocido $e \in \{-3, -2, -1, 0, +1, +2, +4\}$, intentar restar ecuaciones multiplica los errores estocásticos hasta destruir el sistema, haciendo imposible deducir la clave privada $\mathbf{s}$.
+
+A partir de esta estructura, Regev (2005) definió dos variantes equivalentes del problema que sustentan la seguridad criptográfica:
+
+\begin{enumerate}
+	\item \textbf{LWE de Búsqueda:} Consiste en intentar descubrir cuál es el vector secreto $\mathbf{s}$ conociendo únicamente la matriz pública $\mathbf{A}$ y el resultado con ruido $\mathbf{b}$. Esta propiedad garantiza que nadie pueda deducir la clave privada a partir de la clave pública.
+
+	\item \textbf{LWE de Decisión:} Consiste en distinguir si un par de datos $(\mathbf{A}, \mathbf{b})$ fue construido mediante la fórmula $\mathbf{A}\mathbf{s} + \mathbf{e}$ o si, por el contrario, el vector $\mathbf{b}$ está compuesto por números completamente aleatorios sin relación con $\mathbf{A}$. Esta propiedad garantiza que los textos cifrados parezcan ruido aleatorio ante cualquier observador, protegiendo el secreto del voto.
+\end{enumerate}
+
+Regev (2005) demostró matemáticamente que resolver cualquiera de estas dos variantes de LWE es tan difícil como resolver los problemas geométricos de retículos (SVP y CVP) en su peor caso, incluso para una computadora cuántica.
+
+Para comprender visualmente por qué el algoritmo cuántico de Shor puede quebrar RSA pero no puede quebrar el problema LWE, en la Figura \ref{fig:shor_vs_lwe} se comparan ambos comportamientos.
 
 \begin{figure}[htbp]
 	\centering
@@ -72,9 +192,11 @@ Cuando un atacante intenta aplicar combinaciones lineales tipo Gauss sobre el si
 			}
 		\end{scope}
 	\end{tikzpicture}
-	\caption{Comparación estructural: la periodicidad explotada por la Transformada Cuántica de Fourier frente a la dispersión aperiódica del ruido en LWE.}
+	\caption{Comparación entre onda periódica y dispersión LWE.}
 	\label{fig:shor_vs_lwe}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
+
+Tal como se ilustra en la Figura \ref{fig:shor_vs_lwe}, en la parte superior los esquemas clásicos como RSA generan una onda regular que se repite exactamente cada período $r$, lo cual permite que la Transformada Cuántica de Fourier identifique su frecuencia y rompa el cifrado. En cambio, en la parte inferior se observa que las muestras del problema LWE presentan alturas irregulares y dispersas debido a la presencia del ruido $\mathbf{e}$, destruyendo cualquier ciclo periódico y dejando sin efecto al algoritmo de Shor.
 
 % =============================================================================

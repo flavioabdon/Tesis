@@ -1,15 +1,19 @@
 \section{Mecanismo de Encapsulamiento de Claves ML-KEM (FIPS 203)}
 % =============================================================================
 
-El estándar \textbf{FIPS 203} (NIST, 2024), derivado del algoritmo CRYSTALS-Kyber, formaliza el esquema \textbf{ML-KEM} como estándar post-cuántico para el establecimiento y encapsulamiento seguro de claves simétricas.
+En agosto de 2024, el Instituto Nacional de Estándares y Tecnología (NIST) publicó el estándar oficial \textbf{FIPS 203} (NIST, 2024a), el cual define el algoritmo de encapsulamiento de claves basado en retículos modulares \textbf{ML-KEM}, originado en el proyecto CRYSTALS-Kyber. Este estándar constituye el mecanismo principal a nivel mundial para proteger la confidencialidad de la información frente a computadoras cuánticas.
 
 \subsection{Concepto de KEM en Votación Electrónica}
 
-A diferencia de los criptosistemas asimétricos convencionales, ML-KEM no cifra directamente datos voluminosos. En su lugar, opera como un mecanismo de transporte de clave de alta seguridad: la cabina del votante utiliza ML-KEM para acordar una clave simétrica efímera compartida $K \in \{0, 1\}^{256}$ con el servidor electoral, la cual se emplea posteriormente para cifrar el contenido del voto mediante un algoritmo simétrico autenticado (como AES-256-GCM).
+Cuando se estudia criptografía por primera vez, suele pensarse que la clave pública sirve para cifrar directamente archivos o mensajes largos. Sin embargo, en la práctica informática moderna se utiliza una técnica mucho más eficiente denominada \textbf{Mecanismo de Encapsulamiento de Claves} (KEM).
+
+El funcionamiento de un KEM puede explicarse mediante una analogía cotidiana: supóngase que el votante desea enviar su boleta electoral dentro de una caja fuerte muy rápida y ligera (cifrado simétrico AES-256-GCM), para lo cual inventa en ese instante una llave secreta única $K$ de $256$ bits. El problema es cómo hacer llegar esa llave $K$ a la Autoridad de Conteo a través de Internet sin que ningún atacante la copie en el camino.
+
+Para resolverlo, el algoritmo ML-KEM no cifra el voto directamente, sino que ``encapsula'' (envuelve) esa llave simétrica $K$ utilizando la clave pública post-cuántica de la autoridad electoral, produciendo una cápsula cifrada $c$. De este modo, el votante cifra su voto con la llave $K$ mediante AES-256-GCM y adjunta la cápsula $c$. Al final de la elección, solo la Autoridad de Conteo posee la clave privada necesaria para abrir la cápsula $c$, recuperar la llave $K$ y leer el contenido del voto.
 
 \subsection{Fases del Protocolo ML-KEM}
 
-El protocolo articula tres algoritmos probabilísticos:
+El funcionamiento de ML-KEM se compone de tres pasos secuenciales bien definidos: generación de claves, encapsulamiento y desencapsulamiento. En la Figura \ref{fig:kem_flow} se presenta el diagrama general de interacción entre la autoridad electoral y la terminal del votante.
 
 \begin{figure}[!htbp]
 	\centering
@@ -42,29 +46,31 @@ El protocolo articula tres algoritmos probabilísticos:
 		};
 		\draw[arr] (aut) -- (dec);
 	\end{tikzpicture}
-	\caption{Flujo secuencial de operaciones en el estándar FIPS 203 (ML-KEM).}
+	\caption{Flujo de operaciones del algoritmo ML-KEM.}
 	\label{fig:kem_flow}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia a partir de FIPS PUB 203.}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia a partir de FIPS PUB 203 (NIST, 2024a).}}
 \end{figure}
 
+Tal como se observa en la Figura \ref{fig:kem_flow}, la autoridad pone a disposición la clave pública $PK = (\mathbf{A}, \mathbf{b})$, el terminal del votante la utiliza para encapsular el secreto $K$ dentro del criptograma $c = (\mathbf{u}, v)$, y posteriormente se realiza el desencapsulamiento restando el término secreto $\mathbf{s}^T\mathbf{u}$. A continuación se explica de forma sencilla qué ocurre en cada una de estas tres fases:
+
 \begin{enumerate}
-	\item \textbf{Generación de Claves (\texttt{ML-KEM.KeyGen}):}
-	El receptor genera la matriz de polinomios $\mathbf{A} \sim R_q^{k \times k}$ y muestrea los vectores pequeños $\mathbf{s}, \mathbf{e} \sim \chi^k$. Calcula:
+	\item \textbf{Generación de Claves:}
+	Antes de iniciar la votación, la autoridad genera una matriz pública de polinomios $\mathbf{A} \in R_q^{k \times k}$, un vector de polinomios secretos con coeficientes pequeños $\mathbf{s}$ y un vector de ruido pequeño $\mathbf{e}$. Con ellos calcula el vector público con ruido:
 	\begin{equation}
 		\mathbf{b} = \mathbf{A}\mathbf{s} + \mathbf{e} \pmod q
 	\end{equation}
-	Publica la clave pública $PK = (\mathbf{A}, \mathbf{b})$ y almacena la clave privada $SK = \mathbf{s}$.
-	
-	\item \textbf{Encapsulamiento (\texttt{ML-KEM.Encaps}):}
-	El emisor recibe $PK$, muestrea un vector efímero $\mathbf{r} \sim \chi^k$ y vectores de ruido $\mathbf{e}_1 \sim \chi^k$, $e_2 \sim \chi$. A partir de un mensaje aleatorio $m \in \{0, 1\}^{256}$, calcula el texto cifrado $c = (\mathbf{u}, v)$:
+	La clave pública publicada es el par $PK = (\mathbf{A}, \mathbf{b})$, mientras que la clave privada guardada en custodia es $SK = \mathbf{s}$.
+
+	\item \textbf{Encapsulamiento:}
+	Cuando un ciudadano va a emitir su voto, el sistema toma la clave pública $PK = (\mathbf{A}, \mathbf{b})$ y genera un vector aleatorio temporal $\mathbf{r}$ junto con nuevos ruidos pequeños $\mathbf{e}_1$ y $e_2$. A partir de una semilla aleatoria $m$ de $256$ bits (de la cual se deriva la llave simétrica $K$), calcula el texto cifrado compuesto por dos partes $c = (\mathbf{u}, v)$:
 	\begin{align}
 		\mathbf{u} &= \mathbf{A}^T \mathbf{r} + \mathbf{e}_1 \pmod q \\
 		v &= \mathbf{b}^T \mathbf{r} + e_2 + \text{Codificar}(m) \pmod q
 	\end{align}
-	donde $\text{Codificar}(m)$ proyecta cada bit al elemento dipolar $0$ o $\lfloor q/2 \rceil \in \mathbb{Z}_q$.
-	
-	\item \textbf{Desencapsulamiento (\texttt{ML-KEM.Decaps}):}
-	El receptor computa la diferencia matricial utilizando su secreto $\mathbf{s}$:
+	Aquí la función $\text{Codificar}(m)$ realiza una tarea muy ingeniosa para proteger cada bit de información frente al ruido: como el módulo es $q = 3329$, si el bit de $m$ es $0$ lo coloca en el valor $0$, pero si el bit es $1$ lo coloca a mitad del reloj modular, en $\lfloor 3329 / 2 \rceil = 1665$. Al estar tan separados el $0$ y el $1665$, un pequeño ruido de $\pm 10$ o $\pm 20$ no logrará confundir un uno con un cero.
+
+	\item \textbf{Desencapsulamiento:}
+	Durante el escrutinio, la autoridad utiliza su clave privada $\mathbf{s}$ para multiplicar $\mathbf{s}^T \mathbf{u}$ y restarlo de $v$:
 	\begin{align}
 		v - \mathbf{s}^T \mathbf{u} &= \left( \mathbf{b}^T \mathbf{r} + e_2 + \text{Codificar}(m) \right) - \mathbf{s}^T \left( \mathbf{A}^T \mathbf{r} + \mathbf{e}_1 \right) \nonumber \\
 		&= \left( (\mathbf{A}\mathbf{s} + \mathbf{e})^T \mathbf{r} + e_2 + \text{Codificar}(m) \right) - \left( \mathbf{s}^T \mathbf{A}^T \mathbf{r} + \mathbf{s}^T \mathbf{e}_1 \right) \nonumber \\
@@ -72,10 +78,14 @@ El protocolo articula tres algoritmos probabilísticos:
 	\end{align}
 \end{enumerate}
 
-Los términos de alta magnitud $(\mathbf{s}^T \mathbf{A}^T \mathbf{r})$ se cancelan exactamente. Como el término de ruido residual $\mathbf{e}_{\text{residual}}$ es pequeño por construcción ($\|\mathbf{e}_{\text{residual}}\|_\infty < q/4$), un redondeo umbral decodifica el bit $m_i = 0$ si el coeficiente se ubica en $[0, q/4) \cup (3q/4, q)$, y $m_i = 1$ si se ubica en $(q/4, 3q/4)$.
+Como muestra el resultado final de la ecuación anterior, los términos grandes $\mathbf{s}^T \mathbf{A}^T \mathbf{r}$ se anulan entre sí de manera exacta. Lo único que queda es el mensaje $\text{Codificar}(m)$ sumado a un ruido residual pequeño $\mathbf{e}_{\text{residual}}$. Finalmente, el programa aplica una operación de redondeo: si el número resultante está cerca de $0$, recupera el bit $0$; si está cerca de $1665$ (la mitad de $q$), recupera el bit $1$, reconstruyendo sin errores los $256$ bits de la clave $K$ que permite abrir el voto.
 
 \subsection{Seguridad IND-CCA2 y Transformada Fujisaki-Okamoto}
 
-Para prevenir ataques de texto cifrado escogido activo (IND-CCA2), el estándar FIPS 203 envuelve este esquema básico mediante una variante rigurosa de la \textit{Transformada de Fujisaki-Okamoto} (FO) (Fujisaki y Okamoto, 2013). Durante el desencapsulamiento, el algoritmo re-encripta el mensaje recuperado $m'$ utilizando los parámetros públicos y verifica si el criptograma resultante coincide idénticamente con el texto recibido $c$. Si detecta una discrepancia infinitesimal, aborta emitiendo un valor pseudoaleatorio ciego, impidiendo cualquier ataque de oráculo de descifrado.
+En ciberseguridad no basta con proteger el sistema frente a un atacante que solo escucha la red; también es necesario defenderse de un atacante activo que modifique ligeramente los textos cifrados enviados al servidor para observar si el sistema devuelve mensajes de error y así tratar de adivinar la clave privada. La resistencia contra este tipo de ataques se conoce formalmente como \textbf{indistinguibilidad frente a ataques de texto cifrado escogido adaptativo} o seguridad IND-CCA2.
+
+Para alcanzar la seguridad IND-CCA2, el estándar FIPS 203 incorpora un mecanismo de verificación interna llamado \textbf{Transformada de Fujisaki-Okamoto} (Fujisaki y Okamoto, 2013). Su funcionamiento consiste en que, inmediatamente después de desencapsular y obtener el valor candidato $m'$, el receptor vuelve a ejecutar internamente el paso de encapsulamiento usando ese mismo $m'$ y comprueba si la cápsula generada coincide bit por bit con la cápsula $c$ que llegó por la red.
+
+Si un atacante alteró aunque sea un solo bit del criptograma en el camino, ambas cápsulas no coincidirán. En ese caso, ML-KEM rechaza silenciosamente el paquete manipulado sin dar pistas del fallo, garantizando la protección total de la clave privada electoral.
 
 % =============================================================================

@@ -3,160 +3,172 @@
 
 \subsection{Fundamentación de la Verificación Formal en Protocolos Criptográficos}
 
-El diseño de protocolos criptográficos constituye una disciplina notoriamente propensa a fallas sutiles. La experiencia acumulada en la literatura de seguridad informática demuestra de forma reiterada la falacia del protocolo ``casi seguro'': un sistema puede incorporar primitivas criptográficas robustas y estandarizadas (como ML-KEM o ML-DSA) y, sin embargo, resultar completamente vulnerable a nivel de protocolo si la secuencia lógica de intercambio de mensajes permite ataques de reordenamiento, inyección, reflexión o reenvío (Cremers y Mauw, 2012). Ejemplos históricos notables como el protocolo de autenticación de Needham-Schroeder ---cuya vulnerabilidad permaneció inadvertida durante casi dos décadas hasta su análisis formal automatizado--- evidencian los límites intrínsecos de las pruebas empíricas tradicionales y la inspección manual.
+Un protocolo criptográfico es el conjunto ordenado de reglas y pasos que definen cómo se intercambian mensajes dos o más computadoras a través de una red para llevar a cabo una tarea segura, como iniciar sesión, realizar un pago o emitir un voto.
 
-En sistemas electorales electrónicos, donde se debe garantizar simultáneamente el anonimato del sufragante y la integridad estricta del resultado, las consecuencias de una falla lógica son catastróficas. Baloglu et al. (2021) emplearon verificación formal para analizar los sistemas de votación Helios y Belenios, identificando vulnerabilidades de manipulación de papeletas que habían eludido revisiones previas. 
+En la práctica de la ciberseguridad, se ha comprobado repetidamente que un sistema puede utilizar los algoritmos criptográficos más fuertes del mundo (como ML-KEM o ML-DSA) y, sin embargo, ser inseguro si el orden o la estructura de los mensajes del protocolo tiene un error de diseño (Cremers y Mauw, 2012). Por ejemplo, si una puerta blindada de acero (el algoritmo criptográfico) se instala en un marco mal construido que permite sacar las bisagras desde afuera (el protocolo), un atacante no necesitará romper el acero para entrar.
 
-A diferencia de las pruebas empíricas de software ---las cuales solo pueden demostrar la presencia de errores en escenarios específicos, pero jamás su ausencia general---, la \textbf{verificación formal} proporciona una prueba matemática rigurosa y exhaustiva de que un protocolo satisface sus propiedades de seguridad bajo \textit{todas} las condiciones posibles y para un número arbitrariamente grande de sesiones concurrentes (Schmidt et al., 2012).
+Un caso clásico en la historia de la Informática es el protocolo de autenticación de Needham-Schroeder, el cual fue considerado seguro durante casi diecisiete años hasta que se descubrió, mediante una herramienta de análisis formal, que un atacante podía interceptar y reenviar mensajes válidos en distinto orden para hacerse pasar por otro usuario. Asimismo, en el área de votación electrónica, Baloglu et al. (2021) utilizaron verificación formal para encontrar fallas de duplicación de boletas en los sistemas Helios y Belenios que no habían sido detectadas mediante revisiones manuales.
 
-Una analogía elocuente ilustra esta diferencia conceptual: evaluar un protocolo de seguridad únicamente con pruebas de software convencionales es equivalente a entrenar a un espadachín enfrentándolo contra un grupo de rivales conocidos; por más rivales a los que derrote en el entrenamiento, siempre existirá la posibilidad de que un nuevo adversario en el mundo real ejecute una estocada o ángulo imprevisto que vulnere su guardia. La verificación formal automatizada, en contraste, no evalúa rivales particulares; modela el espacio de combate algebraicamente y demuestra por inducción matemática que no existe ninguna secuencia de movimientos en todo el universo del modelo capaz de penetrar las defensas del sistema.
+Cuando un programador realiza pruebas de software tradicionales (como pruebas unitarias o de integración), únicamente comprueba que el programa funciona bien en los casos que él mismo imaginó, pero nunca puede probar todos los ataques posibles. En cambio, la \textbf{verificación formal} consiste en representar el protocolo mediante lógica matemática para que un motor automatizado explore todas las combinaciones posibles de mensajes y demuestre con certeza que ningún ataque puede vulnerar las reglas definidas (Schmidt et al., 2012).
 
 \subsection{El Modelo de Atacante Dolev-Yao y el Conocimiento Adversarial}
 
-La definición del modelo de adversario establece el marco de hostilidad bajo el cual se evalúa la seguridad del protocolo. En verificación formal de protocolos de seguridad, el estándar universal es el \textbf{modelo de atacante Dolev-Yao} (Dolev y Yao, 1983).
+Para comprobar la seguridad de un protocolo mediante verificación formal, primero es necesario definir qué capacidades tiene el atacante. En ciberseguridad, el estándar más exigente y utilizado a nivel mundial es el \textbf{modelo de atacante Dolev-Yao}, formulado por Danny Dolev y Andrew Yao (1983).
 
-Bajo este modelo, la premisa de diseño fundamental es que \textit{la red de comunicación es el propio atacante}. El adversario no es un observador periférico pasivo, sino la entidad que transporta los mensajes:
+La idea principal del modelo Dolev-Yao es asumir el peor escenario posible: \textit{el atacante tiene control total sobre toda la red de telecomunicaciones}. Es decir, cualquier mensaje que viaje entre el navegador del votante y el servidor electoral pasa por las manos del atacante, quien cuenta con las siguientes capacidades y límites:
+
 \begin{itemize}
-	\item \textbf{Control total del canal:} Puede interceptar, almacenar, descomponer en sus componentes elementales, modificar, suprimir o reinyectar cualquier mensaje en tránsito.
-	\item \textbf{Capacidad de composición:} Puede sintetizar nuevos mensajes combinando cualquier dato previamente aprendido con términos aleatorios generados por él mismo.
-	\item \textbf{Restricción de caja negra perfecta:} El atacante se encuentra estrictamente sujeto a las reglas algebraicas de la criptografía: no puede invertir una función hash unidireccional, no puede descifrar un criptograma sin poseer la clave privada correspondiente, y no puede falsificar una firma digital sin conocer la clave secreta de firma.
+	\item \textbf{Control completo de los mensajes en la red:} El atacante puede leer todos los paquetes enviados, guardar copias, bloquear mensajes para que no lleguen a su destino, modificarlos, cambiarles el orden o volver a enviar mensajes antiguos mediante ataques de repetición.
+
+	\item \textbf{Creación de nuevos mensajes:} El atacante puede fabricar mensajes falsos combinando cualquier dato que haya capturado previamente en la red con datos inventados por él mismo.
+
+	\item \textbf{Respeto a la criptografía perfecta:} La única limitación del atacante Dolev-Yao es que no puede adivinar claves por magia ni romper las matemáticas de los algoritmos: no puede descifrar un mensaje cifrado si no posee la clave privada correspondiente, no puede falsificar una firma digital sin tener la clave secreta de firma, y no puede invertir un resumen hash.
 \end{itemize}
 
-En la herramienta Tamarin Prover, el estado de conocimiento acumulado por el adversario se formaliza mediante el predicado especial de acción:
+Dentro de la herramienta Tamarin Prover, todo lo que el atacante va aprendiendo se representa mediante el predicado especial:
 \begin{equation}
 	K(m)
 \end{equation}
-el cual declara que el término $m$ forma parte del conocimiento del atacante en un instante temporal determinado. Cada vez que un agente legítimo envía un mensaje a la red mediante la primitiva \texttt{Out(t)}, el término $t$ ingresa automáticamente al conjunto de deducción del atacante ($K(t)$). A su vez, cualquier mensaje recibido por una entidad mediante \texttt{In(t)} debe ser derivable por el adversario a partir de su conocimiento disponible.
+el cual significa que ``el atacante conoce el dato $m$''. Cada vez que un participante envía un mensaje a la red mediante la instrucción de salida, ese dato $t$ pasa inmediatamente al conocimiento del atacante ($K(t)$). De igual manera, cualquier dato recibido de la red mediante la instrucción de entrada puede haber sido alterado o fabricado por el atacante usando todo lo que conoce hasta ese momento.
 
-En el marco de la votación universitaria, Dolev-Yao representa el peor escenario operacional posible: asume que las redes WiFi, los enlaces de fibra óptica y los conmutadores del campus universitario están totalmente controlados por un adversario hostil, demostrando que la seguridad del sufragio no depende de la confiabilidad de la red física, sino de la arquitectura formal del protocolo.
+Aplicar el modelo Dolev-Yao a la votación electrónica universitaria significa demostrar que, aunque un intruso controle por completo la red WiFi del lugar o los enrutadores de Internet, no podrá leer el contenido de ningún voto ni introducir boletas falsas en la urna.
 
 \subsection{Criptografía Simbólica versus Criptografía Computacional}
 
-La literatura científica clasifica el análisis formal de protocolos criptográficos en dos paradigmas complementarios:
+En la investigación en seguridad informática existen dos maneras complementarias de analizar y demostrar que un protocolo es seguro: el enfoque computacional y el enfoque simbólico.
 
 \begin{enumerate}
-	\item \textbf{Enfoque Computacional (Teoría de la Complejidad):} Modela los mensajes como cadenas de bits binarias $\{0, 1\}^*$, las primitivas como funciones probabilísticas en tiempo polinomial, y la seguridad como la probabilidad negligible $\epsilon$ de que un adversario acotado computacionalmente gane un juego de seguridad (como IND-CCA2 o EUF-CMA). Este enfoque fundamenta la dureza de los problemas matemáticos de retículos (Module-LWE y Module-SIS) descritos en las Secciones anteriores.
-	\item \textbf{Enfoque Simbólico (Modelo Dolev-Yao / Álgebra de Términos):} Modela los mensajes como términos algebraicos abstractos generados sobre una signatura formal, y las operaciones criptográficas como constructores de términos de caja negra perfecta regidos por una \textit{teoría ecuacional} (Basin et al., 2015).
+	\item \textbf{Enfoque Computacional:} Estudia los algoritmos trabajando directamente con cadenas de unos y ceros ($\{0, 1\}^*$) y probabilidades matemáticas. Demuestra que a un atacante le tomaría miles de años de cálculo resolver problemas difíciles como Module-LWE o Module-SIS. Es el enfoque que respalda la seguridad interna de los algoritmos ML-KEM y ML-DSA.
+
+	\item \textbf{Enfoque Simbólico:} Trata a los algoritmos criptográficos como ``cajas cerradas ideales'' regidas por ecuaciones exactas y analiza el flujo lógico de los mensajes entre los participantes para descubrir si existe algún hueco en las reglas del protocolo (Basin et al., 2015). Es el enfoque que utiliza la herramienta Tamarin Prover.
 \end{enumerate}
+
+En la Tabla \ref{tab:simbolico_vs_computacional} se resumen las diferencias principales entre ambos enfoques de análisis de seguridad.
 
 \begin{table}[htbp]
 	\centering
 	\small
+	\caption{Comparación metodológica entre criptografía simbólica y computacional.}
+	\label{tab:simbolico_vs_computacional}
 	\begin{tabular}{p{2.8cm} p{5.3cm} p{5.5cm}}
 		\toprule
 		\textbf{Dimensión} & \textbf{Enfoque Simbólico (Tamarin)} & \textbf{Enfoque Computacional} \\
 		\midrule
-		\textbf{Representación} & Términos algebraicos abstractos & Cadenas de bits $\{0, 1\}^*$ \\
-		\textbf{Primitivas} & Cajas negras perfectas (ecuaciones) & Algoritmos probabilísticos tiempo poli. \\
-		\textbf{Modelo de seguridad} & Verdadero / Falso (Satisfacibilidad) & Probabilidad de ventaja negligible $\epsilon$ \\
-		\textbf{Espacio de búsqueda} & Infinito (sesiones y términos ilimitados) & Acotado polinomialmente \\
-		\textbf{Automatización} & Totalmente automatizada (Maude / Tamarin) & Demostraciones manuales en su mayoría \\
+		\textbf{Representación} & Símbolos y términos algebraicos & Cadenas binarias de bits $\{0, 1\}^*$ \\
+		\textbf{Primitivas} & Cajas negras gobernadas por ecuaciones & Algoritmos probabilísticos en tiempo polinomial \\
+		\textbf{Resultado} & Demostración exacta o traza de ataque & Probabilidad de éxito despreciable $\epsilon$ \\
+		\textbf{Alcance} & Número ilimitado de sesiones en paralelo & Acotado por recursos de cómputo \\
+		\textbf{Herramienta} & Verificación automatizada (Tamarin / Maude) & Reducciones matemáticas manuales \\
 		\bottomrule
 	\end{tabular}
-	\caption{Comparación metodológica entre criptografía simbólica y computacional.}
-	\label{tab:simbolico_vs_computacional}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Cremers y Mauw (2012).}}
 \end{table}
 
-En Tamarin Prover, las primitivas post-cuánticas de los estándares FIPS 203 y FIPS 204 se abstraen mediante la definición de constructores de funciones y sus correspondientes \textbf{ecuaciones de reescritura algebraica}:
+Como muestra la Tabla \ref{tab:simbolico_vs_computacional}, ambos métodos se complementan en la presente tesis: los estándares del NIST garantizan la fortaleza computacional de los algoritmos, mientras que Tamarin Prover verifica simbólicamente que el protocolo electoral los utilice de manera segura. Para ello, las operaciones post-cuánticas se representan en Tamarin mediante ecuaciones algebraicas claras:
 
 \begin{itemize}
-	\item \textbf{Mecanismo KEM (ML-KEM / FIPS 203):} Se define la función de encapsulamiento $\text{encaps}(pk, k)$ y de desencapsulamiento $\text{decaps}(ct, sk)$, vinculadas mediante la ecuación canónica:
+	\item \textbf{Encapsulamiento de Claves (ML-KEM / FIPS 203):} Se representa con las funciones $\text{encaps}(pk, k)$ y $\text{decaps}(ct, sk)$, unidas por la regla:
 	\begin{equation}
 		\text{decaps}(\text{encaps}(pk(sk), k), sk) = k
 	\end{equation}
-	El atacante no puede extraer la clave secreta $k$ a partir del criptograma $\text{encaps}(pk(sk), k)$ a menos que deduzca formalmente la clave privada $sk$.
-	
-	\item \textbf{Firma Digital (ML-DSA / FIPS 204):} Se define la función de firma $\text{sign}(m, sk)$ y la función de verificación $\text{verify}(\sigma, m, pk)$, modeladas por:
+	Esta ecuación indica que solo quien posee la clave privada $sk$ correspondiente a la clave pública $pk(sk)$ puede abrir la cápsula y recuperar la llave secreta $k$.
+
+	\item \textbf{Firma Digital (ML-DSA / FIPS 204):} Se representa con las funciones $\text{sign}(m, sk)$ y $\text{verify}(\sigma, m, pk)$, unidas por la regla:
 	\begin{equation}
 		\text{verify}(\text{sign}(m, sk), m, pk(sk)) = \text{true}
 	\end{equation}
-	La única vía simbólica para generar un término $\sigma$ tal que $\text{verify}(\sigma, m, pk(sk))$ evalúe a $\text{true}$ consiste en poseer la clave de firma $sk$.
-	
-	\item \textbf{Cifrado Simétrico y Hash (FIPS 202):} El cifrado simétrico autenticado se rige por $\text{sdec}(\text{senc}(m, k), k) = m$, mientras que las funciones hash ($h(m)$) se modelan sin ecuación inversa, operando bajo la hipótesis del Oráculo Aleatorio Simbólico (unidireccionalidad perfecta y ausencia de colisiones).
+	Esta ecuación expresa que la verificación devuelve verdadero únicamente cuando la firma fue generada con la clave privada auténtica $sk$ sobre el mismo mensaje $m$.
+
+	\item \textbf{Cifrado Simétrico y Funciones Hash (AES-GCM y FIPS 202):} El cifrado simétrico cumple $\text{sdec}(\text{senc}(m, k), k) = m$ (se cifra y descifra con la misma llave $k$), mientras que la función hash $h(m)$ no tiene ecuación inversa, reflejando que es una operación unidireccional.
 \end{itemize}
 
 \subsection{Semántica Operacional y Arquitectura de Tamarin Prover}
 
-Tamarin Prover (Schmidt et al., 2012) opera sobre una semántica basada en sistemas de reescritura de multiconjuntos de hechos (\textit{multiset rewriting}). El estado global del protocolo en un instante dado se representa como un multiconjunto finito de \textbf{hechos} ($\mathcal{S}$), donde un hecho es un predicado que encapsula información sobre el estado de los agentes o del canal.
+Tamarin Prover (Schmidt et al., 2012; Meier et al., 2013) es una herramienta informática de código abierto desarrollada en la Escuela Politécnica Federal de Zúrich (ETH Zürich) para verificar automáticamente protocolos criptográficos. Su funcionamiento se basa en un modelo llamado \textbf{reescritura de multiconjuntos}.
 
-\subsubsection{Taxonomía de Hechos en Tamarin}
+De forma sencilla, se puede imaginar el estado del sistema en Tamarin como una ``mesa de trabajo'' donde se colocan tarjetas llamadas \textbf{hechos}. Cada hecho guarda información sobre lo que ocurre en un momento dado (por ejemplo, que un votante fue registrado o que una boleta fue guardada en la urna).
 
-El modelo diferencia tres categorías fundamentales de hechos:
+\subsubsection{Clasificación de Hechos en Tamarin}
+
+En un modelo de Tamarin existen tres tipos de hechos que permiten representar con exactitud el comportamiento del sistema electoral:
 
 \begin{enumerate}
-	\item \textbf{Hechos Lineales:} Representan recursos mutables y de uso único. Cuando una regla de reescritura utiliza un hecho lineal como premisa, dicho hecho \textit{se consume y desaparece} del multiconjunto de estado $\mathcal{S}$. En el protocolo de votación, la boleta digital y el estado de la urna se modelan como hechos lineales para garantizar que cada voto solo pueda ser contabilizado una única vez.
-	\item \textbf{Hechos Persistentes:} Denotados con el prefijo de admiración (\texttt{!Hecho}). Representan verdades invariantes en el tiempo que \textit{no se consumen al ser utilizadas}. Modelan información pública permanente, como las claves públicas electorales o el padrón oficial de votantes habilitados (\texttt{!PadronElectoral(idV, pkV)}).
-	\item \textbf{Hechos Especiales del Sistema:}
+	\item \textbf{Hechos Lineales (de un solo uso):} Son hechos que, una vez utilizados por un paso del protocolo, se consumen y desaparecen del estado. Esta propiedad resulta sumamente útil para la votación electrónica: por ejemplo, la autorización para votar de un ciudadano se modela como un hecho lineal; cuando el ciudadano emite su voto, ese hecho se consume y deja de existir, impidiendo que el mismo elector vuelva a votar por segunda vez.
+
+	\item \textbf{Hechos Persistentes (permanentes):} Se escriben anteponiendo un signo de admiración. Representan datos públicos o registros permanentes que pueden consultarse muchas veces sin gastarse, tales como las claves públicas de las autoridades electorales o el padrón oficial.
+
+	\item \textbf{Hechos Especiales del Sistema:} Tamarin incluye tres tipos de eventos propios para interactuar con el entorno:
 	\begin{itemize}
-		\item \texttt{Fr(\~{}x)} (\textit{Fresh Fact}): Modela la generación de un valor aleatorio fresco no predecible (\textit{nonce}), garantizado como univalente e independiente de cualquier valor generado previamente en cualquier sesión concurrente.
-		\item \texttt{In(t)}: Modela la recepción de un término $t$ proveniente del canal de comunicación abierto de Dolev-Yao.
-		\item \texttt{Out(t)}: Modela la emisión de un término $t$ hacia la red, poniéndolo a disposición inmediata del conocimiento adversarial.
+		\item \textbf{Generación aleatoria fresca:} Genera un número o clave aleatoria completamente nueva que nadie ha visto antes.
+		\item \textbf{Emisión de mensajes:} Envía el mensaje hacia la red pública.
+		\item \textbf{Recepción de mensajes:} Recibe el mensaje desde la red pública.
 	\end{itemize}
 \end{enumerate}
 
 \subsubsection{Estructura de las Reglas de Reescritura}
 
-Las transiciones de estado se formalizan mediante reglas de la forma:
+Cada paso del protocolo (como registrar a un votante, emitir un voto o contar una boleta) se programa en Tamarin mediante una \textbf{regla de reescritura} que tiene tres partes:
 \begin{equation}
 	\text{Regla}: \quad [l_1, \dots, l_n] \xrightarrow{[a_1, \dots, a_k]} [r_1, \dots, r_m]
 \end{equation}
-donde:
 \begin{itemize}
-	\item $[l_1, \dots, l_n]$ son las \textbf{premisas}: hechos que deben estar presentes en el estado $\mathcal{S}$ para habilitar la ejecución de la regla.
-	\item $[a_1, \dots, a_k]$ son las \textbf{etiquetas de acción}: eventos registrados en la traza de ejecución que no alteran el estado, pero sirven como puntos de observación para la verificación de los lemas lógicos temporales.
-	\item $[r_1, \dots, r_m]$ son las \textbf{conclusiones}: nuevos hechos que se agregan al estado resultante $\mathcal{S}'$.
+	\item \textbf{Premisas ($[l_1, \dots, l_n]$):} Son las condiciones o hechos que deben existir previamente en el sistema para que el paso pueda ejecutarse.
+	\item \textbf{Etiquetas de acción ($[a_1, \dots, a_k]$):} Son marcas de registro (como un historial o bitácora con marca de tiempo $\#t$) que indican qué acción acaba de ocurrir para poder revisarla después en las pruebas de seguridad.
+	\item \textbf{Conclusiones ($[r_1, \dots, r_m]$):} Son los nuevos hechos que quedan creados en el sistema después de ejecutar la regla.
 \end{itemize}
 
-Una \textbf{traza de ejecución} es una secuencia temporal de etiquetas de acción producida por una sucesión válida de transiciones de reglas a partir del estado inicial vacío:
+A la secuencia ordenada en el tiempo de todas las etiquetas de acción que ocurren durante una ejecución del protocolo se le denomina \textbf{traza de ejecución}:
 \begin{equation}
 	\text{Traza} = [A_1 @ \#t_1, \; A_2 @ \#t_2, \; \dots, \; A_N @ \#t_N] \quad \text{con} \quad \#t_1 < \#t_2 < \dots < \#t_N
 \end{equation}
 
 \subsection{Especificación Lógica: Restricciones y Lemas Formales}
 
-Las propiedades deseadas y los axiomas operativos se expresan en Tamarin mediante fórmulas de lógica de primer orden cuantificada sobre trazas temporales.
+Una vez escritas las reglas del protocolo, se debe indicar a Tamarin qué reglas de control debe respetar el sistema (restricciones) y qué propiedades de seguridad debe demostrar matemáticamente (lemas).
 
 \subsubsection{Restricciones (Axiomas del Protocolo)}
 
-Las restricciones (\textit{restrictions}) actúan como filtros axiomáticos que podan el espacio de búsqueda de trazas, descartando aquellas secuencias de ejecución que contradigan las invariantes físicas del entorno. 
+Las restricciones representan las verificaciones obligatorias que hace el software (como comprobar que una firma digital sea válida o que un usuario no haya votado antes). Si una secuencia de pasos incumple una restricción, el servidor la rechaza de inmediato.
 
-En un sistema electoral, la restricción de unicidad del sufragio (\texttt{Unicidad\_Voto}) se formaliza como:
+Por ejemplo, la restricción de unicidad del voto se escribe en lógica formal indicando que si aparece un voto registrado para el ciudadano $id$ en el instante de tiempo $\#i$, y también aparece un voto para el mismo ciudadano $id$ en el instante $\#j$, entonces ambos instantes deben ser obligatoriamente el mismo momento ($\#i = $\#j):
 \begin{equation}
 	\forall id, \#i, \#j. \; \big(\text{VotoUnico}(id) @ \#i \;\land\; \text{VotoUnico}(id) @ \#j\big) \implies \#i = \#j
 \end{equation}
-garantizando que ninguna traza donde un mismo votante deposite dos papeletas sea considerada admisible por el verificador.
+Es decir, el sistema prohíbe que existan dos momentos distintos en los que una misma persona deposite un voto.
 
 \subsubsection{Lemas Formales: Sanidad y Seguridad}
 
-Tamarin Prover clasifica los lemas en dos modalidades complementarias:
+Los lemas son los teoremas de seguridad que Tamarin Prover debe demostrar de forma automática. Se dividen en dos tipos:
 
 \begin{enumerate}
-	\item \textbf{Lemas de Alcanzabilidad (\texttt{exists-trace}):} Verifican si \textit{existe al menos una traza} que satisfaga la fórmula. Operan como pruebas de sanidad lógica (\textit{sanity checks}) para demostrar que el protocolo está libre de bloqueos o precondiciones contradictorias y puede alcanzar el estado de escrutinio final exitosamente.
-	\item \textbf{Lemas de Seguridad Universal (\texttt{all-traces}):} Exigen que la fórmula lógica se cumpla en \textit{todas las trazas posibles} de longitud infinita frente a cualquier interferencia de Dolev-Yao:
+	\item \textbf{Lemas de Ejecutabilidad:} Comprueban que existe al menos una traza normal donde los participantes honestos pueden completar todo el proceso electoral de principio a fin sin quedarse bloqueados.
+
+	\item \textbf{Lemas de Seguridad Universal:} Comprueban que una propiedad de seguridad se cumple en \textit{absolutamente todas las ejecuciones posibles}, sin importar qué ataques intente realizar el adversario Dolev-Yao:
 	\begin{itemize}
-		\item \textbf{Confidencialidad del voto (Secreto del contenido):} Declara que si un voto $m$ fue emitido en el instante $\#t$, el atacante jamás puede deducirlo:
+		\item \textbf{Confidencialidad del voto:} Establece que para todo voto $m$ emitido en un instante $\#t$, no existe ningún instante $\#t_2$ en el que el atacante llegue a conocer $m$:
 		\begin{equation}
 			\forall m, \#t. \; \text{SecretoVoto}(m) @ \#t \implies \neg (\exists \#t_2. \; K(m) @ \#t_2)
 		\end{equation}
-		\item \textbf{Integridad del escrutinio:} Todo voto contabilizado en el instante $\#t_c$ debe corresponder forzosamente a una emisión previa no corrompida:
+
+		\item \textbf{Integridad del escrutinio:} Establece que si un voto $m$ es contabilizado en el instante $\#t_c$, entonces forzosamente tuvo que ser emitido sin alteraciones en un instante anterior $\#t_e < \#t_c$:
 		\begin{equation}
 		\begin{split}
 			\forall id, m, \#t_c. \; &\text{VotoContado}(id, m) @ \#t_c \implies \\
 			&\big(\exists \#t_e < \#t_c. \; \text{VotoEmitido}(id, m) @ \#t_e\big)
 		\end{split}
 		\end{equation}
-		\item \textbf{Autenticidad e Injective Agreement:} Garantiza una biyección estricta entre la emisión y la recepción de cada boleta, impidiendo la inyección de votos por entidades no autorizadas o la duplicación maliciosa de votos válidos.
+
+		\item \textbf{Autenticidad y no repetición o acuerdo inyectivo:} Garantiza que cada voto aceptado por la urna proviene de un elector legítimo acreditado y no es una copia repetida por un atacante en la red.
 	\end{itemize}
 \end{enumerate}
 
-El motor inductivo de Tamarin Prover, sustentado en el resolvedor de ecuaciones Maude, analiza sistemáticamente las dependencias causales hacia atrás (\textit{backward search}). Si una propiedad es válida, produce una demostración matemática de completitud; si existe una vulnerabilidad, sintetiza un gráfico de contraejemplo que ilustra la secuencia exacta de manipulaciones que el atacante Dolev-Yao ejecuta para quebrar el protocolo.
+Si Tamarin comprueba que todos los casos cumplen la fórmula, emite el resultado verificado. Por el contrario, si descubre algún fallo lógico en el protocolo, muestra paso a paso cómo un atacante podría aprovecharlo.
 
 % =============================================================================
 \subsection{Síntesis Estructural del Marco Teórico}
 % =============================================================================
 
-La Figura \ref{fig:marco_teorico_tesis} sintetiza la articulación conceptual del presente marco teórico: la vulnerabilidad cuántica de los algoritmos clásicos fundamenta la necesidad de migración; la geometría de retículos provee el respaldo computacional estandarizado en FIPS 203 y 204 con soporte de FIPS 202; estas primitivas se ensamblan en el protocolo de votación electrónica, y la robustez lógica resultante se somete a verificación formal en Tamarin Prover bajo el modelo Dolev--Yao.
+Con el propósito de brindar una visión integrada de los temas expuestos hasta este punto, en la Figura \ref{fig:marco_teorico_tesis} se muestra cómo se conectan entre sí los componentes teóricos que sustentan el protocolo de votación.
 
 \begin{figure}[htbp]
 	\centering
@@ -179,8 +191,9 @@ La Figura \ref{fig:marco_teorico_tesis} sintetiza la articulación conceptual de
 		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.7pt, dashed] (e.east) .. controls +(1.8,0) and +(1.8,0) .. (d.east)
 		node[midway, right, font=\scriptsize\itshape] {constata};
 	\end{tikzpicture}
-	\caption{Articulación conceptual y metodológica de los ejes del marco teórico.}
+	\caption{Articulación de los ejes del marco teórico.}
 	\label{fig:marco_teorico_tesis}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
 
+Como se interpreta en la Figura \ref{fig:marco_teorico_tesis}, la debilidad de los esquemas clásicos (RSA y ECDSA) frente al algoritmo cuántico de Shor motiva la adopción de los estándares post-cuánticos del NIST (FIPS 203 y FIPS 204), los cuales utilizan internamente las funciones hash y de salida extensible de FIPS 202 y descansan sobre la dificultad matemática de los problemas de retículos Module-LWE y Module-SIS. A partir de estas bases se construye el protocolo de votación electrónica post-cuántica, cuya seguridad lógica es finalmente constatada mediante verificación formal en Tamarin Prover.

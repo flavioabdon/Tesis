@@ -1,44 +1,56 @@
 \section{Criptografía de Clave Pública Clásica y su Vulnerabilidad Cuántica}
 % =============================================================================
 
-Los esquemas criptográficos de clave pública empleados históricamente de forma predominante en sistemas de votación electrónica ---entre ellos RSA y ECDSA--- sustentan su seguridad computacional en dos problemas aritméticos fundamentales: la factorización de enteros grandes y el logaritmo discreto sobre grupos finitos o curvas elípticas.
+La criptografía de clave pública, también conocida como criptografía asimétrica, es el método que permite proteger la información en redes abiertas como Internet mediante el uso de un par de claves: una clave pública, que se comparte abiertamente con todos los usuarios para cifrar mensajes o verificar firmas, y una clave privada, que se mantiene en secreto para descifrar la información o generar firmas digitales.
+
+Durante las últimas décadas, los sistemas informáticos y de votación electrónica han utilizado principalmente dos esquemas clásicos de clave pública: el algoritmo RSA y la criptografía de curvas elípticas (como ECDSA). La seguridad de estos algoritmos se apoya en problemas matemáticos de la teoría de números: la dificultad de factorizar números enteros muy grandes y el cálculo de logaritmos discretos. Sin embargo, ambos problemas presentan una debilidad estructural frente al desarrollo de las computadoras cuánticas.
 
 \subsection{El Mecanismo Clásico de RSA}
 
-Propuesto por Rivest, Shamir y Adleman (1978), el esquema RSA basa su asimetría en que la multiplicación de dos números primos grandes $p$ y $q$ es trivialmente calculable en milisegundos, mientras que la operación inversa ---factorizar el módulo compuesto $N = p \cdot q$--- requiere un esfuerzo computacional que crece de forma subexponencial con el algoritmo clásico más avanzado conocido (la Criba General del Cuerpo de Números, GNFS).
+El algoritmo RSA, propuesto por Rivest, Shamir y Adleman (1978), es uno de los sistemas criptográficos más utilizados en la historia de la Informática. Su funcionamiento se basa en una diferencia práctica muy sencilla de comprobar: para una computadora común es sumamente rápido multiplicar dos números primos grandes $p$ y $q$ para obtener su producto $N = p \cdot q$; pero si solamente se conoce el resultado $N$, encontrar cuáles fueron los dos números primos originales que se multiplicaron (operación llamada factorización) resulta extremadamente lento.
 
-La función de cifrado de un mensaje $m \in \mathbb{Z}_N$ bajo el exponente público $e$ se define como:
+Por ejemplo, si se multiplican los números primos $17 \times 23$, cualquier persona obtiene de inmediato el resultado $391$. En cambio, cuando los números primos $p$ y $q$ tienen más de $300$ dígitos decimales cada uno (como ocurre en una clave estándar RSA de $2048$ bits), el número resultante $N$ es tan grande que ni siquiera las supercomputadoras convencionales más rápidas del mundo pueden encontrar sus factores primos en un tiempo razonable.
+
+Dentro de RSA, las operaciones se realizan utilizando aritmética modular (donde solo importa el residuo de dividir entre $N$). Para cifrar un mensaje numérico $m$, el emisor utiliza la clave pública formada por el par $(e, N)$ y aplica la siguiente fórmula:
 \begin{equation}
 	c \equiv m^e \pmod N
 \end{equation}
-Para descifrar, el receptor legítimo requiere calcular el exponente privado $d \equiv e^{-1} \pmod{\phi(N)}$, donde $\phi(N) = (p-1)(q-1)$ corresponde a la función totiente de Euler:
+Por su parte, para recuperar el mensaje original a partir del texto cifrado $c$, el receptor legítimo utiliza su clave privada $d$ mediante la operación inversa:
 \begin{equation}
 	m \equiv c^d \pmod N
 \end{equation}
-Un atacante que intente deducir $d$ únicamente a partir de la información pública $(e, N)$ se enfrenta a la necesidad insalvable de factorizar $N$. Para una clave estándar de RSA-2048, el esfuerzo computacional clásico demandaría miles de años de cómputo en supercomputadoras actuales.
+Aquí la clave privada $d$ depende directamente de conocer los factores primos $p$ y $q$, ya que se calcula como el inverso de $e$ respecto a la función de Euler $\phi(N) = (p-1)(q-1)$. Por lo tanto, mientras nadie pueda factorizar el número público $N$, nadie podrá deducir la clave privada $d$ ni leer el voto cifrado.
 
 \subsection{El Algoritmo Cuántico de Shor}
 
-La seguridad de RSA y de los esquemas basados en curvas elípticas colapsa teóricamente frente al advenimiento de una computadora cuántica de escala suficiente debido al algoritmo de factorización y logaritmo discreto formulado por Peter Shor (1997).
+Aunque la factorización de números grandes es un problema inabordable para las computadoras actuales (que procesan información mediante bits clásicos que toman valores de $0$ o $1$), esta seguridad desaparece ante una computadora cuántica debido al algoritmo desarrollado por el matemático Peter Shor (1997).
 
-Shor demostró que el problema de factorizar un entero compuesto $N$ puede reducirse matemáticamente al problema de encontrar el \textit{período} $r$ de una función periódica definida sobre el grupo multiplicativo $(\mathbb{Z}_N)^*$:
+Para comprender cómo funciona el algoritmo de Shor sin entrar en física avanzada, primero debe observarse una propiedad matemática importante: factorizar un número grande $N$ equivale a encontrar cada cuántos pasos se repite el resultado de una secuencia modular. Si se elige un número entero $a$ menor que $N$ y se calculan sus potencias sucesivas divididas entre $N$:
 \begin{equation}
 	f(x) = a^x \pmod N
 \end{equation}
-donde $a$ es un entero coprimo con $N$. Dicha función es estrictamente periódica: satisface $f(x + r) = f(x)$, con $a^r \equiv 1 \pmod N$. Si el período $r$ es par, se cumple:
+los residuos obtenidos comienzan a repetirse de manera exacta cada cierto número de pasos $r$. A esa distancia de repetición se le denomina el \textit{período} $r$ de la función, cumpliéndose que $f(x + r) = f(x)$ y que $a^r \equiv 1 \pmod N$.
+
+Shor (1997) demostró que si se logra conocer ese período de repetición $r$ (y $r$ es un número par), la ecuación puede descomponerse algebraicamente como una diferencia de cuadrados:
 \begin{equation}
 	a^r - 1 \equiv (a^{r/2} - 1)(a^{r/2} + 1) \equiv 0 \pmod N
 \end{equation}
-Al calcular el máximo común divisor mediante el algoritmo euclídeo clásico:
+A partir de esta expresión, basta con aplicar el algoritmo clásico de Euclides para calcular el máximo común divisor entre dichos términos y el número $N$:
 \begin{equation}
 	\gcd(a^{r/2} - 1, N) \quad \text{y} \quad \gcd(a^{r/2} + 1, N)
 \end{equation}
-se obtienen de forma no trivial los factores primos $p$ y $q$ de $N$.
+obteniendo de forma directa los factores primos secretos $p$ y $q$, con lo cual la clave privada queda completamente descubierta.
 
-Mientras que una computadora clásica requiere tiempo exponencial o subexponencial para hallar dicho período evaluando combinaciones punto por punto, una computadora cuántica ejecuta la \textbf{Transformada Cuántica de Fourier} (\textit{Quantum Fourier Transform}, QFT). La QFT aprovecha el fenómeno de superposición cuántica y la interferencia destructiva para concentrar las amplitudes de probabilidad en las frecuencias resonantes correspondientes al período $r$, resolviendo la búsqueda en tiempo polinomial estricto $\mathcal{O}((\log N)^3)$.
+Una computadora tradicional no puede aprovechar este atajo porque, para descubrir el período $r$, tendría que evaluar la función paso por paso millones de millones de veces. En cambio, una computadora cuántica utiliza unidades llamadas \textit{qubits}, que gracias a los principios de superposición e interferencia cuántica permiten evaluar simultáneamente el comportamiento global de la onda periódica. Mediante una operación llamada \textbf{Transformada Cuántica de Fourier} (QFT), el procesador cuántico detecta la frecuencia de repetición $r$ en tiempo polinomial $\mathcal{O}((\log N)^3)$.
+
+Es decir, una computadora cuántica con capacidad suficiente podría romper en cuestión de minutos u horas una clave RSA-2048 o una firma de curvas elípticas ECDSA que a una computadora convencional le tomaría miles de años descifrar.
 
 \subsection{La Amenaza ``Cosechar Ahora, Descifrar Después''}
 
-La vulnerabilidad cuántica no representa únicamente un riesgo futuro, sino una amenaza operativa inmediata clasificada por las agencias de estandarización técnica bajo el término \textit{Harvest Now, Decrypt Later} (HNDL; cosechar ahora para descifrar después) (Chen et al., 2016). Un adversario puede interceptar y almacenar pasivamente las boletas y credenciales electorales transmitidas en los procesos democráticos contemporáneos cifrados con RSA o ECDSA. Una vez que se cuente con un procesador cuántico tolerante a fallos (\textit{Fault-Tolerant Quantum Computer}, FTQC), dicho registro histórico podrá ser descifrado retroactivamente, vulnerando permanentemente la confidencialidad del voto de los electores.
+Un aspecto fundamental en ciberseguridad es comprender que la amenaza cuántica no pertenece únicamente al futuro, sino que afecta a los datos que se transmiten hoy en día. Los organismos internacionales de estandarización, como el Instituto Nacional de Estándares y Tecnología de los Estados Unidos (NIST), denominan a este riesgo bajo la estrategia HNDL, que significa cosechar ahora para descifrar después (Chen et al., 2016).
+
+Esta estrategia consiste en que un atacante actual puede interceptar y guardar en discos duros todas las comunicaciones cifradas que circulan por la red durante una elección electrónica protegida con RSA o ECDSA. Aunque el atacante no pueda abrir esos paquetes hoy en día, conservará una copia íntegra del tráfico electoral.
+
+Cuando en los próximos años se disponga de computadoras cuánticas de mayor escala, el atacante podrá aplicar el algoritmo de Shor sobre los datos almacenados en el pasado, descifrar las boletas guardadas y exponer públicamente por quién votó cada ciudadano o falsificar firmas históricas. Por esta razón, la protección de procesos sensibles como la votación electrónica exige migrar desde ahora hacia algoritmos post-cuánticos que ni siquiera una computadora cuántica pueda vulnerar.
 
 % =============================================================================

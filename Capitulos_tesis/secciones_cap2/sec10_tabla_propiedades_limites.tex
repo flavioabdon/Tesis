@@ -3,37 +3,39 @@
 \label{sec:tabla_propiedades_limites}
 % =============================================================================
 
-Con el propósito de delimitar de manera rigurosa y transparente el alcance del protocolo de votación electrónica diseñado, la Tabla \ref{tab:propiedades_limites_protocolo} sistematiza cada una de las propiedades de seguridad fundamentales, indicando su nivel de cobertura en el sistema, los mecanismos criptográficos u operativos implementados y la evidencia formal o experimental que las sustenta.
+En todo proyecto de investigación en ciberseguridad resulta indispensable establecer con claridad y transparencia cuáles propiedades de seguridad están cubiertas por el diseño propuesto y cuáles quedan fuera del alcance de la implementación actual.
+
+Para organizar esta información de manera comprensible, en la Tabla \ref{tab:propiedades_limites_protocolo} se presenta la relación entre cada propiedad de seguridad electoral estudiada en este capítulo, indicando si se encuentra cubierta por el protocolo, qué tecnología se utiliza para implementarla y qué tipo de prueba respalda su cumplimiento.
 
 \begin{table}[!htbp]
 \centering
 \renewcommand{\arraystretch}{1.3}
 \small
-\caption{Matriz de correspondencia entre propiedades de seguridad y evidencia formal.}
+\caption{Propiedades de seguridad y límites del protocolo.}
 \label{tab:propiedades_limites_protocolo}
 \begin{tabularx}{\textwidth}{|>{\bfseries}p{3.2cm}|c|>{\raggedright\arraybackslash}p{4.2cm}|>{\raggedright\arraybackslash}X|}
 \hline
 \textbf{Propiedad} & \textbf{¿Cubierta?} & \textbf{Mecanismo Tecnológico} & \textbf{Tipo de Evidencia / Soporte} \\
 \hline
-Ejecutabilidad del Protocolo & Sí & Intercambio de mensajes conforme a las especificaciones & Lema formal de alcanzabilidad \texttt{ejecutabilidad} en Tamarin Prover \\
+Ejecutabilidad del Protocolo & Sí & Secuencia ordenada de pasos de registro, emisión y conteo & Lema formal de alcanzabilidad verificado en Tamarin Prover \\
 \hline
-Confidencialidad del Voto & Sí (parcial) & KEM-DEM híbrido: ML-KEM-768 + AES-256-GCM (AAD) & Lema formal \texttt{secreto\_voto} en Tamarin Prover y reducción IND-CCA2 \\
+Confidencialidad del Voto & Sí (parcial) & Esquema híbrido: ML-KEM-768 + AES-256-GCM con datos asociados & Lema formal de secreto verificado en Tamarin Prover y seguridad IND-CCA2 \\
 \hline
-Integridad del Sufragio & Sí & Firma post-cuántica ML-DSA-65 (FIPS 204) & Lema formal \texttt{integridad\_voto} y reducción EUF-CMA de Module-SIS \\
+Integridad del Sufragio & Sí & Firma digital post-cuántica ML-DSA-65 (FIPS 204) & Lema formal de integridad y seguridad sobre Module-SIS \\
 \hline
-Autenticidad y Anti-Replay & Sí & Credencial institucional AR y acuerdo inyectivo & Lema formal \texttt{autenticidad\_votante} en Tamarin Prover \\
+Autenticidad y Anti-Replay & Sí & Credencial emitida por la AR y validación de firma del votante & Lema formal de autenticidad en Tamarin Prover \\
 \hline
-Unicidad y Elegibilidad & Sí & Control de estado lineal en base de datos (transacción atómica) & Lema formal \texttt{unicidad} (modelo de estado no mutable) \\
+Unicidad y Elegibilidad & Sí & Control transaccional en base de datos y consumo de estado lineal & Lema formal de unicidad verificado en Tamarin Prover \\
 \hline
-Verificabilidad E2E Individual & Parcial & Recibo firmado con digest criptográfico SHA3-256 & Pruebas funcionales de auditoría mediante hash de recibo \\
+Verificabilidad E2E Individual & Parcial & Recibo electrónico firmado con código resumen SHA3-256 & Pruebas funcionales de consulta del recibo mediante hash \\
 \hline
-Verificabilidad Universal & No & Requiere tablón público auditable completo o Mix-Net & Límite declarado del diseño actual (trabajo futuro) \\
+Verificabilidad Universal & No & Requeriría un tablón público completo o red de mezcla con pruebas de conocimiento cero & Límite declarado del diseño actual (propuesto como trabajo futuro) \\
 \hline
-Libertad de Recibo (Receipt-Freeness) & No & No se proporcionan credenciales simuladas ni claves alternas & Límite explícito declarado (Sección \ref{sec:alcances_limites_tesis}) \\
+Libertad de Recibo & No & No se implementan credenciales falsas ni cabinas con canales libres de rastro & Límite declarado en los alcances y límites de la investigación (Sección \ref{sec:alcances_limites_tesis}) \\
 \hline
-Resistencia a la Coacción (Coercion Resistance) & No & No se contempla revocación ni emisión múltiple anuladora & Límite explícito declarado (Sección \ref{sec:alcances_limites_tesis}) \\
+Resistencia a la Coacción & No & No se incluye revocación de votos previos ante vigilancia física de un coactor & Límite declarado en los alcances y límites de la investigación (Sección \ref{sec:alcances_limites_tesis}) \\
 \hline
 \end{tabularx}
 \end{table}
 
-Esta formalización separa de manera inequívoca lo que la plataforma garantiza matemática y computacionalmente de las propiedades avanzadas contra coerción que escapan al modelo formal implementado, dotando a la investigación de honestidad académica y precisión técnica.
+Tal como se observa en la Tabla \ref{tab:propiedades_limites_protocolo}, el protocolo propuesto garantiza de forma completa la ejecutabilidad, la integridad, la autenticidad, la elegibilidad y la unicidad del voto, así como la confidencialidad del sufragio frente a atacantes en la red y frente a servidores separados. Por otro lado, propiedades adicionales contra la coacción presencial (como la libertad de recibo y la resistencia a la coacción física) se declaran explícitamente como límites fuera del alcance del prototipo, manteniendo coherencia con los objetivos definidos en el Capítulo 1.
