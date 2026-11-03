@@ -140,7 +140,7 @@ En la Figura \ref{fig:uwe_navegacion} se presenta el Modelo de Estructura de Nav
 \subsection{Restricciones Formales de Navegación (OCL)}
 \label{subsec:restricciones_ocl_uwe}
 
-Para evitar ambigüedades en el control de sesiones por rol, el mapa de navegación se rige por tres invariantes y precondiciones formales basadas en el Lenguaje de Restricciones de Objetos (OCL 2.4, OMG, 2014):
+Para evitar ambigüedades en el control de sesiones por rol, el mapa de navegación se rige por tres invariantes y precondiciones formales basadas en el Lenguaje de Restricciones de Objetos OCL 2.4 (OMG, 2014):
 
 \begin{enumerate}
 	\item \textbf{Invariante de bloqueo de retorno tras sufragar:} En el contexto del padrón y de la cabina del ciudadano, si el indicador de voto emitido toma el valor verdadero ($\text{haVotado} = \text{verdadero}$), el enlace de acceso al formulario de votación queda permanentemente deshabilitado ($\text{linkCabina.deshabilitado} = \text{verdadero}$).

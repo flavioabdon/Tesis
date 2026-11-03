@@ -5,7 +5,7 @@
 
 Un protocolo criptográfico es el conjunto ordenado de reglas y pasos que definen cómo se intercambian mensajes dos o más computadoras a través de una red para llevar a cabo una tarea segura, como iniciar sesión, realizar un pago o emitir un voto.
 
-En la práctica de la ciberseguridad, se ha comprobado repetidamente que un sistema puede utilizar los algoritmos criptográficos más fuertes del mundo (como ML-KEM o ML-DSA) y, sin embargo, ser inseguro si el orden o la estructura de los mensajes del protocolo tiene un error de diseño (Lucena López, 2010; Schmidt et al., 2012). Por ejemplo, si una puerta blindada de acero (el algoritmo criptográfico) se instala en un marco mal construido que permite sacar las bisagras desde afuera (el protocolo), un atacante no necesitará romper el acero para entrar.
+En la práctica de la ciberseguridad, se ha comprobado repetidamente que un sistema puede utilizar los algoritmos criptográficos más fuertes del mundo (como ML-KEM o ML-DSA) y, sin embargo, ser inseguro si el orden o la estructura de los mensajes del protocolo tiene un error de diseño (Lucena, 2010; Schmidt, Meier, Cremers y Basin, 2012). Por ejemplo, si una puerta blindada de acero (el algoritmo criptográfico) se instala en un marco mal construido que permite sacar las bisagras desde afuera (el protocolo), un atacante no necesitará romper el acero para entrar.
 
 Un caso clásico en la historia de la Informática es el protocolo de autenticación de Needham-Schroeder, el cual fue considerado seguro durante casi diecisiete años hasta que se descubrió, mediante una herramienta de análisis formal, que un atacante podía interceptar y reenviar mensajes válidos en distinto orden para hacerse pasar por otro usuario. Asimismo, en el área de votación electrónica, Baloglu et al. (2021) utilizaron verificación formal para encontrar fallas de duplicación de boletas en los sistemas Helios y Belenios que no habían sido detectadas mediante revisiones manuales.
 
@@ -13,7 +13,7 @@ Cuando un programador realiza pruebas de software tradicionales (como pruebas un
 
 \subsection{El Modelo de Atacante Dolev-Yao y el Conocimiento Adversarial}
 
-Para comprobar la seguridad de un protocolo mediante verificación formal, primero es necesario definir qué capacidades tiene el atacante. En ciberseguridad, el estándar más exigente y utilizado a nivel mundial es el \textbf{modelo de atacante Dolev-Yao}, formulado por Danny Dolev y Andrew Yao (1983).
+Para comprobar la seguridad de un protocolo mediante verificación formal, primero es necesario definir qué capacidades tiene el atacante. En ciberseguridad, el estándar más exigente y utilizado a nivel mundial es el \textbf{modelo de atacante Dolev-Yao}, formulado por Dolev y Yao (1983).
 
 La idea principal del modelo Dolev-Yao es asumir el peor escenario posible: \textit{el atacante tiene control total sobre toda la red de telecomunicaciones}. Es decir, cualquier mensaje que viaje entre el navegador del votante y el servidor electoral pasa por las manos del atacante, quien cuenta con las siguientes capacidades y límites:
 
@@ -61,7 +61,7 @@ En la Tabla \ref{tab:simbolico_vs_computacional} se resumen las diferencias prin
 		\textbf{Herramienta} & Verificación automatizada (Tamarin / Maude) & Reducciones matemáticas manuales \\
 		\bottomrule
 	\end{tabular}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Schmidt et al. (2012) y Lucena López (2010).}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Schmidt et al. (2012) y Lucena (2010).}}
 \end{table}
 
 Como muestra la Tabla \ref{tab:simbolico_vs_computacional}, ambos métodos se complementan en la presente tesis: los estándares del NIST garantizan la fortaleza computacional de los algoritmos, mientras que Tamarin Prover verifica simbólicamente que el protocolo electoral los utilice de manera segura. Para ello, las operaciones post-cuánticas se representan en Tamarin mediante ecuaciones algebraicas claras:

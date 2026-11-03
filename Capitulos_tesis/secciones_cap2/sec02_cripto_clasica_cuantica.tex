@@ -23,7 +23,7 @@ Aquí la clave privada $d$ depende directamente de conocer los factores primos $
 
 \subsection{El Algoritmo Cuántico de Shor}
 
-Aunque la factorización de números grandes es un problema inabordable para las computadoras actuales (que procesan información mediante bits clásicos que toman valores de $0$ o $1$), esta seguridad desaparece ante una computadora cuántica debido al algoritmo desarrollado por el matemático Peter Shor (1997).
+Aunque la factorización de números grandes es un problema inabordable para las computadoras actuales (que procesan información mediante bits clásicos que toman valores de $0$ o $1$), esta seguridad desaparece ante una computadora cuántica debido al algoritmo desarrollado por Shor (1997).
 
 Para comprender cómo funciona el algoritmo de Shor sin entrar en física avanzada, primero debe observarse una propiedad matemática importante: factorizar un número grande $N$ equivale a encontrar cada cuántos pasos se repite el resultado de una secuencia modular. Si se elige un número entero $a$ menor que $N$ y se calculan sus potencias sucesivas divididas entre $N$:
 \begin{equation}
@@ -47,7 +47,7 @@ Es decir, una computadora cuántica con capacidad suficiente podría romper en c
 
 \subsection{La Amenaza ``Cosechar Ahora, Descifrar Después''}
 
-Un aspecto fundamental en ciberseguridad es comprender que la amenaza cuántica no pertenece únicamente al futuro, sino que afecta a los datos que se transmiten hoy en día. Los organismos de ciberseguridad y estandarización denominan a este riesgo bajo la estrategia HNDL, que significa cosechar ahora para descifrar después (CCN-CERT, 2023).
+Un aspecto fundamental en ciberseguridad es comprender que la amenaza cuántica no pertenece únicamente al futuro, sino que afecta a los datos que se transmiten hoy en día. Los organismos de ciberseguridad y estandarización denominan a este riesgo bajo la estrategia HNDL, que significa cosechar ahora para descifrar después (Centro Criptológico Nacional [CCN-CERT], 2023).
 
 Esta estrategia consiste en que un atacante actual puede interceptar y guardar en discos duros todas las comunicaciones cifradas que circulan por la red durante una elección electrónica protegida con RSA o ECDSA. Aunque el atacante no pueda abrir esos paquetes hoy en día, conservará una copia íntegra del tráfico electoral.
 
