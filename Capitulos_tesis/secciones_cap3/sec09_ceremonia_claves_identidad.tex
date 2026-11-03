@@ -3,55 +3,34 @@
 \label{sec:ceremonia_identidad_adversarios}
 % =============================================================================
 
-\subsection{Ceremonia de Generación y Custodia de Claves (Ceremonia Criptográfica)}
+\subsection{Ceremonia de Generación y Custodia de Claves}
 
-La seguridad del protocolo descansa en la estricta segregación de roles entre el Servidor de Votación (SV) y la Autoridad de Conteo (AC). Para asegurar que la clave privada de desencapsulamiento $dk_{\text{AC}}$ permanezca completamente inaccesible durante la jornada electoral, su generación se lleva a cabo mediante una \textbf{ceremonia de claves formal} previa a la apertura de las mesas:
+La seguridad del protocolo descansa en la separación de funciones entre el Servidor de Votación (SV) y la Autoridad de Conteo (AC): la clave privada de desencapsulamiento $dk_{\text{AC}}$ (2400 B) pertenece exclusivamente a la Autoridad de Conteo y nunca reside en el servidor web que recibe los votos. Antes de abrir las mesas, la Autoridad de Conteo genera el par de claves ML-KEM-768 en una estación aislada, publica únicamente la clave pública $ek_{\text{AC}}$ (1184 B) hacia el Servidor de Votación para el cifrado en cabina y mantiene $dk_{\text{AC}}$ resguardada hasta el cierre oficial de los comicios.
 
-\begin{enumerate}
-	\item \textbf{Generación Aislada (HSM / Token Criptográfico):} La Autoridad de Conteo ejecuta el algoritmo \texttt{crypto\_kem\_keypair} de ML-KEM-768 en un entorno físicamente desconectado de la red (\textit{air-gapped}) o en el interior de un Módulo de Seguridad de Hardware (HSM). La clave privada $dk_{\text{AC}}$ (2400 bytes) se almacena bajo control de acceso criptográfico con esquema de custodia compartida multifirma (o secreto compartido de Shamir), y jamás es transferida ni cargada en el servidor web de votación.
-	\item \textbf{Exportación y Publicación de $ek_{\text{AC}}$:} Únicamente la clave pública de encapsulamiento $ek_{\text{AC}}$ (1184 bytes) se exporta y publica en el repositorio público oficial y en el Servidor de Votación, permitiendo que cualquier votante habilitado pueda cifrar su voto mediante KEM.
-	\item \textbf{Respaldo Sellado y Apertura Pospuesta:} La clave $dk_{\text{AC}}$ se resguarda en sobres de seguridad con sello inviolable bajo custodia dual de notarios electorales y delegados académicos. Solo tras el cierre formal de los comicios y la verificación de la firma de clausura del ánfora, la AC introduce la clave $dk_{\text{AC}}$ en la estación de escrutinio para desencapsular los secretos compartidos.
-\end{enumerate}
+\subsection{Mecanismos de Disociación y Modelo de Adversarios}
 
-\subsection{Flujo de Identidad y Disociación Estricta de Datos}
-
-Para transformar la noción abstracta de confidencialidad en una garantía técnica verificable y defendible, el protocolo implementa una \textbf{disociación estructural de identidad} en el ciclo de vida del sufragio:
-
-\begin{itemize}
-	\item \textbf{Recepción y Separación en el SV:} El Servidor de Votación recibe el paquete firmado $\langle \text{boleta}, \sigma_V, \sigma_{\text{AR}} \rangle$. Verifica la credencial del elector en el padrón y su firma $\sigma_V$. Si ambas firmas son válidas y el elector no ha votado, el SV actualiza el padrón a \texttt{ha\_votado = TRUE} y desacopla por completo la identidad: al ánfora digital y a la AC se transfiere exclusivamente la tupla anónima $\langle ct_{\text{kem}}, c_{\text{voto}}, \text{nonce}, id_{\text{eleccion}} \rangle$, sin vincular $id_V$ con el texto cifrado.
-	\item \textbf{Permutación Aleatoria (\textit{Shuffle}) de Boletas:} Antes de transferir las boletas a la AC para el conteo, el SV aplica una permutación pseudoaleatoria criptográfica sobre el conjunto de votos cifrados. Esto destruye la correlación temporal entre el orden de llegada de los electores y el orden de escrutinio.
-	\item \textbf{Eliminación de Metadatos de Red:} La dirección IP de origen y la información del agente de usuario (\textit{User-Agent}) se eliminan de la tabla del ánfora digital, almacenándose únicamente en bitácoras efímeras de infraestructura con una retención mínima estricta para mitigación de ataques de denegación de servicio (DoS).
-	\item \textbf{Redondeo Temporal de Marcas de Tiempo:} Los campos temporales en el padrón electoral y en el ánfora se redondean por lote o por hora de sufragio, imposibilitando ataques de enlace estadístico basados en correlación de marcas de tiempo al milisegundo.
-	\item \textbf{Codificación de Voto de Longitud Fija:} El voto del ciudadano se codifica con longitud constante de 32 bytes (1 byte para el índice de la opción y 31 bytes de relleno criptográficamente seguro CSPRNG). Esto garantiza que el texto cifrado $c_{\text{voto}}$ posea exactamente 48 bytes (32 bytes de carga útil + 16 bytes de etiqueta GMAC) para todos los candidatos, neutralizando fugas por análisis de tamaño de tráfico.
-	\item \textbf{Uso de $id_{\text{eleccion}}$ como Datos Autenticados Adicionales (AAD):} Tanto el identificador de la elección $id_{\text{eleccion}}$ como el texto cifrado $ct_{\text{kem}}$ se incorporan como AAD en el cifrado AES-256-GCM, vinculando criptográficamente la boleta a su elección específica e impidiendo ataques de trasplante entre distintas mesas.
-	\item \textbf{Emisión y Verificabilidad del Recibo de Sufragio:} Tras custodiar la boleta, el SV emite el recibo firmado $\text{sign}(h(\text{boleta}), sk_{\text{SV}})$. Conforme a los límites del análisis formal detallados en la Sección \ref{sec:practica_tamarin}, en el modelo simbólico de \texttt{protocolo\_v3.spthy} la regla del servidor introduce el término fresco $\sim\!ts\_recibo$ que permanece en el estado lineal interno del SV; por ende, la verificabilidad de correspondencia del recibo individual en manos del votante constituye una propiedad de auditoría funcional de aplicación no respaldada directamente por un lema formal en Tamarin Prover.
-\end{itemize}
-
-\subsection{Modelo de Adversarios y Matriz de Visibilidad}
-
-La Tabla \ref{tab:modelo_adversarios} define formalmente el modelo de amenazas considerado, detallando qué información puede observar cada tipo de adversario y las garantías ofrecidas.
+Para impedir que se asocie la identidad del elector con el sentido de su voto, el protocolo aplica cinco medidas de desvinculación: (1) separación inmediata entre la credencial del ciudadano y la boleta cifrada al momento del depósito; (2) permutación aleatoria del lote de boletas antes de entregarlo a la Autoridad de Conteo; (3) exclusión de direcciones IP y redondeo de marcas de tiempo a ventanas horarias; (4) empaquetado del voto a tamaño constante (48 B cifrados con etiqueta GMAC) vinculado mediante datos asociados $\text{AAD} = \langle id_{\text{eleccion}}, ct_{\text{kem}} \rangle$; y (5) emisión de recibo firmado sobre el resumen SHA3-256 para auditoría ciudadana. En la Tabla \ref{tab:modelo_adversarios} se resume la matriz de visibilidad frente a cada perfil de adversario.
 
 \begin{table}[!htbp]
 \centering
-\renewcommand{\arraystretch}{1.3}
-\small
-\caption{Modelo de adversarios y delimitación de visibilidad de datos.}
+\renewcommand{\arraystretch}{1.22}
+\footnotesize
+\caption{Modelo de adversarios y visibilidad de datos.}
 \label{tab:modelo_adversarios}
-\begin{tabularx}{\textwidth}{|>{\bfseries}p{3.2cm}|>{\raggedright\arraybackslash}p{3.4cm}|>{\raggedright\arraybackslash}p{3.8cm}|>{\raggedright\arraybackslash}X|}
+\begin{tabularx}{\textwidth}{|>{\bfseries}p{3.0cm}|>{\raggedright\arraybackslash}p{3.4cm}|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}X|}
 \hline
-\textbf{Adversario} & \textbf{Lo que VE / Accede} & \textbf{Lo que NO VE} & \textbf{Garantía del Protocolo} \\
+\textbf{Adversario} & \textbf{Datos que Observa} & \textbf{Datos Ocultos} & \textbf{Garantía del Protocolo} \\
 \hline
-Atacante de Red (Dolev-Yao) & Mensajes en tránsito: $\langle \text{boleta}, \sigma_V \rangle$, recibos firmados. & Voto en texto plano ($m_V$), claves privadas ($dk_{\text{AC}}, sk_V$). & Confidencialidad IND-CCA2 e integridad EUF-CMA. \\
+Atacante de Red (Dolev--Yao) & Mensajes en tránsito: $\langle \text{boleta}, \sigma_V \rangle$ y recibos. & Voto en claro ($m_V$) y claves privadas ($dk_{\text{AC}}, sk_V$). & Confidencialidad IND-CCA2 e integridad de firma. \\
 \hline
-Servidor de Votación (SV) Malicioso & Identidad del votante ($id_V$), credencial, $ct_{\text{kem}}$, $c_{\text{voto}}$. & Voto en plano ($m_V$), clave $dk_{\text{AC}}$. No puede descifrar. & No puede conocer el sufragio del elector. \\
+Servidor de Votación Malicioso & Identidad ($id_V$), credencial, $ct_{\text{kem}}$ y $c_{\text{voto}}$. & Voto en claro ($m_V$) y clave $dk_{\text{AC}}$. & Incapacidad de descifrar el sentido del voto. \\
 \hline
-Autoridad de Conteo (AC) Maliciosa & Boletas cifradas desvinculadas, clave $dk_{\text{AC}}$, votos en plano ($m_V$). & Identidad del votante ($id_V$), recibos, credenciales, padrón. & No puede asociar ningún voto plano a un elector concreto. \\
+Autoridad de Conteo Maliciosa & Lote de boletas anónimas, $dk_{\text{AC}}$ y votos ($m_V$). & Identidad ($id_V$), credenciales y padrón. & Incapacidad de vincular el voto abierto con el elector. \\
 \hline
-Colusión SV + AC (SV y AC coordinados) & Conjunto total de datos: identidades y clave $dk_{\text{AC}}$. & Claves privadas de votantes ($sk_V$). & Límite declarado: la colusión rompería el secreto del voto. \\
+Colusión SV + AC & Conjunto total: identidades y clave $dk_{\text{AC}}$. & Claves privadas de los votantes ($sk_V$). & Límite declarado: exige separación institucional. \\
 \hline
-Administrador de BD (DBA) & Tablas en reposo: padrón, ánfora desvinculada, recibos. & Voto en plano ($m_V$), clave $dk_{\text{AC}}$ (resguardada en HSM). & Privacidad preservada por cifrado y desvinculación relacional. \\
+Administrador de Base de Datos & Tablas de padrón, ánfora disociada y recibos. & Voto en claro ($m_V$) y clave $dk_{\text{AC}}$. & Privacidad protegida por cifrado y ausencia de FK. \\
 \hline
 \end{tabularx}
+\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{table}
-
-Esta matriz fundamenta de forma honesta y precisa la afirmación de seguridad: la privacidad del voto se preserva frente a la red, frente al SV y frente a la AC por separado; únicamente la colusión simultánea y concertada entre SV y AC constituiría una amenaza al secreto del sufragio.

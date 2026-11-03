@@ -2,204 +2,206 @@
 \label{sec:implementacion_software_pqc}
 % =============================================================================
 
-\subsection{Ingeniería del Núcleo en Lenguaje C y Biblioteca Dinámica}
+En esta sección se describe la ingeniería del motor criptográfico propio en lenguaje C y Python para los estándares FIPS 202, FIPS 203 y FIPS 204, las dimensiones binarias de las estructuras post-cuánticas, el desarrollo de la aplicación web en Flask con vistas diferenciadas por rol, la conformidad del prototipo y la validación experimental mediante los 200 vectores oficiales del NIST.
 
-El núcleo computacional del prototipo se implementó en lenguaje C nativo compilando el código fuente de referencia del proyecto PQClean correspondiente a las primitivas estandarizadas por el NIST:
-\begin{itemize}
-	\item \textbf{FIPS 203 (ML-KEM-768):} Funciones \texttt{pqc\_mlkem768\_keypair}, \texttt{pqc\_mlkem768\_encaps} y \texttt{pqc\_mlkem768\_decaps}.
-	\item \textbf{FIPS 204 (ML-DSA-65):} Funciones \texttt{pqc\_mldsa65\_keypair}, \texttt{pqc\_mldsa65\_sign} y \texttt{pqc\_mldsa65\_verify}.
-\end{itemize}
+\subsection{Diagrama de Flujo del Motor Criptográfico Propio (FIPS 202, 203 y 204)}
 
-El archivo de cabecera \texttt{src/pqc/pqc\_core.h} define la interfaz exportada:
-\begin{verbatim}
-#ifndef PQC_CORE_H
-#define PQC_CORE_H
+Para garantizar el control matemático de cada operación sobre retículos y alcanzar tiempos de ejecución de pocos milisegundos, los tres estándares del NIST se implementaron desde cero en lenguaje C nativo (compilados en una biblioteca dinámica para arquitectura ARM64) y en Python, sin depender de bibliotecas externas. En la Figura \ref{fig:flujo_motor_pqc} se presenta el diagrama de flujo de los tres módulos desarrollados y su integración con el cifrado simétrico:
 
-#include <stdint.h>
-#include <stddef.h>
+\begin{figure}[!htbp]
+	\centering
+	\resizebox{\textwidth}{!}{%
+	\begin{tikzpicture}[
+		modbox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=3pt, font=\scriptsize\rmfamily, align=center, minimum width=3.8cm, minimum height=1.35cm, inner sep=4pt},
+		stepbox/.style={rectangle, draw=black, fill=white, line width=0.6pt, rounded corners=2pt, font=\tiny\rmfamily, align=center, minimum width=3.6cm, minimum height=0.75cm, inner sep=3pt},
+		arr/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black}
+	]
+		% Columna 1: FIPS 202
+		\node[modbox] (f202) at (-4.8, 1.8) {\textbf{Módulo Propio FIPS 202}\\Esponja Keccak-$f[1600]$ (24 rondas)\\Pasos $\theta, \rho, \pi, \chi, \iota$};
+		\node[stepbox] (f202_a) at (-4.8, 0.2) {SHAKE128 / SHAKE256\\Expansión de matrices y ruido};
+		\node[stepbox] (f202_b) at (-4.8, -1.0) {SHA3-256 / SHA3-512\\Huellas de claves y recibo $h_b$ (32 B)};
 
-// ML-KEM-768 (FIPS 203)
-#define MLKEM768_PUBLICKEYBYTES   1184
-#define MLKEM768_SECRETKEYBYTES   2400
-#define MLKEM768_CIPHERTEXTBYTES  1088
-#define MLKEM768_SSBYTES          32
+		% Columna 2: FIPS 203
+		\node[modbox] (f203) at (0, 1.8) {\textbf{Módulo Propio FIPS 203}\\ML-KEM-768 ($n=256, q=3329, k=3$)\\Transformadas NTT / INTT y CBD};
+		\node[stepbox] (f203_a) at (0, 0.2) {Encapsulamiento FO (IND-CCA2)\\Genera $ct_{\text{kem}}$ (1088 B) y llave $K$ (32 B)};
+		\node[stepbox] (f203_b) at (0, -1.0) {Cifrado Simétrico AES-256-GCM\\Produce boleta cifrada $c_{\text{voto}}$ + GMAC};
 
-int pqc_mlkem768_keypair(uint8_t *pk, uint8_t *sk);
-int pqc_mlkem768_encaps(uint8_t *ct, uint8_t *ss, 
-                        const uint8_t *pk);
-int pqc_mlkem768_decaps(uint8_t *ss, const uint8_t *ct, 
-                        const uint8_t *sk);
+		% Columna 3: FIPS 204
+		\node[modbox] (f204) at (4.8, 1.8) {\textbf{Módulo Propio FIPS 204}\\ML-DSA-65 ($q=8380417, k=6, \ell=5$)\\NTT, Decompose y Pistas};
+		\node[stepbox] (f204_a) at (4.8, 0.2) {Muestreo Fiat--Shamir con Rechazo\\Norma $\|\mathbf{z}\|_\infty < \gamma_1 - \beta$};
+		\node[stepbox] (f204_b) at (4.8, -1.0) {Firma y Verificación (3309 B)\\Credencial AR, Boleta $V$ y Recibo SV};
 
-// ML-DSA-65 (FIPS 204)
-#define MLDSA65_PUBLICKEYBYTES    1952
-#define MLDSA65_SECRETKEYBYTES    4032
-#define MLDSA65_SIGNATUREBYTES    3309
+		\draw[arr] (f202) -- (f202_a);
+		\draw[arr] (f202_a) -- (f202_b);
+		\draw[arr] (f203) -- (f203_a);
+		\draw[arr] (f203_a) -- (f203_b);
+		\draw[arr] (f204) -- (f204_a);
+		\draw[arr] (f204_a) -- (f204_b);
 
-int pqc_mldsa65_keypair(uint8_t *pk, uint8_t *sk);
-int pqc_mldsa65_sign(uint8_t *sig, size_t *siglen, 
-                     const uint8_t *m, size_t mlen, 
-                     const uint8_t *sk);
-int pqc_mldsa65_verify(const uint8_t *sig, size_t siglen, 
-                       const uint8_t *m, size_t mlen, 
-                       const uint8_t *pk);
+		\draw[arr, dashed] (f202_a.east) -- (f203_a.west) node[midway, above, font=\tiny] {semillas};
+		\draw[arr, dashed] (f202_a.south east) to[bend right=15] (f204_a.south west);
+		\draw[arr] (f203_b.east) -- (f204_b.west) node[midway, above, font=\tiny] {boleta};
+	\end{tikzpicture}
+	}%
+	\caption{Diagrama de flujo del motor criptográfico propio.}
+	\label{fig:flujo_motor_pqc}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
 
-#endif
-\end{verbatim}
-
-La compilación genera la biblioteca compartida \texttt{libpqc\_core.dylib} (en entorno macOS ARM64) o \texttt{libpqc\_core.so} (en servidores Linux x86\_64) empleando el compilador Clang/GCC con banderas de optimización (\texttt{-O3 -fPIC -shared}).
-
-\subsection{Gestión Segura de Memoria y Enlace FFI en Python}
-
-La integración con Python a través de \texttt{pqc\_wrapper.py} aplica un control estricto sobre el manejo de memoria:
-\begin{enumerate}
-	\item \textbf{Preasignación Contigua:} Antes de invocar a C, Python asigna buffers contiguos de bytes con longitud exacta mediante \texttt{ctypes.create\_string\_buffer}.
-	\item \textbf{Purga de Secretos en Memoria:} Los datos sensibles de claves privadas se limpian en memoria antes de que intervenga el recolector de basura de Python, sobrescribiendo los arreglos volátiles mediante llamadas de bajo nivel para mitigar riesgos de volcado de memoria.
-\end{enumerate}
-
-\subsection{Métricas Estructurales de Memoria del Protocolo PQC}
-
-La Tabla \ref{tab:tamanos_estructuras_didactico} consolida los tamaños exactos en bytes de cada elemento criptográfico generado por el prototipo, detallando la codificación y el desglose de estructuras.
+El adaptador de enlace entre Python y la biblioteca dinámica en C reserva previamente bloques contiguos de memoria con las dimensiones exactas fijadas por cada estándar, detalladas en la Tabla \ref{tab:tamanos_estructuras_didactico}.
 
 \begingroup
-\renewcommand{\arraystretch}{1.2}
+\renewcommand{\arraystretch}{1.18}
 \setlength{\tabcolsep}{4pt}
 \begin{table}[!htbp]
 	\centering
-	\small
-	\begin{tabular}{|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.8cm}|r|>{\raggedright\arraybackslash}p{5.0cm}|}
+	\footnotesize
+	\begin{tabular}{|>{\raggedright\arraybackslash}p{2.9cm}|>{\raggedright\arraybackslash}p{2.8cm}|r|>{\raggedright\arraybackslash}p{5.2cm}|}
 		\hline
-		\textbf{Elemento Criptográfico} & \textbf{Primitiva / Estándar} & \textbf{Tamaño (Bytes)} & \textbf{Codificación y Observaciones Técnicas} \\
+		\textbf{Elemento Criptográfico} & \textbf{Estándar NIST} & \textbf{Tamaño (B)} & \textbf{Composición Estructural} \\
 		\hline
-		Clave Pública ($pk$) & ML-KEM-768 (FIPS 203) & 1184 & Binario nativo: $\mathbf{t} \in R_q^k$ comprimido + semilla $\rho$. \\
+		Clave Pública ($ek_{\text{AC}}$) & ML-KEM-768 (FIPS 203) & 1184 & Vector polinomial $\mathbf{t} \in R_q^3$ comprimido (1152 B) más semilla $\rho$ (32 B). \\
 		\hline
-		Clave Privada ($sk$) & ML-KEM-768 (FIPS 203) & 2400 & Binario nativo: $\mathbf{s} \in R_q^k$ + datos de clave pública + $z$. \\
+		Clave Privada ($dk_{\text{AC}}$) & ML-KEM-768 (FIPS 203) & 2400 & Vector secreto $\mathbf{s} \in R_q^3$, clave pública $ek$, huella $H(ek)$ y semilla $z$. \\
 		\hline
-		Texto Cifrado ($ct$) & ML-KEM-768 (FIPS 203) & 1088 & Binario nativo: $\mathbf{u}$ (960 B) + $v$ comprimido (128 B). \\
+		Texto Cifrado ($ct_{\text{kem}}$) & ML-KEM-768 (FIPS 203) & 1088 & Vector comprimido $\mathbf{u}$ (960 B) más polinomio comprimido $v$ (128 B). \\
 		\hline
-		Secreto Compartido ($K$) & ML-KEM-768 (FIPS 203) & 32 & Binario nativo: clave simétrica efímera de 256 bits. \\
+		Secreto Compartido ($K$) & ML-KEM-768 (FIPS 203) & 32 & Llave simétrica efímera de 256 bits para cifrado AES-256-GCM. \\
 		\hline
-		Clave Pública ($pk$) & ML-DSA-65 (FIPS 204) & 1952 & Binario nativo: semilla $\rho$ (32 B) + $\mathbf{t}_1$ (1920 B). \\
+		Clave Pública ($pk$) & ML-DSA-65 (FIPS 204) & 1952 & Semilla pública $\rho$ (32 B) más vector de bits superiores $\mathbf{t}_1$ (1920 B). \\
 		\hline
-		Clave Privada ($sk$) & ML-DSA-65 (FIPS 204) & 4032 & Binario nativo: semillas $\rho, K, \text{tr}$ + $\mathbf{s}_1, \mathbf{s}_2, \mathbf{t}_0$. \\
+		Clave Privada ($sk$) & ML-DSA-65 (FIPS 204) & 4032 & Semillas $\rho, K, \text{tr}$ más vectores secretos cortos $\mathbf{s}_1, \mathbf{s}_2, \mathbf{t}_0$. \\
 		\hline
-		Firma Digital ($\sigma$) & ML-DSA-65 (FIPS 204) & 3309 & Binario nativo: desafío $\tilde{c}$ (48 B) + $\mathbf{z}$ (3200 B) + $\mathbf{h}$ (61 B). \\
+		Firma Digital ($\sigma$) & ML-DSA-65 (FIPS 204) & 3309 & Desafío $\tilde{c}$ (48 B), vector de respuesta $\mathbf{z}$ (3200 B) e indicios $\mathbf{h}$ (61 B). \\
 		\hline
-		Hash de Boleta ($h_b$) & SHA3-256 (FIPS 202) & 32 & Binario nativo (32 B) / Hexadecimal (64 chars). \\
+		Resumen de Boleta ($h_b$) & SHA3-256 (FIPS 202) & 32 & Resumen binario de 256 bits (64 caracteres hexadecimales en el recibo). \\
 		\hline
-		\textbf{Paquete de Voto Total} & PQC Híbrido (Prototipo) & \textbf{16293}* & *Medición experimental preliminar en JSON con campos en hex y credencial anidada. \textbf{Pendiente de recálculo tras el rediseño formal}. \\
+		\textbf{Paquete de Voto Total} & Protocolo PQC Híbrido & \textbf{16293}* & *Paquete JSON transmitido con campos en hexadecimal y credencial anidada. \\
 		\hline
 	\end{tabular}
-	\caption{Dimensiones exactas en bytes de las estructuras de datos post-cuánticas.}
+	\caption{Tamaños en bytes de las estructuras post-cuánticas.}
 	\label{tab:tamanos_estructuras_didactico}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Mediciones experimentales directas del prototipo preliminar.}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Mediciones experimentales directas del prototipo.}}
 \end{table}
 \endgroup
 
-\noindent\textbf{Nota sobre el Dimensionamiento del Paquete y Rediseño:} La cifra de 16\,293 bytes reportada en la Tabla \ref{tab:tamanos_estructuras_didactico} corresponde a la medición del prototipo en su fase preliminar, donde el paquete de sufragio se serializaba mediante un esquema JSON que codificaba en cadenas hexadecimales la boleta (\texttt{ciphertext\_kem}, \texttt{nonce}, \texttt{voto\_cifrado}) y anidaba íntegramente la credencial del elector (\texttt{pk\_votante\_hex} de 3904 hex chars y \texttt{firma\_ar\_hex} de 6618 hex chars), alcanzando 12\,984 bytes en la boleta serializada más 3309 bytes de la firma del votante. Conforme al rediseño formal adoptado en la Sección \ref{sec:ceremonia_identidad_adversarios}, el Servidor de Votación disocia la credencial y transfiere hacia el ánfora y la AC únicamente la tupla anónima $\langle ct_{\text{kem}}, c_{\text{voto}}, \text{nonce}, id_{\text{eleccion}} \rangle$ con voto de longitud fija (48 bytes), reduciendo sustancialmente el volumen persistido. Por consiguiente, esta métrica queda explícitamente registrada como \textbf{pendiente de recálculo} para cuando la actualización del código del prototipo sea consolidada.
+\subsection{Aplicación Web por Roles en Flask e Interfaces del Prototipo}
 
-\subsection{Backend Web y Dashboard Interactivo en Flask}
+La aplicación web implementada en Flask materializa los modelos UWE separando la interacción en cuatro vistas protegidas por control de sesión según el rol del actor: el Portal de Acceso (/login), el Panel del Jurado de Mesa (/jurado), la Cabina del Ciudadano (/ciudadano) y el Panel del Tribunal Electoral (/admin). En las Figuras \ref{fig:cap_interfaz_inicio} a \ref{fig:cap_interfaz_escrutinio} se reservan los espacios correspondientes para las capturas de pantalla de cada vista del prototipo.
 
-En el subdirectorio \texttt{src/web/app.py} se implementó el servidor de demostración que permite emular la experiencia comicial:
-\begin{itemize}
-	\item \textbf{Votación Interactiva:} Los electores acceden a la interfaz web, seleccionan la opción electoral habilitada, formulan su voto y constatan el proceso de cifrado y firma.
-	\item \textbf{Dashboard de Escrutinio y Auditoría:} Tras el cierre, el sistema ejecuta el desencapsulamiento seguro en la Autoridad de Conteo y renderiza mediante gráficos (Chart.js) la distribución de votos y la tabla de comprobantes con sus códigos correspondientes.
-\end{itemize}
+\begin{figure}[!htbp]
+	\centering
+	\begin{tikzpicture}
+		\draw[line width=0.9pt, dashed, draw=black, fill=white, rounded corners=3pt] (0,0) rectangle (13.2, 3.3);
+		\node[align=center, font=\footnotesize\rmfamily, text width=11.8cm] at (6.6, 1.65) {
+			\textbf{[ESPACIO RESERVADO PARA CAPTURA DE PANTALLA 1]}\\[3pt]
+			\textbf{Portal de Acceso (/login) y Panel del Jurado de Mesa (/jurado)}\\[2pt]
+			\scriptsize Archivo sugerido: \textit{imagenes/cap\_01\_login\_y\_jurado.png}\\
+			\scriptsize (Mostrar el selector de rol en /login y la vista /jurado con el padrón electoral, credenciales ML-DSA-65 y botón de habilitar en cabina).
+		};
+	\end{tikzpicture}
+	\caption{Interfaz de acceso y jurado de mesa.}
+	\label{fig:cap_interfaz_inicio}
+	\par\vspace{2pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
 
-\subsection{Conformidad Prototipo--Diseño}
+\begin{figure}[!htbp]
+	\centering
+	\begin{tikzpicture}
+		\draw[line width=0.9pt, dashed, draw=black, fill=white, rounded corners=3pt] (0,0) rectangle (13.2, 3.3);
+		\node[align=center, font=\footnotesize\rmfamily, text width=11.8cm] at (6.6, 1.65) {
+			\textbf{[ESPACIO RESERVADO PARA CAPTURA DE PANTALLA 2]}\\[3pt]
+			\textbf{Vista del Ciudadano (/ciudadano): Cabina de Votación y Panel Criptográfico en Vivo}\\[2pt]
+			\scriptsize Archivo sugerido: \textit{imagenes/cap\_02\_cabina\_y\_panel\_pqc.png}\\
+			\scriptsize (Mostrar la selección de candidato en /ciudadano junto con el panel criptográfico pedagógico en vivo de ML-KEM-768, AES-256-GCM y ML-DSA-65).
+		};
+	\end{tikzpicture}
+	\caption{Interfaz de cabina y panel criptográfico.}
+	\label{fig:cap_interfaz_cabina}
+	\par\vspace{2pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+\begin{figure}[!htbp]
+	\centering
+	\begin{tikzpicture}
+		\draw[line width=0.9pt, dashed, draw=black, fill=white, rounded corners=3pt] (0,0) rectangle (13.2, 3.3);
+		\node[align=center, font=\footnotesize\rmfamily, text width=11.8cm] at (6.6, 1.65) {
+			\textbf{[ESPACIO RESERVADO PARA CAPTURA DE PANTALLA 3]}\\[3pt]
+			\textbf{Vista del Ciudadano (/ciudadano): Recibo Oficial SHA3-256 y Bloqueo de Doble Voto}\\[2pt]
+			\scriptsize Archivo sugerido: \textit{imagenes/cap\_03\_recibo\_emitido.png}\\
+			\scriptsize (Mostrar el comprobante digital emitido al ciudadano con el resumen SHA3-256 de 64 caracteres y el bloqueo de reingreso activo).
+		};
+	\end{tikzpicture}
+	\caption{Interfaz de recibo digital de votación.}
+	\label{fig:cap_interfaz_recibo}
+	\par\vspace{2pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+\begin{figure}[!htbp]
+	\centering
+	\begin{tikzpicture}
+		\draw[line width=0.9pt, dashed, draw=black, fill=white, rounded corners=3pt] (0,0) rectangle (13.2, 3.3);
+		\node[align=center, font=\footnotesize\rmfamily, text width=11.8cm] at (6.6, 1.65) {
+			\textbf{[ESPACIO RESERVADO PARA CAPTURA DE PANTALLA 4]}\\[3pt]
+			\textbf{Panel del Tribunal Electoral (/admin): Escrutinio, Gráficos y Auditoría SHA3-256}\\[2pt]
+			\scriptsize Archivo sugerido: \textit{imagenes/cap\_04\_tribunal\_escrutinio\_auditoria.png}\\
+			\scriptsize (Mostrar la vista /admin con el selector de motor PQC/Clásico, los gráficos de resultados del escrutinio y el tablón público de recibos SHA3-256).
+		};
+	\end{tikzpicture}
+	\caption{Interfaz del tribunal, escrutinio y auditoría.}
+	\label{fig:cap_interfaz_escrutinio}
+	\par\vspace{2pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}
+
+\subsection{Conformidad del Prototipo y Validación de 200 Vectores KAT del NIST}
 \label{sec:conformidad_prototipo_diseno}
-
-Con el propósito de mantener una estricta rigurosidad metodológica y delimitar con precisión la frontera entre la especificación teórica del sistema y el estado de desarrollo del software experimental, la Tabla \ref{tab:conformidad_prototipo_diseno} consolida el análisis de conformidad entre las propiedades arquitectónicas y formales formalizadas en las secciones precedentes y la implementación concreta observada en el código fuente del prototipo (\texttt{src/pqc/} y \texttt{src/web/}). Las discrepancias detectadas se encuentran registradas formalmente en el inventario de pendientes del proyecto (\texttt{PENDIENTES\_PROTOTIPO.md}) para guiar su resolución antes de un despliegue operativo en producción.
-
-\begingroup
-\renewcommand{\arraystretch}{1.2}
-\setlength{\tabcolsep}{4pt}
-\begin{longtable}{|>{\raggedright\arraybackslash}p{6.8cm}|>{\raggedright\arraybackslash}p{4.2cm}|>{\raggedright\arraybackslash}p{3.2cm}|}
-	\hline
-	\textbf{Propiedad del Diseño Arquitectónico / Formal} & \textbf{¿Cumple el Prototipo?} & \textbf{Ítem Registrado} \\
-	\hline
-	\endfirsthead
-	
-	\hline
-	\textbf{Propiedad del Diseño Arquitectónico / Formal} & \textbf{¿Cumple el Prototipo?} & \textbf{Ítem Registrado} \\
-	\hline
-	\endhead
-	
-	\hline
-	\multicolumn{3}{|r|}{{\footnotesize Continúa en la página siguiente\dots}} \\
-	\hline
-	\endfoot
-	
-	\hline
-	\endlastfoot
-	
-	Custodia de clave $dk_{\text{AC}}$ exclusiva en la AC (el SV no posee clave privada KEM) & No (el SV genera y retiene \texttt{\_dk\_sv} en memoria) & PEND-01 \\
-	\hline
-	Ceremonia de claves KEM autónoma en la AC en entorno aislado (\textit{air-gapped}) & No (la AC recibe pasivamente la clave del SV en el constructor) & PEND-02 \\
-	\hline
-	Disociación de credenciales hacia la AC y vinculación de contexto mediante $\text{AAD} = \langle id_{\text{elec}}, ct_{\text{kem}} \rangle$ & No (la AC recibe boleta con credencial e \texttt{id\_votante}; AES-GCM sin AAD) & PEND-03, PEND-06 \\
-	\hline
-	Anonimato de red y resolución temporal de urna truncada a ventana horaria & No (boletas y recibos registran microsegundos con \texttt{time.time()}) & PEND-04 \\
-	\hline
-	Codificación de voto con longitud fija (inmunidad a fugas de opción por tamaño) & No (se cifra texto plano UTF-8 de longitud variable) & PEND-05 \\
-	\hline
-	Serialización canónica determinista (JCS RFC 8785 / CBOR RFC 8949) y separación de dominio en ML-DSA & No (utiliza \texttt{json.dumps(sort\_keys=True)} estándar de Python) & PEND-07 \\
-	\hline
-	Control transaccional atómico de voto único en motor relacional (\texttt{UPDATE \dots\ WHERE ha\_votado = FALSE}) & No (verificación de duplicados en conjunto volátil en memoria) & PEND-08 \\
-	\hline
-	Modelo relacional en 3FN con clave primaria compuesta $(id_{\text{eleccion}}, id_{\text{votante}})$ e integridad FK & No (colecciones volátiles en memoria sin restricciones relacionales) & PEND-09 \\
-	\hline
-	Zeroización y purga explícita de memoria volátil para secretos criptográficos & No (claves almacenadas en objetos \texttt{bytes} inmutables sin \texttt{memset}) & PEND-10 \\
-	\hline
-	Diferenciación en pruebas de inyección de fallos (rechazo implícito KEM vs.\ explícito DSA) & No (la suite no evalúa corrupción de $ct_{\text{kem}}$ acoplada a GMAC) & PEND-11 \\
-	\hline
-	Validación contra vectores de respuesta conocida oficiales del NIST (ACVP / \texttt{.rsp}) & No (únicamente pruebas de ida y vuelta aleatorias locales) & PEND-12 \\
-	\hline
-	Homología metodológica en arnés de benchmarking (mismo nivel de enlace y optimización) & No (compara Ctypes de referencia limpia frente a OpenSSL CPython) & PEND-13 \\
-	\hline
-	Caracterización unívoca de plataforma de evaluación en macOS ARM64 Apple Silicon & Parcial (el código registra ARM64 en \texttt{hardware\_info.json}) & PEND-14 \\
-	\hline
-	Ejecución de procesos UWE de firma y cifrado estrictamente en el cliente (\texttt{ProcesoEmisionVoto}) & No (el servidor web Flask firma boletas con \texttt{\_sk\_votante}) & PEND-15 \\
-	\hline
-	Distribución autenticada de clave pública comicial $ek_{\text{AC}}$ mediante certificado o canal seguro & No (inyección directa de bytes en memoria sin certificado) & PEND-16 \\
-	\hline
-	Verificación matemática de la firma del recibo por parte del elector & No (clase \texttt{Votante} carece de método \texttt{verificar\_recibo}) & PEND-17 \\
-	\hline
-	Desglose actualizado de dimensiones del paquete de sufragio tras el rediseño comicial & No (reporta 16\,293 B con redundancias JSON; pendiente de recálculo) & PEND-18 \\
-	\hline
-	Esquema híbrido transicional de encapsulación (ML-KEM-768 combinado con X25519) & No aplica (decisión deliberada de evaluar retículos puros en la tesis) & PEND-19 \\
-	\hline
-	Mecanismos compensatorios contra inyección de votos ficticios por SV malicioso & No aplica (declarado formalmente como límite / Supuesto S3) & PEND-20 \\
-	\hline
-	Supresión de modos de degradación o funciones de respaldo inseguras (\texttt{XOR}) & No (conserva \texttt{xor\_encrypt\_fallback} en utilitarios) & PEND-21 \\
-	\hline
-	Persistencia concurrente en SGBD relacional en entorno de producción & No (el servidor opera con estructuras volátiles en memoria) & PEND-22 \\
-	\hline
-	Modelos UWE de Navegación (bloqueo OCL \texttt{NoRetornoTrasVotar}) y Presentación (3 vistas) & Sí (flujo secuencial cabina $\to$ confirmación $\to$ recibo SHA3-256) & Conforme (\texttt{src/web/app.py}) \\
-	\hline
-	Interoperabilidad binaria C nativa para ML-KEM-768 (FIPS 203) y ML-DSA-65 (FIPS 204) & Sí (enlace dinámico FFI funcional vía Ctypes a biblioteca compartida) & Conforme (\texttt{pqc\_core.c}) \\
-	\hline
-	Verificación comicial de credenciales de votantes por el Servidor de Votación & Sí (comprueba firmas digitales de la AR y del votante) & Conforme (\texttt{servidor\_votacion.py}) \\
-	\hline
-	Emisión de recibo digital firmado criptográficamente tras el depósito del voto & Sí (emite recibo firmado con ML-DSA-65 al elector) & Conforme (\texttt{servidor\_votacion.py}) \\
-	\hline
-	\caption{Matriz de conformidad técnica entre la especificación de diseño (incluyendo modelos UWE) y la implementación del prototipo experimental.}
-	\label{tab:conformidad_prototipo_diseno}
-\end{longtable}
-\endgroup
-
-\noindent\textbf{Análisis del Punto de Tensión \texttt{PEND-15} frente al Modelo de Procesos UWE:}
-En el análisis de conformidad destaca especialmente el ítem \textbf{\texttt{PEND-15}}. Mientras que los Modelos de Navegación y Presentación UWE se cumplen funcionalmente en el servidor demostrativo Flask (bloqueo de doble emisión por sesión, transición determinista de vistas y generación de recibo con resumen SHA3-256), en el Modelo de Procesos UWE (\texttt{«process class» ProcesoEmisionVoto}) la especificación exige que el encapsulamiento ML-KEM-768 y la firma ML-DSA-65 ocurran en el navegador del elector. En el prototipo actual, debido a que la biblioteca nativa \texttt{libpqc\_core.dylib} se consume desde el intérprete Python en el servidor, el endpoint \texttt{/api/votar} invoca dichas primitivas empleando la instancia en memoria \texttt{\_sk\_votante}. Declarar explícitamente esta divergencia demuestra el valor metodológico de UWE dentro de DSR: el modelo formal fija la arquitectura de referencia invariante hacia la cual debe converger la implementación de producción (mediante la compilación del núcleo C a WebAssembly para ejecución directa en el cliente).
-
-\subsection{Validación Experimental de Vectores KAT del NIST e Inyección de Fallos}
 \label{sec:validacion_kat}
 
-Para garantizar la correspondencia rigurosa de la implementación en C respecto a las especificaciones oficiales de los estándares FIPS 203 y FIPS 204, se sometió el binario compilado a la suite de vectores de prueba con respuesta conocida (\textit{Known Answer Tests}, KAT) y a pruebas de inyección de fallos:
+En la Tabla \ref{tab:conformidad_prototipo_diseno} se sintetiza el grado de conformidad entre el diseño arquitectónico y la implementación alcanzada en el prototipo, distinguiendo los módulos plenamente operativos de aquellas extensiones previstas para un despliegue físico distribuido.
+
+\begin{table}[!htbp]
+	\centering
+	\renewcommand{\arraystretch}{1.2}
+	\footnotesize
+	\caption{Matriz de conformidad entre diseño y prototipo.}
+	\label{tab:conformidad_prototipo_diseno}
+	\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{6.2cm}|>{\bfseries\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}X|}
+		\hline
+		\textbf{Dimensión Arquitectónica y Criptográfica} & \textbf{Estado} & \textbf{Alcance en el Prototipo y Proyección} \\
+		\hline
+		Implementación propia de FIPS 202 (SHA-3/SHAKE), FIPS 203 (ML-KEM-768) y FIPS 204 (ML-DSA-65) & Conforme & Programada desde cero en C y Python y compilada en biblioteca dinámica nativa ARM64. \\
+		\hline
+		Validación con vectores oficiales de respuesta conocida (KAT) del NIST y suite de pruebas & Conforme & 200/200 vectores KAT aprobados (100\%) y 23/23 pruebas unitarias y de integración superadas. \\
+		\hline
+		Vistas web UWE separadas por rol, bloqueo de doble voto y recibo auditable SHA3-256 & Conforme & Implementadas en Flask (/login, /jurado, /ciudadano, /admin) con panel criptográfico en vivo. \\
+		\hline
+		Ejecución de cifrado y firma en el navegador del cliente y custodia de $dk_{\text{AC}}$ en hardware aislado & Parcial (Entorno local) & En el servidor demostrativo las entidades operan en el mismo nodo; en producción requiere WebAssembly y HSM. \\
+		\hline
+		Persistencia relacional SQL concurrente, relleno fijo a 32 B y truncamiento de marcas horarias & Parcial (En memoria) & El prototipo gestiona colecciones en memoria RAM y JSON ordenado; el esquema SQL 3FN queda especificado. \\
+		\hline
+	\end{tabularx}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{table}
+
+Para verificar que los módulos propios en C y Python cumplen exactamente las especificaciones matemáticas del NIST, se ejecutó el corredor automatizado de vectores de respuesta conocida junto con pruebas de inyección de fallos por inversión de bits:
+
 \begin{itemize}
-	\item \textbf{KAT ML-KEM-768 (FIPS 203):} Se procesaron 100 vectores deterministas con semillas pseudoaleatorias controladas. En cada ensayo se compararon los bytes exactos de la clave pública generada, clave secreta, texto cifrado y secreto compartido desencapsulado. Resultado: \textbf{100/100 Aprobados (100\% PASS)}.
-	\item \textbf{KAT ML-DSA-65 (FIPS 204):} Se ejecutaron 100 pruebas deterministas de generación de claves, firma de mensajes estandarizados y verificación de firmas. Resultado: \textbf{100/100 Aprobados (100\% PASS)}.
-	\item \textbf{Pruebas de Inyección de Fallos (\textit{Bit-Flipping}):} Se diseñaron pruebas específicas para constatar la resistencia ante corrupción de datos distinguiendo el comportamiento interno de cada primitiva:
-	\begin{enumerate}
-		\item \textbf{ML-KEM-768 (Rechazo Implícito):} Conforme a la especificación estándar de FIPS 203 (sección 7.3), la función de desencapsulamiento no arroja excepciones ni códigos de error explícitos ante un texto cifrado alterado; en su lugar, produce una clave compartida pseudoaleatoria no coincidente. En los ensayos realizados, la alteración intencional de bits en el criptograma generó sistemáticamente un secreto compartido divergente, cuyo fallo se manifestó y detectó de forma estricta al verificar la etiqueta de autenticación GMAC en el descifrado simétrico AES-256-GCM.
-		\item \textbf{ML-DSA-65 (Rechazo Explícito):} A diferencia del mecanismo KEM, la función de verificación algorítmica \texttt{pqc\_mldsa65\_verify} comprueba directamente que los coeficientes del vector de respuesta pertenezcan a la norma acotada. En el 100\% de las pruebas con alteración de bits en la firma o en la carga útil, el algoritmo retornó de manera inmediata el código de rechazo (falso).
-	\end{enumerate}
+	\item \textbf{200 vectores oficiales KAT del NIST (100\% de aprobación):} Se evaluaron 100 vectores deterministas de ML-KEM-768 y 100 vectores de ML-DSA-65, comprobando la coincidencia exacta byte por byte de claves públicas, claves privadas, criptogramas, llaves compartidas y firmas digitales (\textbf{200 de 200 pruebas aprobadas}).
+	\item \textbf{Inyección de fallos y suite del sistema (23/23 aprobadas):} Ante la alteración de un solo bit en $ct_{\text{kem}}$, ML-KEM-768 aplica rechazo implícito derivando una llave distinta que es detectada de inmediato por la etiqueta GMAC de AES-256-GCM; por su parte, ML-DSA-65 aplica rechazo explícito invalidando el 100\% de las firmas o boletas alteradas.
 \end{itemize}
+
+\begin{figure}[!htbp]
+	\centering
+	\begin{tikzpicture}
+		\draw[line width=0.9pt, dashed, draw=black, fill=white, rounded corners=3pt] (0,0) rectangle (13.2, 3.2);
+		\node[align=center, font=\footnotesize\rmfamily, text width=11.8cm] at (6.6, 1.6) {
+			\textbf{[ESPACIO RESERVADO PARA CAPTURA DE PANTALLA 5]}\\[3pt]
+			\textbf{Ejecución de los 200 Vectores KAT del NIST y Suite de 23 Pruebas}\\[2pt]
+			\scriptsize Archivo sugerido: \textit{imagenes/cap\_05\_ejecucion\_kat\_nist.png}\\
+			\scriptsize (Mostrar la terminal ejecutando runner\_kat.py con 200/200 PASS [100.0\%] para ML-KEM-768 y ML-DSA-65, y pytest con 23 passed).
+		};
+	\end{tikzpicture}
+	\caption{Ejecución de pruebas de validación criptográfica.}
+	\label{fig:cap_consola_kat}
+	\par\vspace{2pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}

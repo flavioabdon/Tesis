@@ -163,37 +163,3 @@ Los lemas son los teoremas de seguridad que Tamarin Prover debe demostrar de for
 \end{enumerate}
 
 Si Tamarin comprueba que todos los casos cumplen la fórmula, emite el resultado verificado. Por el contrario, si descubre algún fallo lógico en el protocolo, muestra paso a paso cómo un atacante podría aprovecharlo.
-
-% =============================================================================
-\subsection{Síntesis Estructural del Marco Teórico}
-% =============================================================================
-
-Con el propósito de brindar una visión integrada de los temas expuestos hasta este punto, en la Figura \ref{fig:marco_teorico_tesis} se muestra cómo se conectan entre sí los componentes teóricos que sustentan el protocolo de votación.
-
-\begin{figure}[htbp]
-	\centering
-	\begin{tikzpicture}[
-		sbox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, align=center, font=\footnotesize, minimum height=0.95cm, minimum width=7.2cm, inner sep=4pt},
-		node distance=0.65cm
-	]
-		\node (a) [sbox] {Criptografía Clásica (RSA/ECDSA)\\Vulnerable al algoritmo de Shor y amenaza HNDL};
-		\node (b) [sbox, below=of a] {Estándares Post-Cuánticos NIST (FIPS 203 / 204)\\Mecanismo ML-KEM-768 y Firmas ML-DSA-65};
-		\node (sub) [sbox, below=of b] {Soporte de Primitivas Hash y XOF\\FIPS 202 (Permutación Keccak / SHA3 / SHAKE)};
-		\node (c) [sbox, below=of sub] {Fundamentos Matemáticos Subyacentes\\Geometría de retículos: Module-LWE y Module-SIS};
-		\node (d) [sbox, below=of c] {Protocolo de Votación Electrónica Post-Cuántica\\Garantías de Confidencialidad, Integridad y Autenticidad};
-		\node (e) [sbox, below=of d] {Verificación Formal Automatizada\\Modelo Dolev--Yao, Lemas en Tamarin Prover};
-		
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (a) -- (b);
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (b) -- (sub);
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (sub) -- (c);
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (c) -- (d);
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (d) -- (e);
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.7pt, dashed] (e.east) .. controls +(1.8,0) and +(1.8,0) .. (d.east)
-		node[midway, right, font=\scriptsize\itshape] {constata};
-	\end{tikzpicture}
-	\caption{Articulación de los ejes del marco teórico.}
-	\label{fig:marco_teorico_tesis}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
-\end{figure}
-
-Como se interpreta en la Figura \ref{fig:marco_teorico_tesis}, la debilidad de los esquemas clásicos (RSA y ECDSA) frente al algoritmo cuántico de Shor motiva la adopción de los estándares post-cuánticos del NIST (FIPS 203 y FIPS 204), los cuales utilizan internamente las funciones hash y de salida extensible de FIPS 202 y descansan sobre la dificultad matemática de los problemas de retículos Module-LWE y Module-SIS. A partir de estas bases se construye el protocolo de votación electrónica post-cuántica, cuya seguridad lógica es finalmente constatada mediante verificación formal en Tamarin Prover.

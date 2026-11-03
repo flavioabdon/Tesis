@@ -2,52 +2,43 @@
 \label{sec:implementacion_clasica}
 % =============================================================================
 
-\subsection{Objetivo Metodológico de la Línea Base}
+Para contrastar experimentalmente en el Capítulo 4 el desempeño del protocolo post-cuántico propuesto bajo condiciones idénticas de hardware y arquitectura de software, se implementó un protocolo clásico de referencia que conserva el mismo flujo de validación, las mismas pantallas y la misma estructura de datos, sustituyendo únicamente las primitivas de retículos por los estándares asimétricos tradicionales:
 
-Para evaluar experimentalmente el impacto del salto a la criptografía post-cuántica en el Capítulo 4, se programó en \texttt{src/clasico/} una implementación paralela y funcionalmente homóloga que sustituye las primitivas de retículos por los algoritmos asimétricos clásicos dominantes en la industria:
 \begin{itemize}
-	\item \textbf{Cifrado Asimétrico:} RSA-OAEP-2048 con exponente público $e=65537$ y función hash SHA-256 (112 bits de seguridad clásica).
-	\item \textbf{Firma Digital:} ECDSA sobre la curva estandarizada NIST P-256 con SHA-256 (128 bits de seguridad clásica).
-	\item \textbf{Cifrado Simétrico y Hash:} AES-256-GCM y SHA-256, garantizando igualdad de condiciones en el cifrado de datos.
+	\item \textbf{Cifrado asimétrico clásico:} Esquema RSA-OAEP con módulo de 2048 bits, exponente público $e=65537$ y función resumen SHA-256 (112 bits de seguridad clásica, vulnerable al algoritmo cuántico de Shor).
+	\item \textbf{Firma digital clásica:} Esquema de curvas elípticas ECDSA sobre la curva P-256 del NIST con SHA-256 (128 bits de seguridad clásica, igualmente vulnerable al algoritmo de Shor).
+	\item \textbf{Componente simétrico constante:} Se mantiene idéntico el cifrado autenticado AES-256-GCM y el resumen de 256 bits para aislar como única variable independiente el cambio de las primitivas de clave pública.
 \end{itemize}
 
-\subsection{Correspondencia Funcional 1 a 1 entre Esquemas}
-
-La Tabla \ref{tab:correspondencia_modulos_didactico} presenta la correspondencia estructural entre ambos esquemas.
+En la Tabla \ref{tab:correspondencia_modulos_didactico} se presenta la equivalencia funcional uno a uno entre los módulos del sistema post-cuántico y los del sistema clásico de control.
 
 \begingroup
-\renewcommand{\arraystretch}{1.25}
+\renewcommand{\arraystretch}{1.2}
 \setlength{\tabcolsep}{4pt}
 \begin{table}[!htbp]
 	\centering
-	\small
+	\footnotesize
 	\begin{tabular}{|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{5.0cm}|>{\raggedright\arraybackslash}p{5.4cm}|}
 		\hline
-		\textbf{Componente Lógico} & \textbf{Implementación Post-Cuántica (\texttt{src/pqc/})} & \textbf{Implementación Clásica (\texttt{src/clasico/})} \\
+		\textbf{Componente Lógico} & \textbf{Implementación Post-Cuántica (PQC)} & \textbf{Implementación Clásica de Control} \\
 		\hline
-		Primitiva Cifrado Asimétrico & ML-KEM-768 (FIPS 203) & RSA-OAEP-2048 (RFC 8017 / PKCS\#1 versión 2.2) \\
+		Encapsulamiento / Cifrado & ML-KEM-768 (Estándar FIPS 203) & RSA-OAEP-2048 (Estándar RFC 8017) \\
 		\hline
-		Primitiva Firma Digital & ML-DSA-65 (FIPS 204) & ECDSA P-256 / SHA-256 (FIPS 186-4) \\
+		Esquema de Firma Digital & ML-DSA-65 (Estándar FIPS 204) & ECDSA Curva P-256 (Estándar FIPS 186-4) \\
 		\hline
-		Capa de Primitivas & \texttt{pqc\_wrapper.py} + \texttt{crypto\_utils.py} & \texttt{crypto\_clasico.py} (\texttt{cryptography.hazmat}) \\
+		Núcleo Criptográfico & Implementación propia FIPS 202, 203 y 204 (C/Python) & Módulo clásico sobre OpenSSL (RSA/ECDSA) \\
 		\hline
-		Autoridad de Registro & \texttt{autoridad\_}\allowbreak\texttt{registro.py} & \texttt{autoridad\_}\allowbreak\texttt{registro\_}\allowbreak\texttt{clasico.py} \\
+		Entidades del Protocolo & Votante, AR, SV y AC post-cuánticos & Votante, AR, SV y AC clásicos equivalentes \\
 		\hline
-		Cliente Votante & \texttt{votante.py} & \texttt{votante\_clasico.py} \\
-		\hline
-		Servidor de Votación & \texttt{servidor\_}\allowbreak\texttt{votacion.py} & \texttt{servidor\_}\allowbreak\texttt{votacion\_}\allowbreak\texttt{clasico.py} \\
-		\hline
-		Autoridad de Conteo & \texttt{autoridad\_}\allowbreak\texttt{conteo.py} & \texttt{autoridad\_}\allowbreak\texttt{conteo\_}\allowbreak\texttt{clasico.py} \\
-		\hline
-		Orquestador de Simulación & \texttt{protocolo\_pqc.py} & \texttt{protocolo\_clasico.py} \\
+		Banco de Evaluación & Corredor experimental (300 corridas, $N \in [10, 1000]$) & Corredor experimental bajo idénticas cargas \\
 		\hline
 		Tamaño Paquete de Voto & \textbf{16293 bytes}* & \textbf{1196 bytes} \\
 		\hline
 	\end{tabular}
-	\caption{Correspondencia funcional 1 a 1 entre los módulos del protocolo PQC y clásico (*medición preliminar pendiente de recálculo tras rediseño).}
+	\caption{Correspondencia entre los módulos post-cuántico y clásico.}
 	\label{tab:correspondencia_modulos_didactico}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia (*medición en formato JSON con campos en hexadecimal y credencial anidada).}}
 \end{table}
 \endgroup
 
-Esta estricta homología asegura que las variaciones de rendimiento computacional, consumo de memoria y ancho de banda registradas en las simulaciones experimentales se deban a las características algebraicas de la criptografía de retículos frente a las curvas elípticas y factorización entera, sentando las bases cuantitativas para la prueba de hipótesis del Capítulo 4.
+Esta simetría arquitectónica garantiza que toda variación en los tiempos de ejecución o en el tamaño de los paquetes medida durante las 300 corridas experimentales obedezca exclusivamente al comportamiento algebraico de ML-KEM-768 y ML-DSA-65 frente a RSA-2048 y ECDSA P-256, cuyos resultados estadísticos se analizan en detalle en el Capítulo 4.

@@ -3,11 +3,11 @@
 \label{sec:diseno_bbdd}
 % =============================================================================
 
-En la metodología UWE (Koch et al., 2008), el \textbf{Modelo de Contenido} especifica los objetos de información y las entidades del dominio sobre los cuales operan las vistas de navegación y los procesos transaccionales, empleando un diagrama de clases UML estándar con el estereotipo \texttt{«content class»}. En un sistema de votación electrónica criptográfico, el Modelo de Contenido se desdobla en dos niveles acoplados: el modelo de clases de dominio en memoria (que encapsula las estructuras de tamaño fijo de FIPS 203 y FIPS 204) y el esquema relacional de persistencia en Tercera Forma Normal (3FN) con disociación estricta de identidad.
+En la metodología UWE (Koch et al., 2008), el \textbf{Modelo de Contenido} representa mediante un diagrama de clases UML los objetos de información que administra la aplicación web, identificados con el estereotipo «contentClass». En el sistema electoral, este modelo define tanto las clases en memoria con las dimensiones exactas de las primitivas post-cuánticas como el esquema relacional en Tercera Forma Normal (3FN) que desvincula la identidad del ciudadano respecto a su boleta cifrada.
 
 \subsection{Diagrama de Clases de Contenido UWE y Actores Criptográficos}
 
-La Figura \ref{fig:uml_clases_detallado} presenta el Diagrama de Clases del Modelo de Contenido UWE y de los actores del protocolo, detallando los estereotipos \texttt{«content class»} en las entidades de información (\texttt{PaqueteVoto}, \texttt{CredencialVotante}, \texttt{BoletaSufragio}, \texttt{ReciboVotacion} y \texttt{ResultadoEscrutinio}), la visibilidad de atributos, las dimensiones exactas en bytes de los buffers criptográficos, las signaturas de métodos y las relaciones de composición y asociación con segregación estricta de $dk_{\text{AC}}$.
+En la Figura \ref{fig:uml_clases_detallado} se presenta el Diagrama de Clases UML del Modelo de Contenido UWE junto con las cuatro entidades participantes del protocolo, especificando atributos, métodos y multiplicidades según el estándar UML.
 
 \begin{figure}[!htbp]
 	\centering
@@ -15,11 +15,8 @@ La Figura \ref{fig:uml_clases_detallado} presenta el Diagrama de Clases del Mode
 	\begin{tikzpicture}[
 		cls/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, font=\tiny\rmfamily, align=left, inner sep=3.5pt},
 		assoc/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black},
-		comp/.style={{Diamond[length=2.5mm, fill=black]}-, line width=0.8pt, draw=black},
-		dep/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.7pt, dashed, draw=black}
+		comp/.style={{Diamond[length=2.5mm, fill=black]}-, line width=0.8pt, draw=black}
 	]
-		% Fila Superior: Actores Principales
-		% Votante
 		\node[cls] (V) at (-6.2, 4.0) {
 			\textbf{VotantePQC}\\
 			\rule{4.6cm}{0.3pt}\\
@@ -33,7 +30,6 @@ La Figura \ref{fig:uml_clases_detallado} presenta el Diagrama de Clases del Mode
 			+ firmar\_boleta(boleta: BoletaSufragio): bytes
 		};
 
-		% Autoridad de Registro
 		\node[cls] (AR) at (-6.2, -0.6) {
 			\textbf{AutoridadRegistroPQC}\\
 			\rule{4.6cm}{0.3pt}\\
@@ -46,7 +42,6 @@ La Figura \ref{fig:uml_clases_detallado} presenta el Diagrama de Clases del Mode
 			+ exportar\_clave\_publica(): bytes
 		};
 
-		% Servidor de Votacion (Sin clave privada KEM ni acceso a desencapsulamiento)
 		\node[cls] (SV) at (5.5, 4.0) {
 			\textbf{ServidorVotacionPQC}\\
 			\rule{5.2cm}{0.3pt}\\
@@ -63,7 +58,6 @@ La Figura \ref{fig:uml_clases_detallado} presenta el Diagrama de Clases del Mode
 			+ emitir\_recibo(blt: BoletaSufragio): ReciboVotacion
 		};
 
-		% Autoridad de Conteo (Custodia exclusiva de dk_ac)
 		\node[cls] (AC) at (5.5, -0.6) {
 			\textbf{AutoridadConteoPQC}\\
 			\rule{5.2cm}{0.3pt}\\
@@ -76,22 +70,19 @@ La Figura \ref{fig:uml_clases_detallado} presenta el Diagrama de Clases del Mode
 			+ escrutinio(anfora: List[BoletaSufragio]): ResultadoEscrutinio
 		};
 
-		% Clases de Datos / Modelo de Contenido UWE (Centro)
-		% PaqueteVoto (El "todo" que compone Boleta y Credencial)
 		\node[cls] (Pkt) at (-0.5, 4.0) {
-			«content class»\\
+			«contentClass»\\
 			\textbf{PaqueteVoto}\\
 			\rule{4.4cm}{0.3pt}\\
 			+ boleta: BoletaSufragio\\
 			+ credencial: CredencialVotante\\
 			+ firma\_votante: bytes [3309]\\
 			\rule{4.4cm}{0.3pt}\\
-			+ to\_dict(): dict
+			+ serializar\_canonico(): bytes
 		};
 
-		% Credencial
 		\node[cls] (Cred) at (-0.5, 1.3) {
-			«content class»\\
+			«contentClass»\\
 			\textbf{CredencialVotante}\\
 			\rule{4.4cm}{0.3pt}\\
 			+ id\_votante: str\\
@@ -99,12 +90,11 @@ La Figura \ref{fig:uml_clases_detallado} presenta el Diagrama de Clases del Mode
 			+ timestamp\_emision: int\\
 			+ firma\_ar: bytes [3309]\\
 			\rule{4.4cm}{0.3pt}\\
-			+ payload\_bytes(): bytes
+			+ obtener\_bytes(): bytes
 		};
 
-		% Boleta de Sufragio (Anonima, sin credencial ni identidad)
 		\node[cls] (Blt) at (-0.5, -1.7) {
-			«content class»\\
+			«contentClass»\\
 			\textbf{BoletaSufragio}\\
 			\rule{4.4cm}{0.3pt}\\
 			+ id\_eleccion: str\\
@@ -112,259 +102,123 @@ La Figura \ref{fig:uml_clases_detallado} presenta el Diagrama de Clases del Mode
 			+ voto\_cifrado: bytes [48]\\
 			+ nonce\_aead: bytes [12]\\
 			\rule{4.4cm}{0.3pt}\\
-			+ payload\_bytes(): bytes
+			+ obtener\_bytes(): bytes
 		};
 
-		% Recibo Votacion
 		\node[cls] (Rec) at (5.5, -4.6) {
-			«content class»\\
+			«contentClass»\\
 			\textbf{ReciboVotacion}\\
 			\rule{4.6cm}{0.3pt}\\
 			+ hash\_boleta: bytes [32]\\
 			+ timestamp\_recibo: int\\
 			+ firma\_servidor: bytes [3309]\\
 			\rule{4.6cm}{0.3pt}\\
-			+ payload\_bytes(): bytes
+			+ obtener\_bytes(): bytes
 		};
 
-		% Resultado Escrutinio
 		\node[cls] (Res) at (-0.5, -4.6) {
-			«content class»\\
+			«contentClass»\\
 			\textbf{ResultadoEscrutinio}\\
 			\rule{4.4cm}{0.3pt}\\
 			+ totales\_opciones: Dict[str, int]\\
 			+ total\_votos: int\\
 			+ hashes\_auditoria: List[str]\\
 			\rule{4.4cm}{0.3pt}\\
-			+ to\_dict(): dict
+			+ exportar\_acta(): dict
 		};
 
-		% Relaciones y Conectores
-		\draw[assoc] (V) -- (Pkt) node[midway, above, font=\tiny\rmfamily] {formula};
-		\draw[comp] (Pkt) -- (Cred);
-		\draw[comp] (Pkt.south) to[bend right=20] (Blt.north);
-		\draw[assoc] (AR) -- (V) node[midway, left, font=\tiny\rmfamily] {emite credencial};
-		\draw[assoc] (Pkt) -- (SV) node[midway, above, font=\tiny\rmfamily] {envía a SV};
-		\draw[assoc] (SV.west) to[bend left=15] (Blt.east);
-		\draw[assoc] (SV) -- (Rec) node[midway, right, font=\tiny\rmfamily] {emite};
-		\draw[assoc] (SV) -- (AC) node[midway, right, font=\tiny\rmfamily] {lote permutado};
-		\draw[assoc] (AC) -- (Res) node[midway, below, font=\tiny\rmfamily] {genera acta};
+		\draw[assoc] (V) -- (Pkt) node[midway, above, font=\tiny\rmfamily] {formula} node[near start, below, font=\tiny\rmfamily] {1} node[near end, below, font=\tiny\rmfamily] {0..1};
+		\draw[comp] (Pkt) -- (Cred) node[near start, right, font=\tiny\rmfamily] {1} node[near end, right, font=\tiny\rmfamily] {1};
+		\draw[comp] (Pkt.south) to[bend right=20] node[near start, left, font=\tiny\rmfamily] {1} node[near end, left, font=\tiny\rmfamily] {1} (Blt.north);
+		\draw[assoc] (AR) -- (V) node[midway, left, font=\tiny\rmfamily] {acredita} node[near start, right, font=\tiny\rmfamily] {1} node[near end, right, font=\tiny\rmfamily] {1..*};
+		\draw[assoc] (Pkt) -- (SV) node[midway, above, font=\tiny\rmfamily] {envía a SV} node[near start, below, font=\tiny\rmfamily] {0..*} node[near end, below, font=\tiny\rmfamily] {1};
+		\draw[assoc] (SV.west) to[bend left=15] node[near start, above, font=\tiny\rmfamily] {1} node[near end, above, font=\tiny\rmfamily] {0..* custodiada} (Blt.east);
+		\draw[assoc] (SV) -- (Rec) node[midway, right, font=\tiny\rmfamily] {emite} node[near start, left, font=\tiny\rmfamily] {1} node[near end, left, font=\tiny\rmfamily] {0..*};
+		\draw[assoc] (SV) -- (AC) node[midway, right, font=\tiny\rmfamily] {lote mezclado} node[near start, left, font=\tiny\rmfamily] {1} node[near end, left, font=\tiny\rmfamily] {1};
+		\draw[assoc] (AC) -- (Res) node[midway, below, font=\tiny\rmfamily] {genera acta} node[near start, above, font=\tiny\rmfamily] {1} node[near end, above, font=\tiny\rmfamily] {1};
 	\end{tikzpicture}
 	}%
-	\caption{Diagrama UML de Clases del Modelo de Contenido UWE (\texttt{«content class»}) y actores con segregación de $dk_{\text{AC}}$.}
+	\caption{Diagrama de clases del modelo de contenido UWE.}
 	\label{fig:uml_clases_detallado}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia modificado de Koch et al. (2008).}}
 \end{figure}
 
-\subsection{Estructuras de Datos, Serialización Determinista y Separación de Dominio}
+Las cinco clases de contenido («contentClass») cumplen funciones específicas y verificables: \textbf{CredencialVotante} almacena la clave pública ML-DSA-65 del elector (1952 B) avalada por la firma de la Autoridad de Registro (3309 B); \textbf{BoletaSufragio} encapsula de forma anónima el criptograma ML-KEM-768 (1088 B), el voto cifrado (48 B) y el vector de inicialización (12 B); \textbf{PaqueteVoto} agrupa mediante composición la boleta y la credencial junto con la firma del votante (3309 B) para su transmisión; \textbf{ReciboVotacion} contiene el resumen SHA3-256 (32 B) firmado por el servidor; y \textbf{ResultadoEscrutinio} consolida el cómputo final y la lista de resúmenes auditables. Para que la firma digital produzca siempre el mismo resultado binario, todos los objetos se transforman previamente mediante una función de serialización canónica que ordena alfabéticamente sus atributos sin espacios intermedios y aplica separación de contexto según el tipo de documento (credencial, boleta o recibo).
 
-Para evitar vulnerabilidades de maleabilidad en las que dos representaciones sintácticas de un mismo objeto del Modelo de Contenido generen firmas digitales divergentes debido al espaciado o al orden arbitrario de los atributos JSON, el protocolo exige un mecanismo de serialización determinista y reproducible:
+\subsection{Principio de Disociación Criptográfica y Modelo Entidad-Relación}
 
-\begin{enumerate}
-	\item \textbf{Implementación Actual en el Prototipo:} El módulo \texttt{crypto\_utils.py} implementa una serialización canónica basada en la biblioteca estándar de Python:
-\begin{verbatim}
-def canonical_json(obj: Any) -> bytes:
-    """Serializa un objeto a JSON canonico determinista."""
-    return json.dumps(
-        obj,
-        sort_keys=True,
-        separators=(",", ":"),
-        ensure_ascii=False
-    ).encode("utf-8")
-\end{verbatim}
-	Esta función asegura la ordenación lexicográfica de claves y la eliminación de espacios en blanco. No obstante, no satisface la totalidad de los requisitos del estándar RFC 8785 (\textit{JSON Canonicalization Scheme}, JCS), particularmente en lo relativo a la normalización estricta de números en punto flotante según IEEE 754 y el escape canónico de caracteres Unicode.
-	
-	\item \textbf{Diseño Objetivo y Especificación Formal:} Con el fin de garantizar interoperabilidad multiplataforma formal entre el cliente web UWE y el servidor, la arquitectura de diseño define como especificación objetivo la adopción de una biblioteca conforme a JCS (RFC 8785) utilizando exclusivamente representaciones enteras y cadenas de caracteres (evitando campos numéricos de punto flotante en marcas temporales), o alternativamente el estándar CBOR determinista (RFC 8949, \textit{Concise Binary Object Representation}). Esta discrepancia queda registrada en el inventario de pendientes (\texttt{PEND-07}).
-
-	\item \textbf{Separación Criptográfica de Dominio en Firmas ML-DSA:} Para prevenir ataques de confusión de tipo entre las distintas clases de contenido UWE (\texttt{CredencialVotante}, \texttt{BoletaSufragio} y \texttt{ReciboVotacion}), la especificación incorpora separación de dominio mediante la cadena de contexto (\textit{context string}) estipulada en el estándar FIPS 204 (sección 5.3):
-	\begin{itemize}
-		\item Credenciales expedidas por la AR: \texttt{ctx = "ELEC\_CRED\_AR\_V1"}.
-		\item Boletas de sufragio firmadas por el votante: \texttt{ctx = "ELEC\_BOLETA\_V1"}.
-		\item Recibos de votación emitidos por el Servidor: \texttt{ctx = "ELEC\_RECIBO\_SV\_V1"}.
-	\end{itemize}
-\end{enumerate}
-
-\subsection{El Principio de Disociación Criptográfica y Modelo Entidad-Relación (E-R)}
-
-En los sistemas web convencionales, el Modelo de Contenido UWE se traduce directamente en tablas vinculadas mediante claves foráneas entre usuarios y transacciones. Sin embargo, en un sistema electoral digital, replicar una clave foránea entre el votante y la boleta violaría el secreto del sufragio: cualquier administrador de base de datos con acceso a la sentencia SQL \texttt{SELECT * FROM votantes JOIN votos} podría asociar la identidad de un ciudadano con su opción electoral.
-
-Para resolver este desafío, la persistencia del Modelo de Contenido implementa un esquema de \textbf{disociación estricta y asimétrica}:
-\begin{enumerate}
-	\item La tabla del padrón (\texttt{tbl\_padron\_votantes}) mantiene la trazabilidad del ciudadano mediante la clave primaria compuesta \texttt{(id\_eleccion, id\_votante)}, registrando el campo booleano \texttt{ha\_votado = TRUE} y la marca temporal redondeada a la ventana horaria definida en la Sección \ref{sec:ceremonia_identidad_adversarios}.
-	\item La tabla de la urna electrónica (\texttt{tbl\_anfora\_boletas}) almacena exclusivamente los criptogramas (\texttt{ciphertext\_kem}, \texttt{voto\_cifrado}, \texttt{nonce\_aead}) indexados por un UUID aleatorio y el resumen inmutable SHA3-256. No contiene identificador de votante, credencial ni firma digital $\sigma_V$.
-	\item \textbf{Ausencia de relación foránea directa:} No existe ninguna columna ni clave foránea en \texttt{tbl\_anfora\_boletas} que apunte a la identidad del votante. La correlación entre las clases de contenido \texttt{CredencialVotante} y \texttt{BoletaSufragio} se rompe de forma irreversible al desacoplar el \texttt{PaqueteVoto} en el Servidor de Votación.
-\end{enumerate}
-
-La Figura \ref{fig:bbdd_er} expone el Modelo Entidad-Relación formal de la base de datos del prototipo con las entidades, relaciones, claves y cardinalidades alineadas al diseño de disociación.
+Si la tabla de boletas almacenara una clave foránea hacia la cédula del ciudadano, cualquier administrador de base de datos podría cruzar ambas tablas y vulnerar el secreto del sufragio. Para evitarlo, el diseño aplica el \textbf{principio de disociación criptográfica}, ilustrado en el Modelo Entidad-Relación de la Figura \ref{fig:bbdd_er}: al validar el paquete de voto, el Servidor de Votación marca el indicador de sufragio emitido en la rama del padrón (izquierda) y deposita únicamente la boleta cifrada anónima en la rama de la urna digital (derecha), sin relación foránea entre el elector y la boleta.
 
 \begin{figure}[!htbp]
 	\centering
-	\resizebox{\textwidth}{!}{%
+	\resizebox{0.92\textwidth}{!}{%
 	\begin{tikzpicture}[
-		entity/.style={rectangle, draw=black, fill=white, line width=0.8pt, font=\scriptsize\rmfamily\bfseries, minimum width=2.8cm, minimum height=0.8cm, align=center},
+		entity/.style={rectangle, draw=black, fill=white, line width=0.8pt, font=\scriptsize\rmfamily\bfseries, minimum width=2.8cm, minimum height=0.75cm, align=center},
 		rel/.style={diamond, draw=black, fill=white, line width=0.7pt, aspect=1.8, font=\tiny\rmfamily, align=center, inner sep=2pt},
-		attr/.style={ellipse, draw=black, fill=white, line width=0.6pt, font=\tiny\rmfamily, align=center, inner sep=2pt},
 		keyattr/.style={ellipse, draw=black, fill=white, line width=0.8pt, font=\tiny\rmfamily\bfseries, align=center, inner sep=2pt},
 		link/.style={line width=0.7pt, draw=black}
 	]
-		% Entidades Principales
-		\node[entity] (elec) at (0, 3.5) {ELECCIÓN};
-		\node[entity] (padron) at (-5.5, 0.8) {PADRÓN\_VOTANTE};
-		\node[entity] (cred) at (-5.5, -2.6) {CREDENCIAL\_AR};
-		\node[entity] (anfora) at (5.5, 0.8) {BOLETA\_CIFRADA};
-		\node[entity] (recibo) at (5.5, -2.6) {RECIBO\_VOTACIÓN};
-		\node[entity] (audit) at (0, -4.5) {BITÁCORA\_AUDITORÍA};
+		\node[entity] (elec) at (0, 3.1) {ELECCIÓN};
+		\node[entity] (padron) at (-5.3, 0.7) {PADRÓN\_VOTANTE};
+		\node[entity] (cred) at (-5.3, -2.3) {CREDENCIAL\_AR};
+		\node[entity] (anfora) at (5.3, 0.7) {BOLETA\_CIFRADA};
+		\node[entity] (recibo) at (5.3, -2.3) {RECIBO\_VOTACIÓN};
+		\node[entity] (audit) at (0, -3.9) {BITÁCORA\_AUDITORÍA};
 		
-		% Relaciones
-		\node[rel] (r1) at (-2.8, 2.2) {Habilita};
-		\node[rel] (r2) at (-5.5, -0.9) {Posee};
-		\node[rel] (r3) at (2.8, 2.2) {Custodia};
-		\node[rel] (r4) at (5.5, -0.9) {Genera};
-		\node[rel] (r5) at (0, -0.6) {Registra};
+		\node[rel] (r1) at (-2.7, 1.9) {Habilita};
+		\node[rel] (r2) at (-5.3, -0.8) {Posee};
+		\node[rel] (r3) at (2.7, 1.9) {Custodia};
+		\node[rel] (r4) at (5.3, -0.8) {Genera};
+		\node[rel] (r5) at (0, -0.5) {Registra};
 		
-		% Enlaces Relaciones con Cardinalidades
 		\draw[link] (elec) -- (r1) node[midway, above, font=\tiny] {1};
 		\draw[link] (r1) -- (padron) node[midway, above, font=\tiny] {N};
-		
 		\draw[link] (padron) -- (r2) node[midway, left, font=\tiny] {1};
 		\draw[link] (r2) -- (cred) node[midway, left, font=\tiny] {1};
-		
 		\draw[link] (elec) -- (r3) node[midway, above, font=\tiny] {1};
 		\draw[link] (r3) -- (anfora) node[midway, above, font=\tiny] {N};
-		
 		\draw[link] (anfora) -- (r4) node[midway, right, font=\tiny] {1};
 		\draw[link] (r4) -- (recibo) node[midway, right, font=\tiny] {1};
-		
 		\draw[link] (elec) -- (r5) node[midway, left, font=\tiny] {1};
 		\draw[link] (r5) -- (audit) node[midway, left, font=\tiny] {N};
 		
-		% Atributos representativos (claves)
-		\node[keyattr] (k_el) at (0, 4.8) {\underline{id\_eleccion}};
-		\draw[link] (elec) -- (k_el);
-		
-		\node[keyattr] (k_pa) at (-5.5, 2.1) {\underline{id\_eleccion, id\_votante}};
-		\draw[link] (padron) -- (k_pa);
-		
-		\node[keyattr] (k_cr) at (-7.5, -3.5) {\underline{id\_credencial}};
-		\draw[link] (cred) -- (k_cr);
-		
-		\node[keyattr] (k_an) at (5.5, 2.1) {\underline{id\_boleta}};
-		\draw[link] (anfora) -- (k_an);
-		
-		\node[keyattr] (k_re) at (7.5, -3.5) {\underline{id\_recibo}};
-		\draw[link] (recibo) -- (k_re);
-		
-		\node[keyattr] (k_au) at (0, -5.7) {\underline{id\_evento}};
-		\draw[link] (audit) -- (k_au);
+		\node[keyattr] (k_el) at (0, 4.25) {\underline{id\_eleccion}}; \draw[link] (elec) -- (k_el);
+		\node[keyattr] (k_pa) at (-5.3, 1.85) {\underline{id\_eleccion, id\_votante}}; \draw[link] (padron) -- (k_pa);
+		\node[keyattr] (k_cr) at (-7.3, -3.2) {\underline{id\_credencial}}; \draw[link] (cred) -- (k_cr);
+		\node[keyattr] (k_an) at (5.3, 1.85) {\underline{id\_boleta}}; \draw[link] (anfora) -- (k_an);
+		\node[keyattr] (k_re) at (7.3, -3.2) {\underline{id\_recibo}}; \draw[link] (recibo) -- (k_re);
+		\node[keyattr] (k_au) at (0, -4.95) {\underline{id\_evento}}; \draw[link] (audit) -- (k_au);
 	\end{tikzpicture}
 	}%
-	\caption{Modelo Entidad-Relación de la base de datos electoral con disociación de identidad.}
+	\caption{Modelo entidad-relación con disociación de identidad.}
 	\label{fig:bbdd_er}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
 
-\subsection{Modelo Relacional en Tercera Forma Normal (3FN) y Diccionario de Datos}
+En la Tabla \ref{tab:diccionario_datos} se sintetiza la estructura de las seis tablas relacionales normalizadas en Tercera Forma Normal (3FN), detallando sus llaves primarias, atributos principales y mecanismos de seguridad.
 
-El esquema de persistencia se normaliza en Tercera Forma Normal (3FN), eliminando dependencias parciales y transitivas a través de seis relaciones:
-\begin{enumerate}
-	\item \textbf{\texttt{tbl\_elecciones}}: (\underline{\texttt{id\_eleccion}}, \texttt{nombre}, \texttt{fecha\_inicio}, \texttt{fecha\_fin}, \texttt{estado\_fase}, \texttt{pk\_ar}, \texttt{ek\_ac})
-	\item \textbf{\texttt{tbl\_padron\_votantes}}: (\underline{\texttt{id\_eleccion}}$^*$, \underline{\texttt{id\_votante}}, \texttt{nombres}, \texttt{apellidos}, \texttt{carrera}, \texttt{ha\_votado}, \texttt{timestamp\_voto})
-	\item \textbf{\texttt{tbl\_credenciales\_ar}}: (\underline{\texttt{id\_credencial}}, \texttt{id\_votante}$^*$, \texttt{pk\_votante\_hex}, \texttt{timestamp\_emision}, \texttt{firma\_ar\_hex})
-	\item \textbf{\texttt{tbl\_anfora\_boletas}}: (\underline{\texttt{id\_boleta}}, \texttt{id\_eleccion}$^*$, \texttt{ciphertext\_kem}, \texttt{voto\_cifrado}, \texttt{nonce\_aead}, \texttt{hash\_boleta\_sha3}, \texttt{timestamp\_recepcion})
-	\item \textbf{\texttt{tbl\_recibos\_votacion}}: (\underline{\texttt{id\_recibo}}, \texttt{id\_boleta}$^*$, \texttt{timestamp\_recibo}, \texttt{firma\_sv\_hex})
-	\item \textbf{\texttt{tbl\_auditoria\_eventos}}: (\underline{\texttt{id\_evento}}, \texttt{id\_eleccion}$^*$, \texttt{tipo\_evento}, \texttt{descripcion}, \texttt{timestamp\_evento})
-\end{enumerate}
-
-\noindent\textbf{Análisis de Formas Normales, Desnormalización Controlada e Indexación:}
-\begin{itemize}
-	\item \textbf{Cumplimiento de 3FN:} En \texttt{tbl\_padron\_votantes}, la clave primaria compuesta $(\text{id\_eleccion}, \text{id\_votante})$ asegura que cada atributo dependa funcionalmente de toda la clave, generando un índice B-Tree que resuelve la verificación de elegibilidad en tiempo $\mathcal{O}(\log n)$. En \texttt{tbl\_recibos\_votacion}, el resumen SHA3-256 se consulta a través de la clave foránea unívoca hacia \texttt{tbl\_anfora\_boletas}, evitando dependencias transitivas.
-	\item \textbf{Desnormalización Justificada e Índice Único:} La presencia de \texttt{hash\_boleta\_sha3} como atributo persistente con índice B-Tree \texttt{UNIQUE} en \texttt{tbl\_anfora\_boletas} evita la recomputación dinámica de SHA3-256 sobre campos binarios en cada consulta del portal de auditoría UWE (\texttt{«query»}), proporcionando verificación en tiempo $\mathcal{O}(\log n)$ e impidiendo a nivel de motor relacional la reinserción de boletas idénticas.
-	\item \textbf{Eliminación de Metadatos de Red:} La columna \texttt{ip\_origen} fue excluida de \texttt{tbl\_auditoria\_eventos} para eliminar todo riesgo de correlación de red con las boletas emitidas.
-\end{itemize}
-
-La Tabla \ref{tab:diccionario_datos} describe los campos, tipos de datos SQL nativos, claves y restricciones de las seis tablas del modelo relacional.
-
-\begingroup
-\small
-\setlength{\tabcolsep}{3pt}
-\begin{longtable}{>{\ttfamily\raggedright\arraybackslash}p{3.9cm} >{\ttfamily\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}p{5.5cm}}
-	\caption{Diccionario de datos del modelo relacional electoral normalizado.} \label{tab:diccionario_datos} \\
-	\toprule
-	\textbf{Campo} & \textbf{Tipo SQL} & \textbf{Restricción} & \textbf{Descripción y Justificación Criptográfica} \\
-	\midrule
-	\endfirsthead
-
-	\multicolumn{4}{c}{{\bfseries \tablename\ \thetable{} -- Continuación de la página anterior}} \\
-	\toprule
-	\textbf{Campo} & \textbf{Tipo SQL} & \textbf{Restricción} & \textbf{Descripción y Justificación Criptográfica} \\
-	\midrule
-	\endhead
-
-	\midrule
-	\multicolumn{4}{r}{{Continúa en la siguiente página \dots}} \\
-	\bottomrule
-	\endfoot
-
-	\bottomrule
-	\endlastfoot
-
-	\multicolumn{4}{l}{\textbf{1. \texttt{tbl\_elecciones} (Configuración Institucional del Proceso)}} \\
-	\midrule
-	id\_eleccion & VARCHAR(36) & \textbf{PK}, NOT NULL & Identificador UUIDv4 único de la elección. \\
-	nombre & VARCHAR(128) & NOT NULL & Denominación oficial del proceso electoral. \\
-	fecha\_inicio & TIMESTAMP & NOT NULL & Apertura programada de mesas. \\
-	fecha\_fin & TIMESTAMP & NOT NULL & Cierre programado de mesas. \\
-	estado\_fase & VARCHAR(32) & NOT NULL & Fase: \texttt{REGISTRO}, \texttt{VOTACION}, \texttt{CONTEO}, \texttt{CERRADA}. \\
-	pk\_ar & BYTEA & NOT NULL & Clave pública ML-DSA-65 de la AR (1952 bytes). \\
-	ek\_ac & BYTEA & NOT NULL & Clave pública ML-KEM-768 de la AC (1184 bytes). \\
-	\midrule
-
-	\multicolumn{4}{l}{\textbf{2. \texttt{tbl\_padron\_votantes} (Control de Elector y Unicidad de Sufragio)}} \\
-	\midrule
-	id\_eleccion & VARCHAR(36) & \textbf{PK, FK}, NOT NULL & Referencia unívoca al proceso electoral. \\
-	id\_votante & VARCHAR(20) & \textbf{PK}, NOT NULL & Cédula de identidad o matrícula universitaria. \\
-	nombres & VARCHAR(64) & NOT NULL & Nombres del ciudadano empadronado. \\
-	apellidos & VARCHAR(64) & NOT NULL & Apellidos del ciudadano empadronado. \\
-	carrera & VARCHAR(64) & NOT NULL & Unidad académica o carrera habilitada. \\
-	ha\_votado & BOOLEAN & DEFAULT FALSE & Bandera de control transaccional de un solo uso. \\
-	timestamp\_voto & TIMESTAMP & NULL & Marca temporal redondeada a la ventana comicial. \\
-	\midrule
-
-	\multicolumn{4}{l}{\textbf{3. \texttt{tbl\_credenciales\_ar} (Certificados de Habilitación Electoral)}} \\
-	\midrule
-	id\_credencial & VARCHAR(36) & \textbf{PK}, NOT NULL & UUID único del certificado expedido por la AR. \\
-	id\_votante & VARCHAR(20) & \textbf{FK}, UNIQUE & Relación 1:1 estricta con el elector registrado. \\
-	pk\_votante\_hex & TEXT & NOT NULL & Clave pública de firma del votante (ML-DSA-65). \\
-	timestamp\_emision & TIMESTAMP & NOT NULL & Instante formal de expedición de credencial. \\
-	firma\_ar\_hex & TEXT & NOT NULL & Firma digital de la AR sobre la credencial (3309 B). \\
-	\midrule
-
-	\multicolumn{4}{l}{\textbf{4. \texttt{tbl\_anfora\_boletas} (Urna Digital de Boletas Cifradas Disociadas)}} \\
-	\midrule
-	id\_boleta & VARCHAR(36) & \textbf{PK}, NOT NULL & UUID aleatorio de la boleta (anónima). \\
-	id\_eleccion & VARCHAR(36) & \textbf{FK}, NOT NULL & Vinculación a la elección correspondiente. \\
-	ciphertext\_kem & BYTEA & NOT NULL & Criptograma KEM ML-KEM-768 (1088 bytes). \\
-	voto\_cifrado & BYTEA & NOT NULL & Sufragio cifrado AES-256-GCM longitud fija (48 B). \\
-	nonce\_aead & BYTEA & NOT NULL & Vector de inicialización de 12 bytes (96 bits). \\
-	hash\_boleta\_sha3 & CHAR(64) & \textbf{UNIQUE}, NOT NULL & Resumen SHA3-256 inmutable de la boleta. \\
-	timestamp\_recepcion & TIMESTAMP & NOT NULL & Marca de recepción redondeada a la ventana. \\
-	\midrule
-
-	\multicolumn{4}{l}{\textbf{5. \texttt{tbl\_recibos\_votacion} (Auditoría Ciudadana Individual)}} \\
-	\midrule
-	id\_recibo & VARCHAR(36) & \textbf{PK}, NOT NULL & Identificador UUID del recibo de votación. \\
-	id\_boleta & VARCHAR(36) & \textbf{FK}, UNIQUE & Enlace 1:1 unívoco hacia la boleta custodiada. \\
-	timestamp\_recibo & TIMESTAMP & NOT NULL & Marca temporal redondeada de emisión del recibo. \\
-	firma\_sv\_hex & TEXT & NOT NULL & Firma digital ML-DSA-65 del Servidor de Votación. \\
-	\midrule
-
-	\multicolumn{4}{l}{\textbf{6. \texttt{tbl\_auditoria\_eventos} (Trazabilidad Institucional del Sistema)}} \\
-	\midrule
-	id\_evento & BIGSERIAL & \textbf{PK}, NOT NULL & Identificador secuencial del evento auditado. \\
-	id\_eleccion & VARCHAR(36) & \textbf{FK}, NOT NULL & Vinculación a la elección correspondiente. \\
-	tipo\_evento & VARCHAR(48) & NOT NULL & Categoría: \texttt{APERTURA}, \texttt{CIERRE}, \texttt{ESCRUTINIO}. \\
-	descripcion & TEXT & NOT NULL & Detalle técnico de la operación ejecutada. \\
-	timestamp\_evento & TIMESTAMP & NOT NULL & Marca temporal precisa del evento de auditoría. \\
-\end{longtable}
-\endgroup
-
+\begin{table}[!htbp]
+	\centering
+	\renewcommand{\arraystretch}{1.22}
+	\footnotesize
+	\caption{Esquema relacional en tercera forma normal.}
+	\label{tab:diccionario_datos}
+	\begin{tabularx}{\textwidth}{|>{\bfseries\raggedright\arraybackslash}p{3.0cm}|>{\raggedright\arraybackslash}p{2.7cm}|>{\raggedright\arraybackslash}p{4.3cm}|>{\raggedright\arraybackslash}X|}
+		\hline
+		\textbf{Tabla Relacional} & \textbf{Clave Primaria} & \textbf{Atributos Principales} & \textbf{Función y Regla de Seguridad} \\
+		\hline
+		1. Elecciones & id\_eleccion & nombre, fecha\_inicio, fecha\_fin, estado\_fase, pk\_ar, ek\_ac & Almacena los parámetros del comicio y las claves públicas de las autoridades. \\
+		\hline
+		2. Padrón de Votantes & (id\_eleccion, id\_votante) & nombres, apellidos, carrera, ha\_votado, timestamp\_voto & Controla la elegibilidad y el sufragio único en tiempo $\mathcal{O}(\log n)$ sin vínculo hacia la boleta. \\
+		\hline
+		3. Credenciales AR & id\_credencial & id\_votante (FK única), pk\_votante\_hex, firma\_ar\_hex & Registra el certificado digital ML-DSA-65 (3309 B) emitido al empadronar al ciudadano. \\
+		\hline
+		4. Ánfora de Boletas & id\_boleta & id\_eleccion (FK), ciphertext\_kem, voto\_cifrado, nonce, hash\_sha3 & Custodia las boletas anónimas con índice único sobre el resumen SHA3-256 (64 caracteres). \\
+		\hline
+		5. Recibos de Votación & id\_recibo & id\_boleta (FK única), timestamp\_recibo, firma\_sv\_hex & Conserva el comprobante firmado por el Servidor de Votación para auditoría individual. \\
+		\hline
+		6. Bitácora de Eventos & id\_evento & id\_eleccion (FK), tipo\_evento, descripcion, timestamp\_evento & Registra los eventos de apertura, cierre y escrutinio excluyendo direcciones IP de votantes. \\
+		\hline
+	\end{tabularx}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{table}
