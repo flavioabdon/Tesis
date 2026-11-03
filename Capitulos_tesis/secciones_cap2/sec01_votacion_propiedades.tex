@@ -1,52 +1,52 @@
 \section{Votación Electrónica y Propiedades de Seguridad}
 % =============================================================================
 
-Un sistema de votación electrónica es un sistema informático diseñado para automatizar las etapas de un proceso electoral mediante el uso de computadoras, redes de telecomunicaciones y algoritmos de seguridad. En términos generales, comprende los procedimientos tecnológicos que permiten registrar a los ciudadanos habilitados, presentar la papeleta electoral en una pantalla, recibir el voto de forma confidencial, almacenarlo de manera segura y realizar el conteo final de los resultados (Gritzalis, 2002; Volkamer, 2009).
+Un sistema de votación electrónica es un sistema informático diseñado para automatizar las etapas de un proceso electoral mediante el uso de computadoras, redes de telecomunicaciones y algoritmos de seguridad. En términos generales, comprende los procedimientos tecnológicos que permiten registrar a los ciudadanos habilitados, presentar la papeleta electoral en una pantalla, recibir el voto de forma confidencial, almacenarlo de manera segura y realizar el conteo final de los resultados (Barrat i Esteve, 2012; Reniu, 2008).
 
 Es decir, un sistema de votación electrónica busca cumplir las mismas funciones que una elección tradicional con papeletas de papel y ánforas físicas, pero trasladando las garantías de seguridad al ámbito digital. Sin embargo, construir un sistema de este tipo en el área de la Informática plantea un desafío particular que no se presenta en la mayoría de las aplicaciones convencionales.
 
-En un sistema informático común, como una plataforma de compras por Internet o un sistema académico universitario, el servidor registra de manera directa qué usuario realizó cada operación. Por el contrario, en una elección democrática el sistema debe verificar con exactitud la identidad del ciudadano al momento de ingresar a votar, pero una vez emitido el voto debe separar por completo el nombre del votante del contenido de su papeleta, de modo que nadie pueda saber por quién votó (Chaum, 1981; Chaum, 1988; Benaloh, 1987).
+En un sistema informático común, como una plataforma de compras por Internet o un sistema académico universitario, el servidor registra de manera directa qué usuario realizó cada operación. Por el contrario, en una elección democrática el sistema debe verificar con exactitud la identidad del ciudadano al momento de ingresar a votar, pero una vez emitido el voto debe separar por completo el nombre del votante del contenido de su papeleta, de modo que nadie pueda saber por quién votó (Chaum, 1981; Benaloh, 1987; Panizo Alonso, 2007).
 
 \subsection{Evolución Histórica y Enfoques Criptográficos en Sistemas Electorales}
 
 Desde la década de 1980, diversos investigadores en seguridad informática han propuesto mecanismos criptográficos para lograr que el voto sea simultáneamente secreto y verificable. En este sentido, la literatura especializada organiza las soluciones tradicionales en tres grandes enfoques:
 
 \begin{enumerate}
-	\item \textbf{Redes de Mezcla:} Fueron propuestas por David Chaum (1981) con el propósito de ocultar el origen de los mensajes en una red. Su funcionamiento puede compararse con colocar las boletas cifradas dentro de una serie de cajas mezcladoras administradas por distintas entidades independientes. Cada servidor recibe el conjunto de votos, los desordena al azar (aplicando una permutación secreta) y les retira una capa de cifrado antes de pasarlos al siguiente servidor. De esta manera, cuando los votos llegan al conteo final, ya no es posible rastrear en qué orden ingresaron ni a qué ciudadano pertenece cada boleta (Neff, 2001; Cortier et al., 2014).
+	\item \textbf{Redes de Mezcla:} Fueron propuestas por David Chaum (1981) con el propósito de ocultar el origen de los mensajes en una red. Su funcionamiento puede compararse con colocar las boletas cifradas dentro de una serie de cajas mezcladoras administradas por distintas entidades independientes. Cada servidor recibe el conjunto de votos, los desordena al azar (aplicando una permutación secreta) y les retira una capa de cifrado antes de pasarlos al siguiente servidor. De esta manera, cuando los votos llegan al conteo final, ya no es posible rastrear en qué orden ingresaron ni a qué ciudadano pertenece cada boleta (Chaum, 1981; Fúster Sabater et al., 2004).
 
 	\item \textbf{Cifrado Homomórfico y Pruebas de Conocimiento Cero ($ZKP$):} Este enfoque fue introducido por Benaloh (1987) y desarrollado formalmente por Cramer, Gennaro y Schoenmakers (1997). Se basa en una propiedad matemática especial llamada homomorfismo, la cual permite sumar los votos directamente mientras continúan cifrados, sin necesidad de abrir ni descifrar ninguna boleta individual. Al finalizar la jornada electoral, la autoridad utiliza la clave privada una sola vez para descifrar únicamente el resultado total acumulado.
 
-	\item \textbf{Firmas Ciegas:} Fueron diseñadas por Chaum (1988) y aplicadas a la votación electrónica por Fujioka, Okamoto y Ohta (1992). Su funcionamiento equivale a utilizar un sobre con papel carbón en el mundo físico: el votante oculta su voto dentro de un sobre digital especial y lo presenta a la autoridad electoral; la autoridad verifica que el ciudadano tiene derecho a votar y estampa su firma digital sobre el sobre cerrado sin poder ver el contenido interior. Posteriormente, el votante retira el envoltorio y obtiene su boleta firmada por la autoridad, la cual puede depositar de forma anónima en la urna digital.
+	\item \textbf{Firmas Ciegas:} Fueron diseñadas por David Chaum y aplicadas a la votación electrónica por Fujioka, Okamoto y Ohta (1992). Su funcionamiento equivale a utilizar un sobre con papel carbón en el mundo físico: el votante oculta su voto dentro de un sobre digital especial y lo presenta a la autoridad electoral; la autoridad verifica que el ciudadano tiene derecho a votar y estampa su firma digital sobre el sobre cerrado sin poder ver el contenido interior. Posteriormente, el votante retira el envoltorio y obtiene su boleta firmada por la autoridad, la cual puede depositar de forma anónima en la urna digital.
 \end{enumerate}
 
 Estos tres esquemas clásicos han servido como base para numerosos sistemas electorales; no obstante, todos ellos dependen de operaciones matemáticas tradicionales que hoy en día resultan vulnerables ante el avance de las computadoras cuánticas, razón por la cual esta investigación aborda el uso de criptografía post-cuántica.
 
 \subsection{Clasificación de las Propiedades de Seguridad Electoral}
 
-Para evaluar si un sistema de votación electrónica es seguro y confiable, es necesario definir con claridad qué requisitos debe cumplir. De acuerdo con la literatura de seguridad informática, estas propiedades se agrupan en cuatro categorías principales (Volkamer, 2009; Bernhard et al., 2012; Cortier et al., 2014).
+Para evaluar si un sistema de votación electrónica es seguro y confiable, es necesario definir con claridad qué requisitos debe cumplir. De acuerdo con la literatura de seguridad informática, estas propiedades se agrupan en cuatro categorías principales (Panizo Alonso, 2007; Reniu, 2008; Barrat i Esteve, 2012).
 
 \subsubsection{Confidencialidad y Privacidad del Sufragio}
 
-La confidencialidad del voto, conocida también como secreto del sufragio, establece que ninguna persona ni sistema informático debe poder relacionar la identidad de un votante con la opción política o candidato que eligió (Bernhard et al., 2012). Esta protección debe mantenerse incluso frente a los administradores del servidor, los encargados de la base de datos o un atacante que intercepte los mensajes en la red.
+La confidencialidad del voto, conocida también como secreto del sufragio, establece que ninguna persona ni sistema informático debe poder relacionar la identidad de un votante con la opción política o candidato que eligió (Panizo Alonso, 2007; Barrat i Esteve, 2012). Esta protección debe mantenerse incluso frente a los administradores del servidor, los encargados de la base de datos o un atacante que intercepte los mensajes en la red.
 
 Dentro del estudio de la privacidad electoral se distinguen tres niveles de protección progresivos:
 
 \begin{itemize}
 	\item \textbf{Secreto Simple:} Garantiza que el voto viaje cifrado a través de la red y se almacene de forma protegida, de modo que un observador externo que capture los paquetes de datos no pueda leer el contenido de la boleta.
 
-	\item \textbf{Libertad de Recibo:} Definida por Benaloh y Tuinstra (1994) y analizada por Delaune, Kremer y Ryan (2009), indica que el sistema no debe entregarle al votante un comprobante que muestre en texto claro por quién votó. Su finalidad es evitar que el votante pueda mostrar dicho recibo a una tercera persona para vender su voto o demostrar cómo sufragó.
+	\item \textbf{Libertad de Recibo:} Definida en la literatura electoral y analizada por Panizo Alonso (2007) y Barrat i Esteve (2012), indica que el sistema no debe entregarle al votante un comprobante que muestre en texto claro por quién votó. Su finalidad es evitar que el votante pueda mostrar dicho recibo a una tercera persona para vender su voto o demostrar cómo sufragó.
 
-	\item \textbf{Resistencia a la Coacción:} Propuesta por Juels, Catalano y Jakobsson (2010), representa el nivel más estricto de privacidad. Busca proteger al ciudadano incluso en situaciones donde un atacante lo obligue por la fuerza a entregar sus contraseñas o lo vigile físicamente mientras emite su voto frente a la computadora.
+	\item \textbf{Resistencia a la Coacción:} Analizada en el ámbito de seguridad electoral por Panizo Alonso (2007) y Tula (2005), representa el nivel más estricto de privacidad. Busca proteger al ciudadano incluso en situaciones donde un atacante lo obligue por la fuerza a entregar sus contraseñas o lo vigile físicamente mientras emite su voto frente a la computadora.
 \end{itemize}
 
 \subsubsection{Verificabilidad de Extremo a Extremo}
 
-En un sistema informático cerrado, el usuario suele verse obligado a confiar ciegamente en que el programa funciona de manera honesta. Sin embargo, en una elección los ciudadanos y los observadores necesitan pruebas comprobables de que los resultados no fueron alterados en el servidor. Para resolver este problema se formuló el concepto de verificabilidad de extremo a extremo (Chaum, 2004; Adida, 2008; Ryan et al., 2009).
+En un sistema informático cerrado, el usuario suele verse obligado a confiar ciegamente en que el programa funciona de manera honesta. Sin embargo, en una elección los ciudadanos y los observadores necesitan pruebas comprobables de que los resultados no fueron alterados en el servidor. Para resolver este problema se formuló el concepto de verificabilidad de extremo a extremo (Adida, 2008; Panizo Alonso, 2007; Barrat i Esteve, 2012).
 
-De acuerdo con Cortier, Delaune e Issarny (2014), un sistema es verificable de extremo a extremo cuando permite comprobar tres etapas sucesivas del proceso:
+De acuerdo con la literatura especializada en seguridad y verificación de voto electrónico (Panizo Alonso, 2007; Barrat i Esteve, 2012), un sistema es verificable de extremo a extremo cuando permite comprobar tres etapas sucesivas del proceso:
 
 \begin{enumerate}
-	\item \textbf{Emitido según la intención:} Permite al votante asegurarse de que el voto que su computadora preparó y cifró corresponde exactamente a la opción que seleccionó en la pantalla, descartando que un error o programa malicioso haya cambiado su elección antes de enviarla (Benaloh, 1987; Chaum, 2004).
+	\item \textbf{Emitido según la intención:} Permite al votante asegurarse de que el voto que su computadora preparó y cifró corresponde exactamente a la opción que seleccionó en la pantalla, descartando que un error o programa malicioso haya cambiado su elección antes de enviarla (Benaloh, 1987; Panizo Alonso, 2007).
 
 	\item \textbf{Registrado según lo emitido:} Permite al votante comprobar que su boleta cifrada llegó correctamente al servidor y fue guardada en la urna digital sin ser borrada ni modificada en el camino. Para ello, el sistema entrega al elector un código resumen (hash) que funciona como un identificador único de su transacción.
 
@@ -58,7 +58,7 @@ De acuerdo con Cortier, Delaune e Issarny (2014), un sistema es verificable de e
 Además de proteger el secreto y permitir la auditoría del conteo, todo protocolo electoral debe controlar de forma rigurosa quiénes pueden participar y cuántas veces pueden hacerlo:
 
 \begin{itemize}
-	\item \textbf{Elegibilidad:} Consiste en asegurar que únicamente las personas debidamente registradas y autorizadas en el padrón electoral puedan emitir un voto válido dentro del sistema (Sampigethaya y Poovendran, 2006). Si un usuario no registrado intenta enviar una boleta, el servidor debe rechazarla de inmediato.
+	\item \textbf{Elegibilidad:} Consiste en asegurar que únicamente las personas debidamente registradas y autorizadas en el padrón electoral puedan emitir un voto válido dentro del sistema (Tula, 2005; Barrat i Esteve, 2012). Si un usuario no registrado intenta enviar una boleta, el servidor debe rechazarla de inmediato.
 
 	\item \textbf{Unicidad:} Establece que cada votante habilitado puede registrar como máximo un voto en la elección. Si un mismo ciudadano intenta votar por segunda vez, el sistema debe detectar que ya ejerció su derecho y bloquear el nuevo intento sin alterar el voto registrado originalmente (Fujioka et al., 1992).
 
@@ -67,11 +67,11 @@ Además de proteger el secreto y permitir la auditoría del conteo, todo protoco
 
 \subsubsection{Robustez y Tolerancia a Fallos}
 
-La propiedad de robustez se refiere a la capacidad del sistema electoral para continuar funcionando y concluir el conteo de manera correcta incluso cuando se presentan fallos parciales o intentos de sabotaje (Cramer et al., 1997; Chevallier-Mames et al., 2010). Por ejemplo, si un usuario malintencionado envía datos corruptos o paquetes incompletos al servidor, el protocolo debe ser capaz de identificar y descartar únicamente ese paquete inválido, sin detener el proceso de votación para el resto de los ciudadanos.
+La propiedad de robustez se refiere a la capacidad del sistema electoral para continuar funcionando y concluir el conteo de manera correcta incluso cuando se presentan fallos parciales o intentos de sabotaje (Cramer et al., 1997; Fúster Sabater et al., 2004). Por ejemplo, si un usuario malintencionado envía datos corruptos o paquetes incompletos al servidor, el protocolo debe ser capaz de identificar y descartar únicamente ese paquete inválido, sin detener el proceso de votación para el resto de los ciudadanos.
 
 \subsection{La Paradoja de la Votación Electrónica frente a la Banca Digital}
 
-Para comprender por qué el diseño de un protocolo de votación electrónica requiere un tratamiento especial en ciberseguridad, resulta útil compararlo con un sistema de banca por Internet. Autores como Saltman (2006), Volkamer (2009) y Bernhard et al. (2012) coinciden en que ambos sistemas persiguen objetivos opuestos en cuanto al manejo de los comprobantes. Mientras que en una transferencia bancaria la seguridad se apoya en el registro detallado y trazable de la operación (donde el cliente exige un comprobante con su nombre, fecha y monto), en una elección democrática ocurre lo contrario: el sistema tiene estrictamente prohibido entregar un recibo vinculable que revele el candidato elegido, evitando así la compra de votos o la coacción.
+Para comprender por qué el diseño de un protocolo de votación electrónica requiere un tratamiento especial en ciberseguridad, resulta útil compararlo con un sistema de banca por Internet. Autores como Panizo Alonso (2007), Reniu (2008) y Barrat i Esteve (2012) coinciden en que ambos sistemas persiguen objetivos opuestos en cuanto al manejo de los comprobantes. Mientras que en una transferencia bancaria la seguridad se apoya en el registro detallado y trazable de la operación (donde el cliente exige un comprobante con su nombre, fecha y monto), en una elección democrática ocurre lo contrario: el sistema tiene estrictamente prohibido entregar un recibo vinculable que revele el candidato elegido, evitando así la compra de votos o la coacción.
 
 Es decir, la paradoja de la votación electrónica consiste en que el sistema debe darle al ciudadano la seguridad de que su voto fue recibido y contado, pero sin mostrar en el recibo la opción elegida. Para lograr este equilibrio, los protocolos modernos entregan un código resumen criptográfico (hash) del voto cifrado, el cual identifica la operación ante el ciudadano sin revelar a terceros el sentido de su voto.
 
