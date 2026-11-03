@@ -160,85 +160,128 @@ Si la tabla de boletas almacenara una clave foránea hacia la cédula del ciudad
 		keyattr/.style={ellipse, draw=PQCMainBlue, fill=BoxBgBlue, line width=1.2pt, font=\tiny\bfseries, align=center, inner sep=2.4pt}
 	]
 		% --- Cuadro de Simbología / Leyenda ---
-		\draw[draw=gray!50, fill=gray!4, rounded corners=3pt, line width=0.5pt] (-10.4, 3.6) rectangle (-6.2, 5.3);
-		\node[font=\scriptsize\bfseries\color{PQCDark}] at (-8.3, 5.05) {Simbología};
-		\node[keyattr, scale=0.85] (leg_pk) at (-9.4, 4.45) {\underline{id\_pk}};
+		\draw[draw=gray!50, fill=gray!4, rounded corners=3pt, line width=0.5pt] (-13.2, 4.8) rectangle (-9.5, 6.4);
+		\node[font=\scriptsize\bfseries\color{PQCDark}] at (-11.35, 6.15) {Simbología};
+		\node[keyattr, scale=0.85] (leg_pk) at (-12.3, 5.55) {\underline{id\_pk}};
 		\node[right=2pt of leg_pk, font=\tiny\bfseries] {Clave Primaria (PK)};
-		\node[attr, scale=0.85] (leg_at) at (-9.4, 3.95) {atributo};
+		\node[attr, scale=0.85] (leg_at) at (-12.3, 5.05) {atributo};
 		\node[right=2pt of leg_at, font=\tiny] {Atributo común};
 
 		% --- Entidades Principales ---
-		\node[entity] (elec) at (0, 3.8) {ELECCIÓN};
-		\node[entity] (padron) at (-6.2, 0.8) {PADRÓN\_VOTANTE};
-		\node[entity] (cred) at (-6.2, -3.2) {CREDENCIAL\_AR};
-		\node[entity] (anfora) at (6.2, 0.8) {BOLETA\_CIFRADA};
-		\node[entity] (recibo) at (6.2, -3.2) {RECIBO\_VOTACIÓN};
-		\node[entity] (audit) at (0, -4.6) {BITÁCORA\_AUDITORÍA};
+		\node[entity] (elec) at (0, 1.8) {ELECCIÓN};
+		
+		% Rama Superior: Usuarios y Candidatos
+		\node[entity] (usr) at (-6.2, 5.2) {USUARIO\_SISTEMA};
+		\node[entity] (cand) at (6.2, 5.2) {CANDIDATO};
+		
+		% Rama Intermedia: Padrón y Ánfora
+		\node[entity] (padron) at (-8.2, 1.2) {PADRÓN\_VOTANTE};
+		\node[entity] (anfora) at (8.2, 1.2) {BOLETA\_CIFRADA};
+		
+		% Rama Inferior: Credenciales y Recibos
+		\node[entity] (cred) at (-8.2, -3.2) {CREDENCIAL\_AR};
+		\node[entity] (recibo) at (8.2, -3.2) {RECIBO\_VOTACIÓN};
+		
+		% Rama Inferior Central: Auditoría y Resultados
+		\node[entity] (audit) at (-2.8, -3.6) {BITÁCORA\_AUDITORÍA};
+		\node[entity] (res) at (2.8, -3.6) {RESULTADO\_ESCRUTINIO};
 		
 		% --- Relaciones ---
-		\node[rel] (r1) at (-3.1, 2.3) {Habilita};
-		\node[rel] (r2) at (-6.2, -1.2) {Posee};
-		\node[rel] (r3) at (3.1, 2.3) {Custodia};
-		\node[rel] (r4) at (6.2, -1.2) {Genera};
-		\node[rel] (r5) at (0, -0.4) {Registra};
+		\node[rel] (r_usr) at (-3.1, 3.5) {Asigna};
+		\node[rel] (r_cand) at (3.1, 3.5) {Inscribe};
+		\node[rel] (r1) at (-4.1, 1.4) {Habilita};
+		\node[rel] (r3) at (4.1, 1.4) {Custodia};
+		\node[rel] (r2) at (-8.2, -1.0) {Posee};
+		\node[rel] (r4) at (8.2, -1.0) {Genera};
+		\node[rel] (r5) at (-1.4, -0.9) {Registra};
+		\node[rel] (r_res) at (1.4, -0.9) {Consolida};
 		
 		% --- Conexiones y Cardinalidades ---
+		\draw[link] (elec) -- (r_usr) node[midway, left, font=\tiny] {1};
+		\draw[link] (r_usr) -- (usr) node[midway, left, font=\tiny] {N};
+		
+		\draw[link] (elec) -- (r_cand) node[midway, right, font=\tiny] {1};
+		\draw[link] (r_cand) -- (cand) node[midway, right, font=\tiny] {N};
+		
 		\draw[link] (elec) -- (r1) node[midway, above, font=\tiny] {1};
 		\draw[link] (r1) -- (padron) node[midway, above, font=\tiny] {N};
-		\draw[link] (padron) -- (r2) node[midway, left, font=\tiny] {1};
-		\draw[link] (r2) -- (cred) node[midway, left, font=\tiny] {1};
+		
 		\draw[link] (elec) -- (r3) node[midway, above, font=\tiny] {1};
 		\draw[link] (r3) -- (anfora) node[midway, above, font=\tiny] {N};
+		
+		\draw[link] (padron) -- (r2) node[midway, left, font=\tiny] {1};
+		\draw[link] (r2) -- (cred) node[midway, left, font=\tiny] {1};
+		
 		\draw[link] (anfora) -- (r4) node[midway, right, font=\tiny] {1};
 		\draw[link] (r4) -- (recibo) node[midway, right, font=\tiny] {1};
+		
 		\draw[link] (elec) -- (r5) node[midway, left, font=\tiny] {1};
 		\draw[link] (r5) -- (audit) node[midway, left, font=\tiny] {N};
 		
+		\draw[link] (elec) -- (r_res) node[midway, right, font=\tiny] {1};
+		\draw[link] (r_res) -- (res) node[midway, right, font=\tiny] {N};
+
 		% --- Atributos de ELECCIÓN ---
-		\node[keyattr] (k_el) at (0, 5.3) {\underline{id\_eleccion}}; \draw[link] (elec) -- (k_el);
-		\node[attr] (a_el_nom) at (-2.3, 5.0) {nombre}; \draw[link] (elec) -- (a_el_nom);
-		\node[attr] (a_el_fas) at (2.3, 5.0) {estado\_fase}; \draw[link] (elec) -- (a_el_fas);
-		\node[attr] (a_el_ini) at (-4.3, 4.4) {fecha\_inicio}; \draw[link] (elec) -- (a_el_ini);
-		\node[attr] (a_el_fin) at (4.3, 4.4) {fecha\_fin}; \draw[link] (elec) -- (a_el_fin);
-		\node[attr] (a_el_pkar) at (-3.9, 3.4) {pk\_ar}; \draw[link] (elec) -- (a_el_pkar);
-		\node[attr] (a_el_ekac) at (3.9, 3.4) {ek\_ac}; \draw[link] (elec) -- (a_el_ekac);
-		
+		\node[keyattr] (k_el) at (0, 3.0) {\underline{id\_eleccion}}; \draw[link] (elec) -- (k_el);
+		\node[attr] (a_el_nom) at (-1.5, 2.5) {nombre}; \draw[link] (elec) -- (a_el_nom);
+		\node[attr] (a_el_fas) at (1.5, 2.5) {estado\_fase}; \draw[link] (elec) -- (a_el_fas);
+		\node[attr] (a_el_pkar) at (-1.6, 0.7) {pk\_ar}; \draw[link] (elec) -- (a_el_pkar);
+		\node[attr] (a_el_ekac) at (1.6, 0.7) {ek\_ac}; \draw[link] (elec) -- (a_el_ekac);
+
+		% --- Atributos de USUARIO_SISTEMA ---
+		\node[keyattr] (k_usr) at (-6.2, 6.4) {\underline{id\_usuario}}; \draw[link] (usr) -- (k_usr);
+		\node[attr] (a_usr_ide) at (-3.9, 5.9) {id\_eleccion (FK)}; \draw[link] (usr) -- (a_usr_ide);
+		\node[attr] (a_usr_usr) at (-8.3, 5.9) {username}; \draw[link] (usr) -- (a_usr_usr);
+		\node[attr] (a_usr_pwd) at (-8.6, 4.9) {password\_hash}; \draw[link] (usr) -- (a_usr_pwd);
+		\node[attr] (a_usr_rol) at (-6.2, 4.0) {rol}; \draw[link] (usr) -- (a_usr_rol);
+
+		% --- Atributos de CANDIDATO ---
+		\node[keyattr] (k_cand) at (6.2, 6.4) {\underline{id\_candidato}}; \draw[link] (cand) -- (k_cand);
+		\node[attr] (a_cand_ide) at (3.9, 5.9) {id\_eleccion (FK)}; \draw[link] (cand) -- (a_cand_ide);
+		\node[attr] (a_cand_nom) at (8.3, 5.9) {nombre\_completo}; \draw[link] (cand) -- (a_cand_nom);
+		\node[attr] (a_cand_sig) at (8.6, 4.9) {sigla\_frente}; \draw[link] (cand) -- (a_cand_sig);
+		\node[attr] (a_cand_car) at (6.2, 4.0) {cargo}; \draw[link] (cand) -- (a_cand_car);
+
 		% --- Atributos de PADRÓN_VOTANTE ---
-		\node[keyattr] (k_pa) at (-6.2, 2.3) {\underline{id\_eleccion, id\_votante}}; \draw[link] (padron) -- (k_pa);
-		\node[attr] (a_pa_hav) at (-4.0, 1.6) {ha\_votado}; \draw[link] (padron) -- (a_pa_hav);
-		\node[attr] (a_pa_tsv) at (-4.0, 0.0) {timestamp\_voto}; \draw[link] (padron) -- (a_pa_tsv);
-		\node[attr] (a_pa_nom) at (-8.8, 1.8) {nombres}; \draw[link] (padron) -- (a_pa_nom);
-		\node[attr] (a_pa_ape) at (-9.2, 0.8) {apellidos}; \draw[link] (padron) -- (a_pa_ape);
-		\node[attr] (a_pa_car) at (-8.8, -0.2) {carrera}; \draw[link] (padron) -- (a_pa_car);
-		
+		\node[keyattr] (k_pa) at (-8.2, 2.5) {\underline{id\_eleccion, id\_votante}}; \draw[link] (padron) -- (k_pa);
+		\node[attr] (a_pa_hav) at (-5.8, 1.9) {ha\_votado}; \draw[link] (padron) -- (a_pa_hav);
+		\node[attr] (a_pa_tsv) at (-5.8, 0.5) {timestamp\_voto}; \draw[link] (padron) -- (a_pa_tsv);
+		\node[attr] (a_pa_nom) at (-10.7, 1.9) {nombres}; \draw[link] (padron) -- (a_pa_nom);
+		\node[attr] (a_pa_ape) at (-11.0, 1.1) {apellidos}; \draw[link] (padron) -- (a_pa_ape);
+		\node[attr] (a_pa_car) at (-10.7, 0.3) {carrera}; \draw[link] (padron) -- (a_pa_car);
+
 		% --- Atributos de CREDENCIAL_AR ---
-		\node[keyattr] (k_cr) at (-8.8, -2.4) {\underline{id\_credencial}}; \draw[link] (cred) -- (k_cr);
-		\node[attr] (a_cr_idv) at (-9.3, -3.3) {id\_votante (FK)}; \draw[link] (cred) -- (a_cr_idv);
-		\node[attr] (a_cr_pkv) at (-8.4, -4.4) {pk\_votante\_hex}; \draw[link] (cred) -- (a_cr_pkv);
-		\node[attr] (a_cr_far) at (-6.2, -4.6) {firma\_ar\_hex}; \draw[link] (cred) -- (a_cr_far);
-		\node[attr] (a_cr_tse) at (-4.3, -4.2) {timestamp\_emision}; \draw[link] (cred) -- (a_cr_tse);
-		
+		\node[keyattr] (k_cr) at (-10.6, -2.5) {\underline{id\_credencial}}; \draw[link] (cred) -- (k_cr);
+		\node[attr] (a_cr_idv) at (-11.0, -3.3) {id\_votante (FK)}; \draw[link] (cred) -- (a_cr_idv);
+		\node[attr] (a_cr_pkv) at (-10.0, -4.3) {pk\_votante\_hex}; \draw[link] (cred) -- (a_cr_pkv);
+		\node[attr] (a_cr_far) at (-8.2, -4.5) {firma\_ar\_hex}; \draw[link] (cred) -- (a_cr_far);
+		\node[attr] (a_cr_tse) at (-6.4, -4.2) {timestamp\_emision}; \draw[link] (cred) -- (a_cr_tse);
+
 		% --- Atributos de BOLETA_CIFRADA ---
-		\node[keyattr] (k_an) at (6.2, 2.3) {\underline{id\_boleta}}; \draw[link] (anfora) -- (k_an);
-		\node[attr] (a_an_ide) at (4.0, 1.6) {id\_eleccion (FK)}; \draw[link] (anfora) -- (a_an_ide);
-		\node[attr] (a_an_hsh) at (4.0, 0.0) {hash\_sha3}; \draw[link] (anfora) -- (a_an_hsh);
-		\node[attr] (a_an_kem) at (9.4, 1.8) {ciphertext\_kem}; \draw[link] (anfora) -- (a_an_kem);
-		\node[attr] (a_an_vot) at (9.6, 0.9) {voto\_cifrado}; \draw[link] (anfora) -- (a_an_vot);
-		\node[attr] (a_an_non) at (9.4, 0.0) {nonce\_aead}; \draw[link] (anfora) -- (a_an_non);
-		\node[attr] (a_an_tsr) at (8.6, -0.9) {timestamp\_recepcion}; \draw[link] (anfora) -- (a_an_tsr);
-		
+		\node[keyattr] (k_an) at (8.2, 2.5) {\underline{id\_boleta}}; \draw[link] (anfora) -- (k_an);
+		\node[attr] (a_an_ide) at (5.8, 1.9) {id\_eleccion (FK)}; \draw[link] (anfora) -- (a_an_ide);
+		\node[attr] (a_an_hsh) at (5.8, 0.5) {hash\_sha3}; \draw[link] (anfora) -- (a_an_hsh);
+		\node[attr] (a_an_kem) at (11.0, 1.9) {ciphertext\_kem}; \draw[link] (anfora) -- (a_an_kem);
+		\node[attr] (a_an_vot) at (11.2, 1.1) {voto\_cifrado}; \draw[link] (anfora) -- (a_an_vot);
+		\node[attr] (a_an_non) at (11.0, 0.3) {nonce\_aead}; \draw[link] (anfora) -- (a_an_non);
+
 		% --- Atributos de RECIBO_VOTACIÓN ---
-		\node[keyattr] (k_re) at (8.8, -2.4) {\underline{id\_recibo}}; \draw[link] (recibo) -- (k_re);
-		\node[attr] (a_re_idb) at (9.3, -3.3) {id\_boleta (FK)}; \draw[link] (recibo) -- (a_re_idb);
-		\node[attr] (a_re_tsr) at (8.4, -4.4) {timestamp\_recibo}; \draw[link] (recibo) -- (a_re_tsr);
-		\node[attr] (a_re_fsv) at (6.2, -4.6) {firma\_sv\_hex}; \draw[link] (recibo) -- (a_re_fsv);
-		
+		\node[keyattr] (k_re) at (10.6, -2.5) {\underline{id\_recibo}}; \draw[link] (recibo) -- (k_re);
+		\node[attr] (a_re_idb) at (11.0, -3.3) {id\_boleta (FK)}; \draw[link] (recibo) -- (a_re_idb);
+		\node[attr] (a_re_tsr) at (10.0, -4.3) {timestamp\_recibo}; \draw[link] (recibo) -- (a_re_tsr);
+		\node[attr] (a_re_fsv) at (8.2, -4.5) {firma\_sv\_hex}; \draw[link] (recibo) -- (a_re_fsv);
+
 		% --- Atributos de BITÁCORA_AUDITORÍA ---
-		\node[keyattr] (k_au) at (0, -6.0) {\underline{id\_evento}}; \draw[link] (audit) -- (k_au);
-		\node[attr] (a_au_ide) at (-2.7, -5.6) {id\_eleccion (FK)}; \draw[link] (audit) -- (a_au_ide);
-		\node[attr] (a_au_tip) at (-2.8, -3.7) {tipo\_evento}; \draw[link] (audit) -- (a_au_tip);
-		\node[attr] (a_au_des) at (2.8, -3.7) {descripcion}; \draw[link] (audit) -- (a_au_des);
-		\node[attr] (a_au_tse) at (2.7, -5.6) {timestamp\_evento}; \draw[link] (audit) -- (a_au_tse);
+		\node[keyattr] (k_au) at (-2.8, -4.8) {\underline{id\_evento}}; \draw[link] (audit) -- (k_au);
+		\node[attr] (a_au_ide) at (-4.7, -4.3) {id\_eleccion (FK)}; \draw[link] (audit) -- (a_au_ide);
+		\node[attr] (a_au_tip) at (-4.5, -3.1) {tipo\_evento}; \draw[link] (audit) -- (a_au_tip);
+		\node[attr] (a_au_des) at (-1.2, -4.6) {descripcion}; \draw[link] (audit) -- (a_au_des);
+
+		% --- Atributos de RESULTADO_ESCRUTINIO ---
+		\node[keyattr] (k_res) at (2.8, -4.8) {\underline{id\_resultado}}; \draw[link] (res) -- (k_res);
+		\node[attr] (a_res_ide) at (4.7, -4.3) {id\_eleccion (FK)}; \draw[link] (res) -- (a_res_ide);
+		\node[attr] (a_res_tot) at (1.2, -4.6) {votos\_totales}; \draw[link] (res) -- (a_res_tot);
+		\node[attr] (a_res_fir) at (4.5, -3.1) {firma\_acta\_ac}; \draw[link] (res) -- (a_res_fir);
 	\end{tikzpicture}
 	}%
 	\caption{Modelo Entidad-Relación de la base de datos.}
@@ -246,7 +289,7 @@ Si la tabla de boletas almacenara una clave foránea hacia la cédula del ciudad
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
 
-En la Tabla \ref{tab:diccionario_datos} se sintetiza la estructura de las seis tablas relacionales normalizadas en Tercera Forma Normal (3FN), detallando sus llaves primarias, atributos principales y mecanismos de seguridad.
+En la Tabla \ref{tab:diccionario_datos} se sintetiza la estructura de las nueve tablas relacionales normalizadas en Tercera Forma Normal (3FN), detallando sus llaves primarias, atributos principales y mecanismos de seguridad.
 
 \begin{table}[!htbp]
 	\centering
@@ -254,7 +297,7 @@ En la Tabla \ref{tab:diccionario_datos} se sintetiza la estructura de las seis t
 	\footnotesize
 	\caption{Esquema relacional en tercera forma normal.}
 	\label{tab:diccionario_datos}
-	\begin{tabularx}{\textwidth}{|>{\bfseries\raggedright\arraybackslash}p{3.0cm}|>{\raggedright\arraybackslash}p{2.7cm}|>{\raggedright\arraybackslash}p{4.3cm}|>{\raggedright\arraybackslash}X|}
+	\begin{tabularx}{\textwidth}{|>{\bfseries\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.6cm}|>{\raggedright\arraybackslash}p{4.3cm}|>{\raggedright\arraybackslash}X|}
 		\hline
 		\textbf{Tabla Relacional} & \textbf{Clave Primaria} & \textbf{Atributos Principales} & \textbf{Función y Regla de Seguridad} \\
 		\hline
@@ -269,6 +312,12 @@ En la Tabla \ref{tab:diccionario_datos} se sintetiza la estructura de las seis t
 		5. Recibos de Votación & id\_recibo & id\_boleta (FK única), timestamp\_recibo, firma\_sv\_hex & Conserva el comprobante firmado por el Servidor de Votación para auditoría individual. \\
 		\hline
 		6. Bitácora de Eventos & id\_evento & id\_eleccion (FK), tipo\_evento, descripcion, timestamp\_evento & Registra los eventos de apertura, cierre y escrutinio excluyendo direcciones IP de votantes. \\
+		\hline
+		7. Candidatos & id\_candidato & id\_eleccion (FK), nombre\_completo, sigla\_frente, cargo, numero\_lista & Catálogo de opciones y listas electorales para la presentación en cabina. \\
+		\hline
+		8. Usuarios del Sistema & id\_usuario & id\_eleccion (FK), username, password\_hash, rol, ultimo\_acceso & Control de acceso RBAC para Jurados de Mesa y Administradores del Tribunal. \\
+		\hline
+		9. Resultados de Escrutinio & id\_resultado & id\_eleccion (FK), id\_candidato (FK), votos\_totales, firma\_acta\_ac & Consolidación oficial del cómputo electoral auditado y firmado tras el escrutinio de la AC. \\
 		\hline
 	\end{tabularx}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}

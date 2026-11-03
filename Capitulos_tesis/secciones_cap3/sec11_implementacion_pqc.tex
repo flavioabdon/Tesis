@@ -91,15 +91,16 @@ La aplicación web implementada en Flask materializa los modelos UWE separando l
 
 \begin{figure}[!htbp]
 	\centering
-	\begin{tikzpicture}
-		\draw[line width=0.9pt, dashed, draw=black, fill=white, rounded corners=3pt] (0,0) rectangle (13.2, 3.3);
-		\node[align=center, font=\footnotesize\rmfamily, text width=11.8cm] at (6.6, 1.65) {
-			\textbf{[ESPACIO RESERVADO PARA CAPTURA DE PANTALLA 1]}\\[3pt]
-			\textbf{Portal de Acceso (/login) y Panel del Jurado de Mesa (/jurado)}\\[2pt]
-			\scriptsize Archivo sugerido: \textit{imagenes/cap\_01\_login\_y\_jurado.png}\\
-			\scriptsize (Mostrar el selector de rol en /login y la vista /jurado con el padrón electoral, credenciales ML-DSA-65 y botón de habilitar en cabina).
-		};
-	\end{tikzpicture}
+	\begin{minipage}[b]{0.35\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Capturas_de_pantalla/captura-1-login.png}
+		\par\vspace{2pt}{\scriptsize (a) Acceso de jurados (/login)}
+	\end{minipage}\hfill
+	\begin{minipage}[b]{0.62\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Capturas_de_pantalla/captura-1-panel.png}
+		\par\vspace{2pt}{\scriptsize (b) Panel del jurado de mesa (/jurado)}
+	\end{minipage}
 	\caption{Interfaz de acceso y jurado de mesa.}
 	\label{fig:cap_interfaz_inicio}
 	\par\vspace{2pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
@@ -107,48 +108,33 @@ La aplicación web implementada en Flask materializa los modelos UWE separando l
 
 \begin{figure}[!htbp]
 	\centering
-	\begin{tikzpicture}
-		\draw[line width=0.9pt, dashed, draw=black, fill=white, rounded corners=3pt] (0,0) rectangle (13.2, 3.3);
-		\node[align=center, font=\footnotesize\rmfamily, text width=11.8cm] at (6.6, 1.65) {
-			\textbf{[ESPACIO RESERVADO PARA CAPTURA DE PANTALLA 2]}\\[3pt]
-			\textbf{Vista del Ciudadano (/ciudadano): Cabina de Votación y Panel Criptográfico en Vivo}\\[2pt]
-			\scriptsize Archivo sugerido: \textit{imagenes/cap\_02\_cabina\_y\_panel\_pqc.png}\\
-			\scriptsize (Mostrar la selección de candidato en /ciudadano junto con el panel criptográfico pedagógico en vivo de ML-KEM-768, AES-256-GCM y ML-DSA-65).
-		};
-	\end{tikzpicture}
-	\caption{Interfaz de cabina y panel criptográfico.}
+	\begin{minipage}[b]{0.35\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Capturas_de_pantalla/captura-2-login.png}
+		\par\vspace{2pt}{\scriptsize (a) Ingreso a cabina (/login)}
+	\end{minipage}\hfill
+	\begin{minipage}[b]{0.62\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Capturas_de_pantalla/captura-2-panel.png}
+		\par\vspace{2pt}{\scriptsize (b) Papeleta electrónica (/ciudadano)}
+	\end{minipage}
+	\caption{Interfaz de cabina y papeleta de sufragio.}
 	\label{fig:cap_interfaz_cabina}
 	\par\vspace{2pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
 
 \begin{figure}[!htbp]
 	\centering
-	\begin{tikzpicture}
-		\draw[line width=0.9pt, dashed, draw=black, fill=white, rounded corners=3pt] (0,0) rectangle (13.2, 3.3);
-		\node[align=center, font=\footnotesize\rmfamily, text width=11.8cm] at (6.6, 1.65) {
-			\textbf{[ESPACIO RESERVADO PARA CAPTURA DE PANTALLA 3]}\\[3pt]
-			\textbf{Vista del Ciudadano (/ciudadano): Recibo Oficial SHA3-256 y Bloqueo de Doble Voto}\\[2pt]
-			\scriptsize Archivo sugerido: \textit{imagenes/cap\_03\_recibo\_emitido.png}\\
-			\scriptsize (Mostrar el comprobante digital emitido al ciudadano con el resumen SHA3-256 de 64 caracteres y el bloqueo de reingreso activo).
-		};
-	\end{tikzpicture}
-	\caption{Interfaz de recibo digital de votación.}
+	\includegraphics[width=0.88\textwidth]{Capturas_de_pantalla/captura-3-recibo-oficial.png}
+	\caption{Interfaz de emisión y recibo digital de votación.}
 	\label{fig:cap_interfaz_recibo}
 	\par\vspace{2pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
 
 \begin{figure}[!htbp]
 	\centering
-	\begin{tikzpicture}
-		\draw[line width=0.9pt, dashed, draw=black, fill=white, rounded corners=3pt] (0,0) rectangle (13.2, 3.3);
-		\node[align=center, font=\footnotesize\rmfamily, text width=11.8cm] at (6.6, 1.65) {
-			\textbf{[ESPACIO RESERVADO PARA CAPTURA DE PANTALLA 4]}\\[3pt]
-			\textbf{Panel del Tribunal Electoral (/admin): Escrutinio, Gráficos y Auditoría SHA3-256}\\[2pt]
-			\scriptsize Archivo sugerido: \textit{imagenes/cap\_04\_tribunal\_escrutinio\_auditoria.png}\\
-			\scriptsize (Mostrar la vista /admin con el selector de motor PQC/Clásico, los gráficos de resultados del escrutinio y el tablón público de recibos SHA3-256).
-		};
-	\end{tikzpicture}
-	\caption{Interfaz del tribunal, escrutinio y auditoría.}
+	\includegraphics[width=0.92\textwidth]{Capturas_de_pantalla/captura-4-panel-admin.png}
+	\caption{Interfaz del tribunal electoral y ánfora digital.}
 	\label{fig:cap_interfaz_escrutinio}
 	\par\vspace{2pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
