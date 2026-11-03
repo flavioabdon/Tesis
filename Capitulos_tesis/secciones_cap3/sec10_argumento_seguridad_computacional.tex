@@ -12,12 +12,12 @@ Mientras la verificación en Tamarin Prover demuestra la ausencia de fallos lóg
 	\item \textbf{Integridad y Autenticidad (Seguridad EUF-CMA):}
 	Las credenciales emitidas por la Autoridad de Registro y las boletas firmadas por el ciudadano están resguardadas por el esquema ML-DSA-65 (FIPS 204). Falsificar una firma válida sin poseer la clave privada $sk_V$ o $sk_{\text{AR}}$ exige hallar un vector polinomial corto $\mathbf{z}$ que satisfaga la cota de rechazo $\|\mathbf{z}\|_\infty < \gamma_1 - \beta$, lo cual se reduce directamente a la intratabilidad de los problemas Module-SIS y Module-LWE.
 
-	\item \textbf{Unicidad del Sufragio y Disociación Transaccional (Pseudocódigo):}
+	\item \textbf{Unicidad del Sufragio y Desvinculación Transaccional (Pseudocódigo):}
 	La imposibilidad de doble voto se garantiza mediante una operación atómica indivisible en el Servidor de Votación que consume el estado de habilitación del elector en el mismo paso en que almacena la boleta anónima, tal como se expresa en el siguiente pseudocódigo:
 
 	\vspace{4pt}
 	\noindent\fbox{\parbox{0.96\textwidth}{\footnotesize
-	\textbf{Algoritmo 3.1: Recepción Atómica, Control de Voto Único y Disociación en Urna}\\[2pt]
+	\textbf{Algoritmo 3.1: Recepción Atómica, Control de Voto Único y Depósito Anónimo en Urna}\\[2pt]
 	\textbf{Entrada:} Paquete de voto $P = \langle \text{Boleta}, \sigma_V, \text{Cred} \rangle$, claves públicas $pk_{\text{AR}}, pk_{\text{SV}}$, clave privada $sk_{\text{SV}}$.\\
 	\textbf{Salida:} Recibo firmado $R$ o rechazo de transacción.\\[2pt]
 	1: \textbf{Si} $\text{ML-DSA-65.Verificar}(pk_{\text{AR}}, \text{Cred}, \sigma_{\text{AR}}) = \text{Falso}$ \textbf{entonces retornar} RechazoCredencial\\

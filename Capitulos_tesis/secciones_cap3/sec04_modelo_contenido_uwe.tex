@@ -1,4 +1,4 @@
-\section{Modelo de Contenido (UWE) y Persistencia Disociada}
+\section{Modelo de Contenido (UWE) y Modelo Relacional de Base de Datos}
 \label{sec:diagrama_clases_detallado}
 \label{sec:diseno_bbdd}
 % =============================================================================
@@ -145,9 +145,9 @@ En la Figura \ref{fig:uml_clases_detallado} se presenta el Diagrama de Clases UM
 
 Las cinco clases de contenido («contentClass») cumplen funciones específicas y verificables: \textbf{CredencialVotante} almacena la clave pública ML-DSA-65 del elector (1952 B) avalada por la firma de la Autoridad de Registro (3309 B); \textbf{BoletaSufragio} encapsula de forma anónima el criptograma ML-KEM-768 (1088 B), el voto cifrado (48 B) y el vector de inicialización (12 B); \textbf{PaqueteVoto} agrupa mediante composición la boleta y la credencial junto con la firma del votante (3309 B) para su transmisión; \textbf{ReciboVotacion} contiene el resumen SHA3-256 (32 B) firmado por el servidor; y \textbf{ResultadoEscrutinio} consolida el cómputo final y la lista de resúmenes auditables. Para que la firma digital produzca siempre el mismo resultado binario, todos los objetos se transforman previamente mediante una función de serialización canónica que ordena alfabéticamente sus atributos sin espacios intermedios y aplica separación de contexto según el tipo de documento (credencial, boleta o recibo).
 
-\subsection{Principio de Disociación Criptográfica y Modelo Entidad-Relación}
+\subsection{Modelo Entidad-Relación y Privacidad del Sufragio}
 
-Si la tabla de boletas almacenara una clave foránea hacia la cédula del ciudadano, cualquier administrador de base de datos podría cruzar ambas tablas y vulnerar el secreto del sufragio. Para evitarlo, el diseño aplica el \textbf{principio de disociación criptográfica}, ilustrado en el Modelo Entidad-Relación de la Figura \ref{fig:bbdd_er}: al validar el paquete de voto, el Servidor de Votación marca el indicador de sufragio emitido en la rama del padrón (izquierda) y deposita únicamente la boleta cifrada anónima en la rama de la urna digital (derecha), sin relación foránea entre el elector y la boleta.
+Si la tabla de boletas almacenara una clave foránea hacia la cédula del ciudadano, cualquier administrador de base de datos podría cruzar ambas tablas y vulnerar el secreto del sufragio. Para evitarlo, el diseño aplica la \textbf{desvinculación criptográfica de identidad}, ilustrado en el Modelo Entidad-Relación de la Figura \ref{fig:bbdd_er}: al validar el paquete de voto, el Servidor de Votación marca el indicador de sufragio emitido en la rama del padrón (izquierda) y deposita únicamente la boleta cifrada anónima en la rama de la urna digital (derecha), sin relación foránea entre el elector y la boleta.
 
 \begin{figure}[!htbp]
 	\centering
@@ -190,7 +190,7 @@ Si la tabla de boletas almacenara una clave foránea hacia la cédula del ciudad
 		\node[keyattr] (k_au) at (0, -4.95) {\underline{id\_evento}}; \draw[link] (audit) -- (k_au);
 	\end{tikzpicture}
 	}%
-	\caption{Modelo entidad-relación con disociación de identidad.}
+	\caption{Modelo Entidad-Relación de la base de datos electoral.}
 	\label{fig:bbdd_er}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}

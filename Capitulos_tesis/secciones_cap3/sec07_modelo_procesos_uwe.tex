@@ -113,7 +113,7 @@ En la Figura \ref{fig:uml_secuencia_votacion} se modela la interacción cronoló
 		\draw[msg] ([yshift=-4.8cm]V.center) -- ([yshift=-4.8cm]SV.center) node[midway, above, font=\scriptsize] {3: EnviarPaqueteVoto(Boleta, $\sigma_V$, Credencial)};
 		
 		\node[note, left=0.2cm of SV, yshift=-5.8cm] {
-			\textbf{Verificación y Disociación en SV:}\\
+			\textbf{Verificación y Registro Anónimo en SV:}\\
 			$\bullet$ Verificar $\sigma_{AR}$ con $pk_{AR}$ y $\sigma_V$ con $pk_V$\\
 			$\bullet$ Verificar $\text{ha\_votado} = \text{falso}$ y marcar $\text{verdadero}$\\
 			$\bullet$ Guardar solo Boleta anónima en el ánfora\\
@@ -189,7 +189,7 @@ Finalmente, en la Figura \ref{fig:uml_estados_boleta} se presenta la máquina de
 		\node[state] (s3) at (10.8, 0) {3. Firmada Digitalmente\\(ML-DSA-65)};
 		
 		\node[state] (s4) at (10.8, -2.3) {4. En Transmisión\\(Canal Red Dolev--Yao)};
-		\node[state] (s5) at (6.6, -2.3) {5. Custodiada en Urna\\(Ánfora Disociada)};
+		\node[state] (s5) at (6.6, -2.3) {5. Custodiada en Urna\\(Ánfora Digital)};
 		\node[state] (s6) at (2.4, -2.3) {6. Desencapsulada\\(Apertura con $dk_{\text{AC}}$)};
 		
 		\node[final] (sf) at (0, -2.3) {};

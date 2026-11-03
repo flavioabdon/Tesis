@@ -2,11 +2,11 @@
 \label{sec:diseno_bbdd}
 % =============================================================================
 
-\subsection{El Principio de Disociación Criptográfica para el Secreto del Voto}
+\subsection{El Principio de Desvinculación de Identidad para el Secreto del Voto}
 
 En los sistemas de bases de datos convencionales, las transacciones se vinculan comúnmente mediante claves foráneas directas entre la tabla de usuarios y la tabla de registros. Sin embargo, en un sistema electoral digital, replicar este esquema violaría el secreto del sufragio: cualquier administrador de base de datos con acceso a la sentencia SQL \texttt{SELECT * FROM votantes JOIN votos} podría asociar de forma inmediata la identidad de un elector con la opción política que apoyó.
 
-Para resolver este desafío, la base de datos implementa un esquema de \textbf{disociación estricta y asimétrica}:
+Para resolver este desafío, la base de datos implementa un esquema de \textbf{desvinculación estricta y asimétrica}:
 \begin{enumerate}
 	\item La tabla del padrón (\texttt{tbl\_padron\_votantes}) mantiene la trazabilidad del ciudadano mediante la clave primaria compuesta \texttt{(id\_eleccion, id\_votante)}, registrando el campo booleano \texttt{ha\_votado = TRUE} y la marca temporal redondeada a la ventana horaria definida en la Sección \ref{sec:ceremonia_identidad_adversarios} para impedir el doble voto sin revelar el instante exacto.
 	\item La tabla de la urna electrónica (\texttt{tbl\_anfora\_boletas}) almacena exclusivamente los criptogramas (\texttt{ciphertext\_kem}, \texttt{voto\_cifrado}, \texttt{nonce\_aead}) indexados por un identificador de boleta UUID generado al azar y el hash inmutable SHA3-256. No contiene identificador de votante, credencial ni firma digital $\sigma_V$.
@@ -15,7 +15,7 @@ Para resolver este desafío, la base de datos implementa un esquema de \textbf{d
 
 \subsection{Modelo Entidad-Relación (E-R) de la Base de Datos}
 
-La Figura \ref{fig:bbdd_er} expone el Modelo Entidad-Relación formal de la base de datos del prototipo con las entidades, relaciones, claves y cardinalidades alineadas al diseño de disociación.
+La Figura \ref{fig:bbdd_er} expone el Modelo Entidad-Relación formal de la base de datos del prototipo con las entidades, relaciones, claves y cardinalidades alineadas al diseño de desvinculación de identidad.
 
 \begin{figure}[!htbp]
 	\centering
@@ -78,7 +78,7 @@ La Figura \ref{fig:bbdd_er} expone el Modelo Entidad-Relación formal de la base
 		\draw[link] (audit) -- (k_au);
 	\end{tikzpicture}
 	}%
-	\caption{Modelo Entidad-Relación de la base de datos electoral con disociación de identidad.}
+	\caption{Modelo Entidad-Relación de la base de datos electoral.}
 	\label{fig:bbdd_er}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
@@ -162,7 +162,7 @@ La Tabla \ref{tab:diccionario_datos} describe los campos, tipos de datos SQL nat
 	firma\_ar\_hex & TEXT & NOT NULL & Firma digital de la AR sobre la credencial (3309 B). \\
 	\midrule
 
-	\multicolumn{4}{l}{\textbf{4. \texttt{tbl\_anfora\_boletas} (Urna Digital de Boletas Cifradas Disociadas)}} \\
+	\multicolumn{4}{l}{\textbf{4. \texttt{tbl\_anfora\_boletas} (Urna Digital de Boletas Cifradas)}} \\
 	\midrule
 	id\_boleta & VARCHAR(36) & \textbf{PK}, NOT NULL & UUID aleatorio de la boleta (anónima). \\
 	id\_eleccion & VARCHAR(36) & \textbf{FK}, NOT NULL & Vinculación a la elección correspondiente. \\

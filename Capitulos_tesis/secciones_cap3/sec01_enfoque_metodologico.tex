@@ -80,7 +80,7 @@ El sistema se rige por cuatro requerimientos funcionales (RF) y dos no funcional
 
 \begin{itemize}
 	\item \textbf{RF1 - Acreditación por Rol y Sufragio Único:} Todo ciudadano debe ser empadronado y habilitado por el Jurado de Mesa (Autoridad de Registro) mediante una credencial firmada con ML-DSA-65, garantizando que cada elector emita a lo sumo un voto válido.
-	\item \textbf{RF2 - Secreto del Voto y Disociación:} La boleta debe protegerse mediante encapsulamiento ML-KEM-768 y cifrado autenticado AES-256-GCM, desvinculando la identidad del elector respecto al ánfora digital.
+	\item \textbf{RF2 - Secreto del Voto y Desvinculación de Identidad:} La boleta debe protegerse mediante encapsulamiento ML-KEM-768 y cifrado autenticado AES-256-GCM, desvinculando la identidad del elector respecto al ánfora digital.
 	\item \textbf{RF3 - Integridad y Autenticidad:} Toda boleta debe incluir la firma digital ML-DSA-65 generada con la clave privada del votante ($sk_V$), impidiendo alteraciones en tránsito o suplantación de identidad.
 	\item \textbf{RF4 - Auditabilidad Individual:} Tras almacenar el voto, el sistema debe emitir un recibo firmado por el Servidor de Votación ($sk_{\text{SV}}$) con el resumen SHA3-256 de la boleta cifrada para su verificación en el tablón público.
 	\item \textbf{RNF1 - Viabilidad Operativa:} El tiempo de procesamiento criptográfico por sufragio debe ser inferior a $200\text{ ms}$.

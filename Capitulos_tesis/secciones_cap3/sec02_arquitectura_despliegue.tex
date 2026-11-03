@@ -4,7 +4,7 @@
 
 \subsection{Arquitectura en Capas del Sistema y Ubicación de Modelos UWE}
 
-La arquitectura del sistema se estructura en seis capas desacopladas (Figura \ref{fig:uml_arquitectura}). Las tres capas superiores materializan los modelos de la metodología UWE (vistas por rol, control de sesiones y clases de dominio electoral), mientras que las tres inferiores implementan el enlace criptográfico, el motor matemático propio en lenguaje C para los estándares FIPS 202, FIPS 203 y FIPS 204, y el almacenamiento disociado.
+La arquitectura del sistema se estructura en seis capas desacopladas (Figura \ref{fig:uml_arquitectura}). Las tres capas superiores materializan los modelos de la metodología UWE (vistas por rol, control de sesiones y clases de dominio electoral), mientras que las tres inferiores implementan el enlace criptográfico, el motor matemático propio en lenguaje C para los estándares FIPS 202, FIPS 203 y FIPS 204, y el almacenamiento en la base de datos relacional.
 
 \begin{figure}[!htbp]
 	\centering
@@ -53,7 +53,7 @@ La arquitectura del sistema se estructura en seis capas desacopladas (Figura \re
 
 		% Capa 6: Persistencia
 		\node[layer, below=0.45cm of capa5] (capa6) {};
-		\node[anchor=north, font=\scriptsize\rmfamily\bfseries] at ([yshift=-2pt]capa6.north) {Capa 6: Persistencia y Almacenamiento Relacional Disociado};
+		\node[anchor=north, font=\scriptsize\rmfamily\bfseries] at ([yshift=-2pt]capa6.north) {Capa 6: Persistencia y Almacenamiento en Base de Datos Relacional};
 		\node[subcomp] at (-4.3, -8.72) {Padrón Electoral de Votantes};
 		\node[subcomp] at (0.0, -8.72) {Ánfora Digital de Boletas Cifradas};
 		\node[subcomp] at (4.3, -8.72) {Tablón de Recibos y Auditoría};
@@ -106,7 +106,7 @@ En la Figura \ref{fig:uml_despliegue} se presenta el Diagrama de Despliegue UML 
 		\drawumlnode{db}
 		\node[anchor=north, font=\tiny\rmfamily, align=center] at ([yshift=-2.5pt]db.north) {«device»\\\textbf{Servidor Base de Datos}};
 		\node[artbox, below=0.9cm of db.north] {«executionEnvironment»\\Motor SQL Relacional};
-		\node[artbox, below=1.85cm of db.north] {«artifact»\\Esquema Relacional 3FN Disociado};
+		\node[artbox, below=1.85cm of db.north] {«artifact»\\Modelo Relacional de Base de Datos};
 
 		\node[nodebox] (ar_node) at (-5.2, -2.2) {};
 		\drawumlnode{ar_node}

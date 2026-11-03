@@ -6,7 +6,7 @@ Para modelar la dinámica temporal de las transacciones y los parámetros de los
 
 \subsection{Secuencia 1: Emisión, Validación Multinivel y Custodia del Voto}
 
-La Figura \ref{fig:uml_secuencia_votacion} detalla el intercambio de mensajes durante la jornada electoral activa, destacando la encapsulación contra la clave pública de la Autoridad de Conteo ($ek_{\text{AC}}$) y la disociación inmediata de identidad en el Servidor de Votación (SV).
+La Figura \ref{fig:uml_secuencia_votacion} detalla el intercambio de mensajes durante la jornada electoral activa, destacando la encapsulación contra la clave pública de la Autoridad de Conteo ($ek_{\text{AC}}$) y la desvinculación inmediata de identidad en el Servidor de Votación (SV).
 
 \begin{figure}[!htbp]
 	\centering
@@ -58,7 +58,7 @@ La Figura \ref{fig:uml_secuencia_votacion} detalla el intercambio de mensajes du
 		
 		% Validación en Servidor
 		\node[note, left=0.2cm of SV, yshift=-6.2cm] {
-			\textbf{Verificación Multinivel y Disociación en SV:}\\
+			\textbf{Verificación Multinivel y Registro Anónimo en SV:}\\
 			$\bullet$ $\text{ML-DSA.Verify}(\sigma_{AR}, \text{Credencial}, pk_{AR}) \stackrel{?}{=} \text{OK}$\\
 			$\bullet$ $\text{ML-DSA.Verify}(\sigma_V, \text{Boleta}, pk_V) \stackrel{?}{=} \text{OK}$\\
 			$\bullet$ Comprobación y bloqueo atómico: \texttt{ha\_votado = FALSE}\\
