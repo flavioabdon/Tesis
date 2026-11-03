@@ -175,19 +175,3 @@ Para verificar que los módulos propios en C y Python cumplen exactamente las es
 	\item \textbf{200 vectores oficiales KAT del NIST (100\% de aprobación):} Se evaluaron 100 vectores deterministas de ML-KEM-768 y 100 vectores de ML-DSA-65, comprobando la coincidencia exacta byte por byte de claves públicas, claves privadas, criptogramas, llaves compartidas y firmas digitales (\textbf{200 de 200 pruebas aprobadas}).
 	\item \textbf{Inyección de fallos y suite del sistema (23/23 aprobadas):} Ante la alteración de un solo bit en $ct_{\text{kem}}$, ML-KEM-768 aplica rechazo implícito derivando una llave distinta que es detectada de inmediato por la etiqueta GMAC de AES-256-GCM; por su parte, ML-DSA-65 aplica rechazo explícito invalidando el 100\% de las firmas o boletas alteradas.
 \end{itemize}
-
-\begin{figure}[!htbp]
-	\centering
-	\begin{tikzpicture}
-		\draw[line width=0.9pt, dashed, draw=black, fill=white, rounded corners=3pt] (0,0) rectangle (13.2, 3.2);
-		\node[align=center, font=\footnotesize\rmfamily, text width=11.8cm] at (6.6, 1.6) {
-			\textbf{[ESPACIO RESERVADO PARA CAPTURA DE PANTALLA 5]}\\[3pt]
-			\textbf{Ejecución de los 200 Vectores KAT del NIST y Suite de 23 Pruebas}\\[2pt]
-			\scriptsize Archivo sugerido: \textit{imagenes/cap\_05\_ejecucion\_kat\_nist.png}\\
-			\scriptsize (Mostrar la terminal ejecutando runner\_kat.py con 200/200 PASS [100.0\%] para ML-KEM-768 y ML-DSA-65, y pytest con 23 passed).
-		};
-	\end{tikzpicture}
-	\caption{Ejecución de pruebas de validación criptográfica.}
-	\label{fig:cap_consola_kat}
-	\par\vspace{2pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
-\end{figure}

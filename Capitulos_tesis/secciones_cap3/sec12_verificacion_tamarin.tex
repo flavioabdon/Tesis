@@ -34,7 +34,7 @@ El modelo formal se especificó mediante reglas de reescritura de multiconjuntos
 \label{subsec:tamarin_alcance_lemas}
 \label{subsec:tamarin_limites}
 
-Al ejecutar el demostrador automático con derivación de fuentes de tipado sobre 4 núcleos y 8 GB de RAM, Tamarin Prover verificó exitosamente los cinco lemas de seguridad y el lema auxiliar de tipos en un tiempo total de **4,58 segundos**, como detalla la Tabla \ref{tab:resultados_tamarin}.
+Al ejecutar el demostrador automático con derivación de fuentes de tipado sobre 4 núcleos y 8 GB de RAM, Tamarin Prover verificó exitosamente los cinco lemas de seguridad y el lema auxiliar de tipos en un tiempo total de \textbf{4,58 segundos}, como detallan la Tabla \ref{tab:resultados_tamarin} y la captura de terminal de la Figura \ref{fig:cap_tamarin_prover}.
 
 \begin{table}[!htbp]
 	\centering
@@ -61,15 +61,7 @@ Al ejecutar el demostrador automático con derivación de fuentes de tipado sobr
 
 \begin{figure}[!htbp]
 	\centering
-	\begin{tikzpicture}
-		\draw[line width=0.9pt, dashed, draw=black, fill=white, rounded corners=3pt] (0,0) rectangle (13.2, 3.2);
-		\node[align=center, font=\footnotesize\rmfamily, text width=11.8cm] at (6.6, 1.6) {
-			\textbf{[ESPACIO RESERVADO PARA CAPTURA DE PANTALLA 6]}\\[3pt]
-			\textbf{Verificación Automatizada de los Cinco Lemas en Tamarin Prover 1.12.0}\\[2pt]
-			\scriptsize Archivo sugerido: \textit{imagenes/cap\_06\_verificacion\_tamarin.png}\\
-			\scriptsize (Mostrar la salida de consola o interfaz gráfica de Tamarin Prover con los 5 lemas verificados y el número de pasos de cada prueba).
-		};
-	\end{tikzpicture}
+	\includegraphics[width=0.92\textwidth]{Capturas_de_pantalla/prueba_tamarin.png}
 	\caption{Verificación formal de lemas en Tamarin Prover.}
 	\label{fig:cap_tamarin_prover}
 	\par\vspace{2pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
