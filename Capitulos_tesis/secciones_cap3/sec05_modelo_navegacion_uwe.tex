@@ -2,7 +2,7 @@
 \label{sec:modelo_navegacion_uwe}
 % =============================================================================
 
-El modelo de navegación de la metodología UWE (Koch et al., 2008) define qué nodos de información pueden ser visitados por cada rol de usuario y qué enlaces de navegación o de proceso conectan las vistas del sistema. En la aplicación electoral desarrollada, el recorrido parte del portal de inicio de sesión (/login) y ramifica el acceso mediante control de roles hacia tres espacios independientes: el Panel del Jurado de Mesa (/jurado), la Cabina del Ciudadano (/ciudadano) y el Panel del Tribunal Electoral y Auditoría (/admin).
+El modelo de navegación de la metodología UWE (Wakil y Jawawi, 2022) define qué nodos de información pueden ser visitados por cada rol de usuario y qué enlaces de navegación o de proceso conectan las vistas del sistema. En la aplicación electoral desarrollada, el recorrido parte del portal de inicio de sesión (/login) y ramifica el acceso mediante control de roles hacia tres espacios independientes: el Panel del Jurado de Mesa (/jurado), la Cabina del Ciudadano (/ciudadano) y el Panel del Tribunal Electoral y Auditoría (/admin).
 
 \subsection{Diagrama de Estructura de Navegación UWE}
 \label{subsec:diagrama_navegacion_uwe}
@@ -140,7 +140,7 @@ En la Figura \ref{fig:uwe_navegacion} se presenta el Modelo de Estructura de Nav
 \subsection{Restricciones Formales de Navegación (OCL)}
 \label{subsec:restricciones_ocl_uwe}
 
-Para evitar ambigüedades en el control de sesiones por rol, el mapa de navegación se rige por tres invariantes y precondiciones formales basadas en el Lenguaje de Restricciones de Objetos OCL 2.4 (OMG, 2014):
+Para evitar ambigüedades en el control de sesiones por rol, el mapa de navegación se rige por tres invariantes y precondiciones formales basadas en el Lenguaje de Restricciones de Objetos OCL (Cabot y Clarisó, 2023):
 
 \begin{enumerate}
 	\item \textbf{Invariante de bloqueo de retorno tras sufragar:} En el contexto del padrón y de la cabina del ciudadano, si el indicador de voto emitido toma el valor verdadero ($\text{haVotado} = \text{verdadero}$), el enlace de acceso al formulario de votación queda permanentemente deshabilitado ($\text{linkCabina.deshabilitado} = \text{verdadero}$).

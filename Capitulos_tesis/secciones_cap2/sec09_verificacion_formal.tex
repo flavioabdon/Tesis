@@ -5,11 +5,11 @@
 
 Un protocolo criptográfico es el conjunto ordenado de reglas y pasos que definen cómo se intercambian mensajes dos o más computadoras a través de una red para llevar a cabo una tarea segura, como iniciar sesión, realizar un pago o emitir un voto.
 
-En la práctica de la ciberseguridad, se ha comprobado repetidamente que un sistema puede utilizar los algoritmos criptográficos más fuertes del mundo (como ML-KEM o ML-DSA) y, sin embargo, ser inseguro si el orden o la estructura de los mensajes del protocolo tiene un error de diseño (Lucena, 2010; Schmidt, Meier, Cremers y Basin, 2012). Por ejemplo, si una puerta blindada de acero (el algoritmo criptográfico) se instala en un marco mal construido que permite sacar las bisagras desde afuera (el protocolo), un atacante no necesitará romper el acero para entrar.
+En la práctica de la ciberseguridad, se ha comprobado repetidamente que un sistema puede utilizar los algoritmos criptográficos más fuertes del mundo (como ML-KEM o ML-DSA) y, sin embargo, ser inseguro si el orden o la estructura de los mensajes del protocolo tiene un error de diseño (Basin, Cremers, Dreier y Sasse, 2022; Stallings, 2023). Por ejemplo, si una puerta blindada de acero (el algoritmo criptográfico) se instala en un marco mal construido que permite sacar las bisagras desde afuera (el protocolo), un atacante no necesitará romper el acero para entrar.
 
 Un caso clásico en la historia de la Informática es el protocolo de autenticación de Needham-Schroeder, el cual fue considerado seguro durante casi diecisiete años hasta que se descubrió, mediante una herramienta de análisis formal, que un atacante podía interceptar y reenviar mensajes válidos en distinto orden para hacerse pasar por otro usuario. Asimismo, en el área de votación electrónica, Baloglu et al. (2021) utilizaron verificación formal para encontrar fallas de duplicación de boletas en los sistemas Helios y Belenios que no habían sido detectadas mediante revisiones manuales.
 
-Cuando un programador realiza pruebas de software tradicionales (como pruebas unitarias o de integración), únicamente comprueba que el programa funciona bien en los casos que él mismo imaginó, pero nunca puede probar todos los ataques posibles. En cambio, la \textbf{verificación formal} consiste en representar el protocolo mediante lógica matemática para que un motor automatizado explore todas las combinaciones posibles de mensajes y demuestre con certeza que ningún ataque puede vulnerar las reglas definidas (Schmidt et al., 2012).
+Cuando un programador realiza pruebas de software tradicionales (como pruebas unitarias o de integración), únicamente comprueba que el programa funciona bien en los casos que él mismo imaginó, pero nunca puede probar todos los ataques posibles. En cambio, la \textbf{verificación formal} consiste en representar el protocolo mediante lógica matemática para que un motor automatizado explore todas las combinaciones posibles de mensajes y demuestre con certeza que ningún ataque puede vulnerar las reglas definidas (Basin et al., 2022).
 
 \subsection{El Modelo de Atacante Dolev-Yao y el Conocimiento Adversarial}
 
@@ -40,7 +40,7 @@ En la investigación en seguridad informática existen dos maneras complementari
 \begin{enumerate}
 	\item \textbf{Enfoque Computacional:} Estudia los algoritmos trabajando directamente con cadenas de unos y ceros ($\{0, 1\}^*$) y probabilidades matemáticas. Demuestra que a un atacante le tomaría miles de años de cálculo resolver problemas difíciles como Module-LWE o Module-SIS. Es el enfoque que respalda la seguridad interna de los algoritmos ML-KEM y ML-DSA.
 
-	\item \textbf{Enfoque Simbólico:} Trata a los algoritmos criptográficos como ``cajas cerradas ideales'' regidas por ecuaciones exactas y analiza el flujo lógico de los mensajes entre los participantes para descubrir si existe algún hueco en las reglas del protocolo (Schmidt et al., 2012). Es el enfoque que utiliza la herramienta Tamarin Prover.
+	\item \textbf{Enfoque Simbólico:} Trata a los algoritmos criptográficos como ``cajas cerradas ideales'' regidas por ecuaciones exactas y analiza el flujo lógico de los mensajes entre los participantes para descubrir si existe algún hueco en las reglas del protocolo (Basin et al., 2022). Es el enfoque que utiliza la herramienta Tamarin Prover.
 \end{enumerate}
 
 En la Tabla \ref{tab:simbolico_vs_computacional} se resumen las diferencias principales entre ambos enfoques de análisis de seguridad.
@@ -61,7 +61,7 @@ En la Tabla \ref{tab:simbolico_vs_computacional} se resumen las diferencias prin
 		\textbf{Herramienta} & Verificación automatizada (Tamarin / Maude) & Reducciones matemáticas manuales \\
 		\bottomrule
 	\end{tabular}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Schmidt et al. (2012) y Lucena (2010).}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Basin et al. (2022) y Stallings (2023).}}
 \end{table}
 
 Como muestra la Tabla \ref{tab:simbolico_vs_computacional}, ambos métodos se complementan en la presente tesis: los estándares del NIST garantizan la fortaleza computacional de los algoritmos, mientras que Tamarin Prover verifica simbólicamente que el protocolo electoral los utilice de manera segura. Para ello, las operaciones post-cuánticas se representan en Tamarin mediante ecuaciones algebraicas claras:
@@ -84,7 +84,7 @@ Como muestra la Tabla \ref{tab:simbolico_vs_computacional}, ambos métodos se co
 
 \subsection{Semántica Operacional y Arquitectura de Tamarin Prover}
 
-Tamarin Prover (Schmidt et al., 2012) es una herramienta informática de código abierto desarrollada en la Escuela Politécnica Federal de Zúrich (ETH Zürich) para verificar automáticamente protocolos criptográficos. Su funcionamiento se basa en un modelo llamado \textbf{reescritura de multiconjuntos}.
+Tamarin Prover (Basin et al., 2022) es una herramienta informática de código abierto desarrollada en la Escuela Politécnica Federal de Zúrich (ETH Zürich) para verificar automáticamente protocolos criptográficos. Su funcionamiento se basa en un modelo llamado \textbf{reescritura de multiconjuntos}.
 
 De forma sencilla, se puede imaginar el estado del sistema en Tamarin como una ``mesa de trabajo'' donde se colocan tarjetas llamadas \textbf{hechos}. Cada hecho guarda información sobre lo que ocurre en un momento dado (por ejemplo, que un votante fue registrado o que una boleta fue guardada en la urna).
 
