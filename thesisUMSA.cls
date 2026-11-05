@@ -277,7 +277,6 @@
 \fi\begin{minipage}[c][\textheight][c]{\textwidth}
     \centering
     \vspace{0cm}
-    \pdfrender{TextRenderingMode=FillStroke, LineWidth=0.3pt}%
     \begin{spacing}{1.8}
     \@university
     \@faculty
