@@ -25,22 +25,22 @@ En la Figura \ref{fig:uml_actividades} se presenta el Diagrama de Actividades (d
 	]
 		\node[init] (start) at (0, 0) {};
 		
-		\node[act, below=0.4cm of start] (a1) {1. Confirmar opción en cabina y empaquetar voto\\$m_{\text{fijo}} \leftarrow \text{Pad}_{32\text{B}}(\text{opción} \;\|\; \text{CSPRNG}_{31\text{B}})$};
-		\node[act, below=0.4cm of a1] (a2) {2. Encapsular clave efímera con clave pública de AC\\$(K, ct_{\text{kem}}) \leftarrow \text{ML-KEM-768.Encaps}(ek_{\text{AC}})$};
-		\node[act, below=0.4cm of a2] (a3) {3. Cifrar con AES-256-GCM ($\text{AAD}=\langle id_{\text{elec}}, ct_{\text{kem}} \rangle$) y firmar\\$c_{\text{voto}} \leftarrow \text{AEAD.Enc}(K, m_{\text{fijo}}, \text{AAD})$; \; $\sigma_V \leftarrow \text{ML-DSA-65.Sign}(sk_V)$};
-		\node[act, below=0.4cm of a3] (a4) {4. Transmitir PaqueteVoto al Servidor de Votación};
+		\node[act, below=0.4cm of start] (a1) {1. Confirmar candidato en la cabina y empaquetar\\el voto a tamaño uniforme con relleno aleatorio};
+		\node[act, below=0.4cm of a1] (a2) {2. Generar clave secreta temporal y protegerla\\con la clave pública de la Autoridad de Conteo};
+		\node[act, below=0.4cm of a2] (a3) {3. Cifrar el contenido del voto con AES-256\\y firmar digitalmente el paquete con la clave del votante};
+		\node[act, below=0.4cm of a3] (a4) {4. Transmitir el paquete de voto cifrado y firmado\\al Servidor de Votación};
 		
-		\node[dec, below=0.5cm of a4] (d1) {¿Credencial AR válida\\(ML-DSA-65)?};
-		\node[dec, below=0.65cm of d1] (d2) {¿Firma del votante $\sigma_V$\\válida (ML-DSA-65)?};
-		\node[dec, below=0.65cm of d2] (d3) {¿Registro en padrón\\indica ha\_votado = true?};
+		\node[dec, below=0.5cm of a4] (d1) {¿Credencial electoral\\válida y autorizada?};
+		\node[dec, below=0.65cm of d1] (d2) {¿Firma digital del\\votante es auténtica?};
+		\node[dec, below=0.65cm of d2] (d3) {¿El votante ya figura\\como haber sufragado?};
 		
-		\node[errbox, right=2.1cm of d1] (err1) {Abortar proceso:\\Credencial no autorizada};
-		\node[errbox, right=2.1cm of d2] (err2) {Abortar proceso:\\Firma digital inválida};
-		\node[errbox, right=2.1cm of d3] (err3) {Activar CU9: Rechazar\\intento de doble voto};
+		\node[errbox, right=2.1cm of d1] (err1) {Rechazar sufragio:\\Credencial no autorizada};
+		\node[errbox, right=2.1cm of d2] (err2) {Rechazar sufragio:\\Firma digital inválida};
+		\node[errbox, right=2.1cm of d3] (err3) {Rechazar sufragio:\\Intento de voto duplicado};
 		
-		\node[act, below=0.65cm of d3] (a5) {5. Actualizar padrón ($\text{ha\_votado} \leftarrow \text{verdadero}$) y desacoplar\\identidad guardando boleta anónima en el ánfora};
-		\node[act, below=0.4cm of a5] (a6) {6. Calcular $h_b = \text{SHA3-256}(\text{Boleta})$ y firmar recibo con $sk_{\text{SV}}$};
-		\node[act, below=0.4cm of a6] (a7) {7. Activar regla OCL NoRetornoTrasVotar y desplegar\\pantalla PaginaReciboInmutable};
+		\node[act, below=0.65cm of d3] (a5) {5. Marcar al elector como sufragado en el padrón y desacoplar\\la identidad, guardando la boleta anónima en el ánfora};
+		\node[act, below=0.4cm of a5] (a6) {6. Generar código de verificación del voto (SHA-3)\\y firmar el recibo digital por el Servidor};
+		\node[act, below=0.4cm of a6] (a7) {7. Bloquear nuevo acceso de votación y desplegar\\en pantalla el recibo digital definitivo para el ciudadano};
 		
 		\node[stop, below=0.4cm of a7] (final) {};
 		\node[circle, fill=black, inner sep=2pt] at (final.center) {};
@@ -74,7 +74,7 @@ En la Figura \ref{fig:uml_actividades} se presenta el Diagrama de Actividades (d
 
 \subsection{Diagramas de Secuencia y Máquina de Estados UML}
 
-En la Figura \ref{fig:uml_secuencia_votacion} se modela la interacción cronológica entre el Votante ($V$), la Autoridad de Registro ($AR$) y el Servidor de Votación ($SV$) durante la acreditación y emisión del sufragio; y en la Figura \ref{fig:uml_secuencia_conteo} se detalla la entrega del lote permutado a la Autoridad de Conteo ($AC$), el desencapsulamiento con $dk_{\text{AC}}$ y la publicación del acta auditable.
+En la Figura \ref{fig:uml_secuencia_votacion} se modela la interacción cronológica entre el Votante, la Autoridad de Registro y el Servidor de Votación durante la acreditación y emisión del sufragio; y en la Figura \ref{fig:uml_secuencia_conteo} se detalla la entrega del lote permutado a la Autoridad de Conteo, el descifrado seguro de las boletas y la publicación del acta auditable.
 
 \begin{figure}[!htbp]
 	\centering
@@ -86,9 +86,9 @@ En la Figura \ref{fig:uml_secuencia_votacion} se modela la interacción cronoló
 		retmsg/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.7pt, dashed, draw=black},
 		note/.style={rectangle, draw=black, fill=white, line width=0.6pt, rounded corners=1pt, font=\tiny, align=left, inner sep=3pt}
 	]
-		\node[lifeline] (V)  at (0, 0) {\underline{:Votante ($V$)}};
-		\node[lifeline] (AR) at (5.0, 0) {\underline{:AutoridadReg ($AR$)}};
-		\node[lifeline] (SV) at (10.2, 0) {\underline{:ServidorVotacion ($SV$)}};
+		\node[lifeline] (V)  at (0, 0) {\underline{:Votante}};
+		\node[lifeline] (AR) at (5.0, 0) {\underline{:Autoridad de Registro}};
+		\node[lifeline] (SV) at (10.2, 0) {\underline{:Servidor de Votación}};
 		
 		\draw[draw=black, dashed, line width=0.5pt] (V) -- ++(0,-8.8);
 		\draw[draw=black, dashed, line width=0.5pt] (AR) -- ++(0,-8.8);
@@ -99,28 +99,28 @@ En la Figura \ref{fig:uml_secuencia_votacion} se modela la interacción cronoló
 		\draw[fill=white, draw=black, line width=0.6pt] ([xshift=-1.5mm, yshift=-3.0cm]V.center) rectangle ++(3mm, -2.9cm);
 		\draw[fill=white, draw=black, line width=0.6pt] ([xshift=-1.5mm, yshift=-4.4cm]SV.center) rectangle ++(3mm, -3.5cm);
 		
-		\draw[msg] ([yshift=-1.1cm]V.center) -- ([yshift=-1.1cm]AR.center) node[midway, above, font=\scriptsize] {1: SolicitudRegistro(id\_v, pk\_v)};
-		\draw[retmsg] ([yshift=-2.0cm]AR.center) -- ([yshift=-2.0cm]V.center) node[midway, above, font=\scriptsize] {2: CredencialVotante(id\_v, pk\_v, ts, firma\_ar)};
+		\draw[msg] ([yshift=-1.1cm]V.center) -- ([yshift=-1.1cm]AR.center) node[midway, above, font=\scriptsize] {1: Solicitud de registro con clave pública};
+		\draw[retmsg] ([yshift=-2.0cm]AR.center) -- ([yshift=-2.0cm]V.center) node[midway, above, font=\scriptsize] {2: Emisión de credencial firmada};
 		
 		\node[note, right=0.2cm of V, yshift=-3.4cm] {
-			\textbf{Proceso en Cabina (ProcesoEmisionVoto):}\\
-			$\bullet$ $(K, ct_{kem}) \leftarrow \text{ML-KEM.Encaps}(ek_{\text{AC}})$\\
-			$\bullet$ $c_{voto} \leftarrow \text{AES-GCM.Encrypt}(K, m_{\text{fijo}}, nonce, \text{AAD})$\\
-			$\bullet$ $\text{Boleta} = \langle id_{\text{elec}}, ct_{kem}, c_{voto}, nonce \rangle$\\
-			$\bullet$ $\sigma_V \leftarrow \text{ML-DSA.Sign}(sk_V, \text{Boleta})$
+			\textbf{Proceso en Cabina de Votación:}\\
+			$\bullet$ Generar clave temporal protegida para Conteo\\
+			$\bullet$ Cifrar el contenido del voto (AES-256)\\
+			$\bullet$ Ensamblar boleta anónima electoral\\
+			$\bullet$ Firmar digitalmente con clave del votante
 		};
 		
-		\draw[msg] ([yshift=-4.8cm]V.center) -- ([yshift=-4.8cm]SV.center) node[midway, above, font=\scriptsize] {3: EnviarPaqueteVoto(Boleta, $\sigma_V$, Credencial)};
+		\draw[msg] ([yshift=-4.8cm]V.center) -- ([yshift=-4.8cm]SV.center) node[midway, above, font=\scriptsize] {3: Enviar paquete (Boleta cifrada, Firma y Credencial)};
 		
 		\node[note, left=0.2cm of SV, yshift=-5.8cm] {
-			\textbf{Verificación y Registro Anónimo en SV:}\\
-			$\bullet$ Verificar $\sigma_{AR}$ con $pk_{AR}$ y $\sigma_V$ con $pk_V$\\
-			$\bullet$ Verificar $\text{ha\_votado} = \text{falso}$ y marcar $\text{verdadero}$\\
-			$\bullet$ Guardar solo Boleta anónima en el ánfora\\
-			$\bullet$ $\sigma_{SV} \leftarrow \text{ML-DSA.Sign}(sk_{SV}, \langle h(\text{Boleta}), ts \rangle)$
+			\textbf{Verificación y Registro en Servidor:}\\
+			$\bullet$ Validar credencial y firma del votante\\
+			$\bullet$ Verificar que no registre voto previo\\
+			$\bullet$ Desacoplar identidad y depositar boleta en ánfora\\
+			$\bullet$ Firmar digitalmente recibo de votación
 		};
 		
-		\draw[retmsg] ([yshift=-7.6cm]SV.center) -- ([yshift=-7.6cm]V.center) node[midway, above, font=\scriptsize] {4: ReciboVotacion(h\_boleta, ts, firma\_sv)};
+		\draw[retmsg] ([yshift=-7.6cm]SV.center) -- ([yshift=-7.6cm]V.center) node[midway, above, font=\scriptsize] {4: Entrega de recibo oficial con código firmado};
 	\end{tikzpicture}
 	}%
 	\caption{Diagrama de secuencia de emisión del voto.}
@@ -137,9 +137,9 @@ En la Figura \ref{fig:uml_secuencia_votacion} se modela la interacción cronoló
 		msg/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black},
 		note/.style={rectangle, draw=black, fill=white, line width=0.6pt, rounded corners=1pt, font=\tiny, align=left, inner sep=3pt}
 	]
-		\node[lifeline] (SV)  at (0, 0) {\underline{:ServidorVotacion ($SV$)}};
-		\node[lifeline] (AC)  at (5.5, 0) {\underline{:AutoridadConteo ($AC$)}};
-		\node[lifeline] (PUB) at (11.0, 0) {\underline{:PortalAuditoriaUWE}};
+		\node[lifeline] (SV)  at (0, 0) {\underline{:Servidor de Votación}};
+		\node[lifeline] (AC)  at (5.5, 0) {\underline{:Autoridad de Conteo}};
+		\node[lifeline] (PUB) at (11.0, 0) {\underline{:Portal de Auditoría}};
 		
 		\draw[draw=black, dashed, line width=0.5pt] (SV) -- ++(0,-6.8);
 		\draw[draw=black, dashed, line width=0.5pt] (AC) -- ++(0,-6.8);
@@ -151,19 +151,20 @@ En la Figura \ref{fig:uml_secuencia_votacion} se modela la interacción cronoló
 		
 		\draw[msg] ([yshift=-1.2cm]SV.center) -- ([yshift=-1.2cm]AC.center) node[midway, above, font=\scriptsize] {1: Clausura de mesa $\to$ Entrega de Lote Mezclado};
 		\node[note, below=0.1cm of SV, xshift=1.2cm, yshift=-1.4cm] {
-			\textbf{Mezcla Aleatoria en SV:}\\
-			Permuta el lote anónimo $\{\langle id_{\text{elec}}, ct_{kem}, c_{voto}, nonce \rangle_j\}$.
+			\textbf{Mezcla Aleatoria en Servidor:}\\
+			Permuta aleatoriamente las boletas\\
+			para desvincular el orden de llegada.
 		};
 		
 		\node[note, right=0.2cm of AC, yshift=-3.1cm] {
-			\textbf{Desencapsulamiento y Escrutinio en la AC:}\\
-			$\bullet$ Para cada boleta anónima $j \in \{1, \dots, N\}$:\\
-			\quad 1) $K_j \leftarrow \text{ML-KEM.Decaps}(dk_{\text{AC}}, ct_{kem, j})$\\
-			\quad 2) $m_j \leftarrow \text{AES-GCM.Decrypt}(K_j, c_{voto, j}, nonce_j)$\\
-			\quad 3) Incrementar $\text{Total}[m_j]$ y registrar $h_j = \text{SHA3-256}(\text{Boleta}_j)$
+			\textbf{Apertura y Escrutinio en Conteo:}\\
+			$\bullet$ Para cada boleta anónima del lote:\\
+			\quad 1) Recuperar clave con clave privada de conteo\\
+			\quad 2) Descifrar el voto emitido (AES-256)\\
+			\quad 3) Sumar cómputo y generar código de verificación
 		};
 		
-		\draw[msg] ([yshift=-5.6cm]AC.center) -- ([yshift=-5.6cm]PUB.center) node[midway, above, font=\scriptsize] {2: Publicar Acta Oficial de Cómputo + Lista de Resúmenes $\{h_j\}$};
+		\draw[msg] ([yshift=-5.6cm]AC.center) -- ([yshift=-5.6cm]PUB.center) node[midway, above, font=\scriptsize] {2: Publicar Acta Oficial de Cómputo y lista de verificación};
 	\end{tikzpicture}
 	}%
 	\caption{Diagrama de secuencia de escrutinio y auditoría.}
@@ -185,12 +186,12 @@ Finalmente, en la Figura \ref{fig:uml_estados_boleta} se presenta la máquina de
 	]
 		\node[init] (s0) at (0, 0) {};
 		\node[state] (s1) at (2.4, 0) {1. En Edición\\(Cabina UWE)};
-		\node[state] (s2) at (6.6, 0) {2. Cifrada Híbrida\\(KEM-DEM)};
-		\node[state] (s3) at (10.8, 0) {3. Firmada Digitalmente\\(ML-DSA-65)};
+		\node[state] (s2) at (6.6, 0) {2. Cifrada Híbrida\\(Protección PQC)};
+		\node[state] (s3) at (10.8, 0) {3. Firmada Digitalmente\\(Autenticación Votante)};
 		
-		\node[state] (s4) at (10.8, -2.3) {4. En Transmisión\\(Canal Red Dolev--Yao)};
+		\node[state] (s4) at (10.8, -2.3) {4. En Transmisión\\(Canal Seguro)};
 		\node[state] (s5) at (6.6, -2.3) {5. Custodiada en Urna\\(Ánfora Digital)};
-		\node[state] (s6) at (2.4, -2.3) {6. Desencapsulada\\(Apertura con $dk_{\text{AC}}$)};
+		\node[state] (s6) at (2.4, -2.3) {6. Descifrada\\(Apertura en Conteo)};
 		
 		\node[final] (sf) at (0, -2.3) {};
 		\node[circle, fill=black, inner sep=2pt] at (sf.center) {};
@@ -199,8 +200,8 @@ Finalmente, en la Figura \ref{fig:uml_estados_boleta} se presenta la máquina de
 		\node[errstate] (err_dup) at (4.0, -4.2) {Descartada\\(Intento de Voto Duplicado)};
 		
 		\draw[trans] (s0) -- (s1) node[midway, above] {Seleccionar};
-		\draw[trans] (s1) -- (s2) node[midway, above] {$\text{Encaps}(ek_{\text{AC}})$};
-		\draw[trans] (s2) -- (s3) node[midway, above] {$\text{Sign}(sk_V)$};
+		\draw[trans] (s1) -- (s2) node[midway, above] {Cifrar voto};
+		\draw[trans] (s2) -- (s3) node[midway, above] {Firmar digitalmente};
 		\draw[trans] (s3) -- (s4) node[midway, right] {Enviar};
 		\draw[trans] (s4) -- (s5) node[midway, above] {[Validación OK]};
 		\draw[trans] (s5) -- (s6) node[midway, above] {Escrutinio};

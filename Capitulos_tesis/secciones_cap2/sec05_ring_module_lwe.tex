@@ -37,31 +37,17 @@ No es necesario imaginar los polinomios de $R_q$ como expresiones algebraicas ab
 	\item \textbf{Multiplicación rápida mediante la Transformada NTT:} Si dos arreglos de $256$ posiciones se multiplican por el método escolar tradicional (todos contra todos), la computadora debe realizar $256 \times 256 = 65\,536$ multiplicaciones. Para acelerar este cálculo, los estándares post-cuánticos utilizan la \textbf{Transformada Teórica de Números} (NTT). La NTT convierte el polinomio a una representación especial donde multiplicar dos polinomios solo requiere multiplicar casilla por casilla ($256$ operaciones), reduciendo la complejidad de $\mathcal{O}(n^2)$ a $\mathcal{O}(n \log n)$ y logrando que el cifrado del voto tome menos de un milisegundo.
 \end{enumerate}
 
-En la Figura \ref{fig:anillo_reduccion} se ilustra el comportamiento circular de los grados del polinomio dentro del anillo $R_q$, mostrando cómo el término $x^{n-1}$, al avanzar un paso más, regresa a la posición inicial $x^0 = 1$ con signo negativo.
+En la Figura \ref{fig:anillo_reduccion} se ilustra la descomposición y reducción ciclotómica en el anillo polinomial $R_q = \mathbb{Z}_q[x]/(x^n + 1)$ mediante el árbol de factorización del Teorema del Resto Chino (CRT) y la transformada rápida NTT.
 
 \begin{figure}[htbp]
 	\centering
-	\begin{tikzpicture}[scale=0.95]
-		\coordinate (O) at (0,0);
-		\draw[line width=0.6pt, dashed, draw=black] (O) circle (1.8cm);
-		
-		\node[draw=black, fill=white, line width=0.8pt, circle, font=\scriptsize, inner sep=2.5pt] (x0) at (0,1.8) {$x^0=1$};
-		\node[draw=black, fill=white, line width=0.8pt, circle, font=\scriptsize, inner sep=2.5pt] (x1) at (1.8,0) {$x^1$};
-		\node[draw=black, fill=white, line width=0.8pt, circle, font=\scriptsize, inner sep=2.5pt] (x2) at (0,-1.8) {$x^2$};
-		\node[draw=black, fill=white, line width=0.8pt, circle, font=\scriptsize, inner sep=2.5pt] (x3) at (-1.8,0) {$x^{n-1}$};
-		
-		\draw[-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black] (x0) to[bend left=20] (x1);
-		\draw[-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black] (x1) to[bend left=20] (x2);
-		\draw[line width=0.8pt, draw=black, dotted] (x2) to[bend left=20] (x3);
-		\draw[-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black, dashed] (x3) to[bend left=25] 
-		node[midway, above left, font=\scriptsize\itshape] {$x^n \equiv -1$} (x0);
-	\end{tikzpicture}
-	\caption{Reducción ciclotómica en el anillo polinomial $R_q$.}
+	\includegraphics[width=0.90\textwidth,keepaspectratio]{imagenes/autores_cap2/fig_anillo_reduccion_ciclotomica.png}
+	\caption{Descomposición y reducción ciclotómica en el anillo polinomial $\mathbb{Z}_q[x]/(x^n + 1)$ mediante transformada NTT.}
 	\label{fig:anillo_reduccion}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Lyubashevsky, Peikert y Regev (2010).}}
+	\par\vspace{3pt}{\footnotesize\textit{ Liang y Zhao (2022), p. 12.}}
 \end{figure}
 
-Como muestra la Figura \ref{fig:anillo_reduccion}, esta estructura circular permite que un solo polinomio represente una fila completa de la matriz criptográfica, reduciendo drásticamente la cantidad de datos que deben transmitirse entre el navegador del votante y el servidor electoral.
+Como muestra la Figura \ref{fig:anillo_reduccion}, la descomposición jerárquica del polinomio ciclotómico en factores lineales permite calcular multiplicaciones complejas en tiempo $\mathcal{O}(n \log n)$, logrando que un solo polinomio represente una fila completa de la matriz criptográfica y reduciendo drásticamente la cantidad de datos que deben transmitirse entre el navegador del votante y el servidor electoral.
 
 \subsection{Module-LWE: El Compromiso Óptimo de FIPS 203 y 204}
 

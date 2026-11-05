@@ -15,6 +15,16 @@ A diferencia de las funciones hash anteriores como SHA-2, el estándar FIPS 202 
 	\item \textbf{Fase de extracción o compresión:} Una vez procesada toda la entrada, el algoritmo extrae secuencialmente del estado interno la cantidad exacta de bytes de salida requerida por la aplicación.
 \end{enumerate}
 
+Este proceso se representa formalmente en la Figura \ref{fig:fips202_esponja}, tomada del estándar FIPS 202 del NIST (2015). En ella se aprecia cómo la cadena de entrada con relleno ($N \,\|\, \text{pad}$) se procesa en bloques sucesivos de tasa $r$ mediante operaciones XOR ($\oplus$) con los primeros $r$ bits del estado interno $b = r + c$ (donde $c$ es la capacidad de seguridad), iterando la función de permutación $f$. Posteriormente, durante la fase de extracción (\textit{squeezing}), se leen bloques de $r$ bits aplicando $f$ de forma sucesiva hasta truncar la salida a la longitud deseada de $d$ bits.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.92\textwidth]{imagenes/autores_cap2/fig_fips202_sponge.png}
+	\caption{Construcción esponja de la permutación Keccak con fases de absorción y extracción en el estándar FIPS 202.}
+	\label{fig:fips202_esponja}
+	\par\vspace{3pt}{\footnotesize\textit{ National Institute of Standards and Technology [NIST] (2015), p. 18.}}
+\end{figure}
+
 Gracias a esta arquitectura de permutación, el estándar FIPS 202 ofrece dos tipos de herramientas que se emplean a lo largo de la tesis:
 
 \begin{itemize}
@@ -30,8 +40,6 @@ Las funciones del estándar FIPS 202 no trabajan de forma aislada, sino que form
 \begin{table}[htbp]
 	\centering
 	\small
-	\caption{Funciones de FIPS 202 en el protocolo.}
-	\label{tab:fips202_roles}
 	\begin{tabular}{p{2.6cm} p{2.8cm} p{8.2cm}}
 		\toprule
 		\textbf{Estándar} & \textbf{Primitiva FIPS 202} & \textbf{Función Criptográfica en el Protocolo} \\
@@ -45,6 +53,8 @@ Las funciones del estándar FIPS 202 no trabajan de forma aislada, sino que form
 		& SHAKE256 & Cálculo del resumen contextual del mensaje a firmar $\mu = H(\text{tr} \,\|\, M)$. \\
 		\bottomrule
 	\end{tabular}
+	\caption{Funciones de FIPS 202 en el protocolo.}
+	\label{tab:fips202_roles}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia a partir de NIST (2015, 2024a, 2024b).}}
 \end{table}
 

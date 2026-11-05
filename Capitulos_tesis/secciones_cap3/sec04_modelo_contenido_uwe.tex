@@ -295,15 +295,13 @@ En la Tabla \ref{tab:diccionario_datos} se sintetiza la estructura de las nueve 
 	\centering
 	\renewcommand{\arraystretch}{1.22}
 	\footnotesize
-	\caption{Esquema relacional en tercera forma normal.}
-	\label{tab:diccionario_datos}
 	\begin{tabularx}{\textwidth}{|>{\bfseries\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.6cm}|>{\raggedright\arraybackslash}p{4.3cm}|>{\raggedright\arraybackslash}X|}
 		\hline
 		\textbf{Tabla Relacional} & \textbf{Clave Primaria} & \textbf{Atributos Principales} & \textbf{Función y Regla de Seguridad} \\
 		\hline
 		1. Elecciones & id\_eleccion & nombre, fecha\_inicio, fecha\_fin, estado\_fase, pk\_ar, ek\_ac & Almacena los parámetros del comicio y las claves públicas de las autoridades. \\
 		\hline
-		2. Padrón de Votantes & (id\_eleccion, id\_votante) & nombres, apellidos, carrera, ha\_votado, timestamp\_voto & Controla la elegibilidad y el sufragio único en tiempo $\mathcal{O}(\log n)$ sin vínculo hacia la boleta. \\
+		2. Padrón de Votantes & (id\_eleccion, id\_votante) & nombres, apellidos, carrera, ha\_votado, timestamp\_voto & Controla la elegibilidad y el sufragio único en tiempo logarítmico O(log n) sin vínculo hacia la boleta. \\
 		\hline
 		3. Credenciales AR & id\_credencial & id\_votante (FK única), pk\_votante\_hex, firma\_ar\_hex & Registra el certificado digital ML-DSA-65 (3309 B) emitido al empadronar al ciudadano. \\
 		\hline
@@ -320,5 +318,7 @@ En la Tabla \ref{tab:diccionario_datos} se sintetiza la estructura de las nueve 
 		9. Resultados de Escrutinio & id\_resultado & id\_eleccion (FK), id\_candidato (FK), votos\_totales, firma\_acta\_ac & Consolidación oficial del cómputo electoral auditado y firmado tras el escrutinio de la AC. \\
 		\hline
 	\end{tabularx}
+	\caption{Esquema relacional en tercera forma normal.}
+	\label{tab:diccionario_datos}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{table}

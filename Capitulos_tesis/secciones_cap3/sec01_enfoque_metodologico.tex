@@ -53,8 +53,6 @@ El diseño parte del Modelo de Requisitos, del cual derivan el Modelo de Conteni
 	\centering
 	\renewcommand{\arraystretch}{1.22}
 	\footnotesize
-	\caption{Fases metodológicas de investigación.}
-	\label{tab:mapeo_dsr_uwe_cripto}
 	\begin{tabularx}{\textwidth}{|>{\bfseries\raggedright\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}p{4.3cm}|>{\raggedright\arraybackslash}p{4.3cm}|>{\raggedright\arraybackslash}X|}
 		\hline
 		\textbf{Fase DSR} & \textbf{Ingeniería Web (UWE)} & \textbf{Criptografía y Verificación Formal} & \textbf{Artefactos Generados} \\
@@ -70,6 +68,8 @@ El diseño parte del Modelo de Requisitos, del cual derivan el Modelo de Conteni
 		5. Conclusión & Evaluación del diseño web modular orientado a procesos electorales. & Contraste de hipótesis y delimitación de alcances formales del prototipo. & Conclusiones y recomendaciones de despliegue (Cap.\ 5). \\
 		\hline
 	\end{tabularx}
+	\caption{Fases metodológicas de investigación.}
+	\label{tab:mapeo_dsr_uwe_cripto}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia basada en Hevner y Gregor (2022), Hernández-Sampieri y Mendoza (2023) y Wakil y Jawawi (2022).}}
 \end{table}
 
@@ -81,8 +81,8 @@ El sistema se rige por cuatro requerimientos funcionales (RF) y dos no funcional
 \begin{itemize}
 	\item \textbf{RF1 - Acreditación por Rol y Sufragio Único:} Todo ciudadano debe ser empadronado y habilitado por el Jurado de Mesa (Autoridad de Registro) mediante una credencial firmada con ML-DSA-65, garantizando que cada elector emita a lo sumo un voto válido.
 	\item \textbf{RF2 - Secreto del Voto y Desvinculación de Identidad:} La boleta debe protegerse mediante encapsulamiento ML-KEM-768 y cifrado autenticado AES-256-GCM, desvinculando la identidad del elector respecto al ánfora digital.
-	\item \textbf{RF3 - Integridad y Autenticidad:} Toda boleta debe incluir la firma digital ML-DSA-65 generada con la clave privada del votante ($sk_V$), impidiendo alteraciones en tránsito o suplantación de identidad.
-	\item \textbf{RF4 - Auditabilidad Individual:} Tras almacenar el voto, el sistema debe emitir un recibo firmado por el Servidor de Votación ($sk_{\text{SV}}$) con el resumen SHA3-256 de la boleta cifrada para su verificación en el tablón público.
-	\item \textbf{RNF1 - Viabilidad Operativa:} El tiempo de procesamiento criptográfico por sufragio debe ser inferior a $200\text{ ms}$.
+	\item \textbf{RF3 - Integridad y Autenticidad:} Toda boleta debe incluir la firma digital ML-DSA-65 generada con la clave privada del votante, impidiendo alteraciones en tránsito o suplantación de identidad.
+	\item \textbf{RF4 - Auditabilidad Individual:} Tras almacenar el voto, el sistema debe emitir un recibo firmado por el Servidor de Votación con su clave privada, conteniendo el resumen SHA3-256 de la boleta cifrada para su verificación en el tablón público.
+	\item \textbf{RNF1 - Viabilidad Operativa:} El tiempo de procesamiento criptográfico por sufragio debe ser inferior a 200 ms.
 	\item \textbf{RNF2 - Control de Acceso por Roles y No Retorno:} La aplicación web debe aislar las vistas de Ciudadano, Jurado de Mesa y Tribunal Electoral, bloqueando el reingreso a la cabina tras sufragar.
 \end{itemize}

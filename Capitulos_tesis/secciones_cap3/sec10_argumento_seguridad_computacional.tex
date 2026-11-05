@@ -7,30 +7,70 @@ Mientras la verificación en Tamarin Prover demuestra la ausencia de fallos lóg
 
 \begin{enumerate}
 	\item \textbf{Confidencialidad del Sufragio (Seguridad IND-CCA2 y AEAD):}
-	La protección de la boleta combina el mecanismo de encapsulamiento ML-KEM-768 (FIPS 203), cuya seguridad IND-CCA2 se reduce a la dureza del problema Module-LWE, con el cifrado autenticado AES-256-GCM. Si un adversario cuántico lograra distinguir entre dos votos cifrados con ventaja no despreciable, dicho adversario podría emplearse como subrutina para distinguir la llave $K$ de ML-KEM-768 respecto a una cadena uniforme (resolviendo Module-LWE) o para vulnerar AES-256, el cual conserva 128 bits de seguridad cuántica frente al algoritmo de Grover.
+	La protección de la boleta combina el mecanismo de encapsulamiento ML-KEM-768 (FIPS 203), cuya seguridad IND-CCA2 se reduce a la dureza del problema Module-LWE, con el cifrado autenticado AES-256-GCM. Si un adversario cuántico lograra distinguir entre dos votos cifrados con ventaja no despreciable, dicho adversario podría emplearse como subrutina para distinguir la clave compartida de ML-KEM-768 respecto a una cadena uniforme (resolviendo Module-LWE) o para vulnerar AES-256, el cual conserva 128 bits de seguridad cuántica frente al algoritmo de Grover.
 
 	\item \textbf{Integridad y Autenticidad (Seguridad EUF-CMA):}
-	Las credenciales emitidas por la Autoridad de Registro y las boletas firmadas por el ciudadano están resguardadas por el esquema ML-DSA-65 (FIPS 204). Falsificar una firma válida sin poseer la clave privada $sk_V$ o $sk_{\text{AR}}$ exige hallar un vector polinomial corto $\mathbf{z}$ que satisfaga la cota de rechazo $\|\mathbf{z}\|_\infty < \gamma_1 - \beta$, lo cual se reduce directamente a la intratabilidad de los problemas Module-SIS y Module-LWE.
+	Las credenciales emitidas por la Autoridad de Registro y las boletas firmadas por el ciudadano están resguardadas por el esquema ML-DSA-65 (FIPS 204). Falsificar una firma válida sin poseer la clave privada correspondiente exige resolver una instancia intratable de los problemas matemáticos subyacentes sobre retículos (Module-SIS y Module-LWE), formalizados en el Capítulo 2.
 
-	\item \textbf{Unicidad del Sufragio y Desvinculación Transaccional (Pseudocódigo):}
-	La imposibilidad de doble voto se garantiza mediante una operación atómica indivisible en el Servidor de Votación que consume el estado de habilitación del elector en el mismo paso en que almacena la boleta anónima, tal como se expresa en el siguiente pseudocódigo:
-
-	\vspace{4pt}
-	\noindent\fbox{\parbox{0.96\textwidth}{\footnotesize
-	\textbf{Algoritmo 3.1: Recepción Atómica, Control de Voto Único y Depósito Anónimo en Urna}\\[2pt]
-	\textbf{Entrada:} Paquete de voto $P = \langle \text{Boleta}, \sigma_V, \text{Cred} \rangle$, claves públicas $pk_{\text{AR}}, pk_{\text{SV}}$, clave privada $sk_{\text{SV}}$.\\
-	\textbf{Salida:} Recibo firmado $R$ o rechazo de transacción.\\[2pt]
-	1: \textbf{Si} $\text{ML-DSA-65.Verificar}(pk_{\text{AR}}, \text{Cred}, \sigma_{\text{AR}}) = \text{Falso}$ \textbf{entonces retornar} RechazoCredencial\\
-	2: \textbf{Si} $\text{ML-DSA-65.Verificar}(pk_V, \text{Boleta}, \sigma_V) = \text{Falso}$ \textbf{entonces retornar} RechazoFirma\\
-	3: \textbf{Iniciar Transacción Atómica Serializable}\\
-	4: \quad \textbf{Si} $\text{Padron}[id_{\text{elec}}, id_V].\text{ha\_votado} = \text{Verdadero}$ \textbf{entonces}\\
-	5: \quad \quad \textbf{Revertir Transacción y retornar} RechazoDobleVoto\\
-	6: \quad $\text{Padron}[id_{\text{elec}}, id_V].\text{ha\_votado} \leftarrow \text{Verdadero}$\\
-	7: \quad $id_{\text{boleta}} \leftarrow \text{GenerarUUIDAleatorio}()$; \quad $h_b \leftarrow \text{SHA3-256}(\text{Boleta})$\\
-	8: \quad $\text{Anfora}.\text{Insertar}(id_{\text{boleta}}, id_{\text{elec}}, ct_{\text{kem}}, c_{\text{voto}}, \text{nonce}, h_b)$ \quad \textit{// Sin $id_V$, $\text{Cred}$ ni $\sigma_V$}\\
-	9: \textbf{Confirmar Transacción Atómica}\\
-	10: $\sigma_{\text{SV}} \leftarrow \text{ML-DSA-65.Firmar}(sk_{\text{SV}}, \langle h_b, ts_{\text{ventana}} \rangle)$\\
-	11: \textbf{retornar} $R \leftarrow \langle h_b, ts_{\text{ventana}}, \sigma_{\text{SV}} \rangle$
-	}}
-	\vspace{4pt}
+	\item \textbf{Unicidad del Sufragio y Desvinculación Transaccional (Diagrama de Flujo):}
+	La imposibilidad de doble voto se garantiza mediante una operación atómica indivisible en el Servidor de Votación que consume el estado de habilitación del elector en el mismo paso en que almacena la boleta anónima, como se ilustra en el diagrama de flujo de la Figura \ref{fig:flujo_recepcion_urna}.
 \end{enumerate}
+
+\begin{figure}[!htbp]
+	\centering
+	\resizebox{!}{0.55\textheight}{%
+	\begin{tikzpicture}[
+		scale=0.88,
+		act/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=4pt, font=\scriptsize, align=center, minimum height=0.64cm, text width=5.6cm},
+		dec/.style={diamond, draw=black, fill=white, line width=0.8pt, aspect=2.2, font=\tiny, align=center, inner sep=1.5pt},
+		errbox/.style={rectangle, draw=black, fill=white, double, double distance=1.2pt, line width=0.7pt, rounded corners=4pt, font=\scriptsize, align=center, text width=3.2cm},
+		flow/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black},
+		init/.style={circle, fill=black, inner sep=3.5pt},
+		stop/.style={circle, draw=black, line width=0.8pt, fill=white, inner sep=3.5pt}
+	]
+		\node[init] (start) at (0, 0) {};
+		\node[anchor=south, font=\scriptsize\bfseries] at (start.north) {Recepción del paquete de voto};
+
+		\node[dec, below=0.5cm of start] (d1) {¿Firma de credencial\\válida con clave de registro?};
+		\node[dec, below=0.65cm of d1] (d2) {¿Firma de boleta\\válida con clave del votante?};
+		\node[act, below=0.65cm of d2] (p1) {Iniciar transacción atómica serializable en BD};
+		\node[dec, below=0.65cm of p1] (d3) {¿Elector registra sufragio\\previo en padrón electoral?};
+		
+		\node[errbox, right=1.8cm of d1] (err1) {Rechazar sufragio:\\Credencial no autorizada};
+		\node[errbox, right=1.8cm of d2] (err2) {Rechazar sufragio:\\Firma de boleta inválida};
+		\node[errbox, right=1.8cm of d3] (err3) {Revertir transacción (ROLLBACK):\\Intento de voto duplicado};
+		
+		\node[act, below=0.65cm of d3] (p2) {Marcar elector como sufragado en el padrón\\(\texttt{ha\_votado = verdadero})};
+		\node[act, below=0.4cm of p2] (p3) {Generar identificador único y calcular\\resumen de verificación SHA-3};
+		\node[act, below=0.4cm of p3] (p4) {Insertar boleta anónima en el ánfora digital\\(desvinculada de datos del elector)};
+		\node[act, below=0.4cm of p4] (p5) {Confirmar transacción atómica (COMMIT)\\y firmar recibo con clave del servidor};
+		
+		\node[stop, below=0.5cm of p5] (final) {};
+		\node[circle, fill=black, inner sep=2pt] at (final.center) {};
+		\node[anchor=north, font=\scriptsize\bfseries] at (final.south) {Entrega de recibo oficial firmado};
+		
+		\draw[flow] (start) -- (d1);
+		\draw[flow] (d1) -- node[left, font=\tiny\itshape] {[Sí]} (d2);
+		\draw[flow] (d1) -- node[above, font=\tiny\itshape] {[No]} (err1);
+		\draw[flow] (d2) -- node[left, font=\tiny\itshape] {[Sí]} (p1);
+		\draw[flow] (d2) -- node[above, font=\tiny\itshape] {[No]} (err2);
+		\draw[flow] (p1) -- (d3);
+		\draw[flow] (d3) -- node[left, font=\tiny\itshape] {[No]} (p2);
+		\draw[flow] (d3) -- node[above, font=\tiny\itshape] {[Sí]} (err3);
+		\draw[flow] (p2) -- (p3);
+		\draw[flow] (p3) -- (p4);
+		\draw[flow] (p4) -- (p5);
+		\draw[flow] (p5) -- (final);
+		
+		\node[stop, right=5.8cm of d2] (err_final) {};
+		\node[circle, fill=black, inner sep=2pt] at (err_final.center) {};
+		\node[anchor=north, font=\scriptsize\bfseries] at (err_final.south) {Transacción abortada};
+		\draw[flow] (err1) -| (err_final);
+		\draw[flow] (err2) -- (err_final);
+		\draw[flow] (err3) -| (err_final);
+	\end{tikzpicture}
+	}%
+	\caption{Diagrama de flujo de recepción atómica, control de voto único y depósito anónimo.}
+	\label{fig:flujo_recepcion_urna}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+\end{figure}

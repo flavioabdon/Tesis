@@ -17,22 +17,22 @@ La Figura \ref{fig:uml_casos_uso} expone los Casos de Uso del sistema, detalland
 		extend/.style={-{Latex[length=2mm]}, dashed, draw=PQCCrimson, font=\tiny\bfseries}
 	]
 		% Actores Izquierda
-		\node[actor] (votante) at (-5.4, 0.8) {Votante ($V$)\\(Ciudadano)};
-		\node[actor] (ar) at (-5.4, -4.5) {Autoridad de\\Registro ($AR$)};
+		\node[actor] (votante) at (-5.4, 0.8) {Votante\\(Ciudadano)};
+		\node[actor] (ar) at (-5.4, -4.5) {Autoridad de\\Registro};
 		
 		% Actores Derecha
-		\node[actor] (sv) at (5.4, 0.8) {Servidor de\\Votación ($SV$)};
-		\node[actor] (ac) at (5.4, -4.5) {Autoridad de\\Conteo ($AC$)};
+		\node[actor] (sv) at (5.4, 0.8) {Servidor de\\Votación};
+		\node[actor] (ac) at (5.4, -4.5) {Autoridad de\\Conteo};
 		
 		% Casos de Uso
 		\node[uc] (uc1) at (0, 3.0) {CU1: Registrarse en Padrón};
-		\node[uc] (uc2) at (0, 1.8) {CU2: Emitir Credencial ML-DSA};
-		\node[uc] (uc3) at (0, 0.6) {CU3: Cifrar Voto (KEM-DEM)};
-		\node[uc] (uc4) at (0, -0.6) {CU4: Firmar Boleta (ML-DSA)};
+		\node[uc] (uc2) at (0, 1.8) {CU2: Emitir Credencial de Votación};
+		\node[uc] (uc3) at (0, 0.6) {CU3: Cifrar Voto en Cabina};
+		\node[uc] (uc4) at (0, -0.6) {CU4: Firmar Boleta Digitalmente};
 		\node[uc] (uc5) at (0, -1.8) {CU5: Validar Boleta y Duplicados};
 		\node[uc] (uc6) at (0, -3.0) {CU6: Custodiar en Ánfora y Recibo};
-		\node[uc] (uc7) at (0, -4.2) {CU7: Desencapsular Urna ($dk_{AC}$)};
-		\node[uc] (uc8) at (0, -5.4) {CU8: Escrutinio y Auditoría SHA3};
+		\node[uc] (uc7) at (0, -4.2) {CU7: Descifrar Urna en Conteo};
+		\node[uc] (uc8) at (0, -5.4) {CU8: Escrutinio y Auditoría};
 		\node[uc, draw=PQCCrimson] (uc9) at (0, -6.6) {CU9: Alerta Intento Doble Voto};
 		
 		% Límite del Sistema
@@ -70,9 +70,9 @@ La Figura \ref{fig:uml_casos_uso} expone los Casos de Uso del sistema, detalland
 El diagrama formaliza la participación de los actores:
 \begin{itemize}
 	\item \textbf{CU1 y CU2 (Empadronamiento):} El votante se acredita de forma presencial o institucional ante la AR, quien genera y firma digitalmente su credencial ML-DSA-65.
-	\item \textbf{CU3 y CU4 (Emisión de Boleta):} En el dispositivo del votante, formular una opción electoral incluye de manera forzosa el encapsulamiento simétrico ML-KEM-768 y la firma de la boleta con $sk_V$.
+	\item \textbf{CU3 y CU4 (Emisión de Boleta):} En el dispositivo del votante, formular una opción electoral incluye de manera forzosa el encapsulamiento simétrico ML-KEM-768 y la firma digital de la boleta con la clave privada del votante.
 	\item \textbf{CU5 y CU6 (Custodia y Recibo):} El Servidor valida la credencial de AR, comprueba que el votante no figure con sufragio previo y almacena la boleta en la urna. En caso de detectarse un intento de duplicación, se dispara el caso de uso extendido CU9, abortando la transacción y registrando la alerta en auditoría.
-	\item \textbf{CU7 y CU8 (Escrutinio Oficial):} Tras la clausura comicial, la Autoridad de Conteo utiliza $dk_{AC}$ para desencapsular en bloque las claves simétricas, descifrar los votos, tabular los resultados y emitir la lista pública de comprobantes SHA3-256.
+	\item \textbf{CU7 y CU8 (Escrutinio Oficial):} Tras la clausura comicial, la Autoridad de Conteo utiliza su clave privada para desencapsular en bloque las claves simétricas, descifrar los votos, tabular los resultados y emitir la lista pública de comprobantes SHA3-256.
 \end{itemize}
 
 \subsection{Diagrama de Actividades UML: Flujo Operativo de Extremo a Extremo}
@@ -94,13 +94,13 @@ La Figura \ref{fig:uml_actividades} detalla el Diagrama de Actividades UML, ilus
 		
 		% Actividades Cliente
 		\node[act, below=0.6cm of start] (a1) {1. Presentar credencial y seleccionar candidato};
-		\node[act, below=0.6cm of a1] (a2) {2. Encapsular clave simétrica\\$(K, ct_{kem}) \leftarrow \text{ML-KEM.Encaps}(ek_{AC})$};
-		\node[act, below=0.6cm of a2] (a3) {3. Cifrar voto con AES-256-GCM\\$c_{voto} \leftarrow \text{Enc}(K, m)$ y firmar con $sk_V$};
-		\node[act, below=0.6cm of a3] (a4) {4. Transmitir PaqueteVoto\\al Servidor por HTTPS};
+		\node[act, below=0.6cm of a1] (a2) {2. Generar clave secreta temporal y protegerla\\con la clave pública de la Autoridad de Conteo};
+		\node[act, below=0.6cm of a2] (a3) {3. Cifrar el contenido del voto con AES-256\\y firmar digitalmente con la clave del votante};
+		\node[act, below=0.6cm of a3] (a4) {4. Transmitir paquete de voto cifrado\\al Servidor por conexión segura};
 		
 		% Decisiones Servidor
 		\node[dec, below=0.7cm of a4] (d1) {¿Credencial de AR\\válida y en padrón?};
-		\node[dec, below=0.9cm of d1] (d2) {¿Firma del votante\\$\sigma_V$ auténtica?};
+		\node[dec, below=0.9cm of d1] (d2) {¿Firma digital del\\votante es auténtica?};
 		\node[dec, below=0.9cm of d2] (d3) {¿Votante registra\\sufragio previo?};
 		
 		% Rechazos
@@ -109,8 +109,8 @@ La Figura \ref{fig:uml_actividades} detalla el Diagrama de Actividades UML, ilus
 		\node[act, fill=red!10, draw=PQCCrimson, right=2.0cm of d3, text width=2.8cm] (err3) {Rechazar: Intento de voto duplicado};
 		
 		% Actividades Éxito
-		\node[act, fill=BoxBgGreen, draw=PQCGreen, below=0.9cm of d3] (a5) {5. Marcar elector como 'Ya Votó'\\y archivar boleta en ánfora};
-		\node[act, fill=BoxBgGreen, draw=PQCGreen, below=0.6cm of a5] (a6) {6. Calcular $h_b = \text{SHA3-256}(\text{Boleta})$\\y devolver Recibo firmado por SV};
+		\node[act, fill=BoxBgGreen, draw=PQCGreen, below=0.9cm of d3] (a5) {5. Marcar elector como 'Ya Votó'\\y archivar boleta anónima en ánfora};
+		\node[act, fill=BoxBgGreen, draw=PQCGreen, below=0.6cm of a5] (a6) {6. Generar código de verificación (SHA-3)\\y devolver recibo firmado por el Servidor};
 		\node[act, below=0.6cm of a6] (a7) {7. Votante descarga/imprime recibo\\con código QR para auditoría};
 		
 		% Nodo Final

@@ -19,7 +19,15 @@ Desde la década de 1980, diversos investigadores en seguridad informática han 
 	\item \textbf{Firmas Ciegas:} Fueron diseñadas por Chaum y aplicadas a la votación electrónica por Fujioka, Okamoto y Ohta (1992). Su funcionamiento equivale a utilizar un sobre con papel carbón en el mundo físico: el votante oculta su voto dentro de un sobre digital especial y lo presenta a la autoridad electoral; la autoridad verifica que el ciudadano tiene derecho a votar y estampa su firma digital sobre el sobre cerrado sin poder ver el contenido interior. Posteriormente, el votante retira el envoltorio y obtiene su boleta firmada por la autoridad, la cual puede depositar de forma anónima en la urna digital.
 \end{enumerate}
 
-Estos tres esquemas clásicos han servido como base para numerosos sistemas electorales; no obstante, todos ellos dependen de operaciones matemáticas tradicionales que hoy en día resultan vulnerables ante el avance de las computadoras cuánticas, razón por la cual esta investigación aborda el uso de criptografía post-cuántica.
+Estos tres esquemas clásicos han servido como base para numerosos sistemas electorales; no obstante, todos ellos dependen de operaciones matemáticas tradicionales que hoy en día resultan vulnerables ante el avance de las computadoras cuánticas, razón por la cual esta investigación aborda el uso de criptografía post-cuántica. En la Figura \ref{fig:kho_evoting_structure} se sintetiza la estructura arquitectónica de los principales paradigmas de votación electrónica documentados en la literatura científica por Kho et al. (2022), contrastando los esquemas clásicos (redes de mezcla, cifrado homomórfico y firmas ciegas) con las aproximaciones contemporáneas basadas en blockchain, criptografía post-cuántica y modelos híbridos.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.82\textwidth, height=0.60\textheight, keepaspectratio]{imagenes/autores_cap2/fig_kho2022_evoting_structure.png}
+	\caption{Estructura general y arquitecturas de los enfoques de votación electrónica criptográfica.}
+	\label{fig:kho_evoting_structure}
+	\par\vspace{3pt}{\footnotesize\textit{ Kho et al. (2022), p. 858.}}
+\end{figure}
 
 \subsection{Clasificación de las Propiedades de Seguridad Electoral}
 
@@ -99,29 +107,12 @@ Para comprender este concepto de forma intuitiva, se puede pensar en el funciona
 
 \begin{figure}[htbp]
 	\centering
-	\begin{tikzpicture}[
-		scale=0.9,
-		node distance=1.1cm,
-		cbox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, align=center, font=\footnotesize, inner sep=5pt}
-	]
-		\node (in) [cbox, text width=2.8cm] {\textbf{Mensaje / Voto}\\$x \in X$};
-		\node (proc) [cbox, right=of in, text width=3.4cm] {\textbf{Cálculo Criptográfico}\\$y = f(x)$ \ (Polinomial)};
-		\node (out) [cbox, right=of proc, text width=2.8cm] {\textbf{Criptograma / Boleta}\\$y \in Y$};
-		
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (in) -- (proc);
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (proc) -- (out);
-		
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.7pt, dashed] (out.north) to[bend right=40] 
-		node[midway, above, font=\scriptsize\itshape] {Inversión intratable sin trampa} (in.north);
-		
-		\node (trap) [cbox, below=0.85cm of proc, text width=4.0cm] {\textbf{Trampa Secreta (Clave Privada)}\\Permite calcular $x = f^{-1}(y)$ en tiempo eficiente};
-		\draw[-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt] (trap) -- (proc);
-	\end{tikzpicture}
-	\caption{Funcionamiento de una función unidireccional con trampa.}
+	\includegraphics[width=0.85\textwidth,keepaspectratio]{imagenes/autores_cap2/fig_diffie_hellman_trapdoor.png}
+	\caption{Funcionamiento de una función unidireccional con trampa y flujo de clave pública.}
 	\label{fig:trapdoor_func}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Diffie y Hellman (1976).}}
+	\par\vspace{3pt}{\footnotesize\textit{ Diffie y Hellman (1976), p. 647.}}
 \end{figure}
 
-Como se observa en la Figura \ref{fig:trapdoor_func}, el voto original $x$ ingresa al cálculo criptográfico y se convierte en la boleta cifrada $y$ en tiempo polinomial (es decir, en pocos milisegundos). Si un atacante intercepta la boleta $y$ en la red e intenta regresar hacia $x$ por la línea superior discontinua, se encuentra con un problema matemático imposible de resolver en la práctica. En cambio, la Autoridad de Conteo, que custodia la clave privada (trampa secreta), puede aplicar la función inversa $x = f^{-1}(y)$ de manera inmediata al finalizar la elección para contabilizar los votos.
+Como se observa en el esquema clásico de la Figura \ref{fig:trapdoor_func}, el mensaje original ingresa al transmisor y se transforma en un criptograma accesible al adversario en el canal público. Sin conocer la clave privada (la trampa secreta custodiada en el receptor), revertir la operación es computacionalmente intratable para el atacante, garantizando la confidencialidad. En cambio, el receptor legítimo utiliza la trampa secreta para recuperar el mensaje en tiempo eficiente.
 
 % =============================================================================

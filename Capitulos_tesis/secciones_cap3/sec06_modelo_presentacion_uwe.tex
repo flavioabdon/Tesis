@@ -33,7 +33,7 @@ En la Figura \ref{fig:uwe_presentacion_inicio_auditoria} se modela la presentaci
 		\node[pagebox] (v3) at (4.9, 0) {};
 		\node[anchor=north, font=\scriptsize\rmfamily\bfseries] at ([yshift=-0.12cm]v3.north) {\begin{tabular}{c}«presentationPage»\\\textbf{C. PaginaTribunalAdmin}\end{tabular}};
 		\node[elem] at (4.9, 1.45) {«inputForm» \textbf{ControlMotorYFase}\\+ selectorMotor (PQC / Clásico)\\+ faseComicial, gestionCandidatos};
-		\node[elem] at (4.9, 0.25) {«anchoredCollection» \textbf{MonitorAnfora}\\+ listaBoletasCifradas ($ct_{\text{kem}}$)\\+ verificadorRecibosSHA3};
+		\node[elem] at (4.9, 0.25) {«anchoredCollection» \textbf{MonitorAnfora}\\+ listaBoletasCifradas (Anónimas)\\+ verificadorRecibosSHA3};
 		\node[elem] at (4.9, -1.0) {«presentationGroup» \textbf{GraficosConteo}\\+ graficoResultados, tablaAuditoria};
 		\node[btn] at (4.9, -2.05) {«button» \textbf{btnEjecutarEscrutinioAC}};
 
@@ -68,13 +68,13 @@ Complementariamente, en la Figura \ref{fig:uwe_presentacion} se modela la secuen
 		\node[anchor=north, font=\scriptsize\rmfamily\bfseries] at ([yshift=-0.12cm]p1.north) {\begin{tabular}{c}«presentationPage»\\\textbf{1. PaginaCabinaVotacion}\end{tabular}};
 		\node[elem] at (-4.8, 1.45) {«text» \textbf{BannerCiudadano}\\+ nombreElector, estadoCredencialAR};
 		\node[elem] at (-4.8, 0.3) {«inputForm» \textbf{FormSufragio}\\\rule{3.4cm}{0.2pt}\\«selection» tarjetaCandidato\\«anchoredCollection» Opciones};
-		\node[elem] at (-4.8, -0.95) {«text» \textbf{InfoClavePublicaAC}\\+ huellaSHA3($ek_{\text{AC}}$) [1184 B]};
+		\node[elem] at (-4.8, -0.95) {«text» \textbf{InfoClavePublicaAC}\\+ huella SHA-3 (Clave Conteo)};
 		\node[btn] at (-4.8, -2.0) {«button» \textbf{btnPrevisualizarVoto}};
 
 		\node[groupbox] (p2) at (0, 0) {};
 		\node[anchor=north, font=\scriptsize\rmfamily\bfseries] at ([yshift=-0.12cm]p2.north) {\begin{tabular}{c}«presentationGroup»\\\textbf{2. ModalConfirmacionCifrado}\end{tabular}};
 		\node[elem] at (0, 1.45) {«text» \textbf{ResumenPreferencia}\\+ opcionElegida, avisoIrreversible};
-		\node[elem] at (0, 0.2) {«text» \textbf{PanelCriptograficoEnVivo}\\$\bullet$ Secreto efímero: 32 B\\$\bullet$ KEM: ML-KEM-768 ($ct_{\text{kem}}$: 1088 B)\\$\bullet$ AEAD: AES-256-GCM (48 B)\\$\bullet$ Firma: ML-DSA-65 ($\sigma_V$: 3309 B)};
+		\node[elem] at (0, 0.2) {«text» \textbf{PanelCriptograficoEnVivo}\\$\bullet$ Clave secreta temporal: 32 B\\$\bullet$ Cifrado PQC: ML-KEM-768 (1088 B)\\$\bullet$ Voto cifrado: AES-256-GCM (48 B)\\$\bullet$ Firma digital: ML-DSA-65 (3309 B)};
 		\node[elem] at (0, -1.05) {«button» btnCorregirOpcion};
 		\node[btn] at (0, -2.0) {«button» \textbf{btnCifrarYFirmarDefinitivo}};
 

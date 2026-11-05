@@ -48,8 +48,6 @@ En la Tabla \ref{tab:simbolico_vs_computacional} se resumen las diferencias prin
 \begin{table}[htbp]
 	\centering
 	\small
-	\caption{Comparación metodológica entre criptografía simbólica y computacional.}
-	\label{tab:simbolico_vs_computacional}
 	\begin{tabular}{p{2.8cm} p{5.3cm} p{5.5cm}}
 		\toprule
 		\textbf{Dimensión} & \textbf{Enfoque Simbólico (Tamarin)} & \textbf{Enfoque Computacional} \\
@@ -61,6 +59,8 @@ En la Tabla \ref{tab:simbolico_vs_computacional} se resumen las diferencias prin
 		\textbf{Herramienta} & Verificación automatizada (Tamarin / Maude) & Reducciones matemáticas manuales \\
 		\bottomrule
 	\end{tabular}
+	\caption{Comparación metodológica entre criptografía simbólica y computacional.}
+	\label{tab:simbolico_vs_computacional}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Basin et al. (2022) y Stallings (2023).}}
 \end{table}
 
@@ -121,6 +121,16 @@ A la secuencia ordenada en el tiempo de todas las etiquetas de acción que ocurr
 \begin{equation}
 	\text{Traza} = [A_1 @ \#t_1, \; A_2 @ \#t_2, \; \dots, \; A_N @ \#t_N] \quad \text{con} \quad \#t_1 < \#t_2 < \dots < \#t_N
 \end{equation}
+
+En la Figura \ref{fig:tamarin_grafo_restricciones} se aprecia el funcionamiento gráfico del motor de razonamiento de Tamarin Prover documentado por Basin et al. (2022). La herramienta traduce las reglas de reescritura y las propiedades a un sistema de restricciones, conectando las premisas con las conclusiones de las reglas de los participantes honestos (recuadros rectangulares a la izquierda) y deduciendo simultáneamente si el atacante Dolev--Yao puede derivar información secreta mediante las reglas de deducción de conocimiento adversarial $K(m)$ (representadas en recuadros redondeados).
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.88\textwidth]{imagenes/autores_cap2/fig_tamarin_verificacion.png}
+	\caption{Grafo de resolución de restricciones y deducción del adversario Dolev--Yao en el entorno Tamarin Prover.}
+	\label{fig:tamarin_grafo_restricciones}
+	\par\vspace{3pt}{\footnotesize\textit{ Basin, Cremers, Dreier y Sasse (2022), p. 26.}}
+\end{figure}
 
 \subsection{Especificación Lógica: Restricciones y Lemas Formales}
 

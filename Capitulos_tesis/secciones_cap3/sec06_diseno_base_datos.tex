@@ -9,7 +9,7 @@ En los sistemas de bases de datos convencionales, las transacciones se vinculan 
 Para resolver este desafío, la base de datos implementa un esquema de \textbf{desvinculación estricta y asimétrica}:
 \begin{enumerate}
 	\item La tabla del padrón (\texttt{tbl\_padron\_votantes}) mantiene la trazabilidad del ciudadano mediante la clave primaria compuesta \texttt{(id\_eleccion, id\_votante)}, registrando el campo booleano \texttt{ha\_votado = TRUE} y la marca temporal redondeada a la ventana horaria definida en la Sección \ref{sec:ceremonia_identidad_adversarios} para impedir el doble voto sin revelar el instante exacto.
-	\item La tabla de la urna electrónica (\texttt{tbl\_anfora\_boletas}) almacena exclusivamente los criptogramas (\texttt{ciphertext\_kem}, \texttt{voto\_cifrado}, \texttt{nonce\_aead}) indexados por un identificador de boleta UUID generado al azar y el hash inmutable SHA3-256. No contiene identificador de votante, credencial ni firma digital $\sigma_V$.
+	\item La tabla de la urna electrónica (\texttt{tbl\_anfora\_boletas}) almacena exclusivamente los criptogramas (\texttt{ciphertext\_kem}, \texttt{voto\_cifrado}, \texttt{nonce\_aead}) indexados por un identificador de boleta UUID generado al azar y el hash inmutable SHA3-256. No contiene identificador de votante, credencial ni firma digital del votante.
 	\item \textbf{Ausencia de relación foránea directa:} No existe ninguna columna ni clave foránea en \texttt{tbl\_anfora\_boletas} que apunte a la identidad del votante. La correlación entre elector y voto queda destruida en el plano de la base de datos.
 \end{enumerate}
 
@@ -163,20 +163,20 @@ El esquema de persistencia se normaliza en Tercera Forma Normal (3FN), eliminand
 
 \begin{enumerate}
 	\item \textbf{\texttt{tbl\_elecciones}}: (\underline{\texttt{id\_eleccion}}, \texttt{nombre}, \texttt{fecha\_inicio}, \texttt{fecha\_fin}, \texttt{estado\_fase}, \texttt{pk\_ar}, \texttt{ek\_ac})
-	\item \textbf{\texttt{tbl\_padron\_votantes}}: (\underline{\texttt{id\_eleccion}}$^*$, \underline{\texttt{id\_votante}}, \texttt{nombres}, \texttt{apellidos}, \texttt{carrera}, \texttt{ha\_votado}, \texttt{timestamp\_voto})
-	\item \textbf{\texttt{tbl\_credenciales\_ar}}: (\underline{\texttt{id\_credencial}}, \texttt{id\_votante}$^*$, \texttt{pk\_votante\_hex}, \texttt{timestamp\_emision}, \texttt{firma\_ar\_hex})
-	\item \textbf{\texttt{tbl\_anfora\_boletas}}: (\underline{\texttt{id\_boleta}}, \texttt{id\_eleccion}$^*$, \texttt{ciphertext\_kem}, \texttt{voto\_cifrado}, \texttt{nonce\_aead}, \texttt{hash\_boleta\_sha3}, \texttt{timestamp\_recepcion})
-	\item \textbf{\texttt{tbl\_recibos\_votacion}}: (\underline{\texttt{id\_recibo}}, \texttt{id\_boleta}$^*$, \texttt{timestamp\_recibo}, \texttt{firma\_sv\_hex})
-	\item \textbf{\texttt{tbl\_auditoria\_eventos}}: (\underline{\texttt{id\_evento}}, \texttt{id\_eleccion}$^*$, \texttt{tipo\_evento}, \texttt{descripcion}, \texttt{timestamp\_evento})
-	\item \textbf{\texttt{tbl\_candidatos}}: (\underline{\texttt{id\_candidato}}, \texttt{id\_eleccion}$^*$, \texttt{nombre\_completo}, \texttt{sigla\_frente}, \texttt{cargo}, \texttt{numero\_lista})
-	\item \textbf{\texttt{tbl\_usuarios\_sistema}}: (\underline{\texttt{id\_usuario}}, \texttt{id\_eleccion}$^*$, \texttt{username}, \texttt{password\_hash}, \texttt{rol}, \texttt{ultimo\_acceso})
-	\item \textbf{\texttt{tbl\_resultados\_escrutinio}}: (\underline{\texttt{id\_resultado}}, \texttt{id\_eleccion}$^*$, \texttt{id\_candidato}$^*$, \texttt{votos\_totales}, \texttt{firma\_acta\_ac\_hex}, \texttt{timestamp\_cierre})
+	\item \textbf{\texttt{tbl\_padron\_votantes}}: (\underline{\texttt{id\_eleccion}}, \underline{\texttt{id\_votante}}, \texttt{nombres}, \texttt{apellidos}, \texttt{carrera}, \texttt{ha\_votado}, \texttt{timestamp\_voto})
+	\item \textbf{\texttt{tbl\_credenciales\_ar}}: (\underline{\texttt{id\_credencial}}, \texttt{id\_votante} (FK), \texttt{pk\_votante\_hex}, \texttt{timestamp\_emision}, \texttt{firma\_ar\_hex})
+	\item \textbf{\texttt{tbl\_anfora\_boletas}}: (\underline{\texttt{id\_boleta}}, \texttt{id\_eleccion} (FK), \texttt{ciphertext\_kem}, \texttt{voto\_cifrado}, \texttt{nonce\_aead}, \texttt{hash\_boleta\_sha3}, \texttt{timestamp\_recepcion})
+	\item \textbf{\texttt{tbl\_recibos\_votacion}}: (\underline{\texttt{id\_recibo}}, \texttt{id\_boleta} (FK), \texttt{timestamp\_recibo}, \texttt{firma\_sv\_hex})
+	\item \textbf{\texttt{tbl\_auditoria\_eventos}}: (\underline{\texttt{id\_evento}}, \texttt{id\_eleccion} (FK), \texttt{tipo\_evento}, \texttt{descripcion}, \texttt{timestamp\_evento})
+	\item \textbf{\texttt{tbl\_candidatos}}: (\underline{\texttt{id\_candidato}}, \texttt{id\_eleccion} (FK), \texttt{nombre\_completo}, \texttt{sigla\_frente}, \texttt{cargo}, \texttt{numero\_lista})
+	\item \textbf{\texttt{tbl\_usuarios\_sistema}}: (\underline{\texttt{id\_usuario}}, \texttt{id\_eleccion} (FK), \texttt{username}, \texttt{password\_hash}, \texttt{rol}, \texttt{ultimo\_acceso})
+	\item \textbf{\texttt{tbl\_resultados\_escrutinio}}: (\underline{\texttt{id\_resultado}}, \texttt{id\_eleccion} (FK), \texttt{id\_candidato} (FK), \texttt{votos\_totales}, \texttt{firma\_acta\_ac\_hex}, \texttt{timestamp\_cierre})
 \end{enumerate}
 
 \noindent\textbf{Análisis de Formas Normales y Desnormalización Controlada:}
 \begin{itemize}
-	\item \textbf{Cumplimiento de 3FN:} En \texttt{tbl\_padron\_votantes}, la clave primaria compuesta $(\text{id\_eleccion}, \text{id\_votante})$ asegura que cada atributo dependa funcionalmente de toda la clave, permitiendo que un ciudadano participe en múltiples procesos electorales independientes sin colisión. En \texttt{tbl\_recibos\_votacion}, se eliminó la columna redundante \texttt{hash\_boleta\_sha3}, garantizando que el resumen se consulte estrictamente a través de la clave foránea unívoca hacia \texttt{tbl\_anfora\_boletas}, evitando dependencias transitivas.
-	\item \textbf{Desnormalización Justificada:} La presencia de \texttt{hash\_boleta\_sha3} como atributo persistente indexado con restricción \texttt{UNIQUE} en \texttt{tbl\_anfora\_boletas} constituye una desnormalización técnica consciente. Evita la recomputación dinámica de SHA3-256 sobre los campos binarios en cada consulta de auditoría ciudadana, proporcionando verificación en tiempo $\mathcal{O}(\log n)$ mediante índice B-Tree sin comprometer la normalización.
+	\item \textbf{Cumplimiento de 3FN:} En \texttt{tbl\_padron\_votantes}, la clave primaria compuesta \texttt{(id\_eleccion, id\_votante)} asegura que cada atributo dependa funcionalmente de toda la clave, permitiendo que un ciudadano participe en múltiples procesos electorales independientes sin colisión. En \texttt{tbl\_recibos\_votacion}, se eliminó la columna redundante \texttt{hash\_boleta\_sha3}, garantizando que el resumen se consulte estrictamente a través de la clave foránea unívoca hacia \texttt{tbl\_anfora\_boletas}, evitando dependencias transitivas.
+	\item \textbf{Desnormalización Justificada:} La presencia de \texttt{hash\_boleta\_sha3} como atributo persistente indexado con restricción \texttt{UNIQUE} en \texttt{tbl\_anfora\_boletas} constituye una desnormalización técnica consciente. Evita la recomputación dinámica de SHA3-256 sobre los campos binarios en cada consulta de auditoría ciudadana, proporcionando verificación en tiempo logarítmico O(log n) mediante índice B-Tree sin comprometer la normalización.
 	\item \textbf{Eliminación de Metadatos de Red en Auditoría:} La columna \texttt{ip\_origen} fue excluida del esquema relacional de auditoría electoral (\texttt{tbl\_auditoria\_eventos}). Conforme a lo definido en la Sección \ref{sec:ceremonia_identidad_adversarios}, las direcciones IP y cabeceras de red se derivan a bitácoras efímeras de infraestructura con una retención acotada estrictamente a la mitigación de ataques DoS, eliminando el riesgo de correlación de red con las boletas emitidas.
 \end{itemize}
 
@@ -272,6 +272,6 @@ La Tabla \ref{tab:diccionario_datos} describe los campos, tipos de datos SQL nat
 
 Para sostener una tasa de votación concurrente sin cuellos de botella durante las horas de alta demanda comicial, se diseñaron índices B-Tree específicos:
 \begin{itemize}
-	\item \textbf{Búsqueda Transaccional en \texttt{tbl\_padron\_votantes}:} La clave primaria compuesta \texttt{(id\_eleccion, id\_votante)} genera automáticamente un índice B-Tree que resuelve la verificación de identidad y elegibilidad en tiempo logarítmico $\mathcal{O}(\log n)$. Esto evita la creación de índices redundantes sobre \texttt{id\_votante} y garantiza un costo acotado incluso con padrones de escala nacional.
-	\item \textbf{Índice B-Tree Único en \texttt{tbl\_anfora\_boletas(hash\_boleta\_sha3)}:} Impide a nivel de motor relacional cualquier colisión o reinserción accidental de un paquete de sufragio idéntico en tiempo $\mathcal{O}(\log n)$, además de acelerar la verificación ciudadana del recibo.
+	\item \textbf{Búsqueda Transaccional en \texttt{tbl\_padron\_votantes}:} La clave primaria compuesta \texttt{(id\_eleccion, id\_votante)} genera automáticamente un índice B-Tree que resuelve la verificación de identidad y elegibilidad en tiempo logarítmico O(log n). Esto evita la creación de índices redundantes sobre \texttt{id\_votante} y garantiza un costo acotado incluso con padrones de escala nacional.
+	\item \textbf{Índice B-Tree Único en \texttt{tbl\_anfora\_boletas(hash\_boleta\_sha3)}:} Impide a nivel de motor relacional cualquier colisión o reinserción accidental de un paquete de sufragio idéntico en tiempo logarítmico O(log n), además de acelerar la verificación ciudadana del recibo.
 \end{itemize}

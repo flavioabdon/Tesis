@@ -5,7 +5,7 @@
 Para contrastar experimentalmente en el Capítulo 4 el desempeño del protocolo post-cuántico propuesto bajo condiciones idénticas de hardware y arquitectura de software, se implementó un protocolo clásico de referencia que conserva el mismo flujo de validación, las mismas pantallas y la misma estructura de datos, sustituyendo únicamente las primitivas de retículos por los estándares asimétricos tradicionales:
 
 \begin{itemize}
-	\item \textbf{Cifrado asimétrico clásico:} Esquema RSA-OAEP con módulo de 2048 bits, exponente público $e=65537$ y función resumen SHA-256 (112 bits de seguridad clásica, vulnerable al algoritmo cuántico de Shor).
+	\item \textbf{Cifrado asimétrico clásico:} Esquema RSA-OAEP con módulo de 2048 bits, exponente público estándar 65537 y función resumen SHA-256 (112 bits de seguridad clásica, vulnerable al algoritmo cuántico de Shor).
 	\item \textbf{Firma digital clásica:} Esquema de curvas elípticas ECDSA sobre la curva P-256 del NIST con SHA-256 (128 bits de seguridad clásica, igualmente vulnerable al algoritmo de Shor).
 	\item \textbf{Componente simétrico constante:} Se mantiene idéntico el cifrado autenticado AES-256-GCM y el resumen de 256 bits para aislar como única variable independiente el cambio de las primitivas de clave pública.
 \end{itemize}
@@ -30,7 +30,7 @@ En la Tabla \ref{tab:correspondencia_modulos_didactico} se presenta la equivalen
 		\hline
 		Entidades del Protocolo & Votante, AR, SV y AC post-cuánticos & Votante, AR, SV y AC clásicos equivalentes \\
 		\hline
-		Banco de Evaluación & Corredor experimental (300 corridas, $N \in [10, 1000]$) & Corredor experimental bajo idénticas cargas \\
+		Banco de Evaluación & Corredor experimental (300 corridas, lotes de 10 a 1000 votantes) & Corredor experimental bajo idénticas cargas \\
 		\hline
 		Tamaño Paquete de Voto & \textbf{16293 bytes}* & \textbf{1196 bytes} \\
 		\hline

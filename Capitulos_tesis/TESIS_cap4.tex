@@ -24,8 +24,6 @@ En cumplimiento del objetivo específico orientado al modelado de la capa de apl
 	\centering
 	\renewcommand{\arraystretch}{1.28}
 	\footnotesize
-	\caption{Evaluación de conformidad funcional del prototipo web respecto a los modelos UWE y restricciones OCL.}
-	\label{tab:evaluacion_conformidad_uwe}
 	\begin{tabularx}{\textwidth}{|>{\bfseries\raggedright\arraybackslash}p{3.0cm}|>{\raggedright\arraybackslash}p{3.8cm}|>{\raggedright\arraybackslash}X|c|}
 		\hline
 		\textbf{Submodelo UWE / Regla OCL} & \textbf{Propiedad Funcional Evaluada} & \textbf{Comportamiento Verificado en el Prototipo} & \textbf{Dictamen} \\
@@ -39,6 +37,8 @@ En cumplimiento del objetivo específico orientado al modelado de la capa de apl
 		Modelo de Procesos \newline (\texttt{ProcesoEmisionVoto}) & Secuencia algorítmica: encapsulamiento ML-KEM-768, cifrado AES-256-GCM y firma ML-DSA-65. & La secuencia criptográfica completa se ejecuta mediante llamadas FFI a \texttt{libpqc\_core.dylib}; sin embargo, en el prototipo Flask la firma y el cifrado ocurren en el backend (\texttt{PEND-15}). & \textbf{Parcial} \newline (\texttt{PEND-15}) \\
 		\hline
 	\end{tabularx}
+	\caption{Evaluación de conformidad funcional del prototipo web respecto a los modelos UWE y restricciones OCL.}
+	\label{tab:evaluacion_conformidad_uwe}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia a partir de las pruebas funcionales del módulo web (\texttt{src/web/app.py}).}}
 \end{table}
 

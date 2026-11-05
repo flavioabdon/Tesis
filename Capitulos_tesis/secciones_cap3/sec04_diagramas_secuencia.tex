@@ -6,7 +6,7 @@ Para modelar la dinámica temporal de las transacciones y los parámetros de los
 
 \subsection{Secuencia 1: Emisión, Validación Multinivel y Custodia del Voto}
 
-La Figura \ref{fig:uml_secuencia_votacion} detalla el intercambio de mensajes durante la jornada electoral activa, destacando la encapsulación contra la clave pública de la Autoridad de Conteo ($ek_{\text{AC}}$) y la desvinculación inmediata de identidad en el Servidor de Votación (SV).
+La Figura \ref{fig:uml_secuencia_votacion} detalla el intercambio de mensajes durante la jornada electoral activa, destacando la encapsulación contra la clave pública de la Autoridad de Conteo y la desvinculación inmediata de identidad en el Servidor de Votación (SV).
 
 \begin{figure}[!htbp]
 	\centering
@@ -19,9 +19,9 @@ La Figura \ref{fig:uml_secuencia_votacion} detalla el intercambio de mensajes du
 		note/.style={rectangle, draw=gray!50, fill=BoxBgAmber, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3pt}
 	]
 		% Cabeceras
-		\node[lifeline] (V)  at (0, 0) {Votante ($V$)};
-		\node[lifeline] (AR) at (5.0, 0) {Autoridad Reg. ($AR$)};
-		\node[lifeline] (SV) at (10.2, 0) {Servidor Votación ($SV$)};
+		\node[lifeline] (V)  at (0, 0) {Votante};
+		\node[lifeline] (AR) at (5.0, 0) {Autoridad de Registro};
+		\node[lifeline] (SV) at (10.2, 0) {Servidor de Votación};
 		
 		% Ejes verticales
 		\draw[draw=gray!50, dashed] (V) -- ++(0,-9.6);
@@ -36,40 +36,38 @@ La Figura \ref{fig:uml_secuencia_votacion} detalla el intercambio de mensajes du
 		
 		% Mensajes Registro
 		\draw[msg] ([yshift=-1.2cm]V.center) -- ([yshift=-1.2cm]AR.center)
-		node[midway, above, font=\scriptsize] {1: \texttt{SolicitudRegistro(id\_v, pk\_v)}};
+		node[midway, above, font=\scriptsize] {1: Solicitud de registro con clave pública};
 		
 		\draw[retmsg] ([yshift=-2.2cm]AR.center) -- ([yshift=-2.2cm]V.center)
-		node[midway, above, font=\scriptsize] {2: \texttt{CredencialVotante(id\_v, pk\_v, ts, firma\_ar)}};
+		node[midway, above, font=\scriptsize] {2: Emisión de credencial de votación firmada};
 		
 		% Cifrado local
 		\node[note, right=0.2cm of V, yshift=-3.8cm] {
 			\textbf{Operaciones Locales en Cabina:}\\
-			$\bullet$ Cargar $ek_{\text{AC}}$ pública de la Autoridad de Conteo\\
-			$\bullet$ $(K, ct_{kem}) \leftarrow \text{ML-KEM.Encaps}(ek_{\text{AC}})$\\
-			$\bullet$ $c_{voto} \leftarrow \text{AES-GCM.Encrypt}(K, m_{\text{fijo}}, nonce, \text{AAD}=\langle id_{\text{elec}}, ct_{kem} \rangle)$\\
-			$\bullet$ $\text{Boleta} = \langle id_{\text{elec}}, ct_{kem}, c_{voto}, nonce \rangle$\\
-			$\bullet$ $\sigma_V \leftarrow \text{ML-DSA.Sign}(sk_V, \text{canonical}(\text{Boleta}))$\\
-			$\bullet$ $\text{PaqueteVoto} = \langle \text{Boleta}, \sigma_V, \text{Credencial} \rangle$
+			$\bullet$ Cargar clave pública de la Autoridad de Conteo\\
+			$\bullet$ Generar clave secreta temporal protegida\\
+			$\bullet$ Cifrar contenido del voto a tamaño uniforme (AES-256)\\
+			$\bullet$ Ensamblar paquete de boleta anónima\\
+			$\bullet$ Firmar digitalmente con clave del votante
 		};
 		
 		% Envío de voto
 		\draw[msg, color=PQCMainBlue] ([yshift=-5.2cm]V.center) -- ([yshift=-5.2cm]SV.center)
-		node[midway, above, font=\scriptsize\bfseries] {3: \texttt{POST /api/votar} $(\text{PaqueteVoto})$};
+		node[midway, above, font=\scriptsize\bfseries] {3: Enviar paquete (Boleta cifrada, Firma y Credencial)};
 		
 		% Validación en Servidor
 		\node[note, left=0.2cm of SV, yshift=-6.2cm] {
-			\textbf{Verificación Multinivel y Registro Anónimo en SV:}\\
-			$\bullet$ $\text{ML-DSA.Verify}(\sigma_{AR}, \text{Credencial}, pk_{AR}) \stackrel{?}{=} \text{OK}$\\
-			$\bullet$ $\text{ML-DSA.Verify}(\sigma_V, \text{Boleta}, pk_V) \stackrel{?}{=} \text{OK}$\\
-			$\bullet$ Comprobación y bloqueo atómico: \texttt{ha\_votado = FALSE}\\
-			$\bullet$ Transacción atómica en BD: \texttt{Padron.marcarYaVoto()} e\\
-			\quad \texttt{Urna.insert(Boleta)} (sin credencial ni firma $\sigma_V$)\\
-			$\bullet$ $\text{Recibo} = \langle h(\text{Boleta}), ts_{\text{ventana}} \rangle$; \; $\sigma_{SV} \leftarrow \text{ML-DSA.Sign}(sk_{SV}, \text{Recibo})$
+			\textbf{Verificación Multinivel y Registro en Servidor:}\\
+			$\bullet$ Validar credencial de la Autoridad de Registro\\
+			$\bullet$ Validar firma digital del votante\\
+			$\bullet$ Comprobación de voto único (no registrar sufragio previo)\\
+			$\bullet$ Marcar registro en padrón y guardar boleta en ánfora\\
+			$\bullet$ Generar código de verificación y firmar recibo
 		};
 		
 		% Retorno de Recibo
 		\draw[retmsg, color=PQCGreen] ([yshift=-8.2cm]SV.center) -- ([yshift=-8.2cm]V.center)
-		node[midway, above, font=\scriptsize\bfseries] {4: \texttt{ReciboVotacion(h\_boleta, ts\_ventana, firma\_sv)}};
+		node[midway, above, font=\scriptsize\bfseries] {4: Entrega de recibo con código de verificación firmado};
 	\end{tikzpicture}
 	}%
 	\caption{Diagrama de Secuencia: Emisión, verificación multinivel y retorno de recibo firmado.}
@@ -79,7 +77,7 @@ La Figura \ref{fig:uml_secuencia_votacion} detalla el intercambio de mensajes du
 
 \subsection{Secuencia 2: Clausura Comicial, Desencapsulamiento y Escrutinio}
 
-La Figura \ref{fig:uml_secuencia_conteo} ilustra la fase de cierre formal de urna, transferencia del lote permutado pseudoaleatoriamente a la Autoridad de Conteo fuera de línea, desencapsulamiento con $dk_{\text{AC}}$ y totalización auditable.
+La Figura \ref{fig:uml_secuencia_conteo} ilustra la fase de cierre formal de urna, transferencia del lote permutado pseudoaleatoriamente a la Autoridad de Conteo fuera de línea, descifrado con la clave privada de conteo y totalización auditable.
 
 \begin{figure}[!htbp]
 	\centering
@@ -92,8 +90,8 @@ La Figura \ref{fig:uml_secuencia_conteo} ilustra la fase de cierre formal de urn
 		note/.style={rectangle, draw=gray!50, fill=BoxBgAmber, rounded corners=2pt, font=\tiny\sffamily, align=left, inner sep=3pt}
 	]
 		% Cabeceras
-		\node[lifeline] (SV) at (0, 0) {Servidor Votación ($SV$)};
-		\node[lifeline] (AC) at (5.5, 0) {Autoridad Conteo ($AC$)};
+		\node[lifeline] (SV) at (0, 0) {Servidor de Votación};
+		\node[lifeline] (AC) at (5.5, 0) {Autoridad de Conteo};
 		\node[lifeline] (PUB) at (11.0, 0) {Tablero Público / Auditoría};
 		
 		% Ejes verticales
@@ -108,28 +106,28 @@ La Figura \ref{fig:uml_secuencia_conteo} ilustra la fase de cierre formal de urn
 		
 		% Mensajes
 		\draw[msg, color=PQCPurple] ([yshift=-1.4cm]SV.center) -- ([yshift=-1.4cm]AC.center)
-		node[midway, above, font=\scriptsize\bfseries] {1: Clausura de mesa $\to$ Entrega de Lote Permutado (Shuffle)};
+		node[midway, above, font=\scriptsize\bfseries] {1: Clausura de mesa $\to$ Entrega de Lote Mezclado};
 		\node[note, below=0.1cm of SV, xshift=1.2cm, yshift=-1.6cm] {
-			\textbf{Permutación en SV:}\\
-			Aplica ordenación pseudoaleatoria al lote anónimo\\
-			$\{\langle id_{\text{elec}}, ct_{kem}, c_{voto}, nonce \rangle_j\}$ destruyendo orden temporal.
+			\textbf{Permutación en Servidor:}\\
+			Aplica ordenación aleatoria al lote de boletas\\
+			destruyendo la correlación de orden temporal.
 		};
 		
 		% Nota Desencapsulamiento
 		\node[note, right=0.2cm of AC, yshift=-3.5cm] {
-			\textbf{Procesamiento por la AC (Estación Air-Gapped):}\\
-			$\bullet$ Carga de clave privada de desencapsulamiento $dk_{\text{AC}}$ (resguardada en HSM)\\
-			$\bullet$ \textbf{Para cada boleta anónima} $j \in \{1, \dots, N\}$:\\
-			\quad 1) $K_j \leftarrow \text{ML-KEM.Decaps}(dk_{\text{AC}}, ct_{kem, j})$\\
-			\quad 2) $m_j \leftarrow \text{AES-GCM.Decrypt}(K_j, c_{voto, j}, nonce_j, \text{AAD}=\langle id_{\text{elec}}, ct_{kem, j} \rangle)$\\
-			\quad 3) Desempaquetar voto de longitud fija (32 B) y validar opción\\
-			\quad 4) Acumular cómputo: $\text{Total}[m_j] \leftarrow \text{Total}[m_j] + 1$\\
-			\quad 5) Registrar digest inmutable: $h_j = \text{SHA3-256}(\text{Boleta}_j)$
+			\textbf{Apertura y Escrutinio en Conteo:}\\
+			$\bullet$ Carga de clave privada de conteo\\
+			$\bullet$ \textbf{Para cada boleta anónima del lote}:\\
+			\quad 1) Recuperar clave secreta con clave de conteo\\
+			\quad 2) Descifrar el voto emitido a tamaño uniforme (AES-256)\\
+			\quad 3) Desempaquetar voto y validar opción electoral\\
+			\quad 4) Acumular cómputo en el total del candidato\\
+			\quad 5) Generar código de verificación del acta oficial
 		};
 		
 		% Publicación
 		\draw[msg, color=PQCGreen] ([yshift=-6.6cm]AC.center) -- ([yshift=-6.6cm]PUB.center)
-		node[midway, above, font=\scriptsize\bfseries] {2: Publicar Acta Oficial de Cómputo + Lista de Hashes $\{h_j\}$};
+		node[midway, above, font=\scriptsize\bfseries] {2: Publicar Acta Oficial de Cómputo y lista de verificación};
 		
 		\node[note, left=0.2cm of PUB, yshift=-7.4cm] {
 			\textbf{Auditoría Ciudadana Universal:}\\

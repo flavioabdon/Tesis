@@ -11,8 +11,6 @@ Para organizar esta información de manera comprensible, en la Tabla \ref{tab:pr
 \centering
 \renewcommand{\arraystretch}{1.3}
 \small
-\caption{Propiedades de seguridad y límites del protocolo.}
-\label{tab:propiedades_limites_protocolo}
 \begin{tabularx}{\textwidth}{|>{\bfseries}p{3.2cm}|c|>{\raggedright\arraybackslash}p{4.2cm}|>{\raggedright\arraybackslash}X|}
 \hline
 \textbf{Propiedad} & \textbf{¿Cubierta?} & \textbf{Mecanismo Tecnológico} & \textbf{Tipo de Evidencia / Soporte} \\
@@ -36,6 +34,9 @@ Libertad de Recibo & No & No se implementan credenciales falsas ni cabinas con c
 Resistencia a la Coacción & No & No se incluye revocación de votos previos ante vigilancia física de un coactor & Límite declarado en los alcances y límites de la investigación (Sección \ref{sec:alcances_limites_tesis}) \\
 \hline
 \end{tabularx}
+\caption{Propiedades de seguridad y límites del protocolo.}
+\label{tab:propiedades_limites_protocolo}
+\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{table}
 
 Tal como se observa en la Tabla \ref{tab:propiedades_limites_protocolo}, el protocolo propuesto garantiza de forma completa la ejecutabilidad, la integridad, la autenticidad, la elegibilidad y la unicidad del voto, así como la confidencialidad del sufragio frente a atacantes en la red y frente a servidores separados. Por otro lado, propiedades adicionales contra la coacción presencial (como la libertad de recibo y la resistencia a la coacción física) se declaran explícitamente como límites fuera del alcance del prototipo, manteniendo coherencia con los objetivos definidos en el Capítulo 1.

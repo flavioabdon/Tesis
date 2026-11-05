@@ -13,32 +13,10 @@ En la Figura \ref{fig:aritmetica_modular_reloj} se representa de manera didácti
 
 \begin{figure}[htbp]
 	\centering
-	\begin{tikzpicture}[scale=0.92]
-		\coordinate (O) at (0,0);
-		% Círculo principal del reloj modular
-		\draw[line width=0.8pt, draw=black] (O) circle (2.0cm);
-		
-		% Marcas y etiquetas de 0 a 11
-		\foreach \angle/\val in {
-			90/0, 60/1, 30/2, 0/3, 330/4, 300/5, 
-			270/6, 240/7, 210/8, 180/9, 150/10, 120/11
-		} {
-			\coordinate (P) at (\angle:2.0cm);
-			\coordinate (Pinner) at (\angle:1.75cm);
-			\draw[line width=0.7pt, draw=black] (P) -- (Pinner);
-			\node[font=\footnotesize\rmfamily\bfseries] at (\angle:2.42cm) {\val};
-		}
-		
-		% Flecha de avance cíclico (ejemplo 9 + 5 = 14 = 2 mod 12)
-		\draw[-{Latex[length=2.2mm, width=1.5mm]}, line width=1.0pt, draw=black] 
-			(180:1.35cm) arc[start angle=180, end angle=30, radius=1.35cm];
-			
-		\node[draw=black, fill=white, line width=0.6pt, font=\scriptsize\rmfamily, align=center] at (0, 0) 
-		{Espacio $\mathbb{Z}_{12}$\\$9 + 5 \equiv 2 \pmod{12}$};
-	\end{tikzpicture}
-	\caption{Funcionamiento cíclico de la aritmética modular.}
+	\includegraphics[width=0.75\textwidth,keepaspectratio]{imagenes/autores_cap2/fig_aritmetica_modular_reloj.png}
+	\caption{Funcionamiento cíclico de la aritmética modular en el grupo cíclico $\mathbb{Z}_{12}$.}
 	\label{fig:aritmetica_modular_reloj}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Stallings (2023).}}
+	\par\vspace{3pt}{\footnotesize\textit{ Stallings (2023), Cap. 4.}}
 \end{figure}
 
 Por su parte, un sistema de ecuaciones lineales exacto en $\mathbb{Z}_q$ se expresa en forma matricial como:

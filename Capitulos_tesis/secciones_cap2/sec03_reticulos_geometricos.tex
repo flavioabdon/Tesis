@@ -131,63 +131,10 @@ Para facilitar la comprensión visual de ambos problemas computacionales, en la 
 
 \begin{figure}[htbp]
 	\centering
-	\begin{tikzpicture}[scale=0.86]
-		% Subfigura izquierda: SVP
-		\begin{scope}[shift={(0,0)}]
-			\foreach \x in {-2,...,2} {
-				\foreach \y in {-2,...,2} {
-					\coordinate (P) at ({\x*1.5 + \y*0.5}, {\x*0.3 + \y*1.5});
-					\fill[black] (P) circle (1.3pt);
-				}
-			}
-			\coordinate (O) at (0,0);
-			\node[below left, font=\scriptsize] at (O) {$\mathbf{0}$};
-			
-			% Radio mínimo lambda_1
-			\draw[line width=0.6pt, dashed, draw=black] (O) circle (1.53cm);
-			
-			% Vector más corto v_min
-			\coordinate (Vmin) at (1.5, 0.3);
-			\draw[-{Latex[length=2.2mm, width=1.5mm]}, line width=1.1pt, draw=black] (O) -- (Vmin)
-			node[midway, below right, font=\footnotesize] {$\mathbf{v}_{\min}$};
-			
-			\node[draw=black, fill=white, line width=0.6pt, font=\scriptsize, align=center] at (0, -2.4) 
-			{\textbf{Problema SVP}\\Hallar $\mathbf{v} \ne \mathbf{0}$ con $\|\mathbf{v}\| = \lambda_1$};
-		\end{scope}
-		
-		% Línea divisoria vertical técnica
-		\draw[line width=0.5pt, dash pattern=on 3pt off 2pt] (3.8, -2.6) -- (3.8, 2.6);
-		
-		% Subfigura derecha: CVP
-		\begin{scope}[shift={(7.6,0)}]
-			\foreach \x in {-2,...,2} {
-				\foreach \y in {-2,...,2} {
-					\coordinate (P) at ({\x*1.5 + \y*0.5}, {\x*0.3 + \y*1.5});
-					\fill[black] (P) circle (1.3pt);
-				}
-			}
-			\coordinate (O) at (0,0);
-			\node[below left, font=\scriptsize] at (O) {$\mathbf{0}$};
-			
-			% Punto objetivo t fuera de la grilla
-			\coordinate (Target) at (1.9, 1.4);
-			\coordinate (Closest) at (1.5, 0.3);
-			\fill[black] (Target) circle (1.8pt) node[above right, font=\scriptsize] {$\mathbf{t}$};
-			
-			% Vector de error e
-			\draw[-{Latex[length=1.8mm, width=1.2mm]}, line width=0.8pt, draw=black] (Closest) -- (Target)
-			node[midway, right, font=\tiny\itshape] {$\mathbf{e}$};
-			
-			% Círculo de perturbación alrededor del punto más cercano
-			\draw[line width=0.6pt, dotted, draw=black] (Closest) circle (0.75cm);
-			
-			\node[draw=black, fill=white, line width=0.6pt, font=\scriptsize, align=center] at (0, -2.4) 
-			{\textbf{Problema CVP}\\Hallar $\mathbf{v} \in \Lambda$ más cercano a $\mathbf{t}$};
-		\end{scope}
-	\end{tikzpicture}
-	\caption{Definición geométrica de los problemas SVP y CVP.}
+	\includegraphics[width=0.90\textwidth,keepaspectratio]{imagenes/autores_cap2/fig_svp_cvp_geometrico.png}
+	\caption{Definición geométrica de los problemas SVP y CVP en retículos.}
 	\label{fig:svp_cvp_comparacion}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Ajtai (1996) y Regev (2005).}}
+	\par\vspace{3pt}{\footnotesize\textit{ Eisenbrand, Venzin y Rothvoss (2021), p. 1 (basado en Ajtai, 1996).}}
 \end{figure}
 
 Tal como se compara en la Figura \ref{fig:svp_cvp_comparacion}, en el problema SVP (a la izquierda) el objetivo es encontrar el vector no nulo de menor longitud que conecta el origen con un punto del retículo. En cambio, en el problema CVP (a la derecha) se recibe un punto arbitrario $\mathbf{t}$ en el espacio y el objetivo es encontrar cuál es el punto del retículo más cercano. Ambos problemas constituyen la base de la seguridad post-cuántica porque carecen de algoritmos eficientes en dimensiones elevadas.

@@ -53,4 +53,14 @@ Esta estrategia consiste en que un atacante actual puede interceptar y guardar e
 
 Cuando en los próximos años se disponga de computadoras cuánticas de mayor escala, el atacante podrá aplicar el algoritmo de Shor sobre los datos almacenados en el pasado, descifrar las boletas guardadas y exponer públicamente por quién votó cada ciudadano o falsificar firmas históricas. Por esta razón, la protección de procesos sensibles como la votación electrónica exige migrar desde ahora hacia algoritmos post-cuánticos que ni siquiera una computadora cuántica pueda vulnerar.
 
+Tal como se ilustra en la Figura \ref{fig:hndl_amenaza}, la ventana de vulnerabilidad de la amenaza HNDL se formaliza mediante la desigualdad de Mosca: si la suma del tiempo durante el cual los datos electorales deben mantenerse en secreto ($X$) y el tiempo requerido para completar la migración hacia sistemas post-cuánticos ($Y$) supera el tiempo estimado para la construcción de una computadora cuántica criptográficamente relevante ($Z$), es decir, $X + Y > Z$, entonces la confidencialidad de los votos ya se encuentra en riesgo crítico en la actualidad (Mascelli y Rodden, 2025; Centro Criptológico Nacional [CCN-CERT], 2023).
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.95\textwidth]{imagenes/autores_cap2/fig_hndl_amenaza.png}
+	\caption{Línea de tiempo de la amenaza cuántica «Cosechar ahora, descifrar después» (HNDL) y ventana temporal de transición.}
+	\label{fig:hndl_amenaza}
+	\par\vspace{3pt}{\footnotesize\textit{ Mascelli y Rodden (2025), p. 10; y contextualizado según CCN-CERT (2023).}}
+\end{figure}
+
 % =============================================================================

@@ -25,7 +25,7 @@ La Figura \ref{fig:uml_estados_boleta} ilustra las transiciones de estado de una
 		
 		\node[state] (s4) at (10.8, -2.6) {4. En Transmisión\\(Canal Red Dolev-Yao)};
 		\node[state, fill=BoxBgTeal] (s5) at (6.6, -2.6) {5. Custodiada en Urna\\(Ánfora Digital)};
-		\node[state, fill=BoxBgGreen] (s6) at (2.4, -2.6) {6. Desencapsulada\\(Apertura con $dk_{AC}$)};
+		\node[state, fill=BoxBgGreen] (s6) at (2.4, -2.6) {6. Descifrada\\(Apertura en Conteo)};
 		
 		\node[final] (sf) at (0, -2.6) {};
 		\node[circle, fill=black, inner sep=2.5pt] at (sf.center) {};
@@ -36,8 +36,8 @@ La Figura \ref{fig:uml_estados_boleta} ilustra las transiciones de estado de una
 		
 		% Transiciones de Éxito
 		\draw[trans] (s0) -- (s1) node[midway, above] {Emitir};
-		\draw[trans] (s1) -- (s2) node[midway, above] {$\text{Encaps}(ek_{AC})$};
-		\draw[trans] (s2) -- (s3) node[midway, above] {$\text{Sign}(sk_V)$};
+		\draw[trans] (s1) -- (s2) node[midway, above] {Cifrar voto};
+		\draw[trans] (s2) -- (s3) node[midway, above] {Firmar digitalmente};
 		\draw[trans] (s3) -- (s4) node[midway, right] {Enviar};
 		\draw[trans] (s4) -- (s5) node[midway, above] {Validación OK};
 		\draw[trans] (s5) -- (s6) node[midway, above] {Escrutinio};
@@ -80,7 +80,7 @@ La Figura \ref{fig:uml_estados_eleccion} modela las fases administrativas y los 
 		\draw[arr] (st1) -- node[midway, above] {Claves listas} (st2);
 		\draw[arr] (st2) -- node[midway, above] {Apertura comicios} (st3);
 		\draw[arr] (st3) -- node[midway, right] {Cierre de mesas} (st4);
-		\draw[arr] (st4) -- node[midway, above] {Transferir $dk_{AC}$} (st5);
+		\draw[arr] (st4) -- node[midway, above] {Habilitar clave de conteo} (st5);
 		\draw[arr] (st5) -- node[midway, above] {Publicar acta} (st6);
 		\draw[arr] (st6) -- (end);
 	\end{tikzpicture}

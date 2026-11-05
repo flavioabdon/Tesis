@@ -17,19 +17,19 @@ Para garantizar el control matemático de cada operación sobre retículos y alc
 		arr/.style={-{Latex[length=2mm, width=1.4mm]}, line width=0.8pt, draw=black}
 	]
 		% Columna 1: FIPS 202
-		\node[modbox] (f202) at (-4.8, 1.8) {\textbf{Módulo Propio FIPS 202}\\Esponja Keccak-$f[1600]$ (24 rondas)\\Pasos $\theta, \rho, \pi, \chi, \iota$};
-		\node[stepbox] (f202_a) at (-4.8, 0.2) {SHAKE128 / SHAKE256\\Expansión de matrices y ruido};
-		\node[stepbox] (f202_b) at (-4.8, -1.0) {SHA3-256 / SHA3-512\\Huellas de claves y recibo $h_b$ (32 B)};
+		\node[modbox] (f202) at (-4.8, 1.8) {\textbf{Módulo Propio FIPS 202}\\Funciones Hash y Permutación\\Esponja Keccak (24 rondas)};
+		\node[stepbox] (f202_a) at (-4.8, 0.2) {Funciones SHAKE128 / SHAKE256\\Generación determinista y muestreo};
+		\node[stepbox] (f202_b) at (-4.8, -1.0) {Funciones SHA3-256 / SHA3-512\\Resumen digital para el recibo (32 B)};
 
 		% Columna 2: FIPS 203
-		\node[modbox] (f203) at (0, 1.8) {\textbf{Módulo Propio FIPS 203}\\ML-KEM-768 ($n=256, q=3329, k=3$)\\Transformadas NTT / INTT y CBD};
-		\node[stepbox] (f203_a) at (0, 0.2) {Encapsulamiento FO (IND-CCA2)\\Genera $ct_{\text{kem}}$ (1088 B) y llave $K$ (32 B)};
-		\node[stepbox] (f203_b) at (0, -1.0) {Cifrado Simétrico AES-256-GCM\\Produce boleta cifrada $c_{\text{voto}}$ + GMAC};
+		\node[modbox] (f203) at (0, 1.8) {\textbf{Módulo Propio FIPS 203}\\Cifrado Asimétrico ML-KEM-768\\Aritmética polinomial en retículos};
+		\node[stepbox] (f203_a) at (0, 0.2) {Encapsulado de Clave Segura\\Criptograma (1088 B) y Clave (32 B)};
+		\node[stepbox] (f203_b) at (0, -1.0) {Cifrado Simétrico AES-256-GCM\\Voto protegido con autenticación};
 
 		% Columna 3: FIPS 204
-		\node[modbox] (f204) at (4.8, 1.8) {\textbf{Módulo Propio FIPS 204}\\ML-DSA-65 ($q=8380417, k=6, \ell=5$)\\NTT, Decompose y Pistas};
-		\node[stepbox] (f204_a) at (4.8, 0.2) {Muestreo Fiat--Shamir con Rechazo\\Norma $\|\mathbf{z}\|_\infty < \gamma_1 - \beta$};
-		\node[stepbox] (f204_b) at (4.8, -1.0) {Firma y Verificación (3309 B)\\Credencial AR, Boleta $V$ y Recibo SV};
+		\node[modbox] (f204) at (4.8, 1.8) {\textbf{Módulo Propio FIPS 204}\\Firma Digital ML-DSA-65\\Esquema de identificación en retículos};
+		\node[stepbox] (f204_a) at (4.8, 0.2) {Muestreo con Rechazo\\Verificación de cotas de seguridad};
+		\node[stepbox] (f204_b) at (4.8, -1.0) {Firma y Verificación Digital (3309 B)\\Credencial, Boleta y Recibo};
 
 		\draw[arr] (f202) -- (f202_a);
 		\draw[arr] (f202_a) -- (f202_b);
@@ -60,21 +60,21 @@ El adaptador de enlace entre Python y la biblioteca dinámica en C reserva previ
 		\hline
 		\textbf{Elemento Criptográfico} & \textbf{Estándar NIST} & \textbf{Tamaño (B)} & \textbf{Composición Estructural} \\
 		\hline
-		Clave Pública ($ek_{\text{AC}}$) & ML-KEM-768 (FIPS 203) & 1184 & Vector polinomial $\mathbf{t} \in R_q^3$ comprimido (1152 B) más semilla $\rho$ (32 B). \\
+		Clave Pública (Conteo) & ML-KEM-768 (FIPS 203) & 1184 & Vector polinomial comprimido (1152 B) más semilla pública (32 B). \\
 		\hline
-		Clave Privada ($dk_{\text{AC}}$) & ML-KEM-768 (FIPS 203) & 2400 & Vector secreto $\mathbf{s} \in R_q^3$, clave pública $ek$, huella $H(ek)$ y semilla $z$. \\
+		Clave Privada (Conteo) & ML-KEM-768 (FIPS 203) & 2400 & Vector polinomial secreto, clave pública, huella de verificación y semilla aleatoria. \\
 		\hline
-		Texto Cifrado ($ct_{\text{kem}}$) & ML-KEM-768 (FIPS 203) & 1088 & Vector comprimido $\mathbf{u}$ (960 B) más polinomio comprimido $v$ (128 B). \\
+		Criptograma KEM & ML-KEM-768 (FIPS 203) & 1088 & Vector comprimido (960 B) más polinomio comprimido (128 B). \\
 		\hline
-		Secreto Compartido ($K$) & ML-KEM-768 (FIPS 203) & 32 & Llave simétrica efímera de 256 bits para cifrado AES-256-GCM. \\
+		Secreto Compartido & ML-KEM-768 (FIPS 203) & 32 & Llave simétrica efímera de 256 bits para cifrado AES-256-GCM. \\
 		\hline
-		Clave Pública ($pk$) & ML-DSA-65 (FIPS 204) & 1952 & Semilla pública $\rho$ (32 B) más vector de bits superiores $\mathbf{t}_1$ (1920 B). \\
+		Clave Pública (Firma) & ML-DSA-65 (FIPS 204) & 1952 & Semilla pública (32 B) más vector de bits superiores (1920 B). \\
 		\hline
-		Clave Privada ($sk$) & ML-DSA-65 (FIPS 204) & 4032 & Semillas $\rho, K, \text{tr}$ más vectores secretos cortos $\mathbf{s}_1, \mathbf{s}_2, \mathbf{t}_0$. \\
+		Clave Privada (Firma) & ML-DSA-65 (FIPS 204) & 4032 & Semillas internas de derivación más componentes vectoriales secretos. \\
 		\hline
-		Firma Digital ($\sigma$) & ML-DSA-65 (FIPS 204) & 3309 & Desafío $\tilde{c}$ (48 B), vector de respuesta $\mathbf{z}$ (3200 B) e indicios $\mathbf{h}$ (61 B). \\
+		Firma Digital & ML-DSA-65 (FIPS 204) & 3309 & Desafío comprimido (48 B), vector de respuesta (3200 B) e indicios de redondeo (61 B). \\
 		\hline
-		Resumen de Boleta ($h_b$) & SHA3-256 (FIPS 202) & 32 & Resumen binario de 256 bits (64 caracteres hexadecimales en el recibo). \\
+		Resumen de Boleta (SHA-3) & SHA3-256 (FIPS 202) & 32 & Resumen binario de 256 bits (64 caracteres hexadecimales en el recibo). \\
 		\hline
 		\textbf{Paquete de Voto Total} & Protocolo PQC Híbrido & \textbf{16293}* & *Paquete JSON transmitido con campos en hexadecimal y credencial anidada. \\
 		\hline
@@ -149,8 +149,6 @@ En la Tabla \ref{tab:conformidad_prototipo_diseno} se sintetiza el grado de conf
 	\centering
 	\renewcommand{\arraystretch}{1.2}
 	\footnotesize
-	\caption{Matriz de conformidad entre diseño y prototipo.}
-	\label{tab:conformidad_prototipo_diseno}
 	\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{6.2cm}|>{\bfseries\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}X|}
 		\hline
 		\textbf{Dimensión Arquitectónica y Criptográfica} & \textbf{Estado} & \textbf{Alcance en el Prototipo y Proyección} \\
@@ -161,11 +159,13 @@ En la Tabla \ref{tab:conformidad_prototipo_diseno} se sintetiza el grado de conf
 		\hline
 		Vistas web UWE separadas por rol, bloqueo de doble voto y recibo auditable SHA3-256 & Conforme & Implementadas en Flask (/login, /jurado, /ciudadano, /admin) con panel criptográfico en vivo. \\
 		\hline
-		Ejecución de cifrado y firma en el navegador del cliente y custodia de $dk_{\text{AC}}$ en hardware aislado & Parcial (Entorno local) & En el servidor demostrativo las entidades operan en el mismo nodo; en producción requiere WebAssembly y HSM. \\
+		Ejecución de cifrado y firma en el navegador del cliente y custodia de la clave privada de conteo en hardware aislado & Parcial (Entorno local) & En el servidor demostrativo las entidades operan en el mismo nodo; en producción requiere WebAssembly y HSM. \\
 		\hline
 		Persistencia relacional SQL concurrente, relleno fijo a 32 B y truncamiento de marcas horarias & Parcial (En memoria) & El prototipo gestiona colecciones en memoria RAM y JSON ordenado; el esquema SQL 3FN queda especificado. \\
 		\hline
 	\end{tabularx}
+	\caption{Matriz de conformidad entre diseño y prototipo.}
+	\label{tab:conformidad_prototipo_diseno}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{table}
 
@@ -173,5 +173,5 @@ Para verificar que los módulos propios en C y Python cumplen exactamente las es
 
 \begin{itemize}
 	\item \textbf{200 vectores oficiales KAT del NIST (100\% de aprobación):} Se evaluaron 100 vectores deterministas de ML-KEM-768 y 100 vectores de ML-DSA-65, comprobando la coincidencia exacta byte por byte de claves públicas, claves privadas, criptogramas, llaves compartidas y firmas digitales (\textbf{200 de 200 pruebas aprobadas}).
-	\item \textbf{Inyección de fallos y suite del sistema (23/23 aprobadas):} Ante la alteración de un solo bit en $ct_{\text{kem}}$, ML-KEM-768 aplica rechazo implícito derivando una llave distinta que es detectada de inmediato por la etiqueta GMAC de AES-256-GCM; por su parte, ML-DSA-65 aplica rechazo explícito invalidando el 100\% de las firmas o boletas alteradas.
+	\item \textbf{Inyección de fallos y suite del sistema (23/23 aprobadas):} Ante la alteración de un solo bit en el criptograma KEM, ML-KEM-768 aplica rechazo implícito derivando una llave distinta que es detectada de inmediato por la etiqueta GMAC de AES-256-GCM; por su parte, ML-DSA-65 aplica rechazo explícito invalidando el 100\% de las firmas o boletas alteradas.
 \end{itemize}

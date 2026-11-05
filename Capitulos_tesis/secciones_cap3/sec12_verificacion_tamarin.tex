@@ -7,7 +7,7 @@ Con el fin de demostrar matemáticamente que la estructura de mensajes del proto
 \subsection{Especificación del Modelo Simbólico y Supuestos}
 \label{subsec:tamarin_modelo_formal}
 
-El modelo formal se especificó mediante reglas de reescritura de multiconjuntos de hechos que representan: (1) la teoría ecuacional de encapsulamiento $\text{decaps}(dk, \text{encaps}(\text{ek\_from\_dk}(dk), r)) = r$, cifrado simétrico, firmas digitales y funciones resumen; (2) la generación de claves de las autoridades ($AR$, $SV$ y $AC$); (3) el empadronamiento mediante el hecho lineal de un solo uso $\text{NoHaVotado}(id_V)$, que se consume al votar y se transforma irreversiblemente en el hecho persistente $\text{YaVoto}(id_V)$; (4) el almacenamiento anónimo en la urna $\text{AnforaDigital}(ct_{\text{kem}}, c_{\text{voto}}, ts)$ tras desacoplar la identidad; (5) la apertura y conteo condicionados al hecho de cierre $\text{UrnaCerrada}$; y (6) las reglas de revelación de claves para evaluar qué propiedades se mantienen ante el compromiso de participantes. En la Tabla \ref{tab:supuestos_modelo_tamarin} se resumen los seis supuestos formales del modelo (cuyo código completo se incluye en el Apéndice \ref{anexo:tamarin_spthy}).
+El modelo formal se especificó mediante reglas de reescritura de multiconjuntos de hechos que representan: (1) la teoría ecuacional de encapsulamiento asimétrico, cifrado simétrico, firmas digitales y funciones resumen; (2) la generación de claves de las autoridades (Registro, Servidor y Conteo); (3) el empadronamiento mediante el hecho lineal de un solo uso \texttt{NoHaVotado}, que se consume al sufragar y se transforma irreversiblemente en el estado persistente \texttt{YaVoto}; (4) el almacenamiento anónimo en la urna digital (\texttt{AnforaDigital}) tras desacoplar la identidad; (5) la apertura y conteo condicionados al hecho de cierre \texttt{UrnaCerrada}; y (6) las reglas de revelación de claves para evaluar qué propiedades se mantienen ante el compromiso de participantes. En la Tabla \ref{tab:supuestos_modelo_tamarin} se resumen los seis supuestos formales del modelo (cuyo código completo se incluye en el Apéndice \ref{anexo:tamarin_spthy}).
 
 \begin{table}[!htbp]
 	\centering
@@ -17,7 +17,7 @@ El modelo formal se especificó mediante reglas de reescritura de multiconjuntos
 		\textbf{Id.} & \textbf{Supuesto Declarado} & \textbf{Significado en el Sistema Electoral} & \textbf{Representación en Tamarin} \\
 		\midrule
 		\textbf{S1} & Autoridades únicas & Opera una sola instancia de AR, AC y SV por elección. & Restricciones de inicialización única. \\
-		\textbf{S2} & Clave pública auténtica & El votante recibe la clave auténtica $ek_{\text{AC}}$ antes de cifrar. & Canal autenticado de publicación. \\
+		\textbf{S2} & Clave pública auténtica & El votante recibe la clave pública auténtica de conteo antes de cifrar. & Canal autenticado de publicación. \\
 		\textbf{S3} & Padrón honesto en SV & El SV verifica el padrón oficial y consume el estado lineal. & Confianza operacional en el padrón. \\
 		\textbf{S4} & Cierre temporal único & La urna se cierra una sola vez y bloquea votos tardíos. & Restricción de cierre estricto. \\
 		\textbf{S5} & Criptografía ideal & Las primitivas operan como cajas negras perfectas. & Modelo simbólico Dolev--Yao. \\
@@ -41,15 +41,15 @@ Al ejecutar el demostrador automático con derivación de fuentes de tipado sobr
 	\footnotesize
 	\begin{tabularx}{\textwidth}{lXccr}
 		\toprule
-		\textbf{Lema Formal} & \textbf{Propiedad de Seguridad Demostrada} & \textbf{Traza} & \textbf{Resultado} & \textbf{Pasos} \\
+		\textbf{Lema Formal} & \textbf{Propiedad de Seguridad Demostrada} & \textbf{Tipo de Lema} & \textbf{Resultado} & \textbf{Pasos} \\
 		\midrule
-		ejecutabilidad & Flujo electoral completo de registro, voto y conteo & $\exists$ & \textbf{Verificado} & 22 \\
-		unicidad & Imposibilidad de doble voto por consumo de hecho lineal & $\forall$ & \textbf{Verificado} & 18 \\
-		secreto\_voto & Confidencialidad del voto mientras no se filtre $dk_{\text{AC}}$ & $\forall$ & \textbf{Verificado} & 8 \\
-		autenticidad\_votante & Toda boleta aceptada proviene de un elector acreditado & $\forall$ & \textbf{Verificado} & 17 \\
-		integridad\_voto & Inmutabilidad del voto desde la cabina hasta el conteo & $\forall$ & \textbf{Verificado} & 33 \\
+		ejecutabilidad & Flujo electoral completo de registro, voto y conteo & Existencial & \textbf{Verificado} & 22 \\
+		unicidad & Imposibilidad de doble voto por consumo de hecho lineal & Universal & \textbf{Verificado} & 18 \\
+		secreto\_voto & Confidencialidad del voto mientras no se filtre la clave de conteo & Universal & \textbf{Verificado} & 8 \\
+		autenticidad\_votante & Toda boleta aceptada proviene de un elector acreditado & Universal & \textbf{Verificado} & 17 \\
+		integridad\_voto & Inmutabilidad del voto desde la cabina hasta el conteo & Universal & \textbf{Verificado} & 33 \\
 		\midrule
-		AUTO\_typing & Lema auxiliar automático de invariante de tipos & $\forall$ & \textbf{Verificado} & 85 \\
+		AUTO\_typing & Lema auxiliar automático de invariante de tipos & Universal & \textbf{Verificado} & 85 \\
 		\midrule
 		\multicolumn{3}{l}{\textbf{Tiempo total de verificación automática:}} & & \textbf{4,58 s} \\
 		\bottomrule
@@ -67,4 +67,4 @@ Al ejecutar el demostrador automático con derivación de fuentes de tipado sobr
 	\par\vspace{2pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{figure}
 
-El lema de \textbf{unicidad} se cumple de forma incondicional gracias al consumo del hecho lineal en el servidor; el \textbf{secreto del voto} se preserva siempre que la clave privada $dk_{\text{AC}}$ de la Autoridad de Conteo no sea filtrada; y los lemas de \textbf{autenticidad} e \textbf{integridad} se sostienen mientras las claves privadas de firma de los electores y de la Autoridad de Registro permanezcan seguras. Como límites declarados del modelo simbólico se dejan registrados la prueba de equivalencia observacional por bi-sistemas (que excede la memoria por explosión de estados), la exclusión de colusión entre servidor y registro (Supuesto S3) y la coacción física presencial fuera del sistema.
+El lema de \textbf{unicidad} se cumple de forma incondicional gracias al consumo del hecho lineal en el servidor; el \textbf{secreto del voto} se preserva siempre que la clave privada de la Autoridad de Conteo no sea filtrada; y los lemas de \textbf{autenticidad} e \textbf{integridad} se sostienen mientras las claves privadas de firma de los electores y de la Autoridad de Registro permanezcan seguras. Como límites declarados del modelo simbólico se dejan registrados la prueba de equivalencia observacional por bi-sistemas (que excede la memoria por explosión de estados), la exclusión de colusión entre servidor y registro (Supuesto S3) y la coacción física presencial fuera del sistema.

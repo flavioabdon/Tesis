@@ -35,43 +35,13 @@ Para eliminar por completo este riesgo de fuga estadística, Lyubashevsky (2012)
 
 \begin{figure}[!htbp]
 	\centering
-	\begin{tikzpicture}[
-		pbox/.style={rectangle, draw=black, fill=white, line width=0.8pt, rounded corners=1.5pt, text width=3.4cm, align=center, font=\footnotesize\rmfamily, inner sep=4pt},
-		dec/.style={diamond, draw=black, fill=white, line width=0.8pt, aspect=2.1, align=center, font=\footnotesize\rmfamily, inner sep=2pt},
-		errbox/.style={rectangle, draw=black, fill=white, double, double distance=1.2pt, line width=0.7pt, rounded corners=1.5pt, text width=3.0cm, align=center, font=\footnotesize\rmfamily, inner sep=4pt},
-		arr/.style={-{Latex[length=2mm, width=1.5mm]}, line width=0.8pt, draw=black},
-		darr/.style={-{Latex[length=2mm, width=1.5mm]}, line width=0.7pt, dashed, draw=black}
-	]
-		% Fila 1: Generación y cómputo de firma candidata
-		\node (init) [pbox] at (-4.4, 1.4) {1. Vector máscara $\mathbf{y}$\\aleatorio uniforme};
-		\node (hash) [pbox] at (0, 1.4) {2. Desafío polinomial\\$c = H(\mathbf{A}\mathbf{y}, \mu)$};
-		\node (cand) [pbox] at (4.4, 1.4) {3. Firma candidata\\$\mathbf{z} = \mathbf{y} + c\mathbf{s}$};
-		
-		% Fila 2: Decisión y ramas de aceptación / rechazo
-		\node (abort) [errbox] at (-4.4, -1.4) {\textbf{Abortar}\\Reintentar nuevo $\mathbf{y}$};
-		\node (dec) [dec] at (0, -1.4) {¿$\|\mathbf{z}\|_\infty < \gamma_1 - \beta$?};
-		\node (pub) [pbox] at (4.4, -1.4) {\textbf{Firma Aceptada}\\$\sigma = (\mathbf{z}, c)$};
-		
-		% Conexiones fila superior
-		\draw[arr] (init.east) -- (hash.west);
-		\draw[arr] (hash.east) -- (cand.west);
-		
-		% Transición de firma candidata hacia decisión (por el canal central, sin tocar ningún cuadro)
-		\draw[arr] (cand.south) -- ++(0, -0.65) -| (dec.north);
-		
-		% Ramas de decisión
-		\draw[arr] (dec.east) -- node[above=1pt, font=\scriptsize\rmfamily\itshape] {Sí} (pub.west);
-		\draw[arr] (dec.west) -- node[above=1pt, font=\scriptsize\rmfamily\itshape] {No} (abort.east);
-		
-		% Bucle de reintento: retorno vertical limpio sin solapamiento
-		\draw[darr] (abort.north) -- (init.south);
-	\end{tikzpicture}
-	\caption{Firma digital ML-DSA con muestreo por rechazo.}
+	\includegraphics[width=0.88\textwidth,keepaspectratio]{imagenes/autores_cap2/fig_mldsa_dilithium_rejection.png}
+	\caption{Esquema de firma digital ML-DSA / Dilithium con muestreo por rechazo.}
 	\label{fig:mldsa_abort}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Lyubashevsky (2012) y NIST (2024b).}}
+	\par\vspace{3pt}{\footnotesize\textit{ Ducas et al. (2021), p. 4 (estándar FIPS 204, NIST, 2024b).}}
 \end{figure}
 
-Como se ilustra en la Figura \ref{fig:mldsa_abort}, en el paso $1$ se elige el vector máscara $\mathbf{y}$, en el paso $2$ se calcula el desafío $c$ combinando $\mathbf{A}\mathbf{y}$ con el resumen del voto $\mu$, y en el paso $3$ se obtiene la firma candidata $\mathbf{z} = \mathbf{y} + c\mathbf{s}$. A continuación, el rombo de decisión evalúa si todos los coeficientes de $\mathbf{z}$ son menores al umbral de seguridad $\gamma_1 - \beta$. Si la condición no se cumple (rama \textit{No}), el proceso aborta internamente y regresa al paso $1$ para probar con otro vector $\mathbf{y}$; si se cumple (rama \textit{Sí}), se emite la firma definitiva $\sigma = (\mathbf{z}, c)$ que es completamente independiente de la clave secreta.
+Como se ilustra en la especificación formal de la Figura \ref{fig:mldsa_abort}, durante la rutina $\text{Sign}(sk, M)$ se selecciona la máscara $\mathbf{y}$, se calcula el desafío $c = H(M \,\|\, \mathbf{w}_1)$ y la firma candidata $\mathbf{z} = \mathbf{y} + c\mathbf{s}_1$. En la línea 11, la prueba de muestreo con rechazo evalúa si $\|\mathbf{z}\|_\infty \ge \gamma_1 - \beta$ o si se desbordan los bits bajos. Si se detecta un posible desbordamiento que pudiera filtrar información de la clave privada, la firma candidata se descarta ($z \leftarrow \bot$) y el bucle reintenta con una nueva máscara, garantizando que la firma definitiva emitida $\sigma = (\mathbf{z}, c)$ sea matemáticamente independiente del secreto y verificable públicamente bajo $\text{Verify}(pk, M, \sigma)$.
 
 \subsection{Verificación Pública}
 

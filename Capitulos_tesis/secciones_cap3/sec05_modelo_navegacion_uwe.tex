@@ -79,9 +79,9 @@ En la Figura \ref{fig:uwe_navegacion} se presenta el Modelo de Estructura de Nav
 			«processClass»\\
 			\textbf{ProcesoEmisionVoto}\\
 			\rule{3.7cm}{0.3pt}\\
-			+ encapsularMLKEM768(ekAC)\\
-			+ cifrarAES256GCM(K, voto)\\
-			+ firmarMLDSA65(skV, boleta)\\
+			+ encapsularClaveTemporal()\\
+			+ cifrarVotoAES256()\\
+			+ firmarPaqueteVotante()\\
 			+ depositarEnAnforaSV()
 		};
 
@@ -108,15 +108,15 @@ En la Figura \ref{fig:uwe_navegacion} se presenta el Modelo de Estructura de Nav
 			\textbf{PanelTribunal (/admin)}\\
 			\rule{3.6cm}{0.3pt}\\
 			+ totalVotosAnfora: int\\
-			+ desencapsularEscrutinio(dk)\\
+			+ ejecutarEscrutinioOficial()\\
 			+ tablaAuditoriaSHA3: List[str]
 		};
 
 		\node[oclbox] (ocl_note) at (5.2, -3.5) {
 			\textbf{Restricción OCL \{NoRetornoTrasVotar\}:}\\
 			Contexto: PanelJurado / CabinaCiudadano\\
-			Si $\text{haVotado} = \text{verdadero} \implies$\\
-			\quad $\text{linkCabina.deshabilitado} = \text{verdadero}$
+			Regla: Si el elector ya votó,\\
+			\quad se bloquea el acceso a cabina
 		};
 
 		\draw[navlink] (ingreso) -- (menu) node[midway, left] {«navigationLink»};
@@ -128,7 +128,7 @@ En la Figura \ref{fig:uwe_navegacion} se presenta el Modelo de Estructura de Nav
 		\draw[proclink] (proc_voto) -- (recibo) node[midway, right] {«processLink»};
 		\draw[navlink] (menu) -- (query_aud) node[midway, left] {«navigationLink»};
 		\draw[navlink] (query_aud) -- (auditoria) node[midway, left] {«navigationLink»};
-		\draw[navlink] (recibo) -- (auditoria) node[midway, above] {«navigationLink»} node[midway, below] {auditar $h_b$};
+		\draw[navlink] (recibo) -- (auditoria) node[midway, above] {«navigationLink»} node[midway, below] {auditar recibo};
 		\draw[draw=black, dashed, line width=0.6pt] (ocl_note.north west) -- (verif.south east);
 	\end{tikzpicture}
 	}%
@@ -143,7 +143,7 @@ En la Figura \ref{fig:uwe_navegacion} se presenta el Modelo de Estructura de Nav
 Para evitar ambigüedades en el control de sesiones por rol, el mapa de navegación se rige por tres invariantes y precondiciones formales basadas en el Lenguaje de Restricciones de Objetos OCL (Cabot y Clarisó, 2023):
 
 \begin{enumerate}
-	\item \textbf{Invariante de bloqueo de retorno tras sufragar:} En el contexto del padrón y de la cabina del ciudadano, si el indicador de voto emitido toma el valor verdadero ($\text{haVotado} = \text{verdadero}$), el enlace de acceso al formulario de votación queda permanentemente deshabilitado ($\text{linkCabina.deshabilitado} = \text{verdadero}$).
-	\item \textbf{Precondición de elegibilidad para ingresar a la cabina:} El acceso a la vista de sufragio (/ciudadano) exige la conjunción lógica de tres condiciones: que la jornada se encuentre abierta ($\text{estadoFase} = \text{VOTACION\_ABIERTA}$), que el elector posea una credencial ML-DSA-65 válida y habilitada en mesa ($\text{credencialValida} = \text{verdadero}$) y que no registre un sufragio previo ($\text{haVotado} = \text{falso}$).
-	\item \textbf{Invariante de integridad del comprobante de cierre:} El nodo de recibo final solo se despliega cuando la transacción de depósito ha concluido ($\text{sesionCerrada} = \text{verdadero}$), verificando que el resumen SHA3-256 posea exactamente 64 caracteres hexadecimales (32 B) y que la firma digital del servidor mida 3309 bytes.
+	\item \textbf{Invariante de bloqueo de retorno tras sufragar:} En el contexto del padrón y de la cabina del ciudadano, si el indicador de voto emitido toma el valor verdadero (\texttt{haVotado = verdadero}), el enlace de acceso al formulario de votación queda permanentemente deshabilitado (\texttt{linkCabina.deshabilitado = verdadero}).
+	\item \textbf{Precondición de elegibilidad para ingresar a la cabina:} El acceso a la vista de sufragio (/ciudadano) exige la conjunción lógica de tres condiciones: que la jornada se encuentre abierta (\texttt{estadoFase = VOTACION\_ABIERTA}), que el elector posea una credencial ML-DSA-65 válida y habilitada en mesa (\texttt{credencialValida = verdadero}) y que no registre un sufragio previo (\texttt{haVotado = falso}).
+	\item \textbf{Invariante de integridad del comprobante de cierre:} El nodo de recibo final solo se despliega cuando la transacción de depósito ha concluido (\texttt{sesionCerrada = verdadero}), verificando que el resumen SHA3-256 posea exactamente 64 caracteres hexadecimales (32 B) y que la firma digital del servidor mida 3309 bytes.
 \end{enumerate}

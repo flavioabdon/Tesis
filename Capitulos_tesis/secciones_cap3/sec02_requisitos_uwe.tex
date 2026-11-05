@@ -13,7 +13,7 @@ En el desarrollo del primer modelo de la metodología UWE (Wakil y Jawawi, 2022;
 \subsection{Diagrama de Casos de Uso Web con Estereotipos UWE}
 \label{subsec:casos_uso_uwe}
 
-En la Figura \ref{fig:uml_casos_uso} se presenta el Diagrama de Casos de Uso Web UWE del sistema electoral, siguiendo el estándar de diseño UML. En él se muestran los cuatro actores que participan en el protocolo (Votante $V$, Autoridad de Registro $AR$, Servidor de Votación $SV$ y Autoridad de Conteo $AC$), los nueve casos de uso clasificados con sus estereotipos UWE y las relaciones de inclusión («include») y extensión («extend»).
+En la Figura \ref{fig:uml_casos_uso} se presenta el Diagrama de Casos de Uso Web UWE del sistema electoral, siguiendo el estándar de diseño UML. En él se muestran los cuatro actores que participan en el protocolo (Votante, Autoridad de Registro, Servidor de Votación y Autoridad de Conteo), los nueve casos de uso clasificados con sus estereotipos UWE y las relaciones de inclusión («include») y extensión («extend»).
 
 \begin{figure}[!htbp]
 	\centering
@@ -39,30 +39,30 @@ En la Figura \ref{fig:uml_casos_uso} se presenta el Diagrama de Casos de Uso Web
 		% Actores Izquierda (Monigotes UML estándar)
 		\coordinate (vot_pic) at (-6.4, 1.5);
 		\pic at (vot_pic) {monigote};
-		\node (votante) at (-6.4, 0.6) [font=\scriptsize\rmfamily, align=center] {\textbf{Votante ($V$)}\\(Rol: Ciudadano)};
+		\node (votante) at (-6.4, 0.6) [font=\scriptsize\rmfamily, align=center] {\textbf{Votante}\\(Rol: Ciudadano)};
 		
 		\coordinate (ar_pic) at (-6.4, -2.4);
 		\pic at (ar_pic) {monigote};
-		\node (ar) at (-6.4, -3.3) [font=\scriptsize\rmfamily, align=center] {\textbf{Autoridad de}\\\textbf{Registro ($AR$)}\\(Rol: Jurado de Mesa)};
+		\node (ar) at (-6.4, -3.3) [font=\scriptsize\rmfamily, align=center] {\textbf{Autoridad de}\\\textbf{Registro}\\(Rol: Jurado de Mesa)};
 		
 		% Actores Derecha (Monigotes UML estándar)
 		\coordinate (sv_pic) at (6.4, -1.7);
 		\pic at (sv_pic) {monigote};
-		\node (sv) at (6.4, -2.6) [font=\scriptsize\rmfamily, align=center] {\textbf{Servidor de}\\\textbf{Votación ($SV$)}};
+		\node (sv) at (6.4, -2.6) [font=\scriptsize\rmfamily, align=center] {\textbf{Servidor de}\\\textbf{Votación}};
 		
 		\coordinate (ac_pic) at (6.4, -4.8);
 		\pic at (ac_pic) {monigote};
-		\node (ac) at (6.4, -5.7) [font=\scriptsize\rmfamily, align=center] {\textbf{Autoridad de}\\\textbf{Conteo ($AC$)}\\(Rol: Tribunal Electoral)};
+		\node (ac) at (6.4, -5.7) [font=\scriptsize\rmfamily, align=center] {\textbf{Autoridad de}\\\textbf{Conteo}\\(Rol: Tribunal Electoral)};
 		
 		% Casos de Uso
 		\node[uc] (uc1) at (0, 3.5) {CU1: Consultar Padrón y Acceder a Cabina};
-		\node[uc] (uc2) at (0, 2.2) {CU2: Emitir Credencial ML-DSA-65 ($AR$)};
-		\node[uc] (uc3) at (0, 0.9) {CU3: Seleccionar y Cifrar Voto (KEM-DEM)};
-		\node[uc] (uc4) at (0, -0.4) {CU4: Firmar Boleta Digitalmente (ML-DSA-65)};
+		\node[uc] (uc2) at (0, 2.2) {CU2: Emitir Credencial de Votación Firmada};
+		\node[uc] (uc3) at (0, 0.9) {CU3: Seleccionar y Cifrar Voto en Cabina};
+		\node[uc] (uc4) at (0, -0.4) {CU4: Firmar Boleta Digitalmente};
 		\node[uc] (uc5) at (0, -1.7) {CU5: Validar Boleta y Control de Voto Único};
 		\node[uc] (uc6) at (0, -3.0) {CU6: Custodiar en Ánfora y Emitir Recibo};
-		\node[uc] (uc7) at (0, -4.3) {CU7: Desencapsular Lote Permutado ($dk_{\text{AC}}$)};
-		\node[uc] (uc8) at (0, -5.6) {CU8: Auditar Recibo SHA3-256 y Acta Oficial};
+		\node[uc] (uc7) at (0, -4.3) {CU7: Descifrar y Contabilizar Lote de Boletas};
+		\node[uc] (uc8) at (0, -5.6) {CU8: Auditar Recibo y Acta Oficial de Resultados};
 		\node[uc] (uc9) at (0, -6.9) {CU9: Bloquear y Alertar Intento de Doble Voto};
 		
 		% Límite del Sistema UML
@@ -106,7 +106,7 @@ Como permite observar la Figura \ref{fig:uml_casos_uso}, el funcionamiento de lo
 \begin{itemize}
 	\item \textbf{Casos de uso de navegación (CU1 y CU8):} En el caso de uso \textbf{CU1}, el ciudadano ingresa su identificador para consultar si está habilitado en el padrón y acceder a la cabina de votación. En el caso de uso \textbf{CU8}, una vez concluida la elección, el ciudadano o cualquier auditor externo ingresa al portal público para buscar el código resumen SHA3-256 de su recibo y comprobar que su voto fue contabilizado en el acta oficial.
 
-	\item \textbf{Casos de uso de proceso (CU2 a CU7 y CU9):} Agrupan las operaciones que transforman o registran información sensible. En \textbf{CU2}, la Autoridad de Registro verifica los datos del ciudadano, genera su par de claves ML-DSA-65 y le entrega su credencial firmada. Cuando el ciudadano elige a su candidato en \textbf{CU3}, el sistema incluye obligatoriamente ({\small «include»}) la firma digital de la boleta en \textbf{CU4}. Al llegar el paquete al Servidor de Votación en \textbf{CU5}, se valida la credencial y se comprueba que el elector no haya votado antes; si todo es correcto, se incluye ({\small «include»}) el depósito anónimo en el ánfora y la emisión del recibo en \textbf{CU6}. Por el contrario, si el sistema detecta que el ciudadano ya había votado previamente, se activa por extensión ({\small «extend»}) el caso de uso \textbf{CU9}, bloqueando la operación. Finalmente, tras el cierre de las mesas, la Autoridad de Conteo ejecuta \textbf{CU7} para desencapsular los votos con su clave privada $dk_{\text{AC}}$ y publicar los resultados hacia \textbf{CU8}.
+	\item \textbf{Casos de uso de proceso (CU2 a CU7 y CU9):} Agrupan las operaciones que transforman o registran información sensible. En \textbf{CU2}, la Autoridad de Registro verifica los datos del ciudadano, genera su par de claves ML-DSA-65 y le entrega su credencial firmada. Cuando el ciudadano elige a su candidato en \textbf{CU3}, el sistema incluye obligatoriamente ({\small «include»}) la firma digital de la boleta en \textbf{CU4}. Al llegar el paquete al Servidor de Votación en \textbf{CU5}, se valida la credencial y se comprueba que el elector no haya votado antes; si todo es correcto, se incluye ({\small «include»}) el depósito anónimo en el ánfora y la emisión del recibo en \textbf{CU6}. Por el contrario, si el sistema detecta que el ciudadano ya había votado previamente, se activa por extensión ({\small «extend»}) el caso de uso \textbf{CU9}, bloqueando la operación. Finalmente, tras el cierre de las mesas, la Autoridad de Conteo ejecuta \textbf{CU7} para descifrar los votos con su clave privada y publicar los resultados hacia \textbf{CU8}.
 \end{itemize}
 
 \subsection{Matriz de Trazabilidad: Requisitos, Casos de Uso UWE y Primitivas Criptográficas}
@@ -118,21 +118,21 @@ En ingeniería de software, una matriz de trazabilidad es una tabla que sirve pa
 	\centering
 	\renewcommand{\arraystretch}{1.28}
 	\footnotesize
-	\caption{Matriz de trazabilidad de requisitos y modelos.}
-	\label{tab:trazabilidad_uwe}
 	\begin{tabularx}{\textwidth}{|>{\bfseries\raggedright\arraybackslash}p{1.0cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{3.3cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{2.8cm}|}
 		\hline
 		\textbf{Req.} & \textbf{Caso de Uso UWE (Estereotipo)} & \textbf{Nodos en Modelos de Navegación y Procesos} & \textbf{Mecanismo Criptográfico y de Base de Datos} & \textbf{Lema Formal en Tamarin} \\
 		\hline
 		\textbf{RF1} & \textbf{CU1} («navigation») \newline \textbf{CU2} («process») \newline \textbf{CU5, CU9} («process») & Clase de navegación: \newline VerificacionPadron \newline Clase de proceso: \newline ProcesoRegistroAR & Firma de credencial AR con ML-DSA-65. Control del campo de voto emitido en la tabla del padrón y regla OCL de no retorno. & Unicidad y autenticidad del votante \\
 		\hline
-		\textbf{RF2} & \textbf{CU3} («process») \newline \textbf{CU6} («process») \newline \textbf{CU7} («process») & Clase de navegación: \newline CabinaVotacion \newline Clase de proceso: \newline ProcesoEmisionVoto & Relleno fijo a 32 bytes, encapsulamiento ML-KEM-768 con $ek_{\text{AC}}$, cifrado AES-256-GCM con datos asociados y guardado anónimo en el ánfora. & Secreto del voto (seguridad IND-CCA2) \\
+		\textbf{RF2} & \textbf{CU3} («process») \newline \textbf{CU6} («process») \newline \textbf{CU7} («process») & Clase de navegación: \newline CabinaVotacion \newline Clase de proceso: \newline ProcesoEmisionVoto & Relleno fijo a 32 bytes, encapsulamiento ML-KEM-768 con la clave pública de conteo, cifrado AES-256-GCM con datos asociados y guardado anónimo en el ánfora. & Secreto del voto (seguridad IND-CCA2) \\
 		\hline
-		\textbf{RF3} & \textbf{CU4} («process») \newline \textbf{CU5} («process») & Clase de navegación: \newline ConfirmacionResumen \newline Clase de proceso: \newline ProcesoEmisionVoto & Ordenamiento determinista de datos y firma digital ML-DSA-65 con la clave del votante $sk_V$; verificación en el servidor con $pk_V$. & Integridad del voto y autenticidad \\
+		\textbf{RF3} & \textbf{CU4} («process») \newline \textbf{CU5} («process») & Clase de navegación: \newline ConfirmacionResumen \newline Clase de proceso: \newline ProcesoEmisionVoto & Ordenamiento determinista de datos y firma digital ML-DSA-65 con la clave privada del votante; verificación en el servidor con la clave pública. & Integridad del voto y autenticidad \\
 		\hline
-		\textbf{RF4} & \textbf{CU6} («process») \newline \textbf{CU8} («navigation») & Clase de navegación: \newline ReciboYCierre \newline Consulta UWE: \newline BuscadorReciboSHA3 & Cálculo del código resumen $h_b = \text{SHA3-256}(\text{Boleta})$ (FIPS 202), firma del servidor $\sigma_{\text{SV}}$ e índice único de búsqueda en el ánfora. & Ejecutabilidad y auditoría individual \\
+		\textbf{RF4} & \textbf{CU6} («process») \newline \textbf{CU8} («navigation») & Clase de navegación: \newline ReciboYCierre \newline Consulta UWE: \newline BuscadorReciboSHA3 & Cálculo del código resumen SHA3-256 de la boleta (FIPS 202), firma digital del servidor e índice único de búsqueda en el ánfora. & Ejecutabilidad y auditoría individual \\
 		\hline
 	\end{tabularx}
+	\caption{Matriz de trazabilidad de requisitos y modelos.}
+	\label{tab:trazabilidad_uwe}
 	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{table}
 

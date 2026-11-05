@@ -5,32 +5,32 @@
 
 \subsection{Ceremonia de Generación y Custodia de Claves}
 
-La seguridad del protocolo descansa en la separación de funciones entre el Servidor de Votación (SV) y la Autoridad de Conteo (AC): la clave privada de desencapsulamiento $dk_{\text{AC}}$ (2400 B) pertenece exclusivamente a la Autoridad de Conteo y nunca reside en el servidor web que recibe los votos. Antes de abrir las mesas, la Autoridad de Conteo genera el par de claves ML-KEM-768 en una estación aislada, publica únicamente la clave pública $ek_{\text{AC}}$ (1184 B) hacia el Servidor de Votación para el cifrado en cabina y mantiene $dk_{\text{AC}}$ resguardada hasta el cierre oficial de los comicios.
+La seguridad del protocolo descansa en la separación de funciones entre el Servidor de Votación (SV) y la Autoridad de Conteo (AC): la clave privada de desencapsulamiento (2400 B) pertenece exclusivamente a la Autoridad de Conteo y nunca reside en el servidor web que recibe los votos. Antes de abrir las mesas, la Autoridad de Conteo genera el par de claves ML-KEM-768 en una estación aislada, publica únicamente la clave pública (1184 B) hacia el Servidor de Votación para el cifrado en cabina y mantiene dicha clave privada resguardada hasta el cierre oficial de los comicios.
 
 \subsection{Mecanismos de Desvinculación de Identidad y Modelo de Adversarios}
 
-Para impedir que se asocie la identidad del elector con el sentido de su voto, el protocolo aplica cinco medidas de desvinculación: (1) separación inmediata entre la credencial del ciudadano y la boleta cifrada al momento del depósito; (2) permutación aleatoria del lote de boletas antes de entregarlo a la Autoridad de Conteo; (3) exclusión de direcciones IP y redondeo de marcas de tiempo a ventanas horarias; (4) empaquetado del voto a tamaño constante (48 B cifrados con etiqueta GMAC) vinculado mediante datos asociados $\text{AAD} = \langle id_{\text{eleccion}}, ct_{\text{kem}} \rangle$; y (5) emisión de recibo firmado sobre el resumen SHA3-256 para auditoría ciudadana. En la Tabla \ref{tab:modelo_adversarios} se resume la matriz de visibilidad frente a cada perfil de adversario.
+Para impedir que se asocie la identidad del elector con el sentido de su voto, el protocolo aplica cinco medidas de desvinculación: (1) separación inmediata entre la credencial del ciudadano y la boleta cifrada al momento del depósito; (2) permutación aleatoria del lote de boletas antes de entregarlo a la Autoridad de Conteo; (3) exclusión de direcciones IP y redondeo de marcas de tiempo a ventanas horarias; (4) empaquetado del voto a tamaño constante (48 B cifrados con autenticación) vinculado mediante datos asociados (identificador de elección y criptograma KEM); y (5) emisión de recibo firmado sobre el resumen SHA3-256 para auditoría ciudadana. En la Tabla \ref{tab:modelo_adversarios} se resume la matriz de visibilidad frente a cada perfil de adversario.
 
 \begin{table}[!htbp]
 \centering
 \renewcommand{\arraystretch}{1.22}
 \footnotesize
-\caption{Modelo de adversarios y visibilidad de datos.}
-\label{tab:modelo_adversarios}
 \begin{tabularx}{\textwidth}{|>{\bfseries}p{3.0cm}|>{\raggedright\arraybackslash}p{3.4cm}|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}X|}
 \hline
 \textbf{Adversario} & \textbf{Datos que Observa} & \textbf{Datos Ocultos} & \textbf{Garantía del Protocolo} \\
 \hline
-Atacante de Red (Dolev--Yao) & Mensajes en tránsito: $\langle \text{boleta}, \sigma_V \rangle$ y recibos. & Voto en claro ($m_V$) y claves privadas ($dk_{\text{AC}}, sk_V$). & Confidencialidad IND-CCA2 e integridad de firma. \\
+Atacante de Red (Dolev--Yao) & Mensajes en tránsito: boletas cifradas, firmas y recibos. & Voto en claro y claves privadas (conteo y votantes). & Confidencialidad IND-CCA2 e integridad de firma. \\
 \hline
-Servidor de Votación Malicioso & Identidad ($id_V$), credencial, $ct_{\text{kem}}$ y $c_{\text{voto}}$. & Voto en claro ($m_V$) y clave $dk_{\text{AC}}$. & Incapacidad de descifrar el sentido del voto. \\
+Servidor de Votación Malicioso & Identidad del elector, credencial y boletas cifradas. & Voto en claro y clave privada de conteo. & Incapacidad de descifrar el sentido del voto. \\
 \hline
-Autoridad de Conteo Maliciosa & Lote de boletas anónimas, $dk_{\text{AC}}$ y votos ($m_V$). & Identidad ($id_V$), credenciales y padrón. & Incapacidad de vincular el voto abierto con el elector. \\
+Autoridad de Conteo Maliciosa & Lote de boletas anónimas, clave de conteo y votos descifrados. & Identidad de los electores, credenciales y padrón. & Incapacidad de vincular el voto abierto con el elector. \\
 \hline
-Colusión SV + AC & Conjunto total: identidades y clave $dk_{\text{AC}}$. & Claves privadas de los votantes ($sk_V$). & Límite declarado: exige separación institucional. \\
+Colusión SV + AC & Conjunto total: identidades y clave de conteo. & Claves privadas de los votantes. & Límite declarado: exige separación institucional. \\
 \hline
-Administrador de Base de Datos & Tablas de padrón, ánfora de boletas y recibos. & Voto en claro ($m_V$) y clave $dk_{\text{AC}}$. & Privacidad protegida por cifrado y ausencia de FK. \\
+Administrador de Base de Datos & Tablas de padrón, ánfora de boletas y recibos. & Voto en claro y clave privada de conteo. & Privacidad protegida por cifrado y ausencia de FK. \\
 \hline
 \end{tabularx}
+\caption{Modelo de adversarios y visibilidad de datos.}
+\label{tab:modelo_adversarios}
 \par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
 \end{table}
