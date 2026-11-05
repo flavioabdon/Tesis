@@ -545,12 +545,28 @@
   \def\bigrule{\titlerule[1pt]}
   \def\bigaboverule{\rule{\textwidth}{1.5pt}\hspace{-\textwidth}\rule[-3.5pt]{\textwidth}{0.5pt}\\[1ex]}
   \def\bigbelowrule{\rule{\textwidth}{0.5pt}\hspace{-\textwidth}\rule[-4.5pt]{\textwidth}{1.5pt}}
-  \if@plain
-    \renewcommand{\thechapter}{}
-    \titleformat{\chapter}[display]{\bfseries\LARGE}{\vskip-1cm\filleft\MakeUppercase{\chaptertitlename}\enspace\Huge\thechapter}{3ex}{\bigaboverule\filright}[\vspace{-1.5ex}\bigbelowrule]
-  \else
-    \titleformat{\chapter}[display]{\LARGE\sf}{\settowidth{\@widthtext}{\chaptertitlename}\vskip-1cm\rule{\@widthtext}{1pt}\hphantom{\chapternumberorfigure}\bigrule\\[-8.5pt] \vrule height48pt width 1pt depth-18pt \chaptertitlename\chapternumberorfigure\bigrule\vrule height49pt width1pt depth0pt}{20pt}{\normalfont\Huge}
-  \fi
+  % --- ESTILO ANTERIOR DE CAPÍTULO (COMENTADO) ---
+  % \if@plain
+  %   \renewcommand{\thechapter}{}
+  %   \titleformat{\chapter}[display]{\bfseries\LARGE}{\vskip-1cm\filleft\MakeUppercase{\chaptertitlename}\enspace\Huge\thechapter}{3ex}{\bigaboverule\filright}[\vspace{-1.5ex}\bigbelowrule]
+  % \else
+  %   \titleformat{\chapter}[display]{\LARGE\sf}{\settowidth{\@widthtext}{\chaptertitlename}\vskip-1cm\rule{\@widthtext}{1pt}\hphantom{\chapternumberorfigure}\bigrule\\[-8.5pt] \vrule height48pt width 1pt depth-18pt \chaptertitlename\chapternumberorfigure\bigrule\vrule height49pt width1pt depth0pt}{20pt}{\normalfont\Huge}
+  % \fi
+  % --- NUEVO ESTILO DE CAPÍTULO: CAPÍTULO N (romano) en 1.ª línea, TÍTULO en 2.ª línea ---
+  \titleformat{\chapter}[display]
+    {\normalsize\bfseries}
+    {CAP\'ITULO\space\Roman{chapter}}
+    {1.5ex}
+    {\MakeUppercase}
+
+  \titleformat{name=\chapter,numberless}
+    {\normalsize\bfseries}
+    {}
+    {0pt}
+    {\MakeUppercase}
+
+  \titlespacing*{\chapter}{0pt}{0pt}{3ex plus 1ex minus .2ex}
+  \titlespacing*{name=\chapter,numberless}{0pt}{0pt}{3ex plus 1ex minus .2ex}
 }
 
 \newcommand\mainmatter{%
@@ -822,6 +838,22 @@
 \newcommand\@tocrmarg{2.55em}
 \newcommand\@dotsep{3}
 \setcounter{tocdepth}{3}
+\newcommand\@indexchapter[1]{%
+    \if@openright\cleardoublepage\else\clearpage\fi
+    \if@appearindex
+        \thispagestyle{plain}%
+    \else
+        \thispagestyle{empty}%
+    \fi
+    \global\@topnum\z@
+    \@afterindentfalse
+    \addcontentsline{toc}{chapter}{#1}%
+    \chaptermark{#1}%
+    {\parindent\z@\centering\normalfont\normalsize\bfseries\MakeUppercase{#1}\par\nobreak}%
+    \vspace{3ex plus 1ex minus .2ex}%
+    \@afterheading
+}
+
 \newcommand\tableofcontents{%
     \setstretch{1}
     \if@twocolumn
@@ -833,9 +865,8 @@
     \if@spanish
         \renewcommand{\contentsname}{\'INDICE}
     \fi
-    \def\chapternumberorfigure{\;\,\includegraphics[height=49pt]{imagesThesis/table_of_contents_graph}\;\,}
-    \chapter{\contentsname}
-        \@mkboth{\MakeUppercase\contentsname}{\MakeUppercase\contentsname}%
+    \@indexchapter{\contentsname}%
+    \@mkboth{\MakeUppercase\contentsname}{\MakeUppercase\contentsname}%
     \@starttoc{toc}%
     \if@restonecol\twocolumn\fi
     \setstretch{\@space}
@@ -971,13 +1002,11 @@
     \else
       \@restonecolfalse
     \fi
-    \@smalltitletrue
-    \ifpdf
-        \def\chapternumberorfigure{\;\,\includegraphics[height=49pt]{imagesThesis/index_of_figures_graph.pdf}\;\,}
-    \else
-        \def\chapternumberorfigure{\;\,\includegraphics[height=49pt]{imagesThesis/index_of_figures_graph.eps}\;\,}
+    \if@spanish
+        \renewcommand{\listfigurename}{\'Indice de figuras}
     \fi
-    \chapter{\listfigurename}%
+    \@smalltitletrue
+    \@indexchapter{\listfigurename}%
       \@mkboth{\MakeUppercase\listfigurename}%
               {\MakeUppercase\listfigurename}%
     \@starttoc{lof}%
@@ -998,12 +1027,7 @@
         \renewcommand{\listtablename}{\'Indice de tablas}
     \fi
     \@smalltitletrue
-    \ifpdf
-        \def\chapternumberorfigure{\;\,\includegraphics[height=49pt]{imagesThesis/index_of_tables_graph.pdf}\;\,}
-    \else
-        \def\chapternumberorfigure{\;\,\includegraphics[height=49pt]{imagesThesis/index_of_tables_graph.eps}\;\,}
-    \fi
-    \chapter{\listtablename}%
+    \@indexchapter{\listtablename}%
       \@mkboth{%
           \MakeUppercase\listtablename}%
          {\MakeUppercase\listtablename}%

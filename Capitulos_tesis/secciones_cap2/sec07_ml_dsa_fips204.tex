@@ -68,7 +68,7 @@ Para eliminar por completo este riesgo de fuga estadística, Lyubashevsky (2012)
 	\end{tikzpicture}
 	\caption{Firma digital ML-DSA con muestreo por rechazo.}
 	\label{fig:mldsa_abort}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia a partir de Lyubashevsky (2012).}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Lyubashevsky (2012) y NIST (2024b).}}
 \end{figure}
 
 Como se ilustra en la Figura \ref{fig:mldsa_abort}, en el paso $1$ se elige el vector máscara $\mathbf{y}$, en el paso $2$ se calcula el desafío $c$ combinando $\mathbf{A}\mathbf{y}$ con el resumen del voto $\mu$, y en el paso $3$ se obtiene la firma candidata $\mathbf{z} = \mathbf{y} + c\mathbf{s}$. A continuación, el rombo de decisión evalúa si todos los coeficientes de $\mathbf{z}$ son menores al umbral de seguridad $\gamma_1 - \beta$. Si la condición no se cumple (rama \textit{No}), el proceso aborta internamente y regresa al paso $1$ para probar con otro vector $\mathbf{y}$; si se cumple (rama \textit{Sí}), se emite la firma definitiva $\sigma = (\mathbf{z}, c)$ que es completamente independiente de la clave secreta.

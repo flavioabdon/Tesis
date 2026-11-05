@@ -38,7 +38,7 @@ En la Figura \ref{fig:aritmetica_modular_reloj} se representa de manera didácti
 	\end{tikzpicture}
 	\caption{Funcionamiento cíclico de la aritmética modular.}
 	\label{fig:aritmetica_modular_reloj}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Stallings (2023).}}
 \end{figure}
 
 Por su parte, un sistema de ecuaciones lineales exacto en $\mathbb{Z}_q$ se expresa en forma matricial como:
@@ -117,7 +117,7 @@ Para ilustrar de forma concreta y didáctica cómo se construye un sistema de ec
 	\end{tikzpicture}
 	\caption{Ejemplo de ecuaciones ruidosas LWE.}
 	\label{fig:lwe_ejemplo_concreto}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Regev (2005).}}
 \end{figure}
 
 En el ejemplo presentado en la Figura \ref{fig:lwe_ejemplo_concreto}, la clave privada está conformada por cuatro valores secretos: $\mathbf{s} = (x, y, z, w) = (10, 82, 50, 5)$. Para generar la clave pública, la entidad emisora elige aleatoriamente coeficientes en el espacio modular $\mathbb{Z}_{89}$ (con $q = 89$) y evalúa las combinaciones lineales añadiendo un pequeño término de perturbación estocástica. 
@@ -194,7 +194,7 @@ Para comprender visualmente por qué el algoritmo cuántico de Shor puede quebra
 	\end{tikzpicture}
 	\caption{Comparación entre onda periódica y dispersión LWE.}
 	\label{fig:shor_vs_lwe}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Shor (1997) y Regev (2005).}}
 \end{figure}
 
 Tal como se ilustra en la Figura \ref{fig:shor_vs_lwe}, en la parte superior los esquemas clásicos como RSA generan una onda regular que se repite exactamente cada período $r$, lo cual permite que la Transformada Cuántica de Fourier identifique su frecuencia y rompa el cifrado. En cambio, en la parte inferior se observa que las muestras del problema LWE presentan alturas irregulares y dispersas debido a la presencia del ruido $\mathbf{e}$, destruyendo cualquier ciclo periódico y dejando sin efecto al algoritmo de Shor.

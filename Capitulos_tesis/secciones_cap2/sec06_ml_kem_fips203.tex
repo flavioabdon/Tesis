@@ -48,7 +48,7 @@ El funcionamiento de ML-KEM se compone de tres pasos secuenciales bien definidos
 	\end{tikzpicture}
 	\caption{Flujo de operaciones del algoritmo ML-KEM.}
 	\label{fig:kem_flow}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia a partir de FIPS PUB 203 (NIST, 2024a).}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de NIST (2024a).}}
 \end{figure}
 
 Tal como se observa en la Figura \ref{fig:kem_flow}, la autoridad pone a disposición la clave pública $PK = (\mathbf{A}, \mathbf{b})$, el terminal del votante la utiliza para encapsular el secreto $K$ dentro del criptograma $c = (\mathbf{u}, v)$, y posteriormente se realiza el desencapsulamiento restando el término secreto $\mathbf{s}^T\mathbf{u}$. A continuación se explica de forma sencilla qué ocurre en cada una de estas tres fases:

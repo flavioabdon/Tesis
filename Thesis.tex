@@ -51,7 +51,7 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{listings}
-\usepackage{pdfrender}
+% \usepackage{pdfrender}
 
 % Colores para diagramas y esquemas didácticos de criptografía post-cuántica
 \definecolor{PQCMainBlue}{RGB}{24, 76, 120}
@@ -69,10 +69,10 @@
 
 \setlength{\parindent}{0pt}
 
-% Estilo de section: MAYÚSCULAS, EXTRA negrita (usando pdfrender), 12pt
+% Estilo de section: MAYÚSCULAS, negrita estándar, 12pt
 \titleformat{\section}
-  {\normalsize\bfseries\pdfrender{TextRenderingMode=FillStroke, LineWidth=0.4pt}}   % formato: 12pt + negrita + trazo extra
-  {\thesection.}           % etiqueta numérica: "1."
+  {\normalsize\bfseries}   % formato: 12pt + negrita
+  {\thesection.}           % etiqueta numérica: "N.1."
   {1em}                    % separación entre número y título
   {\MakeUppercase}         % transforma el título a mayúsculas
 
@@ -235,7 +235,7 @@
 %  \setcounter{chapter}{0}%
 %  \setcounter{section}{0}%
   \mainmatter
-    \renewcommand{\thesection}{\arabic{section}}
+    % \renewcommand{\thesection}{\arabic{section}} % Comentado para mantener el número de capítulo en los títulos (N.1, N.1.1)
     \pagestyle{fancy}
     % \pagenumbering{arabic}
     \input{Capitulos_tesis/TESIS_cap1}

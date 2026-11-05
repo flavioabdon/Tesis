@@ -49,7 +49,7 @@ En la Figura \ref{fig:reticulo_2d} se presenta gráficamente un retículo de dos
 	\end{tikzpicture}
 	\caption{Retículo bidimensional, vectores base y problema CVP.}
 	\label{fig:reticulo_2d}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Ajtai (1996) y Regev (2005).}}
 \end{figure}
 
 Como se aprecia en la Figura \ref{fig:reticulo_2d}, cuando el retículo tiene solamente dos dimensiones, el ojo humano puede identificar de inmediato cuál es el punto de la cuadrícula $\mathbf{v}$ que se encuentra más cerca del punto desplazado $\mathbf{t}$. Sin embargo, en los algoritmos criptográficos reales no se utilizan $2$ dimensiones, sino entre $512$ y $1024$ dimensiones simultáneas, donde localizar el punto más cercano se vuelve imposible sin conocer información secreta adicional.
@@ -110,7 +110,7 @@ En la Figura \ref{fig:bases_buenas_malas} se ilustra esta diferencia fundamental
 	\end{tikzpicture}
 	\caption{Comparación entre bases ortogonales y bases distorsionadas.}
 	\label{fig:bases_buenas_malas}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Regev (2005) y Strang (2023).}}
 \end{figure}
 
 Tal como se observa en la Figura \ref{fig:bases_buenas_malas}, la base buena formada por los vectores sólidos $\mathbf{b}_1$ y $\mathbf{b}_2$ delimita una celda pequeña y casi cuadrada, lo que permite resolver problemas geométricos mediante un redondeo sencillo. Por el contrario, la base mala formada por los vectores punteados $\mathbf{b}_1'$ y $\mathbf{b}_2'$ genera paralelogramos estrechos y muy alargados, de modo que cualquier intento de estimación rápida produce un error de gran magnitud.
@@ -187,7 +187,7 @@ Para facilitar la comprensión visual de ambos problemas computacionales, en la 
 	\end{tikzpicture}
 	\caption{Definición geométrica de los problemas SVP y CVP.}
 	\label{fig:svp_cvp_comparacion}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Ajtai (1996) y Regev (2005).}}
 \end{figure}
 
 Tal como se compara en la Figura \ref{fig:svp_cvp_comparacion}, en el problema SVP (a la izquierda) el objetivo es encontrar el vector no nulo de menor longitud que conecta el origen con un punto del retículo. En cambio, en el problema CVP (a la derecha) se recibe un punto arbitrario $\mathbf{t}$ en el espacio y el objetivo es encontrar cuál es el punto del retículo más cercano. Ambos problemas constituyen la base de la seguridad post-cuántica porque carecen de algoritmos eficientes en dimensiones elevadas.
@@ -232,7 +232,7 @@ En la Figura \ref{fig:complejidad_exponencial} se ilustra esta diferencia fundam
 	\end{tikzpicture}
 	\caption{Crecimiento del tiempo de ejecución en retículos.}
 	\label{fig:complejidad_exponencial}
-	\par\vspace{3pt}{\footnotesize\textit{Fuente: Elaboración propia.}}
+	\par\vspace{3pt}{\footnotesize\textit{Fuente: Adaptado de Ajtai (1996) y NIST (2024a).}}
 \end{figure}
 
 Tal como se desprende de la Figura \ref{fig:complejidad_exponencial}, para valores pequeños de la dimensión $n$ el tiempo de cálculo se mantiene en niveles accesibles. Sin embargo, al cruzar el umbral de seguridad ($n \ge 500$, como en ML-KEM-768 donde la dimensión efectiva es $768$), la curva exponencial $\mathcal{O}(2^{c \cdot n})$ asciende de forma casi vertical. Esto significa que mientras una computadora honesta cifra y firma en pocos milisegundos porque conoce la clave corta, un atacante que deba explorar el retículo sin la trampa requeriría millones de años de cómputo en las supercomputadoras más potentes del planeta, garantizando la inviolabilidad del protocolo electoral.
